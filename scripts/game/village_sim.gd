@@ -162,6 +162,17 @@ func building_cost(type_name: String, tier: int = 1) -> Dictionary:
 	return cost
 
 
+func building_limit(type_name: String) -> int:
+	var spec: Dictionary = building_specs.get(type_name, {})
+	var limit: Variant = spec.get("maxCount", 999)
+	if limit is Array:
+		var levels: Array = limit
+		if levels.is_empty():
+			return 999
+		return int(levels[mini(maxi(village_level() - 1, 0), levels.size() - 1)])
+	return int(limit)
+
+
 func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> String:
 	if type_name == "stone_quarry" and ignore_id < 0 and "stoneworking" not in living.discoveries:
 		return "Research Stoneworking first."
@@ -181,14 +192,11 @@ func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> Str
 		return "" if not raid_active and not raid_warning else "No relocation during raids."
 	if village_level() < int(spec.get("minLevel", 1)):
 		return "Requires village level %d." % int(spec["minLevel"])
-	var limit: Variant = spec.get("maxCount", 999)
-	if limit is Array:
-		limit = limit[mini(village_level() - 1, limit.size() - 1)]
 	var count: int = 0
 	for b in buildings:
 		if b["type"] == type_name and b["hp"] > 0:
 			count += 1
-	if count >= int(limit):
+	if count >= building_limit(type_name):
 		return "Building limit reached."
 	return "" if _affordable(building_cost(type_name)) else "Not enough resources."
 
@@ -1205,8 +1213,19 @@ func _quest_tick() -> void:
 		notice = "Village Path / %s complete / +%d XP." % [quest["name"], quest["xp"]]
 
 
+func _save_entities(source: Array[Dictionary]) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for entity: Dictionary in source:
+		var clean: Dictionary = entity.duplicate(true)
+		# Path/edge memoization is runtime-only and contains Vector types that do not belong in JSON saves.
+		for key in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
+			clean.erase(key)
+		result.append(clean)
+	return result
+
+
 func export_state() -> Dictionary:
-	return {"version": 2, "living": living.state(), "buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
+	return {"version": 2, "living": living.state(), "buildings": buildings.duplicate(true), "units": _save_entities(units), "enemies": _save_entities(enemies),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "elapsed": elapsed, "xp": xp, "wave": wave, "next_raid_at": next_raid_at,
 		"raid_active": raid_active, "raid_warning": raid_warning, "next_id": next_id, "birth_timer": birth_timer}
