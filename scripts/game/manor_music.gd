@@ -313,7 +313,9 @@ func _apply_echo() -> void:
 			var effect: AudioEffect = AudioServer.get_bus_effect(i, e)
 			if effect is AudioEffectDelay:
 				var echo: Dictionary = score.get("echo", {})
-				(effect as AudioEffectDelay).tap1_delay_ms = _bounded(echo.get("seconds"), 0.24, 80.0, 500.0) * 1000.0
+				# Theme data stores delay in seconds; Godot expects milliseconds.
+				var delay_ms: float = _bounded(echo.get("seconds"), 0.24, 0.08, 0.5) * 1000.0
+				(effect as AudioEffectDelay).tap1_delay_ms = delay_ms
 				(effect as AudioEffectDelay).tap1_level_db = linear_to_db(clampf(_bounded(echo.get("gain"), 0.12, 0.0, 0.3) * 2.0, 0.001, 1.0))
 
 
