@@ -78,6 +78,23 @@ func _run() -> void:
 	game.left_pressed = false
 	game._toggle_day()
 	check(not game.night, "day-night visual control")
+	# Command & Control interaction helpers.
+	game.touch_mode = false
+	check(game._input_verb() == "Click", "desktop wording stays mouse-correct")
+	game.touch_mode = true
+	game._refresh_input_copy()
+	check(game._input_verb() == "Tap" and "Two fingers" in game.welcome_help.text, "touch wording switches to phone controls")
+	var drag_row: Array[Vector2i] = game._wall_row_tiles(Vector2i(1, 1), Vector2i(4, 2))
+	check(drag_row == [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1)], "wall drag locks to the dominant straight axis")
+	check(game._selection_radius() > game._touch_slop(), "villager touch target is larger than tap-drag slop")
+	game.sim.chronicle.act = 1
+	game.sim.living.discoveries.clear()
+	game.sim.living.active = ""
+	check(not game._research_surface_ready(), "research surface stays quiet during opening onboarding")
+	game.sim.chronicle.act = 3
+	check(game._research_surface_ready(), "research surface is available once the campaign reaches defense play")
+	game._show_combat_banner("THE MANOR STANDS", true)
+	check(game.combat_banner.visible, "raid result gets a distinct readable combat banner")
 	game._test_raid()
 	check(game.sim.raid_warning, "defense button starts live simulation wave")
 	game._process(0.1)
