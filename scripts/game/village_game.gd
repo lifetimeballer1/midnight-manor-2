@@ -819,11 +819,8 @@ func _build_more_sheet(root_control: Control) -> void:
 
 
 func _toggle_more() -> void:
-	if panel == "pause":
-		sidebar.hide()
-		panel = ""
-	else:
-		_close_panel()
+	# Leaving the pause panel through More must resume the simulation.
+	_close_panel()
 	more_sheet.visible = not more_sheet.visible
 	_layout_ui()
 
@@ -1133,10 +1130,11 @@ func _build_catalog() -> void:
 				if str(b.get("type", "")) == type_name and float(b.get("hp", 0.0)) > 0.0:
 					owned += 1
 			var lock: String = ""
-			var cap_raw: Variant = spec.get("maxCount", 999)
-			var cap: int = 999 if cap_raw is Array else int(cap_raw)
+			var cap: int = sim.building_limit(type_name)
 			if type_name == "stone_quarry" and "stoneworking" not in sim.living.discoveries:
 				lock = "Research Stoneworking first."
+			elif sim.village_level() < int(spec.get("minLevel", 1)):
+				lock = "Requires village level %d." % int(spec.get("minLevel", 1))
 			elif owned >= cap:
 				lock = "Village limit reached."
 			var state: int = ui.card_state_of(not lock.is_empty(), 1.0 if owned > 0 else 0.0)
