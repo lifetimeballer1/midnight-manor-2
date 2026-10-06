@@ -1,6 +1,9 @@
 extends RefCounted
 
+const Chronicle = preload("res://scripts/game/chronicle.gd")
+
 var config: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/living_village.json"))
+var chronicle: Chronicle = null
 var cells: Dictionary = {}
 var insight: float = 0
 var discoveries: Array[String] = []
@@ -9,6 +12,45 @@ var remaining: float = 0
 var revision: int = 0
 var navigation_revision: int = 0
 var decay_clock: float = 0
+
+
+# The unified Chronicle tech tree is the single research authority. Trail and
+# paving tuning stays here; every technology now lives in data/chronicle.json.
+func _init() -> void:
+	chronicle = Chronicle.new()
+	_attach()
+
+
+# The sim owns the one Chronicle that holds progression state, so research and
+# story unlock into the same registry instead of two divergent copies.
+func bind_chronicle(shared: Chronicle) -> void:
+	chronicle = shared
+	_attach()
+
+
+func _attach() -> void:
+	if config is Dictionary and config.get("research", {}) is Dictionary and chronicle.has_config():
+		(config["research"] as Dictionary)["nodes"] = chronicle.nodes()
+
+
+# --- Chronicle passthroughs -------------------------------------------------
+# village_game.gd and the research paths read these directly, so the tree is one
+# object no matter which module asks for it.
+
+func node(id: String) -> Dictionary:
+	return chronicle.node(id)
+
+
+func branches() -> Array:
+	return chronicle.branches()
+
+
+func tier_of(id: String) -> int:
+	return chronicle.tier_of(id)
+
+
+func effect(name: String) -> bool:
+	return chronicle.effect(name)
 
 
 func key(tile: Vector2i) -> String:
@@ -85,33 +127,53 @@ func tick(sim, dt: float) -> void:
 	if not active.is_empty():
 		remaining = maxf(0, remaining - dt)
 		if remaining <= 0:
-			discoveries.append(active)
-			sim.notice = "Research complete / " + str(config["research"]["nodes"][active]["name"])
-			active = ""
+			_complete_research(sim)
 
 
 func research_reason(sim, id: String) -> String:
-	var node: Dictionary = config["research"]["nodes"].get(id, {})
+	var node: Dictionary = chronicle.node(id)
 	if node.is_empty(): return "Unknown research."
 	if id in discoveries: return "Already discovered."
 	if not active.is_empty(): return "Another research project is active."
 	if sim.raid_active or sim.raid_warning: return "Research waits until the alarm passes."
-	if sim.village_level() < int(node["level"]): return "Requires village level %d." % node["level"]
-	if not str(node["requires"]).is_empty() and str(node["requires"]) not in discoveries: return "Requires Stoneworking."
-	if insight < float(node["insight"]): return "Requires %d Insight." % node["insight"]
+	# Campaign progression gates the tier; village level is the supporting floor.
+	var tier_reason: String = chronicle.tier_reason(id)
+	if not tier_reason.is_empty(): return tier_reason
+	if sim.village_level() < int(node.get("level", 1)): return "Requires village level %d." % int(node.get("level", 1))
+	var prereq: String = chronicle.prereq_reason(id, discoveries)
+	if not prereq.is_empty(): return prereq
+	if insight < float(node["insight"]): return "Requires %d Insight." % int(node["insight"])
 	return "" if sim._affordable(node["cost"]) else "Not enough research resources."
 
 
 func research(sim, id: String) -> bool:
 	sim.notice = research_reason(sim, id)
 	if not sim.notice.is_empty(): return false
-	var node: Dictionary = config["research"]["nodes"][id]
+	var node: Dictionary = chronicle.node(id)
 	sim._spend(node["cost"])
 	insight -= float(node["insight"])
 	active = id
 	remaining = float(node["seconds"])
 	sim.notice = "Research begun / " + str(node["name"])
 	return true
+
+
+# Research grants behaviour, commands, doctrines and Great Works - never the
+# same buildings or professions a story mission introduces.
+func _complete_research(sim) -> void:
+	if active.is_empty():
+		return
+	var node: Dictionary = chronicle.node(active)
+	var name: String = str(node.get("name", active))
+	var fresh: Array[String] = chronicle.grant_many(node.get("unlocks", []), "research:" + active)
+	sim.notice = "Research complete / " + name
+	chronicle.queue_banner("Issa the chart-keeper", "%s is written into the chart." % name)
+	for id in fresh:
+		if str(id).begins_with("doctrine:"):
+			chronicle.queue_banner("Old Bell", "The %s doctrine can be sworn at the Manor Hall." % str(chronicle.doctrine_data(str(id).trim_prefix("doctrine:")).get("name", id)))
+	discoveries.append(active)
+	active = ""
+	remaining = 0.0
 
 
 func pave_reason(sim, tile: Vector2i) -> String:

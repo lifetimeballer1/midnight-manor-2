@@ -2,171 +2,1074 @@
   {
     "id": "second-field",
     "name": "A Second Field",
-    "text": "One farm feeds a few. Two farms feed a future. Raise a second Wheat Farm.",
+    "act": 1,
     "giver": "Maro the mason",
-    "flavor": "Maro chalked the hall sill himself. Says a second field means the village means it.",
-    "act": "I",
-    "task": {
-      "kind": "build",
-      "type": "farm",
-      "count": 2
-    },
+    "text": "One farm feeds a few. Two farms feed a future. Raise a second Wheat Farm.",
+    "objectives": [
+      {
+        "id": "two-farms",
+        "kind": "build",
+        "text": "Wheat Farms standing: 2",
+        "type": "farm",
+        "count": 2
+      }
+    ],
     "xp": 60,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "wood": 40
-    }
+    },
+    "unlocks": [],
+    "flavor": "Maro chalked the hall sill himself. Says a second field means the village means it."
   },
   {
     "id": "still-water",
     "name": "Still Water",
-    "text": "Fish shine like fallen stars in the dark. Dig a Stillwater Pond.",
+    "act": 1,
     "giver": "Wren Waterwise",
-    "flavor": "Tomm's granddaughter dug the first pond in one night shift. She will show you where.",
-    "act": "I",
-    "task": {
-      "kind": "build",
-      "type": "pond",
-      "count": 1
-    },
+    "text": "Fish shine like fallen stars in the dark. Dig a Stillwater Pond.",
+    "objectives": [
+      {
+        "id": "one-pond",
+        "kind": "build",
+        "text": "Stillwater Pond: 1",
+        "type": "pond",
+        "count": 1
+      }
+    ],
     "xp": 60,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "food": 30
-    }
+    },
+    "unlocks": [],
+    "flavor": "Tomm's granddaughter dug the first pond in one night shift. She will show you where."
   },
   {
     "id": "first-cast",
     "name": "First Cast",
-    "text": "A pond without a fisher is just a puddle. Recruit a Fisherman from the People panel.",
+    "act": 1,
     "giver": "Old Bell",
-    "flavor": "Bells in threes, lines in the water. The glimmerfish are waiting on you.",
-    "act": "I",
-    "task": {
-      "kind": "recruit",
-      "type": "fisherman",
-      "count": 1
-    },
+    "text": "A pond without a fisher is just a puddle. Recruit a Fisherman from the People panel.",
+    "objectives": [
+      {
+        "id": "one-fisher",
+        "kind": "recruit",
+        "text": "Fishermen: 1",
+        "type": "fisherman",
+        "count": 1
+      }
+    ],
     "xp": 60,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "gold": 30
-    }
+    },
+    "unlocks": [],
+    "flavor": "Bells in threes, lines in the water. The glimmerfish are waiting on you."
   },
   {
     "id": "roof-for-night",
     "name": "A Roof for the Night",
-    "text": "Cold nights make short tempers. Build a Moonlit Cottage so new blood has a bed.",
+    "act": 1,
     "giver": "Pella Second-Lantern",
-    "flavor": "Beds before bodies is law here. Raise the beams and she will bless the door.",
-    "act": "I",
-    "task": {
-      "kind": "build",
-      "type": "cottage",
-      "count": 1
-    },
+    "text": "Cold nights make short tempers. Build a Moonlit Cottage so new blood has a bed.",
+    "objectives": [
+      {
+        "id": "one-cottage",
+        "kind": "build",
+        "text": "Moonlit Cottages: 1",
+        "type": "cottage",
+        "count": 1
+      }
+    ],
     "xp": 80,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "food": 40
-    }
+    },
+    "unlocks": [],
+    "flavor": "Beds before bodies is law here. Raise the beams and she will bless the door."
   },
   {
     "id": "every-hand",
     "name": "A Place for Every Hand",
-    "text": "Idle hands, empty bellies. Assign 2 villagers to workplaces from the People panel.",
+    "act": 1,
     "giver": "Issa the chart-keeper",
-    "flavor": "Two hands at proper work beat ten idle. The Moonwarden chart says so, and so does supper.",
-    "log": "Issa chalked the first true page: every hand at proper work, every belly fed. The Moonwarden chart says so.",
-    "act": "I",
-    "task": {
-      "kind": "assign",
-      "count": 2
-    },
+    "text": "Idle hands, empty bellies. Assign 2 villagers to workplaces from the People panel.",
+    "objectives": [
+      {
+        "id": "two-assigned",
+        "kind": "assign",
+        "text": "Villagers at a workplace: 2",
+        "count": 2
+      }
+    ],
     "xp": 80,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "gold": 30
-    }
+    },
+    "unlocks": [],
+    "flavor": "Two hands at proper work beat ten idle. The Moonwarden chart says so, and so does supper.",
+    "log": "Issa chalked the first true page: every hand at proper work, every belly fed. The Moonwarden chart says so."
+  },
+  {
+    "id": "moon-orchard",
+    "name": "Moon Orchard",
+    "act": 1,
+    "giver": "Tomm the herder",
+    "introduces": [
+      "grove"
+    ],
+    "text": "Tomm has been grafting under the moon since before you were born. Raise a Moonberry Grove and the larder stops being a worry.",
+    "objectives": [
+      {
+        "id": "one-grove",
+        "kind": "build",
+        "text": "Moonberry Groves: 1",
+        "type": "grove",
+        "count": 1
+      }
+    ],
+    "xp": 90,
+    "insight": 0,
+    "reputation": 0,
+    "rewards": {
+      "food": 50
+    },
+    "unlocks": [
+      "grove",
+      "forager"
+    ],
+    "flavor": "Grafted by hand, one tree at a time. He will not say how many winters that took.",
+    "log": "The first Moonberry Grove is in the ground. Tomm checked the graft twice and said nothing, which from him is applause."
+  },
+  {
+    "id": "the-moon-dial",
+    "name": "The Moon Dial",
+    "act": 1,
+    "giver": "Issa the chart-keeper",
+    "text": "Issa has a dial cut from Moonstone and no clear sky to set it against. Bank 200 gold and the Orrery's first stone goes up.",
+    "objectives": [
+      {
+        "id": "gold-200",
+        "kind": "gather",
+        "text": "Gold banked: 200",
+        "resource": "gold",
+        "amount": 200
+      }
+    ],
+    "xp": 100,
+    "insight": 0,
+    "reputation": 0,
+    "rewards": {
+      "gold": 40
+    },
+    "unlocks": [
+      "moon-dial"
+    ],
+    "flavor": "She ground the ring herself. Lampblack for the marks, patience for the numbers.",
+    "log": "The Moon Dial stands in the open and the first true page is written on it."
   },
   {
     "id": "new-blood",
     "name": "New Blood",
-    "text": "Full bellies and warm beds — the village grows on its own. Reach 8 villagers.",
+    "act": 2,
     "giver": "Old Bell",
-    "flavor": "Eight souls. The bell rings a half-hour longer on feast nights now.",
-    "act": "II",
-    "task": {
-      "kind": "population",
-      "count": 8
-    },
+    "text": "Full bellies and warm beds - the village grows on its own. Reach 8 villagers.",
+    "objectives": [
+      {
+        "id": "pop-8",
+        "kind": "population",
+        "text": "Villagers: 8",
+        "count": 8
+      }
+    ],
     "xp": 100,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "gold": 60
-    }
+    },
+    "unlocks": [],
+    "flavor": "Eight souls. The bell rings a half-hour longer on feast nights now."
   },
   {
     "id": "east-field",
     "name": "Clearing the East Field",
-    "text": "The treeline retreats axe-stroke by axe-stroke. Fell and haul 100 wood to clear the east rows.",
+    "act": 2,
     "giver": "Fen the wayfinder",
-    "flavor": "He marked the east rows fallow on his chart. Prove his chalk wrong.",
-    "act": "II",
-    "task": {
-      "kind": "gather",
-      "resource": "wood",
-      "amount": 100
-    },
+    "text": "The treeline retreats axe-stroke by axe-stroke. Fell and haul 100 wood to clear the east rows.",
+    "objectives": [
+      {
+        "id": "wood-100",
+        "kind": "gather",
+        "text": "Wood banked: 100",
+        "resource": "wood",
+        "amount": 100
+      }
+    ],
     "xp": 120,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "wood": 80
-    }
+    },
+    "unlocks": [],
+    "flavor": "He marked the east rows fallow on his chart. Prove his chalk wrong."
   },
   {
     "id": "full-crew",
     "name": "A Full Crew",
-    "text": "Twelve souls under one moon. Reach 12 villagers and the frontier is truly yours.",
+    "act": 2,
     "giver": "Maro the mason",
-    "flavor": "Twelve souls under one moon. Chalk your name inside the hall door.",
-    "act": "II",
-    "task": {
-      "kind": "population",
-      "count": 12
-    },
+    "text": "Twelve souls under one moon. Reach 12 villagers and the frontier is truly yours.",
+    "objectives": [
+      {
+        "id": "pop-12",
+        "kind": "population",
+        "text": "Villagers: 12",
+        "count": 12
+      }
+    ],
     "xp": 150,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "gold": 100,
       "food": 60
-    }
+    },
+    "unlocks": [],
+    "flavor": "Twelve souls under one moon. Chalk your name inside the hall door."
+  },
+  {
+    "id": "moon-well",
+    "name": "The Moon Well",
+    "act": 2,
+    "giver": "Mooncleric",
+    "introduces": [
+      "chapel"
+    ],
+    "text": "Moonstone dust in the old well mortar. The Mooncleric says it is borrowed light, never a miracle - but a village that has been hungry deserves one. Bank 150 food and raise the Moonchapel.",
+    "objectives": [
+      {
+        "id": "one-chapel",
+        "kind": "build",
+        "text": "Moonchapel: 1",
+        "type": "chapel",
+        "count": 1
+      },
+      {
+        "id": "food-150",
+        "kind": "gather",
+        "text": "Food banked: 150",
+        "resource": "food",
+        "amount": 150
+      }
+    ],
+    "xp": 130,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "food": 80,
+      "gold": 40
+    },
+    "unlocks": [
+      "chapel",
+      "healer"
+    ],
+    "flavor": "He blesses the door of every house on the lane. Now he means to bless what lies under them.",
+    "log": "The Moonchapel stands. The Mooncleric rang it once and would not explain why."
+  },
+  {
+    "id": "the-store-yard",
+    "name": "The Store Yard",
+    "act": 2,
+    "giver": "Maro the mason",
+    "text": "A village that cannot store a harvest watches it rot. Raise a Storehouse and bank 120 lumber-scale wood into it.",
+    "objectives": [
+      {
+        "id": "one-store",
+        "kind": "build",
+        "text": "Storehouses: 1",
+        "type": "storehouse",
+        "count": 1
+      },
+      {
+        "id": "wood-120",
+        "kind": "gather",
+        "text": "Wood banked: 120",
+        "resource": "wood",
+        "amount": 120
+      }
+    ],
+    "xp": 140,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "gold": 70
+    },
+    "unlocks": [
+      "mason_yard",
+      "mason"
+    ],
+    "flavor": "Dry floor, high racks, one door that closes. Boring is the point.",
+    "log": "The Store Yard is dry and locked. Maro tested the door twice, both times with his shoulder."
+  },
+  {
+    "id": "the-stone-line",
+    "name": "The Stone Line",
+    "act": 2,
+    "giver": "Maro the mason",
+    "introduces": [
+      "stonewall",
+      "rampart"
+    ],
+    "text": "Timber is for fields, not for standing still. Once Stoneworking is written into the chart, raise two Stone Walls and an Earthen Rampart to bound the village.",
+    "objectives": [
+      {
+        "id": "two-tech",
+        "kind": "research",
+        "text": "Technologies discovered: 2",
+        "count": 2
+      },
+      {
+        "id": "two-walls",
+        "kind": "build",
+        "text": "Stone Walls: 2",
+        "type": "stonewall",
+        "count": 2
+      },
+      {
+        "id": "one-rampart",
+        "kind": "build",
+        "text": "Ramparts: 1",
+        "type": "rampart",
+        "count": 1
+      }
+    ],
+    "xp": 160,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "stone": 80,
+      "wood": 60
+    },
+    "unlocks": [
+      "stonewall",
+      "rampart",
+      "sawmill",
+      "sawyer"
+    ],
+    "flavor": "He lays the first course himself so the rest of us know what straight looks like.",
+    "log": "The stone line is up. It is not pretty. It is the first thing here that will still be standing in fifty years.",
+    "optional": [
+      {
+        "id": "food",
+        "kind": "keep_resource_above",
+        "text": "Keep Food above 100",
+        "reward": {
+          "insight": 4
+        },
+        "resource": "food",
+        "amount": 100
+      }
+    ]
+  },
+  {
+    "id": "the-standing-door",
+    "name": "The Standing Door",
+    "act": 2,
+    "giver": "Rue the turncloak",
+    "introduces": [
+      "gate"
+    ],
+    "text": "A wall with no gap in it is a monument, not a defence. Rue wants one Timber Gate in the line - and she wants to know you can hold it.",
+    "objectives": [
+      {
+        "id": "one-gate",
+        "kind": "build",
+        "text": "Timber Gates: 1",
+        "type": "gate",
+        "count": 1
+      },
+      {
+        "id": "gate-holds",
+        "kind": "preserve_gate",
+        "text": "Gates still standing: 1",
+        "count": 1
+      }
+    ],
+    "xp": 170,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "wood": 100,
+      "gold": 40
+    },
+    "unlocks": [
+      "gate"
+    ],
+    "flavor": "She ran with the pale bands three winters. She knows which gap they always try.",
+    "log": "A gate in the stone line, hung by Maro, named by Rue. Everything after this has somewhere to happen.",
+    "optional": [
+      {
+        "id": "no-gate",
+        "kind": "no_gate_breached",
+        "text": "Lose no gate",
+        "reward": {
+          "insight": 6,
+          "reputation": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "the-watch-roster",
+    "name": "The Watch Roster",
+    "act": 3,
+    "giver": "Rue the turncloak",
+    "introduces": [
+      "squire"
+    ],
+    "text": "Six faces on the roster and none of them trained. Hire two fresh defenders and a Squire to stand behind them.",
+    "objectives": [
+      {
+        "id": "two-warriors",
+        "kind": "recruit",
+        "text": "Warriors: 2",
+        "type": "warrior",
+        "count": 2
+      },
+      {
+        "id": "one-squire",
+        "kind": "recruit",
+        "text": "Squires: 1",
+        "type": "squire",
+        "count": 1
+      }
+    ],
+    "xp": 150,
+    "insight": 0,
+    "reputation": 0,
+    "rewards": {
+      "gold": 60,
+      "food": 50
+    },
+    "unlocks": [
+      "squire",
+      "oathsworn",
+      "warden",
+      "ranger"
+    ],
+    "flavor": "Names, not numbers. She asks every one of them what they would do if the gate went.",
+    "log": "The watch roster is written. Six names, and Rue's chalk beside each one."
+  },
+  {
+    "id": "the-first-horn",
+    "name": "The First Horn",
+    "act": 3,
+    "giver": "Rue the turncloak",
+    "introduces": [
+      "trap",
+      "watchfire"
+    ],
+    "text": "Thornband on the north road. Not a raid - a rehearsal. Wall the line, put a Spike Trap and a Signal Watchfire on the approach, and hold through the horn.",
+    "objectives": [
+      {
+        "id": "one-trap",
+        "kind": "build",
+        "text": "Spike Traps: 1",
+        "type": "trap",
+        "count": 1
+      },
+      {
+        "id": "one-watchfire",
+        "kind": "build",
+        "text": "Signal Watchfires: 1",
+        "type": "watchfire",
+        "count": 1
+      },
+      {
+        "id": "survive",
+        "kind": "survive_raid",
+        "text": "Survive the Thornband raid: 1",
+        "count": 1
+      }
+    ],
+    "xp": 220,
+    "insight": 0,
+    "reputation": 2,
+    "rewards": {
+      "gold": 140,
+      "wood": 80
+    },
+    "unlocks": [
+      "trap",
+      "watchfire"
+    ],
+    "flavor": "'They are not raiders yet,' she says. 'They are neighbours who have not decided to be something else.'",
+    "log": "The horn sounded, the wall held, and the Thornband went home with their own dented. Rue did not say anything, which is the review.",
+    "optional": [
+      {
+        "id": "no-loss",
+        "kind": "no_buildings_destroyed",
+        "text": "Lose no buildings",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      },
+      {
+        "id": "no-knock",
+        "kind": "no_defenders_lost",
+        "text": "Lose no defenders",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "hold-the-timber-line",
+    "name": "Hold The Timber Line",
+    "act": 3,
+    "giver": "Rue the turncloak",
+    "text": "Two timber yards feeding the wall. Keep both working, keep both standing, and give the Thornband a second thing to think about.",
+    "objectives": [
+      {
+        "id": "timber-200",
+        "kind": "maintain_resource",
+        "text": "Wood gathered: 200",
+        "resource": "wood",
+        "amount": 200
+      },
+      {
+        "id": "survive",
+        "kind": "survive_raid",
+        "text": "Survive the Thornband raid: 1",
+        "count": 1
+      }
+    ],
+    "xp": 230,
+    "insight": 0,
+    "reputation": 2,
+    "rewards": {
+      "gold": 160,
+      "food": 80
+    },
+    "unlocks": [],
+    "flavor": "She counts sites, not casualties. A wall fed by one yard is a wall with a future and a half.",
+    "log": "Two yards, two walls, no gap. The line held.",
+    "optional": [
+      {
+        "id": "no-loss",
+        "kind": "no_buildings_destroyed",
+        "text": "Lose no buildings",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      },
+      {
+        "id": "fast",
+        "kind": "under_time",
+        "text": "Finish under 4 minutes",
+        "reward": {
+          "insight": 4
+        },
+        "seconds": 240
+      }
+    ]
+  },
+  {
+    "id": "signal-fires",
+    "name": "Signal Fires",
+    "act": 3,
+    "giver": "Issa the chart-keeper",
+    "introduces": [
+      "watchfire",
+      "archer_tower",
+      "ballista"
+    ],
+    "text": "Two watchfires read as a beacon and one reads as a campfire. Build a second Signal Watchfire and put an Archer Tower and a Ballista Tower where they can see it.",
+    "objectives": [
+      {
+        "id": "two-watchfires",
+        "kind": "build",
+        "text": "Signal Watchfires: 2",
+        "type": "watchfire",
+        "count": 2
+      },
+      {
+        "id": "one-archer",
+        "kind": "build",
+        "text": "Archer Towers: 1",
+        "type": "archer_tower",
+        "count": 1
+      },
+      {
+        "id": "one-ballista",
+        "kind": "build",
+        "text": "Ballista Towers: 1",
+        "type": "ballista",
+        "count": 1
+      }
+    ],
+    "xp": 240,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "gold": 180,
+      "wood": 120
+    },
+    "unlocks": [
+      "archer_tower",
+      "ballista"
+    ],
+    "flavor": "She has counted the fires on the ridge from the manor roof for eleven years. She knows what two look like.",
+    "log": "The fires answer each other. Half the ridge knows the manor is awake."
+  },
+  {
+    "id": "the-longbows",
+    "name": "The Longbows",
+    "act": 3,
+    "giver": "Rue the turncloak",
+    "introduces": [
+      "pikewoman",
+      "halberdier",
+      "longbowman"
+    ],
+    "text": "Bowmen hold a wall if the wall is long. Hire a Pikewoman, a Halberdier and a Longbowman, and equip the line.",
+    "objectives": [
+      {
+        "id": "one-pike",
+        "kind": "recruit",
+        "text": "Pikewomen: 1",
+        "type": "pikewoman",
+        "count": 1
+      },
+      {
+        "id": "one-halberd",
+        "kind": "recruit",
+        "text": "Halberdiers: 1",
+        "type": "halberdier",
+        "count": 1
+      },
+      {
+        "id": "one-longbow",
+        "kind": "recruit",
+        "text": "Longbowmen: 1",
+        "type": "longbowman",
+        "count": 1
+      }
+    ],
+    "xp": 250,
+    "insight": 0,
+    "reputation": 2,
+    "rewards": {
+      "gold": 200,
+      "food": 120
+    },
+    "unlocks": [
+      "pikewoman",
+      "halberdier",
+      "longbowman",
+      "pike",
+      "halberd",
+      "longbow",
+      "kite-shield",
+      "axe",
+      "warhammer"
+    ],
+    "flavor": "'Spears take the shock. Bows end it. I only care which of the two you have.'",
+    "log": "The line has depth now: spears in front, bows behind, and Rue walking it every single day.",
+    "optional": [
+      {
+        "id": "no-knock",
+        "kind": "no_defenders_lost",
+        "text": "Lose no defenders",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "fletchers-field",
+    "name": "Fletcher's Field",
+    "act": 3,
+    "giver": "Rue the turncloak",
+    "introduces": [
+      "fletcher",
+      "shieldwall-yard",
+      "bastion"
+    ],
+    "text": "Shafts, not swords. Build a Fletcher and a Shieldwall Yard so the wall has something to shoot and something to stand behind.",
+    "objectives": [
+      {
+        "id": "one-fletcher",
+        "kind": "build",
+        "text": "Fletcher: 1",
+        "type": "fletcher",
+        "count": 1
+      },
+      {
+        "id": "one-shieldwall",
+        "kind": "build",
+        "text": "Shieldwall Yard: 1",
+        "type": "shieldwall-yard",
+        "count": 1
+      },
+      {
+        "id": "one-bastion",
+        "kind": "build",
+        "text": "Bastion: 1",
+        "type": "bastion",
+        "count": 1
+      }
+    ],
+    "xp": 240,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "wood": 140,
+      "lumber": 60
+    },
+    "unlocks": [
+      "fletcher",
+      "shieldwall-yard",
+      "bastion"
+    ],
+    "flavor": "Bastions need a village of ten. He will wait. The Fletcher will not.",
+    "log": "Arrows are made on site now, by people whose names Rue knows."
+  },
+  {
+    "id": "the-oathstone",
+    "name": "The Oathstone",
+    "act": 3,
+    "giver": "Rue the turncloak",
+    "introduces": [
+      "oathstone",
+      "oathsworn"
+    ],
+    "text": "An Oathstone is a promise cut in stone. Raise it, and the oath-bound answer it.",
+    "objectives": [
+      {
+        "id": "one-oathstone",
+        "kind": "build",
+        "text": "Oathstone: 1",
+        "type": "oathstone",
+        "count": 1
+      },
+      {
+        "id": "one-oath",
+        "kind": "recruit",
+        "text": "Oathsworn: 1",
+        "type": "oathsworn",
+        "count": 1
+      }
+    ],
+    "xp": 260,
+    "insight": 0,
+    "reputation": 2,
+    "rewards": {
+      "gold": 220,
+      "plate": 20
+    },
+    "unlocks": [
+      "oathstone",
+      "oathblade",
+      "tower-shield",
+      "oathkeeper-armor"
+    ],
+    "flavor": "'They do not swear to you,' she says. 'They swear to the stone. That is the part that holds.'",
+    "log": "The Oathstone is up and the oath-bound are wearing their own blades."
+  },
+  {
+    "id": "the-bellcote",
+    "name": "The Bellcote",
+    "act": 3,
+    "giver": "Old Bell",
+    "introduces": [
+      "bellcote"
+    ],
+    "text": "The chapel bell cannot be heard from the wall. Raise a Bellcote and Rue will have warning before the horn.",
+    "objectives": [
+      {
+        "id": "one-bellcote",
+        "kind": "build",
+        "text": "Bellcote: 1",
+        "type": "bellcote",
+        "count": 1
+      }
+    ],
+    "xp": 200,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "gold": 120,
+      "stone": 60
+    },
+    "unlocks": [
+      "bellcote"
+    ],
+    "flavor": "She has been asking for this since the first raid. She will not forget that you built it.",
+    "log": "The bell carries to the wall now. The horn is no longer the first warning."
+  },
+  {
+    "id": "act3-close",
+    "name": "The First Horn",
+    "act": 3,
+    "giver": "Rue the turncloak",
+    "text": "Walls, a door, towers, fire and a roster that knows its own names. The Thornband know the road is shut. Sit through one more horn and the manor is a fortress.",
+    "objectives": [
+      {
+        "id": "hold-out",
+        "kind": "defend_for_time",
+        "text": "Hold through the horn: 240s",
+        "seconds": 240
+      }
+    ],
+    "xp": 300,
+    "insight": 25,
+    "reputation": 3,
+    "rewards": {
+      "gold": 260,
+      "stone": 120,
+      "plate": 30
+    },
+    "unlocks": [],
+    "flavor": "'You have stopped reacting to raids. That is the whole of it.'",
+    "log": "The horns came, the line held, and nobody left the wall to ask why. Rue wrote one word on the gate: ready.",
+    "optional": [
+      {
+        "id": "no-loss",
+        "kind": "no_buildings_destroyed",
+        "text": "Lose no buildings",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      },
+      {
+        "id": "no-knock",
+        "kind": "no_defenders_lost",
+        "text": "Lose no defenders",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      },
+      {
+        "id": "no-gate",
+        "kind": "no_gate_breached",
+        "text": "Lose no gate",
+        "reward": {
+          "insight": 6,
+          "reputation": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "three-lights-on-the-ridge",
+    "name": "Three Lights on the Ridge",
+    "act": 4,
+    "giver": "Fen the wayfinder",
+    "text": "A watchman answers the Manor with three shielded lanterns. Deliver supplies to Starwatch, scout the ridge road, and hold the signal position.",
+    "objectives": [
+      {
+        "id": "scout-ridge",
+        "kind": "scout_region",
+        "text": "Starwatch Ridge scouted",
+        "region": "starwatch-ridge"
+      },
+      {
+        "id": "deliver-supplies",
+        "kind": "deliver_resources",
+        "text": "Supplies delivered: 40 wood, 30 food",
+        "resource": "wood",
+        "amount": 40
+      },
+      {
+        "id": "secure-ridge",
+        "kind": "secure_region",
+        "text": "Starwatch Ridge secured",
+        "region": "starwatch-ridge"
+      },
+      {
+        "id": "survive-watch",
+        "kind": "survive_raid",
+        "text": "Survive the raid on the watch: 1",
+        "count": 1
+      }
+    ],
+    "xp": 240,
+    "insight": 0,
+    "reputation": 2,
+    "rewards": {
+      "gold": 200
+    },
+    "unlocks": [
+      "scout_post",
+      "scout"
+    ],
+    "flavor": "'Three lights means three things,' Fen says. 'It means send help.'",
+    "log": "The ridge stays manned. The road below it is no longer guesswork.",
+    "optional": [
+      {
+        "id": "no-loss",
+        "kind": "no_buildings_destroyed",
+        "text": "Lose no buildings",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      }
+    ]
   },
   {
     "id": "chart-the-dark",
     "name": "Chart the Dark",
-    "text": "Issa's moon-chart has a blank page where the deep gold sleeps. Haul 400 gold so the ink has something true to mark.",
+    "act": 5,
     "giver": "Issa the chart-keeper",
-    "flavor": "She ground the ink herself, lampblack and patience. Gold first, glory after.",
-    "log": "Issa unrolled the dark half of the chart and inked the deep seams in gold. The Orrery is yours — wind it, and learn the sky's accounts.",
-    "act": "V",
-    "task": {
-      "kind": "gather",
-      "resource": "gold",
-      "amount": 400
-    },
+    "text": "Issa's moon-chart has a blank page where the deep gold sleeps. Haul 400 gold so the ink has something true to mark.",
+    "objectives": [
+      {
+        "id": "gold-400",
+        "kind": "gather",
+        "text": "Gold banked: 400",
+        "resource": "gold",
+        "amount": 400
+      }
+    ],
     "xp": 150,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
-      "orrery"
+      "orrery",
+      "scriptorium",
+      "scholar"
+    ],
+    "flavor": "She ground the ink herself, lampblack and patience. Gold first, glory after.",
+    "log": "Issa unrolled the dark half of the chart and inked the deep seams in gold. The Orrery is yours - wind it, and learn the sky's accounts."
+  },
+  {
+    "id": "the-master-strikes",
+    "name": "The Master Strikes",
+    "act": 5,
+    "giver": "Sarella Emberwright",
+    "introduces": [
+      "forge",
+      "armory",
+      "workshop",
+      "tannery",
+      "butchery",
+      "mill",
+      "weaponsmith",
+      "armorer",
+      "toolsmith",
+      "leatherworker",
+      "butcher",
+      "miller",
+      "bakery",
+      "longhouse"
+    ],
+    "text": "Sarella wants every trade in one place: forge, armory, workshop, tannery, smokehouse and mill, each with a master on the floor.",
+    "flavor": "'A trade without a master is a rumour,' she says. 'Put six of them under one roof and we stop being a camp.'",
+    "log": "Six trades, six masters, one ledger. The manor has a market value of its own now.",
+    "objectives": [
+      {
+        "id": "six-trades",
+        "kind": "build",
+        "text": "Trades raised: forge, armory, workshop, tannery, butchery, mill",
+        "types": [
+          "forge",
+          "armory",
+          "workshop",
+          "tannery",
+          "butchery",
+          "mill"
+        ]
+      },
+      {
+        "id": "six-masters",
+        "kind": "recruit",
+        "text": "Specialists hired: 6",
+        "types": [
+          "weaponsmith",
+          "armorer",
+          "toolsmith",
+          "leatherworker",
+          "butcher",
+          "miller"
+        ],
+        "count": 6
+      }
+    ],
+    "xp": 220,
+    "insight": 10,
+    "reputation": 2,
+    "rewards": {
+      "gold": 200,
+      "lumber": 80
+    },
+    "unlocks": [
+      "forge",
+      "armory",
+      "workshop",
+      "tannery",
+      "butchery",
+      "mill",
+      "weaponsmith",
+      "armorer",
+      "toolsmith",
+      "leatherworker",
+      "butcher",
+      "miller"
+    ],
+    "optional": [
+      {
+        "id": "food",
+        "kind": "keep_resource_above",
+        "text": "Keep Food above 200",
+        "reward": {
+          "insight": 6,
+          "reputation": 1
+        },
+        "resource": "food",
+        "amount": 200
+      }
     ]
   },
   {
     "id": "tomm-s-flocks",
     "name": "Tomm's Flocks",
-    "text": "Tomm the herder has watched three generations lamb under this moon. Raise the Night Pasture to tier 2 and prove the village keeps flocks, not just fences.",
+    "act": 5,
     "giver": "Tomm the herder",
-    "flavor": "Wren's grandfather counts lambs the way Issa counts stars. He has never once been wrong.",
-    "log": "Tomm walked the new pasture rails and nodded once. Flocks, not fences — the village is learning.",
-    "act": "V",
-    "task": {
-      "kind": "upgrade",
-      "type": "pasture",
-      "level": 2
-    },
+    "text": "Tomm the herder has watched three generations lamb under this moon. Raise the Night Pasture to tier 2 and prove the village keeps flocks, not just fences.",
+    "objectives": [
+      {
+        "id": "pasture-2",
+        "kind": "upgrade",
+        "text": "Night Pasture at tier 2",
+        "type": "pasture",
+        "level": 2
+      }
+    ],
     "xp": 130,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "food": 60,
       "wood": 40
@@ -174,285 +1077,630 @@
     "unlocks": [
       "herding-crook",
       "berry-basket"
-    ]
+    ],
+    "flavor": "Wren's grandfather counts lambs the way Issa counts stars. He has never once been wrong.",
+    "log": "Tomm walked the new pasture rails and nodded once. Flocks, not fences - the village is learning."
   },
   {
     "id": "open-doors",
     "name": "Open Doors",
-    "text": "Ten souls under one moon and more on the road. Grow the village to 10 villagers and throw the doors wide.",
+    "act": 5,
     "giver": "Old Bell",
-    "flavor": "She rang the roll herself, all ten names, and the echo came back with an eleventh.",
-    "log": "Old Bell chalked ten names inside the hall door. The village takes apprentices now — beds for dozens.",
-    "act": "V",
-    "task": {
-      "kind": "population",
-      "count": 10
-    },
+    "text": "Ten souls under one moon and more on the road. Grow the village to 10 villagers and throw the doors wide.",
+    "objectives": [
+      {
+        "id": "pop-10",
+        "kind": "population",
+        "text": "Villagers: 10",
+        "count": 10
+      }
+    ],
     "xp": 0,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "gold": 50,
       "food": 40
     },
-    "unlocks": [
-      "apprentice"
-    ]
+    "unlocks": [],
+    "flavor": "She rang the roll herself, all ten names, and the echo came back with an eleventh.",
+    "log": "Old Bell chalked ten names inside the hall door. The school can take apprentices now - beds for dozens."
   },
   {
     "id": "sarella-s-standard",
     "name": "Sarella's Standard",
-    "text": "Sarella Emberwright holds every forge-piece to her own standard. Raise the Emberforge AND the Wardarmory to tier 2, then choose one master's tool from her rack.",
+    "act": 5,
     "giver": "Sarella Emberwright",
-    "flavor": "Master of the forge, keeper of the standard. Her rack holds five tools and her patience holds one lesson: pick the work, not the shine.",
-    "log": "Sarella tested every edge herself and chalked her mark on five tools. Choose one — the village can afford the master's standard now.",
-    "act": "V",
-    "task": {
-      "kind": "upgrade",
-      "type": [
-        "forge",
-        "armory"
-      ],
-      "level": 2
-    },
+    "introduces": [
+      "forge",
+      "armory"
+    ],
+    "text": "Sarella Emberwright holds every forge-piece to her own standard. Raise the Emberforge AND the Wardarmory to tier 2 - the gear itself is the forge's business, not yours.",
+    "objectives": [
+      {
+        "id": "forge-2",
+        "kind": "upgrade",
+        "text": "Emberforge at tier 2",
+        "type": "forge",
+        "level": 2
+      },
+      {
+        "id": "armory-2",
+        "kind": "upgrade",
+        "text": "Wardarmory at tier 2",
+        "type": "armory",
+        "level": 2
+      }
+    ],
     "xp": 140,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {
       "gold": 60
     },
     "unlocks": [
-      "runed-forgehammer",
-      "etched-armorkit",
-      "fine-tinkerkit",
       "oiled-awl",
       "brass-chalice"
-    ]
+    ],
+    "flavor": "Master of the forge, keeper of the standard. Her rack holds five tools and her patience holds one lesson: pick the work, not the shine.",
+    "log": "Sarella tested every edge herself and chalked her mark on two tools. The forge standard holds."
+  },
+  {
+    "id": "the-market-row",
+    "name": "The Market Row",
+    "act": 5,
+    "giver": "Pale Envoy",
+    "introduces": [
+      "market",
+      "haggler"
+    ],
+    "text": "Trade needs a floor and a set of scales. Raise the Wild Market and put a Haggler on it.",
+    "objectives": [
+      {
+        "id": "one-market",
+        "kind": "build",
+        "text": "Wild Market: 1",
+        "type": "market",
+        "count": 1
+      },
+      {
+        "id": "one-haggler",
+        "kind": "recruit",
+        "text": "Hagglers: 1",
+        "type": "haggler",
+        "count": 1
+      }
+    ],
+    "xp": 180,
+    "insight": 0,
+    "reputation": 1,
+    "rewards": {
+      "gold": 180,
+      "food": 80
+    },
+    "unlocks": [
+      "market",
+      "haggler",
+      "scales"
+    ],
+    "flavor": "'Every road arrives owing something,' the Envoy says. 'A market is only honest about it.'",
+    "log": "The Market Row opens with scales on the corner and a Haggler who knows every price in the county."
   },
   {
     "id": "west-of-the-chalk",
     "name": "West of the Chalk",
-    "text": "Fen's chalk map finally opens west of the treeline, where the frostwood stands white. Raise a Frostwood Grove and haul 150 frostwood from the cold rows.",
+    "act": 6,
     "giver": "Fen the wayfinder",
-    "flavor": "He chalked the west rows himself, then handed you the chalk. Prove the map true.",
-    "log": "Fen unrolled the west half of his chalk map and inked the frostwood rows in white. The cold treeline is yours — wardens, axes, and all.",
-    "act": "VI",
-    "task": {
-      "kind": "gather",
-      "resource": "frostwood",
-      "amount": 150
-    },
+    "introduces": [
+      "frostgrove",
+      "woodward"
+    ],
+    "text": "Fen's chalk map finally opens west of the treeline, where the frostwood stands white. Raise a Frostwood Grove and post a Woodward on it.",
+    "objectives": [
+      {
+        "id": "one-frost",
+        "kind": "build",
+        "text": "Frostwood Groves: 1",
+        "type": "frostgrove",
+        "count": 1
+      },
+      {
+        "id": "one-warden",
+        "kind": "recruit",
+        "text": "Woodwards: 1",
+        "type": "woodward",
+        "count": 1
+      },
+      {
+        "id": "frost-150",
+        "kind": "gather",
+        "text": "Frostwood banked: 150",
+        "resource": "frostwood",
+        "amount": 150
+      }
+    ],
     "xp": 150,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
+      "frostgrove",
       "woodward",
       "frostaxe"
-    ]
+    ],
+    "flavor": "He chalked the west rows himself, then handed you the chalk. Prove the map true.",
+    "log": "Fen unrolled the west half of his chalk map and inked the frostwood rows in white. The cold treeline is yours - wardens, axes, and all."
   },
   {
     "id": "first-pour",
     "name": "First Pour",
-    "text": "Maro has chalked a new foundation by the cold piles: raise an Ember Smeltery and pour 10 plate for the armor racks.",
+    "act": 6,
     "giver": "Maro the mason",
-    "flavor": "He held the first white-hot pour up to the moon like a lantern. Said the Manner finally has a spine.",
-    "log": "Maro chalked the first pour inside the hall door: ten plate, white-hot, held up like a lantern. Hide and plate — the Armory earns its name.",
-    "act": "VI",
-    "task": {
-      "kind": "gather",
-      "resource": "plate",
-      "amount": 10
-    },
+    "introduces": [
+      "smeltery"
+    ],
+    "text": "Maro has chalked a new foundation by the cold piles: raise an Ember Smeltery and pour 10 plate for the armor racks.",
+    "objectives": [
+      {
+        "id": "one-smelter",
+        "kind": "build",
+        "text": "Ember Smeltery: 1",
+        "type": "smeltery",
+        "count": 1
+      },
+      {
+        "id": "plate-10",
+        "kind": "gather",
+        "text": "Plate banked: 10",
+        "resource": "plate",
+        "amount": 10
+      }
+    ],
     "xp": 140,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
-      "smelter",
-      "iron-cap"
-    ]
+      "smeltery"
+    ],
+    "flavor": "He held the first white-hot pour up to the moon like a lantern. Said the Manner finally has a spine.",
+    "log": "Maro chalked the first pour inside the hall door: ten plate, white-hot, held up like a lantern. Hide and plate - the Armory earns its name."
   },
   {
     "id": "down-dark-water",
     "name": "Down Dark Water",
-    "text": "Wren has been sounding the pond's black middle since she was small. Raise the Stillwater Pond to tier 3 and sink the first Deephole — the deep water will feed us if we learn its manners.",
+    "act": 6,
     "giver": "Wren Waterwise",
-    "flavor": "Her grandfather taught her the still water; the dark water she taught herself. She came up smiling every single time.",
-    "log": "Wren chalked the deep mark on the pond posts: three tiers down, and further yet. Divers wanted — the dark water keeps its own larder.",
-    "act": "VI",
-    "task": {
-      "kind": "upgrade",
-      "type": "pond",
-      "level": 3
-    },
+    "introduces": [
+      "deephole",
+      "diver"
+    ],
+    "text": "Wren has been sounding the pond's black middle since she was small. Raise the Stillwater Pond to tier 3 and sink the first Deephole with a Diver posted on it.",
+    "objectives": [
+      {
+        "id": "pond-3",
+        "kind": "upgrade",
+        "text": "Stillwater Pond at tier 3",
+        "type": "pond",
+        "level": 3
+      },
+      {
+        "id": "one-deephole",
+        "kind": "build",
+        "text": "Deepholes: 1",
+        "type": "deephole",
+        "count": 1
+      },
+      {
+        "id": "one-diver",
+        "kind": "recruit",
+        "text": "Divers: 1",
+        "type": "diver",
+        "count": 1
+      }
+    ],
     "xp": 130,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
       "deephole",
-      "diver",
-      "net"
-    ]
+      "diver"
+    ],
+    "flavor": "Her grandfather taught her the still water; the dark water she taught herself. She came up smiling every single time.",
+    "log": "Wren chalked the deep mark on the pond posts: three tiers down, and further yet. Divers wanted - the dark water keeps its own larder."
   },
   {
     "id": "glass-under-stone",
     "name": "Glass Under Stone",
-    "text": "Pella dreamed of lanterns burning inside the rock. Raise the Moonstone Mine to tier 3 and cut the first Emberglass shaft — gold that glows, for steady hands only.",
+    "act": 6,
     "giver": "Pella Second-Lantern",
-    "flavor": "She blessed the door of every house on the lane. Now she means to bless what lies under them.",
-    "log": "Pella hung a second lantern at the mine mouth and blessed the shaft by name. Emberglass, she called it — the stone that kept a little of the forge-fire.",
-    "act": "VI",
-    "task": {
-      "kind": "upgrade",
-      "type": "mine",
-      "level": 3
-    },
+    "introduces": [
+      "emberglass",
+      "sapper"
+    ],
+    "text": "Pella dreamed of lanterns burning inside the rock. Raise the Moonstone Mine to tier 3 and cut the first Emberglass shaft with a Sapper posted on it.",
+    "objectives": [
+      {
+        "id": "mine-3",
+        "kind": "upgrade",
+        "text": "Moonstone Mine at tier 3",
+        "type": "mine",
+        "level": 3
+      },
+      {
+        "id": "one-glass",
+        "kind": "build",
+        "text": "Emberglass Mine: 1",
+        "type": "emberglass",
+        "count": 1
+      },
+      {
+        "id": "one-sapper",
+        "kind": "recruit",
+        "text": "Sappers: 1",
+        "type": "sapper",
+        "count": 1
+      }
+    ],
     "xp": 140,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
       "emberglass",
       "sapper",
       "glasspick"
-    ]
+    ],
+    "flavor": "She blessed the door of every house on the lane. Now she means to bless what lies under them.",
+    "log": "Pella hung a second lantern at the mine mouth and blessed the shaft by name. Emberglass, she called it - the stone that kept a little of the forge-fire."
   },
   {
     "id": "rue-s-terms",
-    "name": "Rue Terms",
-    "text": "Sapper-Captain Rue walked out of the treeline with empty hands and a full ledger. Win a raid without losing a single building and the siege-craft is yours.",
+    "name": "Rue's Terms",
+    "act": 7,
     "giver": "Rue the turncloak",
-    "flavor": "She ran with the pale bands three winters. She knows where they stack their torches, and she has named the price: one clean defense.",
-    "log": "Rue chalked the raider bands by name on the hall door and burned the page edge to prove it. The bands she ran with will find no soft walls here.",
-    "act": "VII",
-    "task": {
-      "kind": "defeat",
-      "count": 1
-    },
+    "text": "Sapper-Captain Rue walked out of the treeline with empty hands and a full ledger. Win a raid without losing a single building and the siege-craft is yours.",
+    "objectives": [
+      {
+        "id": "win-one",
+        "kind": "defeat",
+        "text": "Raids won: 1",
+        "count": 1
+      }
+    ],
     "xp": 150,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
       "fire-trap",
       "siege-tongs",
       "ashen-cloak"
+    ],
+    "flavor": "She ran with the pale bands three winters. She knows where they stack their torches, and she has named the price: one clean defense.",
+    "log": "Rue chalked the raider bands by name on the hall door and burned the page edge to prove it. The bands she ran with will find no soft walls here.",
+    "optional": [
+      {
+        "id": "no-loss",
+        "kind": "no_buildings_destroyed",
+        "text": "Lose no buildings",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      }
     ]
   },
   {
     "id": "voices-in-the-dark",
     "name": "Voices in the Dark",
-    "text": "The chapel holds four empty stalls and a bell nobody rings. Set 4 villagers to their workplaces and let the choir find its voice.",
+    "act": 7,
     "giver": "Old Bell",
-    "flavor": "She remembers when the chapel sang every night. Four posted hands, she says, and the dark answers back in harmony.",
-    "log": "Four stalls filled, four voices raised. The choir sang the offices and the whole village stood still to listen.",
-    "act": "VII",
-    "task": {
-      "kind": "assign",
-      "count": 4
-    },
+    "text": "The chapel holds four empty stalls and a bell nobody rings. Set 4 villagers to their workplaces and let the choir find its voice.",
+    "objectives": [
+      {
+        "id": "four-assigned",
+        "kind": "assign",
+        "text": "Villagers at a workplace: 4",
+        "count": 4
+      }
+    ],
     "xp": 140,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
       "chorister",
-      "hymnal",
       "choir-robe"
-    ]
+    ],
+    "flavor": "She remembers when the chapel sang every night. Four posted hands, she says, and the dark answers back in harmony.",
+    "log": "Four stalls filled, four voices raised. The choir sang the offices and the whole village stood still to listen."
   },
   {
     "id": "tam-s-school",
     "name": "Tam School",
-    "text": "Master Tam keeps a school with no benches and three empty stools. Recruit 3 Apprentices and give the young ones a trade worth keeping.",
+    "act": 7,
     "giver": "Master Tam",
-    "flavor": "Head of the school, keeper of the primer. He teaches letters first, ledgers second, and loyalty always.",
-    "log": "Three new stools filled, three primers opened. Tam chalked the roll himself: the school is a school now.",
-    "act": "VII",
-    "task": {
-      "kind": "recruit",
-      "type": "apprentice",
-      "count": 3
-    },
+    "introduces": [],
+    "text": "Master Tam keeps a school with no benches and three empty stools. Recruit 3 Apprentices and give the young ones a trade worth keeping.",
+    "objectives": [
+      {
+        "id": "three-apprentices",
+        "kind": "recruit",
+        "text": "Apprentices: 3",
+        "type": "apprentice",
+        "count": 3
+      }
+    ],
     "xp": 150,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
-      "schoolroom",
-      "primer",
       "masters-ring"
-    ]
+    ],
+    "flavor": "Head of the school, keeper of the primer. He teaches letters first, ledgers second, and loyalty always.",
+    "log": "Three new stools filled, three primers opened. Tam chalked the roll himself: the school is a school now."
   },
   {
     "id": "the-bell-remembers",
     "name": "The Bell Remembers",
-    "text": "Old Bell has hung the great bell herself and chalked three new ropes. Ring a level-25 veteran back to a recruit with all honors kept — prestige one troop at the Bell Tower — and let the village hear what remembering sounds like.",
+    "act": 8,
     "giver": "Old Bell",
-    "flavor": "She rang for your first harvest and your twelfth soul. This ringing, she says, is for everyone who carried.",
-    "log": "Old Bell chalked the last page herself: every name she ever rang for, and room for more. The bell remembers, so the village can forget nothing.",
-    "act": "VIII",
-    "task": {
-      "kind": "prestige",
-      "count": 1
-    },
+    "text": "Old Bell has hung the great bell herself and chalked three new ropes. Ring a level-25 veteran back to a recruit with all honors kept - prestige one troop at the Bell Tower - and let the village hear what remembering sounds like.",
+    "objectives": [
+      {
+        "id": "prestige-one",
+        "kind": "prestige_unit",
+        "text": "Troops prestiged: 1",
+        "count": 1
+      }
+    ],
     "xp": 160,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
       "starforged-oathblade",
       "starforged-halberd",
-      "starforged-longbow"
-    ]
+      "starforged-longbow",
+      "bell-tower"
+    ],
+    "flavor": "She rang for your first harvest and your twelfth soul. This ringing, she says, is for everyone who carried.",
+    "log": "Old Bell chalked the last page herself: every name she ever rang for, and room for more. The bell remembers, so the village can forget nothing."
   },
   {
     "id": "what-the-water-kept",
     "name": "What the Water Kept",
-    "text": "Wren has sounded every dark foot of the Deephole and come up smiling. Raise the Deephole to tier 2 and sink the Sunken Chapel — the water has kept something for us, and it is time to ask for it back.",
+    "act": 8,
     "giver": "Wren Waterwise",
-    "flavor": "Her grandfather taught her the still water; the dark water she taught herself. This, she says, is the last lesson.",
-    "log": "Wren hung her sounding-line on the chapel door and walked home dry for the first time in years. The water keeps; the village keeps better.",
-    "act": "VIII",
-    "task": {
-      "kind": "upgrade",
-      "type": "deephole",
-      "level": 2
-    },
+    "introduces": [
+      "deephole",
+      "sunken-chapel",
+      "tidecaller"
+    ],
+    "text": "Wren has sounded every dark foot of the Deephole and come up smiling. Raise the Deephole to tier 2 and sink the Sunken Chapel - the water has kept something for us, and it is time to ask for it back.",
+    "objectives": [
+      {
+        "id": "deephole-2",
+        "kind": "upgrade",
+        "text": "Deephole at tier 2",
+        "type": "deephole",
+        "level": 2
+      },
+      {
+        "id": "one-sunken",
+        "kind": "build",
+        "text": "Sunken Chapel: 1",
+        "type": "sunken-chapel",
+        "count": 1
+      },
+      {
+        "id": "one-tidecaller",
+        "kind": "recruit",
+        "text": "Tidecallers: 1",
+        "type": "tidecaller",
+        "count": 1
+      }
+    ],
     "xp": 150,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
       "sunken-chapel",
       "tidecaller",
       "tidebell",
       "divers-plate"
-    ]
+    ],
+    "flavor": "Her grandfather taught her the still water; the dark water she taught herself. This, she says, is the last lesson.",
+    "log": "Wren hung her sounding-line on the chapel door and walked home dry for the first time in years. The water keeps; the village keeps better."
   },
   {
     "id": "dawn-of-the-manner",
     "name": "Dawn of the Manner",
-    "text": "Issa charted it, Tomm fenced it, Maro laid it stone by stone, Sarella fired it, Fen found the road, Wren blessed the water, Pella lit it, Sorrel guarded it, Rue warned it, Tam taught it, Old Bell rang it, and the Pale Envoy watched it all. Raise the Dawn Gate and let it stand — Issa, Tomm, Maro, Sarella, Fen, Wren, Pella, Sorrel, Rue, Tam, Old Bell, and the Envoy all chalked this page.",
+    "act": 8,
     "giver": "Issa the chart-keeper",
-    "flavor": "Twelve hands on the chalk. One gate. Dawn.",
-    "log": "Twelve givers, one gate, and the whole Manner written down at last. The chart is complete — and the next page is blank on purpose.",
-    "act": "VIII",
-    "task": {
-      "kind": "wonder",
-      "type": "dawn-gate"
-    },
+    "text": "Issa charted it, Tomm fenced it, Maro laid it stone by stone, Sarella fired it, Fen found the road, Wren blessed the water, Pella lit it, Rue warned it, Tam taught it, Old Bell rang it, and the Pale Envoy watched it all. Raise the Dawn Gate and let it stand - and hold a major assault while the masons finish.",
+    "objectives": [
+      {
+        "id": "dawn-gate",
+        "kind": "construct_great_work",
+        "text": "Dawn Gate raised"
+      },
+      {
+        "id": "survive-assault",
+        "kind": "survive_raid",
+        "text": "Survive the assault: 1",
+        "count": 1
+      }
+    ],
     "xp": 200,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
     "unlocks": [
+      "dawn-gate",
       "regalia",
       "dawnbringer"
+    ],
+    "flavor": "Twelve hands on the chalk. One gate. Dawn.",
+    "log": "Twelve givers, one gate, and the whole Manner written down at last. The chart is complete - and the next page is blank on purpose.",
+    "optional": [
+      {
+        "id": "no-loss",
+        "kind": "no_buildings_destroyed",
+        "text": "Lose no buildings",
+        "reward": {
+          "insight": 5,
+          "reputation": 1
+        }
+      },
+      {
+        "id": "no-gate",
+        "kind": "no_gate_breached",
+        "text": "Lose no gate",
+        "reward": {
+          "insight": 6,
+          "reputation": 1
+        }
+      }
     ]
+  },
+  {
+    "id": "envoys-gift",
+    "name": "The Envoy's Gift",
+    "act": 9,
+    "giver": "Pale Envoy",
+    "text": "The Envoy arrives with banners and a question. Accept the gift, and the coast opens.",
+    "objectives": [
+      {
+        "id": "secure-coast",
+        "kind": "secure_region",
+        "text": "Pale Coast secured",
+        "region": "pale-coast"
+      }
+    ],
+    "xp": 200,
+    "insight": 0,
+    "reputation": 2,
+    "rewards": {
+      "gold": 300
+    },
+    "unlocks": [
+      "envoys-gift",
+      "banner-cloak"
+    ],
+    "flavor": "'A gift is only a debt wearing better clothes,' the Envoy says. 'You will wear both.'"
   },
   {
     "id": "whisper-cuts",
     "name": "Whisper Cuts",
+    "act": 10,
+    "giver": "Tomm the herder",
+    "introduces": [
+      "whisper-grove",
+      "heartwarden"
+    ],
     "text": "Tomm follows the paired cuts through Whisperwood. Raise one Whisper Grove behind the old Moonberry Grove, and leave the unmarked trees standing.",
-    "giver": "Tomm",
-    "flavor": "Two cuts for the road, one clean stroke for the hearth. The rest belongs to the woods.",
-    "log": "Tomm marked the first heartwood trunks himself. The wardens carried their haul home without widening the road.",
-    "act": "X",
-    "task": {"kind": "build", "type": "whisper-grove", "count": 1},
+    "objectives": [
+      {
+        "id": "one-whisper",
+        "kind": "build",
+        "text": "Whisper Groves: 1",
+        "type": "whisper-grove",
+        "count": 1
+      },
+      {
+        "id": "one-heartwarden",
+        "kind": "recruit",
+        "text": "Heartwardens: 1",
+        "type": "heartwarden",
+        "count": 1
+      }
+    ],
     "xp": 0,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
-    "unlocks": ["heartwarden", "heartwood-axe", "whisper-coat"]
+    "unlocks": [
+      "heartwarden",
+      "heartwood-axe",
+      "whisper-coat"
+    ],
+    "flavor": "Two cuts for the road, one clean stroke for the hearth. The rest belongs to the woods.",
+    "log": "Tomm marked the first heartwood trunks himself. The wardens carried their haul home without widening the road."
   },
   {
     "id": "white-thread",
     "name": "White Thread",
-    "text": "The Mooncleric ties a white thread to the first river post. Raise one Blackwater Weir behind the old pond, and leave a passage for the returning boats.",
+    "act": 10,
     "giver": "Mooncleric",
-    "flavor": "The thread is for the living. The river already knows the rest.",
-    "log": "A white thread marks the weir's first post. The mudlarks leave the boat channel open and carry the evening catch home.",
-    "act": "X",
-    "task": {"kind": "build", "type": "blackwater-weir", "count": 1},
+    "introduces": [
+      "blackwater-weir",
+      "mudlark"
+    ],
+    "text": "The Mooncleric ties a white thread to the first river post. Raise one Blackwater Weir behind the old pond, and leave a passage for the returning boats.",
+    "objectives": [
+      {
+        "id": "one-weir",
+        "kind": "build",
+        "text": "Blackwater Weirs: 1",
+        "type": "blackwater-weir",
+        "count": 1
+      },
+      {
+        "id": "one-mudlark",
+        "kind": "recruit",
+        "text": "Mudlarks: 1",
+        "type": "mudlark",
+        "count": 1
+      }
+    ],
     "xp": 0,
+    "insight": 0,
+    "reputation": 0,
     "rewards": {},
-    "unlocks": ["mudlark", "blackwater-net", "mire-coat"]
+    "unlocks": [
+      "mudlark",
+      "blackwater-net",
+      "mire-coat"
+    ],
+    "flavor": "The thread is for the living. The river already knows the rest.",
+    "log": "A white thread marks the weir's first post. The mudlarks leave the boat channel open and carry the evening catch home."
+  },
+  {
+    "id": "the-grey-banner",
+    "name": "The Grey Banner",
+    "act": 10,
+    "giver": "Pale Envoy",
+    "text": "Raise a second signal post and hang the grey banner. What is left of the frontier will know the difference.",
+    "objectives": [
+      {
+        "id": "two-towers",
+        "kind": "build",
+        "text": "Watchtowers: 2",
+        "type": "tower",
+        "count": 2
+      },
+      {
+        "id": "gold-300b",
+        "kind": "maintain_resource",
+        "text": "Gold gathered: 300",
+        "resource": "gold",
+        "amount": 300
+      }
+    ],
+    "xp": 0,
+    "insight": 0,
+    "reputation": 2,
+    "rewards": {
+      "gold": 400
+    },
+    "unlocks": [
+      "banner-cloak-grey"
+    ],
+    "flavor": "Black for holding. Grey for warning. Red for what you will do about it."
   }
 ]

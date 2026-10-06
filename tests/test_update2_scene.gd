@@ -27,8 +27,9 @@ func _run() -> void:
 	game._toggle_research()
 	check(game.research_list.visible, "research panel expands on request")
 	game._toggle_research()
-	check(game.research_buttons.size() == 2, "only two actual research nodes are shown")
+	check(game.research_buttons.size() == 36, "the unified tech tree exposes all36 nodes")
 	check(game.research_buttons["stoneworking"].disabled, "level1 research gate is visible")
+	check(not game.research_buttons["wayfinding"].disabled or not game.research_buttons["wayfinding"].tooltip_text.is_empty(), "every branch has an entry with a stated reason")
 	game.sim.xp = 100
 	game.sim.living.insight = 20
 	game._refresh_hud()

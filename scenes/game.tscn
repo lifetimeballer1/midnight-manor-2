@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://di3f18tfha7fc"]
 
-[ext_resource type="Script" path="res://scripts/game/village_game.gd" id="1"]
+[ext_resource type="Script" uid="uid://clrhbpo4ymv6m" path="res://scripts/game/village_game.gd" id="1"]
 
-[node name="MidnightManor2" type="Node3D"]
+[node name="MidnightManor2" type="Node3D" unique_id=785972443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.008633576, 0)
 script = ExtResource("1")
+metadata/_edit_group_ = true

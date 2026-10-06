@@ -31,6 +31,7 @@ var last_pitch: int = 31
 var players: Array[AudioStreamPlayer] = []
 var cache: Dictionary = {}
 var pending: Array = []
+var prewarm: Array = []
 var clock: float = 0.0
 var phrase_end: float = 0.0
 var switch_at: float = -1.0
@@ -46,6 +47,35 @@ func _ready() -> void:
 		add_child(player)
 		players.append(player)
 	_load_themes()
+	_prewarm_queue()
+
+
+# Synthesis is the main-thread cost here (a 4s pad = ~90k samples), so
+# buffers are built ahead of time: a prewarm queue drains 2/frame from the
+# welcome screen on, and phrase notes synthesize max 3/frame within a 1s
+# lookahead. Nothing audible ever waits on a full phrase render.
+func _note_params(note: Dictionary) -> Dictionary:
+	var freq: float = float(score["rootHz"]) * pow(2.0, float(note["semitone"]) / 12.0)
+	var fallback: float = 0.105 if str(note["voice"]) == "pluck" else (0.085 if str(note["voice"]) == "pad" else 0.08)
+	return {
+		"voice": str(note["voice"]),
+		"freq": freq,
+		"dur": float(note["dur"]),
+		"level": _voice_level(str(note["voice"]), fallback),
+	}
+
+
+func _prewarm_queue() -> void:
+	if themes.is_empty():
+		return
+	var saved_phrase: int = phrase
+	var saved_pitch: int = last_pitch
+	var data: Dictionary = _create_phrase(0)
+	phrase = saved_phrase
+	last_pitch = saved_pitch
+	prewarm.clear()
+	for note in (data["notes"] as Array):
+		prewarm.append(_note_params(note))
 
 
 func _ensure_bus() -> void:
@@ -323,18 +353,26 @@ func _schedule_phrase() -> void:
 	phrases_in_song += 1
 	pending.clear()
 	for note in (data["notes"] as Array):
-		var freq: float = float(score["rootHz"]) * pow(2.0, float(note["semitone"]) / 12.0)
-		var fallback: float = 0.105 if str(note["voice"]) == "pluck" else (0.085 if str(note["voice"]) == "pad" else 0.08)
-		pending.append({
-			"at": clock + 0.06 + float(note["at"]),
-			"stream": _tone(str(note["voice"]), freq, float(note["dur"]), _voice_level(str(note["voice"]), fallback)),
-			"gain": float(score["gain"]),
-		})
+		var params: Dictionary = _note_params(note)
+		params["at"] = clock + 0.06 + float(note["at"])
+		params["gain"] = float(score["gain"])
+		params["stream"] = null
+		pending.append(params)
 	last_pitch = int(data["lastPitch"])
 	phrase_end = clock + 0.06 + float(data["duration"])
 
 
+func _synth_entry(entry: Dictionary) -> void:
+	if entry.get("stream") == null:
+		entry["stream"] = _tone(str(entry["voice"]), float(entry["freq"]), float(entry["dur"]), float(entry["level"]))
+
+
 func _process(delta: float) -> void:
+	var budget: int = 2
+	while budget > 0 and not prewarm.is_empty():
+		var params: Dictionary = prewarm.pop_back()
+		_tone(str(params["voice"]), float(params["freq"]), float(params["dur"]), float(params["level"]))
+		budget -= 1
 	if not playing:
 		return
 	clock += delta
@@ -343,10 +381,17 @@ func _process(delta: float) -> void:
 		if entered and enabled:
 			play()
 		return
+	budget = 3
+	for note in pending:
+		if note.get("stream") == null and float(note["at"]) - clock < 1.0 and budget > 0:
+			_synth_entry(note)
+			budget -= 1
 	var voice_index: int = 0
 	var kept: Array = []
 	for note in pending:
 		if float(note["at"]) <= clock:
+			if note.get("stream") == null:
+				_synth_entry(note)
 			var player: AudioStreamPlayer = players[voice_index % players.size()]
 			voice_index += 1
 			player.stream = note["stream"]

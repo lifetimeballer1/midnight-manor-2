@@ -26,6 +26,25 @@ const GOLD := Color("d4b275")
 const PAPER := Color("e8dcc0")
 const BLOOD := Color("8f3b34")
 
+# --- Manor visual language --------------------------------------------------
+# 60% dark carved walnut / blackened iron, 25% parchment / leather, 15% antique
+# brass. Kept as a small kit so every surface is built the same way.
+const WALNUT := Color("241a13")       # carved dark wood container
+const WALNUT_LIGHT := Color("3a2b1e") # raised wood face
+const IRON := Color("14110e")         # blackened iron
+const IRON_EDGE := Color("6b5c46")    # iron rim
+const LEATHER := Color("2e2118")      # inset rows
+const PARCHMENT := Color("e6d9b8")    # information surfaces
+const PARCHMENT_INK := Color("33261a")
+const BRASS := Color("c9a44c")        # antique brass / gold accent
+const BRASS_SOFT := Color("8f7434")
+const RIVET := Color("7d6a4f")        # bolt heads / rivets
+const READY := Color("d79a3c")        # amber ready state
+const DANGER := Color("8c2f2a")       # deep crimson raid state
+const DISABLED := Color("1b1712")     # desaturated dark wood/iron
+const POSITIVE := Color("5f7a45")     # restrained green
+const SEALED := Color("c9a44c")       # researched / stamped
+
 const CATEGORIES: Array[String] = ["Economy", "Homes", "Defense", "Roads"]
 const CATEGORY_TYPES: Dictionary = {
 	"Economy": ["farm", "lumber", "timber_yard", "mine", "pond", "sawmill", "stone_quarry"],
@@ -87,6 +106,14 @@ func theme() -> Theme:
 	return built
 
 
+# BRASS RULE: a thin divider that separates panel sections without stealing space.
+func rule(parent: Node) -> HSeparator:
+	var made := HSeparator.new()
+	made.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(made)
+	return made
+
+
 func heading(text: String, parent: Node) -> Label:
 	var made := Label.new()
 	made.text = text
@@ -124,6 +151,243 @@ func bar(value: float, maximum: float, parent: Node) -> ProgressBar:
 	made.value = clampf(value, 0.0, maxf(1.0, maximum))
 	made.show_percentage = false
 	made.custom_minimum_size.y = 7
+	parent.add_child(made)
+	return made
+
+
+# --- Manor component kit ----------------------------------------------------
+# Every screen builds from these, so a panel in the tech tree looks like a panel
+# on the mission board without either screen restating the styling.
+
+# MANOR PANEL: carved dark wood with an iron rim and restrained brass corners.
+func manor_panel(parent: Node, parchment: bool = false) -> PanelContainer:
+	var made := PanelContainer.new()
+	made.add_theme_stylebox_override("panel", panel_box(parchment))
+	parent.add_child(made)
+	return made
+
+
+func panel_box(parchment: bool = false) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	if parchment:
+		box.bg_color = Color(PARCHMENT, 0.97)
+		box.border_color = Color(BRASS_SOFT)
+		box.set_border_width_all(2)
+		box.border_width_top = 4
+		box.shadow_size = 3
+		box.shadow_color = Color(0, 0, 0, 0.3)
+		box.set_content_margin_all(10)
+		box.set_corner_radius_all(2)
+		return box
+	box.bg_color = Color(WALNUT, 0.96)
+	box.border_color = IRON_EDGE
+	box.set_border_width_all(2)
+	box.border_width_bottom = 5
+	box.shadow_size = 5
+	box.shadow_color = Color(0, 0, 0, 0.4)
+	box.shadow_offset = Vector2(0, 2)
+	box.set_content_margin_all(10)
+	box.set_corner_radius_all(3)
+	return box
+
+
+# NOTICE STRIP: a slim status line for the bottom command bar. Single-line by
+# design, so routine notices never become a floating popup.
+func notice_box() -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(WALNUT, 0.94)
+	box.border_color = IRON_EDGE
+	box.set_border_width_all(1)
+	box.border_width_top = 2
+	box.shadow_size = 0
+	box.set_content_margin_all(6)
+	box.content_margin_top = 3
+	box.content_margin_bottom = 3
+	box.set_corner_radius_all(2)
+	return box
+
+
+# Recessed inset row: the manor equivalent of a table row.
+func inset_box() -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(LEATHER, 0.85)
+	box.border_color = Color(INK, 0.6)
+	box.border_width_left = 2
+	box.set_content_margin_all(6)
+	box.set_corner_radius_all(2)
+	return box
+
+
+# INSET ROW: a recessed container node, ready to receive children.
+func inset_row(parent: Node) -> PanelContainer:
+	var made := PanelContainer.new()
+	made.add_theme_stylebox_override("panel", inset_box())
+	parent.add_child(made)
+	return made
+
+
+# COMMAND BUTTON: brown/iron physical button with a pressed state.
+func command_button(text: String, action: Callable, parent: Node, minimum: float = 44.0) -> Button:
+	var made := Button.new()
+	made.text = text
+	made.focus_mode = Control.FOCUS_NONE
+	made.custom_minimum_size = Vector2(0, minimum)
+	made.pressed.connect(action)
+	paint_command(made, "normal")
+	parent.add_child(made)
+	return made
+
+
+func paint_command(node: Button, state: String = "normal") -> void:
+	var fill: Color = WALNUT_LIGHT
+	var rim: Color = IRON_EDGE
+	match state:
+		"hover": fill = WALNUT_LIGHT.lightened(0.12)
+		"pressed": fill = INK
+		"disabled": fill = DISABLED; rim = Color(IRON_EDGE, 0.5)
+		"gold": fill = Color(BRASS_SOFT, 0.85); rim = BRASS
+		"ready": fill = Color(READY, 0.32); rim = READY
+		"danger": fill = Color(DANGER, 0.85); rim = Color(DANGER.lightened(0.25))
+		"done": fill = Color(SEALED, 0.28); rim = SEALED
+	var box := StyleBoxFlat.new()
+	box.bg_color = fill
+	box.border_color = rim
+	box.set_border_width_all(2)
+	box.border_width_bottom = 4 if state != "pressed" else 1
+	box.set_corner_radius_all(3)
+	box.shadow_size = 2
+	box.shadow_color = Color(0, 0, 0, 0.35)
+	box.shadow_offset = Vector2(0, 1)
+	box.set_content_margin_all(6)
+	node.add_theme_stylebox_override(state if state in ["normal", "hover", "pressed", "disabled"] else "normal", box)
+
+
+# GOLD ACTION BUTTON: the selected or primary action.
+func gold_button(text: String, action: Callable, parent: Node, minimum: float = 48.0) -> Button:
+	var made := command_button(text, action, parent, minimum)
+	paint_command(made, "gold")
+	made.add_theme_color_override("font_color", Color("f6ecd2"))
+	made.add_theme_color_override("font_hover_color", Color("fff6e2"))
+	return made
+
+
+# CREST BADGE: levels, counts and warning values.
+func crest(text: String, parent: Node, tone: String = "iron", size: int = 13) -> Label:
+	var made := Label.new()
+	made.text = text
+	made.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	made.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	made.add_theme_font_size_override("font_size", size)
+	made.add_theme_color_override("font_color", crest_color(tone))
+	made.custom_minimum_size = Vector2(24, 18)
+	parent.add_child(made)
+	return made
+
+
+func crest_color(tone: String) -> Color:
+	match tone:
+		"gold": return BRASS
+		"ready": return READY
+		"danger": return Color("d2705f")
+		"positive": return Color("8aa86a")
+		"parchment": return PARCHMENT_INK
+	return PAPER
+
+
+# PORTRAIT MEDALLION: a story character rendered as a struck-metal roundel.
+func portrait_medallion(character: String, parent: Node, diameter: float = 44.0) -> Control:
+	var holder := Control.new()
+	holder.custom_minimum_size = Vector2(diameter, diameter)
+	holder.tooltip_text = character
+	parent.add_child(holder)
+	var disc := Panel.new()
+	disc.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(WALNUT_LIGHT)
+	box.border_color = BRASS
+	box.set_border_width_all(2)
+	box.set_corner_radius_all(int(diameter * 0.5))
+	box.shadow_size = 3
+	box.shadow_color = Color(0, 0, 0, 0.45)
+	disc.add_theme_stylebox_override("panel", box)
+	holder.add_child(disc)
+	var initials := Label.new()
+	initials.text = _initials(character)
+	initials.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	initials.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	initials.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	initials.add_theme_font_size_override("font_size", int(diameter * 0.34))
+	initials.add_theme_color_override("font_color", BRASS)
+	holder.add_child(initials)
+	return holder
+
+
+func _initials(character: String) -> String:
+	var words := PackedStringArray(character.split(" "))
+	var letters: String = ""
+	for word in words:
+		if not word.is_empty():
+			letters += word.substr(0, 1)
+		if letters.length() >= 2:
+			break
+	return letters.to_upper() if not letters.is_empty() else "?"
+
+
+# MISSION BANNER frame: portrait medallion plus a parchment message plate.
+func mission_banner(character: String, message: String, parent: Node) -> PanelContainer:
+	var made := manor_panel(parent, true)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	made.add_child(row)
+	portrait_medallion(character, row, 40.0)
+	var column := VBoxContainer.new()
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	column.add_theme_constant_override("separation", 2)
+	row.add_child(column)
+	if not character.is_empty():
+		var who := Label.new()
+		who.text = character
+		who.add_theme_font_size_override("font_size", 12)
+		who.add_theme_color_override("font_color", BRASS_SOFT)
+		column.add_child(who)
+	var says := Label.new()
+	says.text = message
+	says.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	says.add_theme_font_size_override("font_size", 14)
+	says.add_theme_color_override("font_color", PARCHMENT_INK)
+	column.add_child(says)
+	return made
+
+
+# RESOURCE ROW: icon glyph, amount, and a recessed capacity gauge.
+func resource_row(parent: Node, label: String, glyph: String) -> Dictionary:
+	var row := VBoxContainer.new()
+	row.add_theme_constant_override("separation", 1)
+	parent.add_child(row)
+	var line := HBoxContainer.new()
+	line.add_theme_constant_override("separation", 4)
+	row.add_child(line)
+	var icon := Label.new()
+	icon.text = glyph
+	icon.add_theme_font_size_override("font_size", 13)
+	icon.add_theme_color_override("font_color", BRASS_SOFT)
+	icon.custom_minimum_size.x = 16
+	line.add_child(icon)
+	var value := Label.new()
+	value.text = label
+	value.add_theme_font_size_override("font_size", 14)
+	value.add_theme_color_override("font_color", PAPER)
+	line.add_child(value)
+	return {"row": row, "value": value, "bar": bar(0, 1, row)}
+
+
+# PARAGRAPH on parchment, for story and mission text.
+func parchment_text(text: String, parent: Node, size: int = 14) -> Label:
+	var made := Label.new()
+	made.text = text
+	made.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	made.add_theme_font_size_override("font_size", size)
+	made.add_theme_color_override("font_color", PARCHMENT_INK)
 	parent.add_child(made)
 	return made
 

@@ -1,8 +1,12 @@
 extends RefCounted
 
+const Chronicle = preload("res://scripts/game/chronicle.gd")
+# Content available without a story introduction. Everything else in
+# buildings.json / troops.json is gated by the Chronicle unlock registry.
 const BUILD_TYPES: Array[String] = ["farm", "lumber", "timber_yard", "mine", "cottage", "pond", "pasture", "barracks", "tower", "archer_tower", "wall", "stonewall", "gate", "trap", "storehouse", "sawmill", "stone_quarry"]
 const Living = preload("res://scripts/game/living_village.gd")
 var living = Living.new()
+var chronicle = Chronicle.new()
 var navigation_revision: int = 0
 const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
@@ -28,11 +32,20 @@ var raid_active: bool = false
 var raid_warning: bool = false
 var paused: bool = false
 var revision: int = 0
+# Path caches key on path_revision, NOT revision: gate open/close flips
+# change friendly walkability but need no 3D rebuild, so they invalidate
+# paths without touching revision (which rebuilds the whole village view).
+var path_revision: int = 0
 # Transient per-tick caches (never saved): threat base ranks, tick counter.
 var threat_ranks: Dictionary = {}
 var threat_stamp: int = -1
 var tick_count: int = 0
 var notice: String = "The Manner stands."
+var quest_progress: Dictionary = {}
+var optional_won: Dictionary = {}
+var raid_stats: Dictionary = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0, "defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0, "expeditions": 0, "delivered": {}}
+var scripted_raid: String = ""
+var region_progress: Dictionary = {}
 var next_id: int = 1
 var birth_timer: float = 0
 var paths: Dictionary = {}
@@ -43,12 +56,16 @@ var stand_cache: Dictionary = {}
 const KITE_TRIGGER: float = 1.5
 const KITE_RELEASE_RATIO: float = 0.7
 const KITE_THINK: float = 0.6
+# Guard Posts hold defenders without giving them a profession, so Organized
+# Watch can fill them on its own.
+const GUARD_POSTS: Array[String] = ["watchfire", "bastion", "gate", "tower", "archer_tower", "ballista", "oathstone"]
 
 
 func _init() -> void:
 	building_specs = _json("buildings")
 	troop_specs = _json("troops")
 	world_specs = _json("world")
+	living.bind_chronicle(chronicle)
 	world_specs["startingResources"]["stone"] = 0
 	world_specs["storageBase"]["stone"] = living.config["stone"]["base_storage"]
 	building_specs["hall"]["storage"]["stone"] = living.config["stone"]["hall_storage"]
@@ -58,13 +75,66 @@ func _init() -> void:
 	workplace_specs = work_spec["workplaces"] if work_spec.get("workplaces") is Dictionary else work_spec
 	workplace_specs["stone_quarry"] = {"stands": [[-1.5, -0.5], [1.5, -0.5]], "target": [0, 0]}
 	var all_quests: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/quests.json"))
-	quests = all_quests.slice(0, 11)
+	quests = _normalise_quests(all_quests)
 	resources = world_specs["startingResources"].duplicate(true)
 	for entry: Dictionary in world_specs["buildings"]:
 		buildings.append(_new_building(entry["type"], int(entry["x"]), int(entry["y"]), false))
 	for role: String in world_specs["troops"]:
 		_add_unit(role)
 	_auto_assign()
+
+
+# Every mission in the file is loaded. Availability is decided by act progress
+# and the unlock registry, not by an array slice, so Acts IV-X need no rewrite.
+func _normalise_quests(raw: Array) -> Array:
+	var out: Array = []
+	for entry: Variant in raw:
+		if not entry is Dictionary:
+			continue
+		var quest: Dictionary = (entry as Dictionary).duplicate(true)
+		var raw_act: Variant = quest.get("act", 1)
+		quest["act"] = _roman(raw_act) if raw_act is String else int(raw_act)
+		var objectives: Array = quest.get("objectives", [])
+		if objectives.is_empty() and quest.has("task"):
+			# Legacy single-task quests become a one-objective list.
+			quest["objectives"] = [quest["task"]]
+		quest["objectives"] = _normalise_objectives(quest.get("objectives", []))
+		quest["optional"] = _normalise_objectives(quest.get("optional", []))
+		for field: String in ["unlocks", "introduces"]:
+			if not quest.get(field) is Array:
+				quest[field] = []
+		for field: String in ["xp", "insight", "reputation"]:
+			if not _number(quest.get(field, 0)):
+				quest[field] = 0
+		if not quest.get("rewards") is Dictionary:
+			quest["rewards"] = {}
+		quest.erase("task")
+		out.append(quest)
+	return out
+
+
+func _normalise_objectives(raw: Array) -> Array:
+	var out: Array = []
+	for entry: Variant in raw:
+		if not entry is Dictionary:
+			continue
+		var objective: Dictionary = (entry as Dictionary).duplicate(true)
+		var kinds: Array = objective.get("types", [])
+		if objective.has("type") and not kinds.has(str(objective["type"])):
+			kinds.append(str(objective["type"]))
+		objective["types"] = kinds
+		objective["count"] = int(objective.get("count", objective.get("amount", 1)))
+		out.append(objective)
+	return out
+
+
+func _roman(value: String) -> int:
+	var index: int = _roman_order().find(value.strip_edges().to_upper())
+	return index + 1 if index >= 0 else 1
+
+
+func _roman_order() -> Array[String]:
+	return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
 
 
 func _json(name: String) -> Dictionary:
@@ -98,6 +168,7 @@ func _add_unit(role: String) -> void:
 func _invalidate() -> void:
 	paths.clear()
 	stand_cache.clear()
+	path_revision += 1
 
 
 func get_building(id: int) -> Dictionary:
@@ -162,14 +233,45 @@ func building_cost(type_name: String, tier: int = 1) -> Dictionary:
 	return cost
 
 
+func unlock_reason(id: String) -> String:
+	# One registry for buildings, professions, equipment and behaviour. Nothing
+	# outside it is reachable, and nothing in it has two owners.
+	if chronicle.is_unlocked(id):
+		return ""
+	var spec: Dictionary = building_specs.get(id, {})
+	if bool(spec.get("project", false)):
+		if not chronicle.effect("command:great-works-permit"):
+			return "Requires the Great Works charter."
+		return "No Great Work has been chartered for this yet."
+	var source: String = chronicle.source_of(id)
+	if source.is_empty():
+		return "Not yet. Research or story has to introduce this."
+	return "Not yet."
+
+
+func playable_building_types() -> Array[String]:
+	var out: Array[String] = []
+	for type_name: Variant in building_specs:
+		if not bool(building_specs[type_name].get("project", false)):
+			out.append(str(type_name))
+	return out
+
+
+func playable_roles() -> Array[String]:
+	var out: Array[String] = []
+	for role: Variant in troop_specs:
+		out.append(str(role))
+	return out
+
+
 func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> String:
-	if type_name == "stone_quarry" and ignore_id < 0 and "stoneworking" not in living.discoveries:
-		return "Research Stoneworking first."
-	if type_name not in BUILD_TYPES and ignore_id < 0:
-		return "That structure is not in this prototype."
 	var spec: Dictionary = building_specs.get(type_name, {})
 	if spec.is_empty():
 		return "Unknown building."
+	if ignore_id < 0:
+		var gate: String = unlock_reason(type_name)
+		if not gate.is_empty():
+			return gate
 	var size: int = int(spec["size"])
 	if x < 0 or y < 0 or x + size > 20 or y + size > 16:
 		return "Outside the village."
@@ -256,7 +358,9 @@ func repair(id: int) -> bool:
 	var b: Dictionary = get_building(id)
 	if b.is_empty() or b["remaining"] > 0:
 		return false
-	var wood: int = mini(int(resources["wood"]), ceili((float(b["max_hp"]) - float(b["hp"])) / 15))
+	# Tool Standardization: the same wall costs less timber to put back up.
+	var per_wood: float = 15.0 * (1.0 - minf(0.6, chronicle.bonus("repair")))
+	var wood: int = mini(int(resources["wood"]), ceili((float(b["max_hp"]) - float(b["hp"])) / per_wood))
 	if wood <= 0:
 		notice = "No repair needed, or not enough Wood."
 		return false
@@ -325,8 +429,11 @@ func beds() -> int:
 
 
 func recruit_reason(role: String) -> String:
-	if role not in ROLES:
+	if not troop_specs.has(role):
 		return "Unknown role."
+	var gate: String = unlock_reason(role)
+	if not gate.is_empty():
+		return gate
 	if units.size() >= beds():
 		return "No free beds / build or upgrade a Cottage."
 	if troop_specs[role]["role"] == "combat":
@@ -368,7 +475,10 @@ func assign(unit_id: int, building_id: int) -> bool:
 	if b.is_empty() or b["hp"] <= 0 or b["remaining"] > 0:
 		notice = "That workplace is not ready."
 		return false
-	if str(building_specs[b["type"]].get("workplace", "")) != str(u["type"]):
+	var workplace: String = str(building_specs[b["type"]].get("workplace", ""))
+	var is_post: bool = GUARD_POSTS.has(str(b["type"]))
+	var is_defender: bool = str(troop_specs[u["type"]]["role"]) == "combat"
+	if workplace != str(u["type"]) and not (is_post and is_defender):
 		notice = "This profession does not match that workplace."
 		return false
 	var count: int = 0
@@ -421,8 +531,10 @@ func train(id: int) -> bool:
 	if u.is_empty() or int(u["level"]) >= int(troop_specs[u["type"]]["maxLevel"]):
 		return false
 	var cost: Dictionary = troop_specs[u["type"]]["levelCost"].duplicate()
+	# Education: the school makes further training cheaper.
+	var discount: float = minf(0.6, chronicle.bonus("school-lessons"))
 	for resource in cost:
-		cost[resource] = float(cost[resource]) * int(u["level"])
+		cost[resource] = ceilf(float(cost[resource]) * float(u["level"]) * (1.0 - discount))
 	if not _spend(cost):
 		notice = "Not enough resources to train."
 		return false
@@ -700,8 +812,11 @@ func _edge_goal(u: Dictionary, b: Dictionary, enemy: bool = false) -> Vector2:
 func _cached_edge_goal(u: Dictionary, b: Dictionary, enemy: bool = false) -> Vector2:
 	var tile := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
 	var bid: int = int(b.get("id", -1))
-	if u.get("edge_rev") == revision and u.get("edge_tile") == tile and int(u.get("edge_bid", -999)) == bid and u.get("edge_goal") is Vector2:
-		return u["edge_goal"]
+	# Type guards: older saves may carry these keys as JSON strings.
+	var cached_tile: Variant = u.get("edge_tile")
+	var cached_goal: Variant = u.get("edge_goal")
+	if u.get("edge_rev") == revision and cached_tile is Vector2i and cached_tile == tile and int(u.get("edge_bid", -999)) == bid and cached_goal is Vector2:
+		return cached_goal
 	var goal: Vector2 = _edge_goal(u, b, enemy)
 	u["edge_goal"] = goal
 	u["edge_tile"] = tile
@@ -784,13 +899,20 @@ func tick(dt: float) -> void:
 				if int(u["workplace"]) == int(b["id"]) and u["hp"] > 0 and u["order"].is_empty() and not u["hold"] and not raid_active and not raid_warning:
 					posted = true
 			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * (1.25 if posted else 1.0)
+			# Moon Orchards / Full Granaries: food production, not a flat buff.
+			if str(spec.get("production", "")) == "food":
+				rate *= 1.0 + chronicle.bonus("growth")
 			b["reserve"] = maxf(float(b["reserve"]), minf(reserve_cap(b), float(b["reserve"]) + rate * dt))
 		for recipe: Dictionary in spec.get("refine", []):
 			_refine(recipe, dt)
 	for u in units:
 		u["cooldown"] = maxf(0, float(u["cooldown"]) - dt)
+		if not raid_active and not raid_warning and u["hp"] > 0 and u["hp"] < u["max_hp"]:
+			# Village Medicine / Field Medicine: recovery between horns.
+			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * (0.012 + chronicle.bonus("heal")) * dt)
 		_unit_tick(u, dt)
 	_raid_tick(dt)
+	_automation_tick(dt)
 	living.tick(self, dt)
 	if navigation_revision != living.navigation_revision:
 		navigation_revision = living.navigation_revision
@@ -817,8 +939,79 @@ func _gate_tick() -> void:
 				open = false
 		if bool(b.get("gate_open", true)) != open:
 			b["gate_open"] = open
-			revision += 1
 			_invalidate()
+
+
+# Research that changes behaviour instead of percentages. Runs on a slow clock:
+# these are standing orders, not per-frame decisions.
+var auto_clock: float = 0.0
+const AUTO_INTERVAL: float = 10.0
+
+func _automation_tick(dt: float) -> void:
+	auto_clock += dt
+	if auto_clock < AUTO_INTERVAL:
+		return
+	auto_clock = 0.0
+	if raid_active or raid_warning:
+		return
+	if chronicle.effect("command:auto-post"):
+		_auto_post()
+	if chronicle.effect("command:auto-pave"):
+		_auto_pave()
+
+
+# Organized Watch: Guard Posts fill themselves from idle defenders.
+func _auto_post() -> void:
+	var posts: Array[Dictionary] = []
+	for b in buildings:
+		if float(b["hp"]) <= 0.0 or float(b.get("remaining", 0.0)) > 0.0:
+			continue
+		if GUARD_POSTS.has(str(b["type"])):
+			posts.append(b)
+	for post in posts:
+		var posted: int = 0
+		for u: Dictionary in units:
+			if int(u["workplace"]) == int(post["id"]):
+				posted += 1
+		if posted >= 2:
+			continue
+		for u: Dictionary in units:
+			if float(u["hp"]) <= 0.0 or not u["order"].is_empty() or u["hold"]:
+				continue
+			if str(troop_specs[u["type"]]["role"]) != "combat":
+				continue
+			var previous: String = notice
+			if assign(int(u["id"]), int(post["id"])):
+				notice = previous
+				posted += 1
+			if posted >= 2:
+				break
+
+
+# Road Masonry: builders convert heavily used dirt trails into permanent roads.
+func _auto_pave() -> void:
+	var cost: int = int(living.config["stone"]["pave_cost"])
+	if not _affordable({"stone": cost}):
+		return
+	var builders: int = 0
+	for u: Dictionary in units:
+		if str(u["type"]) == "builder" and float(u["hp"]) > 0.0 and not u["hold"]:
+			builders += 1
+	if builders <= 0:
+		return
+	var previous: String = notice
+	for id: String in living.cells.keys():
+		if builders <= 0:
+			break
+		var cell: Dictionary = living.cells[id]
+		if bool(cell.get("stone", false)) or float(cell.get("wear", 0.0)) < 0.999:
+			continue
+		var parts: PackedStringArray = id.split(",")
+		if parts.size() != 2 or not parts[0].is_valid_int() or not parts[1].is_valid_int():
+			continue
+		if living.pave(self, Vector2i(int(parts[0]), int(parts[1]))):
+			builders -= 1
+	notice = previous
 
 
 func _refine(recipe: Dictionary, dt: float) -> void:
@@ -1052,11 +1245,29 @@ func start_raid() -> bool:
 	return true
 
 
+func _active_faction() -> Dictionary:
+	# Faction identity is campaign progression, not a colour swap: each has its
+	# own roster shape and stat profile.
+	var chosen: Dictionary = {}
+	for entry: Dictionary in world_specs.get("enemyFactions", []):
+		if wave < int(entry.get("minWave", 1)): continue
+		if village_level() < int(entry.get("minLevel", 1)): continue
+		chosen = entry
+	return chosen
+
+
+func _role_stats(role: String) -> Dictionary:
+	return world_specs.get("enemyRoles", {}).get(role, {})
+
+
 func _spawn_raid() -> void:
 	raid_warning = false
 	raid_active = true
 	wave += 1
-	var count: int = mini(8, wave + 1)
+	var faction: Dictionary = _active_faction()
+	var roles: Array = faction.get("roles", ["raider"])
+	var count: int = mini(int(world_specs["homeRaids"].get("maxCount", 8)), wave + 1)
+	var base: float = 70.0 + wave * 10.0
 	for index in count:
 		var side: int = index % 4 if count >= 4 else (wave - 1) % 4
 		var point := Vector2(0.5, 3.5 + index * 1.1)
@@ -1064,15 +1275,42 @@ func _spawn_raid() -> void:
 			1: point = Vector2(19.5, 4.5 + index)
 			2: point = Vector2(5.5 + index, 0.5)
 			3: point = Vector2(6.5 + index, 15.5)
-		var hp: float = 70 + wave * 10
-		enemies.append({"id": _id(), "type": "raider", "x": point.x, "y": point.y, "hp": hp, "max_hp": hp,
-			"phase": "walk", "cooldown": 0.0})
-	notice = "Wave %d / hold the Manor!" % wave
+		# Hostiles stay "raider" in the save schema; the role drives their stats.
+		var role: String = str(roles[index % roles.size()])
+		var stats: Dictionary = _role_stats(role)
+		var hp: float = base * float(stats.get("hp", 1.0))
+		enemies.append({"id": _id(), "type": "raider", "role": role, "faction": str(faction.get("id", "thornband")),
+			"x": point.x, "y": point.y, "hp": hp, "max_hp": hp, "phase": "walk", "cooldown": 0.0})
+	raid_stats["seconds_held"] = 0.0
+	notice = "Wave %d / %s / hold the Manor!" % [wave, str(faction.get("name", "Raiders"))]
 
 
 func _building_distance(point: Vector2, b: Dictionary) -> float:
 	var near := Vector2(clampf(point.x, float(b["x"]), float(b["x"]) + float(b["size"])), clampf(point.y, float(b["y"]), float(b["y"]) + float(b["size"])))
 	return point.distance_to(near)
+
+
+# Watchtower Doctrine: towers shoot siege engines and breakers first instead of
+# whoever happens to be nearest. Siege Doctrine widens that list.
+func _tower_target(origin: Vector2) -> Dictionary:
+	var nearest: Dictionary = _nearest_enemy(origin)
+	if not chronicle.effect("command:tower-priority"):
+		return nearest
+	var wanted: Array[String] = ["ram", "bombard", "breaker"]
+	if chronicle.effect("command:siege-response"):
+		wanted = ["ram", "bombard", "breaker", "archer", "scout"]
+	var best: Dictionary = {}
+	var best_distance: float = INF
+	for enemy in enemies:
+		if float(enemy.get("hp", 0.0)) <= 0.0:
+			continue
+		if not wanted.has(str(enemy.get("role", "raider"))):
+			continue
+		var gap: float = origin.distance_to(position_of(enemy))
+		if gap < best_distance:
+			best_distance = gap
+			best = enemy
+	return best if not best.is_empty() else nearest
 
 
 func _raid_tick(dt: float) -> void:
@@ -1082,16 +1320,17 @@ func _raid_tick(dt: float) -> void:
 		if raid_warning and elapsed >= next_raid_at:
 			_spawn_raid()
 		return
+	raid_stats["seconds_held"] = float(raid_stats.get("seconds_held", 0.0)) + dt
 	for b in buildings:
 		if b["hp"] <= 0 or b["remaining"] > 0 or b["cooldown"] > 0:
 			continue
 		var stats: Dictionary = building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]
 		if float(stats["damage"]) <= 0:
 			continue
-		var enemy: Dictionary = _nearest_enemy(center(b))
+		var enemy: Dictionary = _tower_target(center(b))
 		if not enemy.is_empty() and center(b).distance_to(position_of(enemy)) <= float(stats["range"]):
 			enemy["hp"] -= float(stats["damage"])
-			b["cooldown"] = 5.0 if b["type"] == "trap" else 1.0
+			b["cooldown"] = (3.0 if chronicle.effect("command:trap-reset") else 5.0) if b["type"] == "trap" else 1.0
 			_shot(center(b), position_of(enemy))
 	for enemy in enemies:
 		if enemy["hp"] <= 0:
@@ -1108,7 +1347,7 @@ func _raid_tick(dt: float) -> void:
 			enemy["fx"] = float(opponent["x"])
 			enemy["fy"] = float(opponent["y"])
 			if enemy["cooldown"] <= 0:
-				opponent["hp"] = maxf(0, float(opponent["hp"]) - (8 + wave * 2))
+				opponent["hp"] = maxf(0, float(opponent["hp"]) - (8 + wave * 2) * float(_role_stats(str(enemy.get("role", "raider"))).get("damage", 1.0)))
 				enemy["cooldown"] = 1
 			continue
 		var objective: Dictionary = _hall()
@@ -1127,9 +1366,16 @@ func _raid_tick(dt: float) -> void:
 			enemy["fx"] = center(objective).x
 			enemy["fy"] = center(objective).y
 			if enemy["cooldown"] <= 0:
-				objective["hp"] = maxf(0, float(objective["hp"]) - (8 + wave * 2))
+				var wall_mult: float = float(_role_stats(str(enemy.get("role", "raider"))).get("wallDamage", 1.0))
+				# Gate Engineering braces a gate while a ram works on it.
+				if str(objective["type"]) == "gate" and chronicle.effect("command:gate-brace"):
+					wall_mult *= 0.6
+				objective["hp"] = maxf(0, float(objective["hp"]) - (8 + wave * 2) * wall_mult)
 				enemy["cooldown"] = 1
 				if objective["hp"] <= 0:
+					raid_stats["built_lost"] = int(raid_stats["built_lost"]) + 1
+					if str(objective["type"]) == "gate":
+						raid_stats["gates_lost"] = int(raid_stats["gates_lost"]) + 1
 					revision += 1
 					_invalidate()
 		else:
@@ -1137,6 +1383,10 @@ func _raid_tick(dt: float) -> void:
 	for index in range(enemies.size() - 1, -1, -1):
 		if enemies[index]["hp"] <= 0:
 			paths.erase(int(enemies[index]["id"]))
+			var role: String = str(enemies[index].get("role", "raider"))
+			raid_stats["kills"] = int(raid_stats["kills"]) + 1
+			var by_role: Dictionary = raid_stats["kills_by"]
+			by_role[role] = int(by_role.get(role, 0)) + 1
 			enemies.remove_at(index)
 	if _hall().get("hp", 0) <= 0:
 		_finish_raid(false)
@@ -1144,16 +1394,13 @@ func _raid_tick(dt: float) -> void:
 		_finish_raid(true)
 
 
-func _reward(rewards: Dictionary) -> void:
-	for resource in rewards:
-		pending_rewards[resource] = float(pending_rewards.get(resource, 0)) + float(rewards[resource])
-
-
 func _finish_raid(victory: bool) -> void:
+	var held: float = float(raid_stats.get("seconds_held", 0.0))
 	raid_active = false
 	raid_warning = false
 	enemies.clear()
 	_invalidate()
+	scripted_raid = ""
 	next_raid_at = elapsed + (240 if victory else 360)
 	for u in units:
 		if u["hp"] <= 0:
@@ -1161,55 +1408,287 @@ func _finish_raid(victory: bool) -> void:
 			u["x"] = 8.0
 			u["y"] = 10.8
 			u["phase"] = "idle"
-	_reward({"gold": 20 + wave * 10} if victory else {"wood": 80})
-	notice = "The Manner stands / salvage and recovery." if victory else "The Manor fell / salvage Wood waits. Repair and rise again."
+	if victory:
+		raid_stats["defended"] = int(raid_stats["defended"]) + 1
+		# Organized Watch research repairs the damage instead of leaving it.
+		if chronicle.effect("command:auto-repair"):
+			for b: Dictionary in buildings:
+				if float(b["hp"]) > 0.0 and float(b["remaining"]) <= 0.0:
+					b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + float(b["max_hp"]) * 0.35)
+			notice = "The Manor stands / masons put the damage back."
+		else:
+			notice = "The Manor stands / salvage and recovery."
+		_reward({"gold": 20 + wave * 10})
+	else:
+		notice = "The Manor fell / salvage Wood waits. Repair and rise again."
+		_reward({"wood": 80})
+	raid_stats["seconds_held"] = maxf(held, 0.0)
+
+
+func _reward(rewards: Dictionary) -> void:
+	for resource in rewards:
+		if str(resource) == "insight":
+			living.insight = minf(float(living.config["research"]["insight_cap"]), living.insight + float(rewards[resource]))
+			continue
+		if str(resource) == "reputation":
+			chronicle.reputation += int(rewards[resource])
+			continue
+		pending_rewards[resource] = float(pending_rewards.get(resource, 0)) + float(rewards[resource])
 
 
 func quest_current() -> Dictionary:
+	# Availability is campaign progress, not an array slice.
 	for quest: Dictionary in quests:
-		if str(quest["id"]) not in completed_quests:
+		var id: String = str(quest["id"])
+		if id in completed_quests or int(quest["act"]) > chronicle.act:
+			continue
+		return quest
+	return {}
+
+
+func quest_by_id(id: String) -> Dictionary:
+	for quest: Dictionary in quests:
+		if str(quest["id"]) == id:
 			return quest
 	return {}
 
 
+func _quest_record(id: String) -> Dictionary:
+	if not quest_progress.has(id):
+		quest_progress[id] = {"optional": {}, "raid_started": false, "started_at": elapsed}
+		# A mission introduces its own content while it is the current mission,
+		# so objectives can ask for what the mission itself introduces.
+		var quest: Dictionary = quest_by_id(id)
+		chronicle.grant_many(quest.get("introduces", []), "story:" + id + "/introduces")
+	return quest_progress[id]
+
+
 func _quest_tick() -> void:
-	var quest: Dictionary = quest_current()
-	if quest.is_empty():
+	# Every mission in the current act can be completed. Nothing blocks on
+	# anything else: the player pursues the objective they can actually do.
+	var active: Dictionary = quest_current()
+	var active_id: String = str(active.get("id", ""))
+	for quest: Dictionary in quests:
+		if int(quest["act"]) > chronicle.act:
+			continue
+		var id: String = str(quest["id"])
+		if id in completed_quests:
+			continue
+		var record: Dictionary = _quest_record(id)
+		if id == active_id:
+			_maybe_start_scripted_raid(quest, record)
+		var complete: bool = true
+		for objective: Dictionary in quest["objectives"]:
+			if _objective_value(objective) < _objective_target(objective):
+				complete = false
+				break
+		if not complete:
+			continue
+		completed_quests.append(id)
+		xp += int(quest.get("xp", 0))
+		living.insight = minf(float(living.config["research"]["insight_cap"]), living.insight + float(quest.get("insight", 0)))
+		chronicle.reputation += int(quest.get("reputation", 0))
+		_reward(quest.get("rewards", {}))
+		chronicle.grant_many(quest.get("unlocks", []), "story:" + id)
+		_award_optionals(quest, record)
+		chronicle.queue_banner(str(quest.get("giver", "")), str(quest.get("log", "%s complete." % str(quest["name"]))))
+		notice = "Act %d / %s complete / +%d XP." % [int(quest["act"]), str(quest["name"]), int(quest.get("xp", 0))]
+	_check_act_complete()
+	# Board contracts ride the same counters, so a mission never has to feed them.
+	for contract_id: String in chronicle.board_active_ids():
+		chronicle.board_advance(contract_id, 0.0)
+
+
+func _award_optionals(quest: Dictionary, record: Dictionary) -> void:
+	for objective: Dictionary in quest.get("optional", []):
+		var oid: String = str(objective["id"])
+		if bool(record["optional"].get(oid, false)) or not _optional_met(objective, record):
+			continue
+		record["optional"][oid] = true
+		var reward: Dictionary = objective.get("reward", {})
+		_reward(reward)
+		living.insight = minf(float(living.config["research"]["insight_cap"]), living.insight + float(reward.get("insight", 0)))
+		chronicle.reputation += int(reward.get("reputation", 0))
+		chronicle.grant_many(reward.get("unlocks", []), "story:%s/%s" % [str(quest["id"]), oid])
+
+
+func _check_act_complete() -> void:
+	for quest: Dictionary in quests:
+		if int(quest["act"]) == chronicle.act and str(quest["id"]) not in completed_quests:
+			return
+	if chronicle.act >= chronicle.act_count():
 		return
-	var task: Dictionary = quest["task"]
+	chronicle.advance_act()
+	notice = "Act %s opens / %s." % [chronicle.act_name(chronicle.act), str(chronicle.act_data(chronicle.act).get("summary", ""))]
+
+
+func _objective_target(objective: Dictionary) -> float:
+	match str(objective["kind"]):
+		"upgrade": return float(objective.get("level", 1))
+		"under_time", "defend_for_time": return float(objective.get("seconds", 0))
+		"all": return float(objective.get("count", 1))
+	return float(objective.get("count", 1))
+
+
+func _buildings_of(types: Array, tier_level: int = 0) -> int:
 	var count: int = 0
-	match task["kind"]:
-		"build":
-			for b in buildings:
-				if b["type"] == task["type"] and b["remaining"] <= 0 and b["hp"] > 0:
-					count += 1
-		"recruit":
-			for u in units:
-				if u["type"] == task["type"]:
-					count += 1
+	for b: Dictionary in buildings:
+		if not types.has(str(b["type"])): continue
+		if float(b["hp"]) <= 0.0 or float(b.get("remaining", 0.0)) > 0.0: continue
+		if tier_level > 0 and int(b["tier"]) < tier_level: continue
+		count += 1
+	return count
+
+
+func _units_of(types: Array) -> int:
+	var count: int = 0
+	for u: Dictionary in units:
+		if types.has(str(u["type"])):
+			count += 1
+	return count
+
+
+func _objective_value(objective: Dictionary) -> float:
+	var kinds: Array = objective.get("types", [])
+	var resource: String = str(objective.get("resource", ""))
+	match str(objective["kind"]):
+		"build": return float(_buildings_of(kinds))
+		"upgrade": return float(_buildings_of(kinds, int(objective.get("level", 1))))
+		"recruit": return float(_units_of(kinds))
 		"assign":
-			for u in units:
-				if int(u["workplace"]) >= 0:
-					count += 1
-		"population": count = units.size()
-		"gather": count = int(gathered.get(task["resource"], 0))
-		"upgrade":
-			for b in buildings:
-				if b["type"] == task["type"] and int(b["tier"]) >= int(task["level"]) and b["remaining"] <= 0 and b["hp"] > 0:
-					count = 1
-	var required: int = int(task.get("amount", task.get("count", 1)))
-	if count >= required:
-		completed_quests.append(str(quest["id"]))
-		xp += int(quest["xp"])
-		_reward(quest["rewards"])
-		notice = "Village Path / %s complete / +%d XP." % [quest["name"], quest["xp"]]
+			var assigned: int = 0
+			for u: Dictionary in units:
+				if int(u["workplace"]) >= 0: assigned += 1
+			return float(assigned)
+		"population": return float(units.size())
+		"gather": return float(gathered.get(resource, 0))
+		"deliver_resources": return float(raid_stats.get("delivered", {}).get(resource, 0))
+		"maintain_resource": return float(resources.get(resource, 0))
+		"research": return float(living.discoveries.size())
+		"defeat", "survive_raid": return float(int(raid_stats["defended"]))
+		"prestige_unit", "prestige": return float(int(raid_stats["prestige"]))
+		"kill_enemy": return float(int(raid_stats["kills_by"].get(str(objective.get("enemy", "raider")), 0)))
+		"preserve_gate":
+			var gates: int = 0
+			for b: Dictionary in buildings:
+				if str(b["type"]) in ["gate", "stonewall"] and float(b["hp"]) > 0.0: gates += 1
+			return float(gates)
+		"defend_for_time": return float(raid_stats["seconds_held"])
+		"complete_expedition": return float(int(raid_stats["expeditions"]))
+		"secure_region", "scout_region":
+			var region_id: String = str(objective.get("region", ""))
+			var wanted: int = 2 if str(objective["kind"]) == "scout_region" else 3
+			var states: Array = chronicle.region_states()
+			return float(states.find(chronicle.region_state(region_id)) + 1) if chronicle.region_index(region_id) >= wanted else 0.0
+		"construct_great_work":
+			var gw: String = str(objective.get("id", objective.get("type", "")))
+			return 1.0 if (chronicle.great_works.has(gw) or chronicle.is_unlocked(gw)) else 0.0
+		"wonder":
+			var want: String = str(objective.get("type", ""))
+			return 1.0 if (chronicle.great_works.has(want) or chronicle.is_unlocked(want)) else 0.0
+		"all": return 1.0
+	return 0.0
+
+
+func _optional_met(objective: Dictionary, record: Dictionary) -> bool:
+	match str(objective["kind"]):
+		"no_buildings_destroyed": return int(raid_stats["built_lost"]) == 0
+		"no_defenders_lost": return int(raid_stats["defenders_lost"]) == 0
+		"no_gate_breached": return int(raid_stats["gates_lost"]) == 0
+		"under_time": return float(record.get("started_at", elapsed)) + float(objective.get("seconds", 0)) >= elapsed
+		"keep_resource_above": return float(resources.get(str(objective.get("resource", "")), 0)) >= float(objective.get("amount", 1))
+	return true
+
+
+# The first horn is a story beat, not a random timer: a mission that asks the
+# player to survive a raid summons one once its build objectives are done.
+func _maybe_start_scripted_raid(quest: Dictionary, record: Dictionary) -> void:
+	if bool(record.get("raid_started", false)) or raid_active or raid_warning:
+		return
+	var wants_raid: bool = false
+	for objective: Dictionary in quest["objectives"]:
+		var kind: String = str(objective["kind"])
+		if kind == "survive_raid":
+			wants_raid = true
+		elif kind != "defend_for_time" and _objective_value(objective) < _objective_target(objective):
+			return
+	if not wants_raid:
+		return
+	record["raid_started"] = true
+	_start_story_raid(int(quest["act"]))
+	notice = "The horn sounds / %s" % str(quest["name"])
+
+
+func _start_story_raid(act_number: int) -> void:
+	raid_warning = true
+	next_raid_at = elapsed + 6
+	scripted_raid = "act%d" % act_number
+	notice = "Horn on the road / hold for 6 seconds."
 
 
 func export_state() -> Dictionary:
-	return {"version": 2, "living": living.state(), "buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
+	# Strip transient memoization keys: Vector2i/Vector2 serialize as JSON
+	# strings and would come back as Strings on load.
+	for group in [units, enemies]:
+		for u in (group as Array):
+			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
+				(u as Dictionary).erase(transient)
+	return {"version": 3, "living": living.state(), "chronicle": chronicle.state(),
+		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
-		"completed_quests": completed_quests.duplicate(), "elapsed": elapsed, "xp": xp, "wave": wave, "next_raid_at": next_raid_at,
+		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
+		"optional_won": optional_won.duplicate(), "raid_stats": raid_stats.duplicate(true),
+		"elapsed": elapsed, "xp": xp, "wave": wave, "next_raid_at": next_raid_at,
 		"raid_active": raid_active, "raid_warning": raid_warning, "next_id": next_id, "birth_timer": birth_timer}
+
+
+func _migrate(state: Dictionary) -> Dictionary:
+	# v1 and v2 saves stay valid. New progression sections get safe defaults and
+	# the act is derived from the quests the player already finished.
+	var version: int = int(state.get("version", 1))
+	if version >= 3:
+		return state
+	var migrated: Dictionary = state.duplicate(true)
+	migrated["version"] = 3
+	# v1 predates Living Village and v2 predates the Chronicle: give the new
+	# sections their real defaults instead of rejecting the save.
+	if not migrated.get("living") is Dictionary:
+		migrated["living"] = Living.new().state()
+	migrated["quest_progress"] = state.get("quest_progress", {})
+	migrated["optional_won"] = state.get("optional_won", {})
+	migrated["raid_stats"] = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0,
+		"defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0,
+		"expeditions": 0, "delivered": {}}
+	var chronicle_state: Dictionary = state["chronicle"].duplicate(true) if chronicle.valid(state.get("chronicle")) else chronicle.state()
+	# A returning player is as far along as their quest record proves.
+	var reached: int = 1
+	var done: Dictionary = {}
+	for quest_id: Variant in state.get("completed_quests", []):
+		done[str(quest_id)] = true
+	for quest: Dictionary in quests:
+		if str(quest["id"]) in done:
+			reached = maxi(reached, int(quest["act"]) + 1)
+	for quest: Dictionary in quests:
+		if str(quest["id"]) in done:
+			continue
+		reached = mini(reached, int(quest["act"]))
+		break
+	chronicle_state["act"] = clampi(reached, 1, chronicle.act_count())
+	migrated["chronicle"] = chronicle_state
+	# Re-derive what the player's finished missions already introduced, so an old
+	# save never loses content it had earned. Missions complete independently,
+	# so membership is checked per mission rather than by list position.
+	for quest: Dictionary in quests:
+		if str(quest["id"]) not in done:
+			continue
+		chronicle.grant_many(quest.get("introduces", []), "story:" + str(quest["id"]) + "/introduces")
+		chronicle.grant_many(quest.get("unlocks", []), "story:" + str(quest["id"]))
+	migrated["chronicle"] = chronicle.state()
+	# Stone is a v3 resource; old saves simply start at zero.
+	var clean: Dictionary = migrated["resources"]
+	if not clean.has("stone"):
+		clean["stone"] = 0.0
+	return migrated
 
 
 func _number(value: Variant) -> bool:
@@ -1219,24 +1698,33 @@ func _number(value: Variant) -> bool:
 func restore_state(state: Dictionary) -> bool:
 	if not _validate_state(state):
 		return false
-	buildings.assign(state["buildings"].duplicate(true))
-	units.assign(state["units"].duplicate(true))
-	enemies.assign(state["enemies"].duplicate(true))
-	resources = state["resources"].duplicate(true)
+	var data: Dictionary = _migrate(state)
+	if not _validate_state(data):
+		return false
+	buildings.assign(data["buildings"].duplicate(true))
+	units.assign(data["units"].duplicate(true))
+	enemies.assign(data["enemies"].duplicate(true))
+	resources = data["resources"].duplicate(true)
 	for resource in world_specs["startingResources"]:
 		resources[resource] = resources.get(resource, 0)
-	pending_rewards = state["pending_rewards"].duplicate(true)
-	gathered = state["gathered"].duplicate(true)
-	completed_quests.assign(state["completed_quests"])
-	elapsed = float(state["elapsed"])
-	xp = int(state["xp"])
-	wave = int(state["wave"])
-	next_raid_at = float(state["next_raid_at"])
-	raid_active = state["raid_active"]
-	raid_warning = state["raid_warning"]
-	next_id = int(state["next_id"])
-	birth_timer = float(state["birth_timer"])
-	living.restore(state.get("living", Living.new().state()))
+	pending_rewards = data["pending_rewards"].duplicate(true)
+	gathered = data["gathered"].duplicate(true)
+	completed_quests.assign(data["completed_quests"])
+	quest_progress = data.get("quest_progress", {}).duplicate(true)
+	optional_won = data.get("optional_won", {}).duplicate()
+	raid_stats = data.get("raid_stats", {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0,
+		"defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0,
+		"expeditions": 0, "delivered": {}}).duplicate(true)
+	elapsed = float(data["elapsed"])
+	xp = int(data["xp"])
+	wave = int(data["wave"])
+	next_raid_at = float(data["next_raid_at"])
+	raid_active = data["raid_active"]
+	raid_warning = data["raid_warning"]
+	next_id = int(data["next_id"])
+	birth_timer = float(data["birth_timer"])
+	living.restore(data.get("living", Living.new().state()))
+	chronicle.restore(data["chronicle"])
 	navigation_revision = living.navigation_revision
 	_invalidate()
 	revision += 1
@@ -1249,9 +1737,11 @@ func _integer(value: Variant) -> bool:
 
 func _validate_state(state: Dictionary) -> bool:
 	# JSON hands back every number as a float, so the version is checked as a finite integer and cast once.
-	if not _integer(state.get("version")) or int(state["version"]) not in [1, 2]:
+	if not _integer(state.get("version")) or int(state["version"]) not in [1, 2, 3]:
 		return false
-	if int(state["version"]) == 2 and not living.valid(state.get("living")):
+	if int(state["version"]) >= 2 and not living.valid(state.get("living")):
+		return false
+	if int(state["version"]) >= 3 and not chronicle.valid(state.get("chronicle")):
 		return false
 	for key in ["buildings", "units", "enemies", "completed_quests"]:
 		if not state.get(key) is Array:
@@ -1265,7 +1755,7 @@ func _validate_state(state: Dictionary) -> bool:
 	for key in ["elapsed", "xp", "wave", "next_raid_at", "next_id", "birth_timer"]:
 		if not _number(state.get(key)):
 			return false
-	if int(state["version"]) == 2:
+	if int(state["version"]) >= 2:
 		for cell: Dictionary in state["living"]["cells"].values():
 			if float(cell["last"]) > float(state["elapsed"]) + 0.01: return false
 			if cell["stone"] and "road_masonry" not in state["living"]["discoveries"]: return false
@@ -1279,7 +1769,7 @@ func _validate_state(state: Dictionary) -> bool:
 	var building_index: Dictionary = {}
 	var hall_count: int = 0
 	for b in state["buildings"]:
-		if not b is Dictionary or b.get("type") not in BUILD_TYPES + ["hall"]:
+		if not b is Dictionary or not building_specs.has(str(b.get("type", ""))):
 			return false
 		for key in ["id", "x", "y", "size", "tier", "hp", "max_hp", "remaining", "reserve", "cooldown"]:
 			if not _number(b.get(key)):
@@ -1305,7 +1795,7 @@ func _validate_state(state: Dictionary) -> bool:
 			if not u is Dictionary:
 				return false
 			var hostile: bool = group == state["enemies"]
-			if (hostile and u.get("type") != "raider") or (not hostile and u.get("type") not in ROLES):
+			if (hostile and u.get("type") != "raider") or (not hostile and not troop_specs.has(str(u.get("type", "")))):
 				return false
 			for key in ["id", "x", "y", "hp", "max_hp", "cooldown"]:
 				if not _number(u.get(key)):
@@ -1326,7 +1816,8 @@ func _validate_state(state: Dictionary) -> bool:
 					if not _integer(u["workplace"]) or not building_index.has(int(u["workplace"])):
 						return false
 					var post: Dictionary = building_index[int(u["workplace"])]
-					if str(building_specs[post["type"]].get("workplace", "")) != str(u["type"]):
+					if str(building_specs[post["type"]].get("workplace", "")) != str(u["type"]) \
+							and not (GUARD_POSTS.has(str(post["type"])) and str(troop_specs[str(u["type"])]["role"]) == "combat"):
 						return false
 				if not u["order"].is_empty() and (u["order"].size() != 2 or not _number(u["order"][0]) or not _number(u["order"][1]) or u["order"][0] >= 20 or u["order"][1] >= 16):
 					return false
@@ -1351,6 +1842,32 @@ func _validate_state(state: Dictionary) -> bool:
 	for quest_id in state["completed_quests"]:
 		if quest_id not in known:
 			return false
+	if int(state["version"]) >= 3:
+		if not state.get("quest_progress") is Dictionary or state["quest_progress"].size() > known.size():
+			return false
+		for quest_id: Variant in state["quest_progress"]:
+			if str(quest_id) not in known or not state["quest_progress"][quest_id] is Dictionary:
+				return false
+			var record: Dictionary = state["quest_progress"][quest_id]
+			if not record.get("optional") is Dictionary or not record.get("raid_started", false) is bool:
+				return false
+			if not _number(record.get("started_at", 0)):
+				return false
+		if not state.get("raid_stats") is Dictionary:
+			return false
+		var stats: Dictionary = state["raid_stats"]
+		for field in ["defended", "kills", "built_lost", "defenders_lost", "gates_lost", "seconds_held", "prestige", "expeditions"]:
+			if not _number(stats.get(field, 0)):
+				return false
+		for field in ["kills_by", "delivered"]:
+			var tally: Dictionary = stats.get(field, {})
+			if not tally is Dictionary:
+				return false
+			if tally.size() > 64:
+				return false
+			for tally_key: Variant in tally:
+				if not tally_key is String or not _number(tally[tally_key]) or float(tally[tally_key]) < 0:
+					return false
 	return true
 
 

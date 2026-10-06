@@ -26,13 +26,13 @@ window/size/viewport_width=390
 window/size/viewport_height=844
 window/size/window_width_override=1280
 window/size/window_height_override=800
-display/window/handheld/orientation=6
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+display/window/handheld/orientation=6
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+enabled=PackedStringArray("res://addons/funplay_mcp/plugin.cfg", "res://addons/godot_mcp/plugin.cfg")
 
 [rendering]
 

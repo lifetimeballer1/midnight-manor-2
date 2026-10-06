@@ -155,7 +155,7 @@ func _run() -> void:
 	check(restored.load_game(path), "disk save reload succeeds")
 	check(not sim.save_game("user://missing-parent-for-test/village.json") and "failed" in sim.notice.to_lower(), "save failures are visible")
 	DirAccess.remove_absolute(path)
-	check(sim.quests.size() == 11, "only the11 supported original early quests are exposed")
+	check(sim.quests.size() == 44, "every authored mission is loaded across all ten acts")
 	sim = Sim.new()
 	sim.start_raid()
 	var started_at: int = Time.get_ticks_msec()
@@ -199,7 +199,26 @@ func _run() -> void:
 	step(sim, 0.2)
 	check(sim.upgrade(int(building(sim, "pasture")["id"])), "pasture tier2 goal is attainable")
 	step(sim, 4.2)
-	check(sim.completed_quests.size() == 11, "all11 original early quests resolve through actual command APIs")
+	var act1_ids: Array[String] = ["second-field", "still-water", "first-cast", "roof-for-night", "every-hand", "the-moon-dial"]
+	var resolved: int = 0
+	for quest_id in act1_ids:
+		if quest_id in sim.completed_quests:
+			resolved += 1
+	check(resolved == act1_ids.size(), "every Act I mission resolves through actual command APIs")
+	check(sim.chronicle.act == 1 and not sim.chronicle.is_unlocked("orrery"), "Act II and beyond stay closed while Act I is unfinished")
+	check(not "new-blood" in sim.completed_quests, "an Act II objective cannot complete early")
+	# Finishing Act I opens Act II, and the Act II objectives bank on their own.
+	check(sim.build("grove", 5, 13), "Act I final mission builds what it introduces")
+	step(sim, 4.2)
+	check("moon-orchard" in sim.completed_quests, "the Act I mission closes on its own objective")
+	check(sim.chronicle.act == 2, "campaign advances to Act II when Act I is finished")
+	check(sim.chronicle.act_name(2) == "II / A Village Worth Keeping", "act naming is readable in the UI")
+	var act2_ids: Array[String] = ["new-blood", "east-field", "full-crew"]
+	var resolved2: int = 0
+	for quest_id in act2_ids:
+		if quest_id in sim.completed_quests:
+			resolved2 += 1
+	check(resolved2 == act2_ids.size(), "Act II missions complete once the act opens")
 	var complete_xp: int = sim.xp
 	step(sim, 2)
 	check(sim.xp == complete_xp, "completed full quest chain does not repeat XP")

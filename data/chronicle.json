@@ -1,0 +1,1416 @@
+{
+  "version": 3,
+  "branchOrder": [
+    "Survival",
+    "Construction",
+    "Warfare",
+    "Industry",
+    "Society",
+    "Exploration"
+  ],
+  "branchGlyphs": {
+    "Survival": "wheat",
+    "Construction": "anvil",
+    "Warfare": "sword",
+    "Industry": "gear",
+    "Society": "quill",
+    "Exploration": "compass"
+  },
+  "tiers": [
+    {
+      "tier": 1,
+      "name": "Foundation",
+      "minAct": 1,
+      "maxAct": 2,
+      "insight": 20,
+      "seconds": 60,
+      "level": 2
+    },
+    {
+      "tier": 2,
+      "name": "Discipline",
+      "minAct": 3,
+      "maxAct": 4,
+      "insight": 45,
+      "seconds": 120,
+      "level": 4
+    },
+    {
+      "tier": 3,
+      "name": "Mastery",
+      "minAct": 5,
+      "maxAct": 6,
+      "insight": 80,
+      "seconds": 180,
+      "level": 6
+    },
+    {
+      "tier": 4,
+      "name": "War Doctrine",
+      "minAct": 7,
+      "maxAct": 7,
+      "insight": 130,
+      "seconds": 240,
+      "level": 7
+    },
+    {
+      "tier": 5,
+      "name": "Manner",
+      "minAct": 8,
+      "maxAct": 10,
+      "insight": 190,
+      "seconds": 300,
+      "level": 9
+    }
+  ],
+  "acts": [
+    {
+      "id": "act1",
+      "numeral": "I",
+      "name": "First Lanterns",
+      "tier": 1,
+      "teaches": [
+        "second farm",
+        "pond",
+        "fisherman",
+        "cottage",
+        "workplace assignment",
+        "basic economy"
+      ],
+      "banner": {
+        "character": "Old Bell",
+        "line": "Nine souls and one lamp lit. Two more lanterns and this place stops being a camp."
+      },
+      "summary": "A second field, still water, and a bed for every hand."
+    },
+    {
+      "id": "act2",
+      "numeral": "II",
+      "name": "A Village Worth Keeping",
+      "tier": 1,
+      "teaches": [
+        "population",
+        "supply",
+        "production stability",
+        "storage",
+        "workforce management"
+      ],
+      "banner": {
+        "character": "Maro the mason",
+        "line": "A village that cannot store a harvest is a village that watches it rot."
+      },
+      "summary": "Food that lasts, hands that stay, stores that hold."
+    },
+    {
+      "id": "act3",
+      "numeral": "III",
+      "name": "The First Horn",
+      "tier": 2,
+      "teaches": [
+        "scripted raid",
+        "walls",
+        "defenders",
+        "guard posts",
+        "rally point",
+        "defensive commands"
+      ],
+      "banner": {
+        "character": "Rue the turncloak",
+        "line": "Thornband on the north road. Not a raid yet - a rehearsal. Wall the line and prove it."
+      },
+      "summary": "The horn sounds for a reason. Hold the line."
+    },
+    {
+      "id": "act4",
+      "numeral": "IV",
+      "name": "Beyond the Lanterns",
+      "tier": 2,
+      "teaches": [
+        "wayfinders",
+        "frontier map",
+        "expeditions",
+        "landmarks",
+        "Starwatch Ridge",
+        "Southreach",
+        "Whisperwood"
+      ],
+      "banner": {
+        "character": "Fen the wayfinder",
+        "line": "The eastern road has gone quiet. Send a Wayfinder beyond the wall."
+      },
+      "summary": "Scout the frontier and claim what the chart can prove."
+    },
+    {
+      "id": "act5",
+      "numeral": "V",
+      "name": "Masters of the Manor",
+      "tier": 3,
+      "teaches": [
+        "forge",
+        "armory",
+        "school",
+        "specialists",
+        "orrery",
+        "better equipment",
+        "mature town identity"
+      ],
+      "banner": {
+        "character": "Sarella Emberwright",
+        "line": "Six trades under one roof, and every one of them held to a standard."
+      },
+      "summary": "Masters, specialists, and the Orrery turns."
+    },
+    {
+      "id": "act6",
+      "numeral": "VI",
+      "name": "Beyond the Chalk",
+      "tier": 3,
+      "teaches": [
+        "Frostwood",
+        "Plate",
+        "Emberglass",
+        "Deephole",
+        "advanced gathering professions",
+        "advanced production"
+      ],
+      "banner": {
+        "character": "Wren Waterwise",
+        "line": "Three tiers down, and further yet. The dark water keeps its own larder."
+      },
+      "summary": "Cold wood, white-hot plate, and water older than the manor."
+    },
+    {
+      "id": "act7",
+      "numeral": "VII",
+      "name": "War Comes Home",
+      "tier": 4,
+      "teaches": [
+        "advanced factions",
+        "siege threats",
+        "fire traps",
+        "tower targeting",
+        "defender posts",
+        "advanced fortification"
+      ],
+      "banner": {
+        "character": "Rue the turncloak",
+        "line": "They brought a ram. They brought it because timber gates are kind."
+      },
+      "summary": "Siege doctrine, target priority, and layered stone."
+    },
+    {
+      "id": "act8",
+      "numeral": "VIII",
+      "name": "Dawn of the Manner",
+      "tier": 5,
+      "teaches": [
+        "troop prestige",
+        "Sunken Chapel",
+        "Dawn Gate",
+        "campaign climax",
+        "first Great Work payoff"
+      ],
+      "banner": {
+        "character": "Issa the chart-keeper",
+        "line": "Twelve hands on the chalk. One gate. Dawn."
+      },
+      "summary": "Prestige, the Sunken Chapel, and the Dawn Gate."
+    },
+    {
+      "id": "act9",
+      "numeral": "IX",
+      "name": "The Pale Court",
+      "tier": 5,
+      "teaches": [
+        "Pale Court campaign",
+        "elite combined-arms raids",
+        "regional conflict",
+        "faction missions",
+        "late doctrine"
+      ],
+      "banner": {
+        "character": "Pale Envoy",
+        "line": "The Court does not raid. It arrives, and it stays."
+      },
+      "summary": "Elite combined arms and regional war."
+    },
+    {
+      "id": "act10",
+      "numeral": "X",
+      "name": "The Next Page",
+      "tier": 5,
+      "teaches": [
+        "Great Works",
+        "frontier development",
+        "legendary progression",
+        "repeatable challenges",
+        "doctrines",
+        "settlement perfection"
+      ],
+      "banner": {
+        "character": "Old Bell",
+        "line": "Every name I ever rang for is on this page. There is room left."
+      },
+      "summary": "Perfect the Manner."
+    }
+  ],
+  "characters": {
+    "Maro the mason": {
+      "craft": "builder",
+      "act": "I",
+      "domain": "construction"
+    },
+    "Wren Waterwise": {
+      "craft": "fisherman",
+      "act": "I",
+      "domain": "water"
+    },
+    "Old Bell": {
+      "craft": "shepherd",
+      "act": "I",
+      "domain": "village memory"
+    },
+    "Issa the chart-keeper": {
+      "craft": "scholar",
+      "act": "I",
+      "domain": "research"
+    },
+    "Tomm the herder": {
+      "craft": "farmer",
+      "act": "I",
+      "domain": "agriculture"
+    },
+    "Sarella Emberwright": {
+      "craft": "weaponsmith",
+      "act": "V",
+      "domain": "forge"
+    },
+    "Fen the wayfinder": {
+      "craft": "scout",
+      "act": "IV",
+      "domain": "exploration"
+    },
+    "Rue the turncloak": {
+      "craft": "warrior",
+      "act": "III",
+      "domain": "raids"
+    },
+    "Master Tam": {
+      "craft": "scholar",
+      "act": "V",
+      "domain": "education"
+    },
+    "Mooncleric": {
+      "craft": "healer",
+      "act": "II",
+      "domain": "recovery"
+    },
+    "Pale Envoy": {
+      "craft": "scholar",
+      "act": "IX",
+      "domain": "frontier politics"
+    },
+    "Pella Second-Lantern": {
+      "craft": "healer",
+      "act": "II",
+      "domain": "lanterns"
+    }
+  },
+  "tech": {
+    "stoneworking": {
+      "branch": "Construction",
+      "tier": 1,
+      "name": "Stoneworking",
+      "level": 2,
+      "insight": 20,
+      "cost": {
+        "wood": 40,
+        "gold": 20
+      },
+      "seconds": 60,
+      "requires": [],
+      "unlocks": [
+        "stone_quarry"
+      ],
+      "behavior": "Quarrymen cut real Stone, and paved roads carry the village faster.",
+      "description": "Unlock the Stone Quarry and a new mineral supply."
+    },
+    "road_masonry": {
+      "branch": "Construction",
+      "tier": 1,
+      "name": "Road Masonry",
+      "level": 2,
+      "insight": 30,
+      "cost": {
+        "stone": 40
+      },
+      "seconds": 90,
+      "requires": [
+        "stoneworking"
+      ],
+      "unlocks": [
+        "command:auto-pave"
+      ],
+      "behavior": "Builders convert heavily used dirt trails into permanent stone roads on their own.",
+      "description": "Pave established dirt paths. Friendly units travel 15% faster on stone."
+    },
+    "moon_orchards": {
+      "branch": "Survival",
+      "tier": 1,
+      "name": "Moon Orchards",
+      "level": 2,
+      "insight": 20,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60,
+      "requires": [],
+      "unlocks": [
+        "aura:moon-orchard"
+      ],
+      "behavior": "Every farm and grove feeds the village faster, and bellies stay full through lean nights.",
+      "description": "Cultivate a dependable new food source and steady the village larder."
+    },
+    "fieldcraft": {
+      "branch": "Warfare",
+      "tier": 1,
+      "name": "Fieldcraft",
+      "level": 2,
+      "insight": 20,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60,
+      "requires": [],
+      "unlocks": [
+        "command:trap-reset"
+      ],
+      "behavior": "Traps arm and reset faster, so a single charge stops mattering.",
+      "description": "Prepare traps and better melee weapons."
+    },
+    "forging": {
+      "branch": "Industry",
+      "tier": 1,
+      "name": "Forging",
+      "level": 2,
+      "insight": 20,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60,
+      "requires": [],
+      "unlocks": [
+        "recipe:forged-tools",
+        "runed-forgehammer",
+        "etched-armorkit"
+      ],
+      "behavior": "The forge refines master tools and armor kits the whole village can put to work.",
+      "description": "Improve the tools of smiths and armorers."
+    },
+    "education": {
+      "branch": "Society",
+      "tier": 1,
+      "name": "Education",
+      "level": 2,
+      "insight": 20,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60,
+      "requires": [],
+      "unlocks": [
+        "command:school-lessons",
+        "schoolroom",
+        "apprentice",
+        "primer"
+      ],
+      "behavior": "Apprentices train for less, reach their trade sooner, and the school opens its benches.",
+      "description": "Open a school and recruit apprentices."
+    },
+    "wayfinding": {
+      "branch": "Exploration",
+      "tier": 1,
+      "name": "Wayfinding",
+      "level": 2,
+      "insight": 20,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60,
+      "requires": [],
+      "unlocks": [
+        "command:scout-report"
+      ],
+      "behavior": "Scouts report which side the horns come from, and the warning says so.",
+      "description": "Train Wayfinders and read the frontier before it arrives."
+    },
+    "village_medicine": {
+      "branch": "Survival",
+      "tier": 2,
+      "name": "Village Medicine",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120,
+      "requires": [
+        "moon_orchards"
+      ],
+      "unlocks": [
+        "aura:recovery-bell",
+        "hymnal"
+      ],
+      "behavior": "Healers post a recovery bell, and the wounded mend far faster between horns.",
+      "description": "Train the choir and establish a recovery bell."
+    },
+    "organized_supply": {
+      "branch": "Survival",
+      "tier": 2,
+      "name": "Organized Supply",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 60
+      },
+      "seconds": 120,
+      "requires": [
+        "moon_orchards"
+      ],
+      "unlocks": [
+        "command:supply-ledger"
+      ],
+      "behavior": "Remote production keeps feeding the Manor instead of sitting at full stores.",
+      "description": "Ration and route the village larder so nothing spoils at the workplace."
+    },
+    "fortifications": {
+      "branch": "Construction",
+      "tier": 2,
+      "name": "Fortifications",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120,
+      "requires": [
+        "road_masonry"
+      ],
+      "unlocks": [
+        "command:wall-row",
+        "toolkit"
+      ],
+      "behavior": "Builders are equipped for large projects and lay a whole wall row from one pick.",
+      "description": "Replace exposed timber with stone defenses."
+    },
+    "organized_watch": {
+      "branch": "Warfare",
+      "tier": 2,
+      "name": "Organized Watch",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120,
+      "requires": [
+        "fieldcraft"
+      ],
+      "unlocks": [
+        "command:auto-post",
+        "doctrine:night-watch",
+        "squires-blade"
+      ],
+      "behavior": "Guard Posts fill themselves from idle defenders, warnings name the side, and squires carry a blade worth the name.",
+      "description": "Hold the perimeter with signal defenses and heavy weapons."
+    },
+    "smelting": {
+      "branch": "Industry",
+      "tier": 2,
+      "name": "Smelting",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120,
+      "requires": [
+        "forging"
+      ],
+      "unlocks": [
+        "recipe:plate-yield",
+        "smelter",
+        "iron-cap"
+      ],
+      "behavior": "Smelters pour plate for less, and the armor racks get what the wall needs.",
+      "description": "Recruit smelters to turn the workshop economy toward plate."
+    },
+    "apprenticeships": {
+      "branch": "Society",
+      "tier": 2,
+      "name": "Apprenticeships",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 120
+      },
+      "seconds": 120,
+      "requires": [
+        "education"
+      ],
+      "unlocks": [
+        "variant:promotion"
+      ],
+      "behavior": "Trained apprentices promote into specialist trades on their own.",
+      "description": "Bind apprentices to masters so trades pass down in the village."
+    },
+    "deep_woodcraft": {
+      "branch": "Exploration",
+      "tier": 2,
+      "name": "Deep Woodcraft",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120,
+      "requires": [
+        "wayfinding"
+      ],
+      "unlocks": [],
+      "behavior": "Woodcutters read the grain and take rarer heartwood from the same stands.",
+      "description": "Work the cold treeline without stripping it."
+    },
+    "waterway_maps": {
+      "branch": "Exploration",
+      "tier": 2,
+      "name": "Waterway Maps",
+      "level": 4,
+      "insight": 45,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120,
+      "requires": [
+        "wayfinding"
+      ],
+      "unlocks": [
+        "command:water-route",
+        "net"
+      ],
+      "behavior": "Charted water routes let expeditions run deeper, and divers work a proper net.",
+      "description": "Chart the black water before anyone swims it."
+    },
+    "field_medicine": {
+      "branch": "Survival",
+      "tier": 3,
+      "name": "Field Medicine",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "village_medicine"
+      ],
+      "unlocks": [
+        "aura:triage"
+      ],
+      "behavior": "Defenders who fall in a raid are carried to the chapel and returned to the line.",
+      "description": "Treat the wounded on the wall instead of after it."
+    },
+    "granary_planning": {
+      "branch": "Survival",
+      "tier": 3,
+      "name": "Granary Planning",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "organized_supply"
+      ],
+      "unlocks": [
+        "doctrine:full-granaries"
+      ],
+      "behavior": "Granaries hold a deeper reserve, so growth never stalls on a thin month.",
+      "description": "Plan the year's stores against the years you cannot predict."
+    },
+    "gate_engineering": {
+      "branch": "Construction",
+      "tier": 3,
+      "name": "Gate Engineering",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "fortifications"
+      ],
+      "unlocks": [
+        "command:gate-brace",
+        "doctrine:hold-the-line"
+      ],
+      "behavior": "Gates brace themselves while a ram works on them, buying seconds for the towers.",
+      "description": "Build gates that outlast the thing that is hitting them."
+    },
+    "watchtower_doctrine": {
+      "branch": "Warfare",
+      "tier": 3,
+      "name": "Watchtower Doctrine",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "organized_watch"
+      ],
+      "unlocks": [
+        "command:tower-priority"
+      ],
+      "behavior": "Towers shoot siege engines and breakers first instead of whoever is nearest.",
+      "description": "Give the towers a target list worth having."
+    },
+    "tool_standardization": {
+      "branch": "Industry",
+      "tier": 3,
+      "name": "Tool Standardization",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "smelting"
+      ],
+      "unlocks": [
+        "aura:repair-rationing",
+        "recipe:standard-tools",
+        "fine-tinkerkit"
+      ],
+      "behavior": "Repair crews spend far less timber for the same wall, and every tool in the manor fits one gauge.",
+      "description": "One tool, one standard, one price for a repair."
+    },
+    "frontier_commerce": {
+      "branch": "Society",
+      "tier": 3,
+      "name": "Frontier Commerce",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "apprenticeships"
+      ],
+      "unlocks": [
+        "doctrine:open-roads"
+      ],
+      "behavior": "Trade and caravans keep running while the village is busy elsewhere.",
+      "description": "Bring markets and specialist traders to town."
+    },
+    "frontier_surveying": {
+      "branch": "Exploration",
+      "tier": 3,
+      "name": "Frontier Surveying",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "deep_woodcraft"
+      ],
+      "unlocks": [
+        "command:camp-intel",
+        "cairnfield"
+      ],
+      "behavior": "The campaign table names faction, strength and prize at every camp, and cairns mark the surveyed road.",
+      "description": "Survey the frontier so expeditions stop being guesses."
+    },
+    "settlement_resilience": {
+      "branch": "Survival",
+      "tier": 4,
+      "name": "Settlement Resilience",
+      "level": 7,
+      "insight": 130,
+      "cost": {
+        "wood": 1200,
+        "gold": 900
+      },
+      "seconds": 240,
+      "requires": [
+        "field_medicine",
+        "granary_planning"
+      ],
+      "unlocks": [
+        "aura:recovery-drill"
+      ],
+      "behavior": "After a lost raid the village rebuilds faster and the people do not scatter.",
+      "description": "Make losing a raid a cost instead of a collapse."
+    },
+    "combined_arms": {
+      "branch": "Warfare",
+      "tier": 3,
+      "name": "Combined Arms",
+      "level": 6,
+      "insight": 80,
+      "cost": {
+        "wood": 600,
+        "gold": 400
+      },
+      "seconds": 180,
+      "requires": [
+        "watchtower_doctrine"
+      ],
+      "unlocks": [
+        "command:formation"
+      ],
+      "behavior": "Front-line units screen the archers instead of both chasing the same raider.",
+      "description": "Fight as one line: spears in front, bows behind."
+    },
+    "siege_doctrine": {
+      "branch": "Warfare",
+      "tier": 4,
+      "name": "Siege Doctrine",
+      "level": 7,
+      "insight": 130,
+      "cost": {
+        "wood": 1200,
+        "gold": 900
+      },
+      "seconds": 240,
+      "requires": [
+        "combined_arms"
+      ],
+      "unlocks": [
+        "command:siege-response",
+        "doctrine:hold-the-line"
+      ],
+      "behavior": "Rams and bombards are answered by the gate crews first, before anything else.",
+      "description": "Answer siege engines with a plan instead of a panic."
+    },
+    "master_workshops": {
+      "branch": "Industry",
+      "tier": 4,
+      "name": "Master Workshops",
+      "level": 7,
+      "insight": 130,
+      "cost": {
+        "wood": 1200,
+        "gold": 900
+      },
+      "seconds": 240,
+      "requires": [
+        "tool_standardization"
+      ],
+      "unlocks": [
+        "command:global-craft"
+      ],
+      "behavior": "One global crafting panel runs every workshop in the manor instead of visiting each.",
+      "description": "Put every trade under one ledger."
+    },
+    "guild_charters": {
+      "branch": "Society",
+      "tier": 4,
+      "name": "Guild Charters",
+      "level": 7,
+      "insight": 130,
+      "cost": {
+        "wood": 1200,
+        "gold": 900
+      },
+      "seconds": 240,
+      "requires": [
+        "frontier_commerce"
+      ],
+      "unlocks": [
+        "doctrine:master-craftsmen",
+        "aura:prestige"
+      ],
+      "behavior": "Chartered trade families train cheaper and their prestige carries further.",
+      "description": "Charter the trades so skill stays in the village."
+    },
+    "regional_outposts": {
+      "branch": "Exploration",
+      "tier": 4,
+      "name": "Regional Outposts",
+      "level": 7,
+      "insight": 130,
+      "cost": {
+        "wood": 1200,
+        "gold": 900
+      },
+      "seconds": 240,
+      "requires": [
+        "frontier_surveying"
+      ],
+      "unlocks": [
+        "command:outpost-supply",
+        "aura:region-development"
+      ],
+      "behavior": "Secured regions send real supply and real warnings back to the manor.",
+      "description": "Hold ground outside the wall and make it pay."
+    },
+    "civic_engineering": {
+      "branch": "Construction",
+      "tier": 4,
+      "name": "Civic Engineering",
+      "level": 7,
+      "insight": 130,
+      "cost": {
+        "wood": 1200,
+        "gold": 900
+      },
+      "seconds": 240,
+      "requires": [
+        "gate_engineering"
+      ],
+      "unlocks": [
+        "command:builder-queue"
+      ],
+      "behavior": "Builders keep working through their queue without being reassigned by hand.",
+      "description": "Give builders a standing order and let them run it."
+    },
+    "fortress_command": {
+      "branch": "Warfare",
+      "tier": 5,
+      "name": "Fortress Command",
+      "level": 9,
+      "insight": 190,
+      "cost": {
+        "wood": 2400,
+        "gold": 1800
+      },
+      "seconds": 300,
+      "requires": [
+        "siege_doctrine",
+        "settlement_resilience"
+      ],
+      "unlocks": [
+        "command:war-plan",
+        "doctrine:night-watch"
+      ],
+      "behavior": "Choose a war plan before the horn: which post holds, which post screens, what towers ignore.",
+      "description": "A manor that fights on paper before it fights on the wall."
+    },
+    "automated_crafting": {
+      "branch": "Industry",
+      "tier": 5,
+      "name": "Automated Crafting",
+      "level": 9,
+      "insight": 190,
+      "cost": {
+        "wood": 2400,
+        "gold": 1800
+      },
+      "seconds": 300,
+      "requires": [
+        "master_workshops"
+      ],
+      "unlocks": [
+        "command:auto-repair",
+        "doctrine:master-craftsmen"
+      ],
+      "behavior": "After a raid, masons walk the damage and put it back without being told.",
+      "description": "Let the manor mend itself between horns."
+    },
+    "civic_administration": {
+      "branch": "Society",
+      "tier": 5,
+      "name": "Civic Administration",
+      "level": 9,
+      "insight": 190,
+      "cost": {
+        "wood": 2400,
+        "gold": 1800
+      },
+      "seconds": 300,
+      "requires": [
+        "guild_charters"
+      ],
+      "unlocks": [
+        "command:town-meal",
+        "aura:civic-unity"
+      ],
+      "behavior": "Town meals and civic duties run to a standing schedule instead of asking daily.",
+      "description": "A settlement that governs itself on a calendar."
+    },
+    "far_horizon": {
+      "branch": "Exploration",
+      "tier": 5,
+      "name": "Far Horizon",
+      "level": 9,
+      "insight": 190,
+      "cost": {
+        "wood": 2400,
+        "gold": 1800
+      },
+      "seconds": 300,
+      "requires": [
+        "regional_outposts"
+      ],
+      "unlocks": [
+        "command:long-expedition",
+        "doctrine:frontier-reach"
+      ],
+      "behavior": "Expeditions reach Pale Coast and return with prizes no near road could carry.",
+      "description": "Send people where the chart ends."
+    },
+    "royal_forge_quarter": {
+      "branch": "Industry",
+      "tier": 5,
+      "name": "Royal Forge Quarter",
+      "level": 9,
+      "insight": 190,
+      "cost": {
+        "wood": 2400,
+        "gold": 1800
+      },
+      "seconds": 300,
+      "requires": [
+        "automated_crafting"
+      ],
+      "unlocks": [
+        "greatwork:royal-forge-quarter"
+      ],
+      "behavior": "Permits the Royal Forge Quarter, and every workshop refines at the quarter's rate.",
+      "description": "A quarter of forges under one charter."
+    },
+    "great_works": {
+      "branch": "Construction",
+      "tier": 5,
+      "name": "Great Works",
+      "level": 9,
+      "insight": 190,
+      "cost": {
+        "wood": 2400,
+        "gold": 1800
+      },
+      "seconds": 300,
+      "requires": [
+        "civic_engineering"
+      ],
+      "unlocks": [
+        "command:great-works-permit"
+      ],
+      "behavior": "Permits the first Great Work, and every later one costs less stone to start.",
+      "description": "The charter that lets a settlement build something that outlasts it."
+    },
+    "manor_legacy": {
+      "branch": "Society",
+      "tier": 5,
+      "name": "Manor Legacy",
+      "level": 9,
+      "insight": 190,
+      "cost": {
+        "wood": 2400,
+        "gold": 1800
+      },
+      "seconds": 300,
+      "requires": [
+        "civic_administration"
+      ],
+      "unlocks": [
+        "command:legacy-oath"
+      ],
+      "behavior": "Prestige no longer resets: the manor's record outlives the troop that set it.",
+      "description": "What the village remembers, the manor inherits."
+    }
+  },
+  "doctrines": [
+    {
+      "id": "hold-the-line",
+      "name": "Hold The Line",
+      "tech": "gate_engineering",
+      "tier": 3,
+      "text": "Walls, gates and defensive crews are held to a harder standard: braced gates, faster repairs, deeper reserves.",
+      "effects": [
+        "walls+",
+        "repair-fast"
+      ]
+    },
+    {
+      "id": "open-roads",
+      "name": "Open Roads",
+      "tech": "frontier_commerce",
+      "tier": 3,
+      "text": "Travel, trade and logistics improve. Roads carry more and caravans arrive sooner.",
+      "effects": [
+        "travel+",
+        "trade+"
+      ]
+    },
+    {
+      "id": "night-watch",
+      "name": "Night Watch",
+      "tech": "organized_watch",
+      "tier": 2,
+      "text": "Better raid warning and tower awareness. The horn names the side before it sounds.",
+      "effects": [
+        "warning+",
+        "tower-awareness"
+      ]
+    },
+    {
+      "id": "full-granaries",
+      "name": "Full Granaries",
+      "tech": "granary_planning",
+      "tier": 3,
+      "text": "Food stability and growth. Bellies stay full through a lean month.",
+      "effects": [
+        "growth+",
+        "food+"
+      ]
+    },
+    {
+      "id": "master-craftsmen",
+      "name": "Master Craftsmen",
+      "tech": "automated_crafting",
+      "tier": 5,
+      "text": "Crafting, construction and repair improvements across every trade in the manor.",
+      "effects": [
+        "craft+",
+        "repair-fast"
+      ]
+    },
+    {
+      "id": "frontier-reach",
+      "name": "Frontier Reach",
+      "tech": "far_horizon",
+      "tier": 5,
+      "text": "Scouting and expedition improvements. The frontier gives more and costs less.",
+      "effects": [
+        "scout+",
+        "expedition+"
+      ]
+    }
+  ],
+  "doctrineSlots": 2,
+  "regions": {
+    "starwatch-ridge": {
+      "name": "Starwatch Ridge",
+      "faction": "pale-host",
+      "x": 45,
+      "y": 1,
+      "text": "Chalk marks on the high stones: horn counts and the names of watchmen who stood here too long.",
+      "benefit": "Better raid warning and attack-direction intelligence.",
+      "developsTo": "Watch posts feed the manor warnings before the horn, and hold the ridge road open."
+    },
+    "whisperwood": {
+      "name": "Whisperwood",
+      "faction": "thornband",
+      "x": 46,
+      "y": 10,
+      "text": "The pines carry sound farther than they should. Wayfinders leave paired cuts on safe trunks.",
+      "benefit": "Rare wood and the advanced forest professions.",
+      "developsTo": "Heartwood and the wardens who can read it."
+    },
+    "ashfall-march": {
+      "name": "Ashfall March",
+      "faction": "cinder-clan",
+      "x": 45,
+      "y": 26,
+      "text": "Charcoal lies under the grass in black seams. The ground remembers every fire asked to burn too long.",
+      "benefit": "Industrial resources: ore, timber and the forge fuel chain.",
+      "developsTo": "The Ember Legion's own supply lines, turned."
+    },
+    "blackwater-mouth": {
+      "name": "Blackwater Mouth",
+      "faction": "pale-host",
+      "x": 2,
+      "y": 38,
+      "text": "Broken pilings vanish beneath the black current. Fishers tie a white thread to the first post.",
+      "benefit": "Fishing and water expeditions.",
+      "developsTo": "Deep soundings and the boats that carry them."
+    },
+    "southreach": {
+      "name": "Southreach Crossing",
+      "faction": "thornband",
+      "x": 13,
+      "y": 38,
+      "text": "Four old roads meet under one weathered marker, and every road arrives owing something.",
+      "benefit": "More traders and caravans.",
+      "developsTo": "A crossroads that pays for the privilege."
+    },
+    "dawnfields": {
+      "name": "Dawnfields",
+      "faction": "pale-host",
+      "x": 31,
+      "y": 38,
+      "text": "The eastern fields take the first light over the chalk. The gate faces them by design.",
+      "benefit": "Grain, growth and the settlement's food security.",
+      "developsTo": "Fields that feed the manor through a lost raid."
+    },
+    "pale-coast": {
+      "name": "Pale Coast",
+      "faction": "pale-court",
+      "x": 49,
+      "y": 40,
+      "text": "Salt grass and precise rows of banners. Supplies are arranged by rank.",
+      "benefit": "Late-game Pale Court progression and the Court's own prizes.",
+      "developsTo": "The road the Court would rather you did not hold."
+    }
+  },
+  "regionStates": [
+    "unseen",
+    "scouted",
+    "contested",
+    "secured",
+    "developed"
+  ],
+  "greatWorks": {
+    "stone-road-network": {
+      "building": "stone-road",
+      "name": "Stone Road Network",
+      "tech": "road_masonry",
+      "text": "Changes the transport system: every paved trail becomes a real supply route."
+    },
+    "city-wall-project": {
+      "building": "city-wall",
+      "name": "City Wall Project",
+      "tech": "fortifications",
+      "text": "Changes the settlement's defense structure: the wall line becomes continuous and self-repairing."
+    },
+    "royal-forge-quarter": {
+      "building": "forge-quarter",
+      "name": "Royal Forge Quarter",
+      "tech": "royal_forge_quarter",
+      "text": "Changes crafting and industry: every workshop refines through the quarter."
+    },
+    "grand-watchtower": {
+      "building": "grand-watchtower",
+      "name": "Grand Watchtower",
+      "tech": "watchtower_doctrine",
+      "text": "Improves warning, targeting and frontier intelligence for the whole manor."
+    },
+    "dawn-gate": {
+      "building": "dawn-gate",
+      "name": "Dawn Gate",
+      "tech": "great_works",
+      "text": "Campaign milestone and settlement visual transformation."
+    },
+    "manner-citadel": {
+      "building": "manner-citadel",
+      "name": "Manner Citadel",
+      "tech": "fortress_command",
+      "text": "Major endgame transformation of the settlement."
+    },
+    "grand-granary": {
+      "building": "grand-granary",
+      "name": "Grand Granary",
+      "tech": "granary_planning",
+      "text": "Deep reserve storage that changes supply stability."
+    },
+    "manor-gardens": {
+      "building": "manor-gardens",
+      "name": "Manor Gardens",
+      "tech": "moon_orchards",
+      "text": "Growth and recovery for the whole settlement."
+    },
+    "market-square": {
+      "building": "market-square",
+      "name": "Grand Market Square",
+      "tech": "frontier_commerce",
+      "text": "Changes trade: frontier goods reach the manor faster and pay better."
+    },
+    "monument": {
+      "building": "monument",
+      "name": "Monument of the Manner",
+      "tech": "manor_legacy",
+      "text": "Carries prestige forward instead of resetting it."
+    }
+  },
+  "board": {
+    "slots": [
+      "settlement",
+      "defense",
+      "frontier"
+    ],
+    "refreshSeconds": 240,
+    "templates": [
+      {
+        "id": "caravan",
+        "slot": "settlement",
+        "name": "Supply the Caravan",
+        "character": "Pale Envoy",
+        "text": "A road cart needs timber before moonrise.",
+        "objective": {
+          "kind": "gather",
+          "resource": "wood",
+          "amount": 120
+        },
+        "reward": {
+          "gold": 90
+        },
+        "insight": 8,
+        "reputation": 1
+      },
+      {
+        "id": "goods",
+        "slot": "settlement",
+        "name": "Produce the Goods",
+        "character": "Sarella Emberwright",
+        "text": "The order book has more on it than the forge.",
+        "objective": {
+          "kind": "gather",
+          "resource": "gold",
+          "amount": 150
+        },
+        "reward": {
+          "wood": 120
+        },
+        "insight": 8,
+        "reputation": 1
+      },
+      {
+        "id": "training",
+        "slot": "settlement",
+        "name": "Train the Watch",
+        "character": "Rue the turncloak",
+        "text": "Six new faces, no drills yet.",
+        "objective": {
+          "kind": "recruit",
+          "type": "warrior",
+          "count": 2
+        },
+        "reward": {
+          "gold": 70,
+          "food": 40
+        },
+        "insight": 10,
+        "reputation": 1
+      },
+      {
+        "id": "repair",
+        "slot": "defense",
+        "name": "Mend the Breach",
+        "character": "Maro the mason",
+        "text": "There is a hole in the wall and it will not keep.",
+        "objective": {
+          "kind": "maintain_resource",
+          "resource": "wood",
+          "amount": 100
+        },
+        "reward": {
+          "stone": 60
+        },
+        "insight": 10,
+        "reputation": 1
+      },
+      {
+        "id": "holdout",
+        "slot": "defense",
+        "name": "Hold Through the Horn",
+        "character": "Rue the turncloak",
+        "text": "Let them come to the gate and hold it.",
+        "objective": {
+          "kind": "survive_raid",
+          "count": 1
+        },
+        "reward": {
+          "gold": 140
+        },
+        "insight": 12,
+        "reputation": 2
+      },
+      {
+        "id": "archetype",
+        "slot": "defense",
+        "name": "Break the Archetype",
+        "character": "Rue the turncloak",
+        "text": "Kill the thing that teaches the rest.",
+        "objective": {
+          "kind": "kill_enemy",
+          "enemy": "breaker",
+          "count": 2
+        },
+        "reward": {
+          "gold": 130
+        },
+        "insight": 12,
+        "reputation": 2
+      },
+      {
+        "id": "expedition",
+        "slot": "frontier",
+        "name": "Run the Expedition",
+        "character": "Fen the wayfinder",
+        "text": "Three days out, if the chart holds.",
+        "objective": {
+          "kind": "complete_expedition",
+          "count": 1
+        },
+        "reward": {
+          "gold": 160
+        },
+        "insight": 14,
+        "reputation": 2
+      },
+      {
+        "id": "landmark",
+        "slot": "frontier",
+        "name": "Scout the Landmark",
+        "character": "Fen the wayfinder",
+        "text": "Somebody has to go and look at it.",
+        "objective": {
+          "kind": "scout_region",
+          "region": "starwatch-ridge",
+          "count": 1
+        },
+        "reward": {
+          "insight": 30
+        },
+        "insight": 0,
+        "reputation": 1
+      },
+      {
+        "id": "deliver",
+        "slot": "frontier",
+        "name": "Deliver the Materials",
+        "character": "Pale Envoy",
+        "text": "The outpost wants it by the new moon.",
+        "objective": {
+          "kind": "deliver_resources",
+          "resource": "stone",
+          "amount": 80
+        },
+        "reward": {
+          "gold": 150
+        },
+        "insight": 12,
+        "reputation": 2
+      }
+    ]
+  }
+}
