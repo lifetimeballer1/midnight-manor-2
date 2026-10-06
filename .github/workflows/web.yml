@@ -2,6 +2,8 @@ name: Web build + Pages
 
 on:
   push:
+    branches: [main, gbt]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -45,6 +47,17 @@ jobs:
       - name: Verify assets
         run: python3 scripts/verify_assets.py
 
+      - name: Run Python tests
+        run: python3 -m pytest -q
+
+      - name: Run gameplay regression suites
+        run: |
+          godot --headless --path . --script res://tests/test_village.gd -- --no-save
+          godot --headless --path . --script res://tests/test_game_scene.gd -- --no-save
+          godot --headless --path . --script res://tests/test_workers_defense.gd -- --no-save
+          godot --headless --path . --script res://tests/test_living_village.gd -- --no-save
+          godot --headless --path . --script res://tests/test_update2_scene.gd -- --no-save
+
       - name: Export Web
         run: |
           mkdir -p build/web
@@ -63,12 +76,14 @@ jobs:
           echo "Safari guard PASS: single-threaded web build"
 
       - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
 
   deploy:
     needs: export
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
