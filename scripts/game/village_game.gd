@@ -51,6 +51,8 @@ var selected_unit: int = -1
 var build_type: String = ""
 var moving_id: int = -1
 var paving: bool = false
+var rallying: bool = false
+var wall_drag_start := Vector2i(-1, -1)
 var preview_tile := Vector2i(-1, -1)
 var ghost_signature: String = ""
 var view_revision: int = -1
@@ -811,6 +813,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	workers_button = _action_button("People", _open_workers, grid)
 	_action_button("Village Path", _open_panel.bind("quests"), grid)
 	_action_button("Research", _open_panel.bind("research"), grid)
+	_action_button("Defense", _open_panel.bind("defense"), grid)
 	_action_button("⟲ Orbit", _orbit_left, grid)
 	_action_button("⟳ Orbit", _orbit_right, grid)
 	_action_button("Pause / Save", _open_pause, grid)
@@ -1092,6 +1095,37 @@ func _open_panel(which: String) -> void:
 				button.disabled = state != "READY"
 				button.tooltip_text = str(node["description"]) if reason.is_empty() else reason
 				research_sheet_buttons[key] = button
+		"defense":
+			_label("FORTRESS COMMAND", side_content, true)
+			var intel: Dictionary = sim.raid_preview()
+			var pieces: Array[String] = []
+			for kind in intel["composition"]:
+				pieces.append("%d %s" % [int(intel["composition"][kind]), str(kind).capitalize()])
+			_label("Next wave %d\nApproach: %s\nExpected: %s" % [int(intel["wave"]), ", ".join(intel["sides"]), ", ".join(pieces)], side_content)
+			var rally_text: String = "Not placed"
+			if sim.rally_point.x >= 0:
+				rally_text = "Tile %d,%d" % [floori(sim.rally_point.x), floori(sim.rally_point.y)]
+			var rally_btn: Button = _button("Place Rally Point / " + rally_text, _toggle_rally, side_content)
+			rally_btn.disabled = "fortifications" not in sim.living.discoveries
+			rally_btn.tooltip_text = "Research Fortifications first." if rally_btn.disabled else "Choose open ground where rally-duty defenders assemble."
+			_label("DEFENDER DUTIES", side_content, true)
+			for u: Dictionary in sim.units:
+				if sim.troop_specs[u["type"]]["role"] != "combat":
+					continue
+				_label("%s #%d / %s" % [str(sim.troop_specs[u["type"]]["name"]), int(u["id"]), str(u.get("defense_priority", "patrol")).capitalize()], side_content, true)
+				var duty_row := HBoxContainer.new()
+				side_content.add_child(duty_row)
+				for priority in Sim.DEFENSE_PRIORITIES:
+					var duty: Button = _button(str(priority).capitalize(), _set_defender_priority.bind(int(u["id"]), str(priority)), duty_row)
+					duty.disabled = priority == "rally" and sim.rally_point.x < 0
+			if not sim.last_raid_report.is_empty():
+				var report: Dictionary = sim.last_raid_report
+				_label("LAST BATTLE", side_content, true)
+				_label("%s / Wave %d\nEnemies defeated %d / Buildings damaged %d / Destroyed %d\nDefenders knocked out %d / Duration %.0fs\nReward: %s" % [
+					"VICTORY" if bool(report.get("victory", false)) else "DEFEAT", int(report.get("wave", 0)),
+					int(report.get("enemies_defeated", 0)), int(report.get("buildings_damaged", 0)), int(report.get("buildings_destroyed", 0)),
+					int(report.get("defenders_knocked_out", 0)), float(report.get("duration", 0.0)), _cost_text(report.get("reward", {}))
+				], side_content)
 		"workers":
 			_build_inspector()
 		"unit":
@@ -1136,6 +1170,12 @@ func _build_catalog() -> void:
 			var cap: int = sim.building_limit(type_name)
 			if type_name == "stone_quarry" and "stoneworking" not in sim.living.discoveries:
 				lock = "Research Stoneworking first."
+			elif type_name in ["guard_post", "mason_yard"] and "fortifications" not in sim.living.discoveries:
+				lock = "Research Fortifications first."
+			elif type_name == "oathstone" and "gate_engineering" not in sim.living.discoveries:
+				lock = "Research Gate Engineering first."
+			elif type_name == "forge" and "watchtowers" not in sim.living.discoveries:
+				lock = "Research Watchtower Doctrine first."
 			elif sim.village_level() < int(spec.get("minLevel", 1)):
 				lock = "Requires village level %d." % int(spec.get("minLevel", 1))
 			elif owned >= cap:
