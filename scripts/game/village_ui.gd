@@ -28,9 +28,9 @@ const BLOOD := Color("8f3b34")
 
 const CATEGORIES: Array[String] = ["Economy", "Homes", "Defense", "Roads"]
 const CATEGORY_TYPES: Dictionary = {
-	"Economy": ["farm", "lumber", "timber_yard", "mine", "pond", "sawmill", "stone_quarry"],
+	"Economy": ["farm", "lumber", "timber_yard", "mine", "pond", "sawmill", "stone_quarry", "mason_yard", "forge"],
 	"Homes": ["cottage", "pasture", "storehouse"],
-	"Defense": ["barracks", "tower", "archer_tower", "trap", "wall", "stonewall", "gate"],
+	"Defense": ["barracks", "tower", "archer_tower", "guard_post", "oathstone", "trap", "wall", "stonewall", "gate"],
 	"Roads": [],
 }
 
