@@ -134,7 +134,7 @@ func body(text: String, parent: Node, size: int = 14) -> Label:
 	return made
 
 
-func button(text: String, action: Callable, parent: Node, minimum: float = 36.0) -> Button:
+func button(text: String, action: Callable, parent: Node, minimum: float = 44.0) -> Button:
 	var made := Button.new()
 	made.text = text
 	made.focus_mode = Control.FOCUS_NONE

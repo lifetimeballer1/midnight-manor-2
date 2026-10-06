@@ -307,6 +307,154 @@ func build(type_name: String, x: int, y: int) -> bool:
 	return true
 
 
+func _scaled_cost(cost: Dictionary, count: int) -> Dictionary:
+	var total: Dictionary = {}
+	for resource: Variant in cost:
+		total[resource] = int(cost[resource]) * count
+	return total
+
+
+func build_row_reason(type_name: String, tiles: Array[Vector2i]) -> String:
+	if type_name not in ["wall", "stonewall"]:
+		return "Wall-row placement is only for walls."
+	if tiles.is_empty():
+		return "Choose at least one wall tile."
+	var same_x: bool = true
+	var same_y: bool = true
+	var unique: Dictionary = {}
+	for tile: Vector2i in tiles:
+		same_x = same_x and tile.x == tiles[0].x
+		same_y = same_y and tile.y == tiles[0].y
+		var key := "%d,%d" % [tile.x, tile.y]
+		if unique.has(key):
+			return "Wall row contains the same tile twice."
+		unique[key] = true
+	if not same_x and not same_y:
+		return "Drag a straight wall row."
+	var sorted: Array[Vector2i] = tiles.duplicate()
+	sorted.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return (a.y < b.y) if same_x else (a.x < b.x))
+	for index in range(1, sorted.size()):
+		if absi(sorted[index].x - sorted[index - 1].x) + absi(sorted[index].y - sorted[index - 1].y) != 1:
+			return "Wall row must be continuous."
+	var spec: Dictionary = building_specs.get(type_name, {})
+	if spec.is_empty() or int(spec.get("size", 1)) != 1:
+		return "This wall cannot be placed as a row."
+	var limit: Variant = spec.get("maxCount", 999)
+	if limit is Array:
+		limit = limit[mini(village_level() - 1, limit.size() - 1)]
+	var standing: int = 0
+	for b: Dictionary in buildings:
+		if str(b["type"]) == type_name and float(b["hp"]) > 0:
+			standing += 1
+	if standing + tiles.size() > int(limit):
+		return "Building limit reached."
+	var total_cost: Dictionary = _scaled_cost(building_cost(type_name), tiles.size())
+	if not _affordable(total_cost):
+		return "Not enough resources for %d wall segments." % tiles.size()
+	for tile: Vector2i in tiles:
+		var reason: String = build_reason(type_name, tile.x, tile.y)
+		if not reason.is_empty():
+			return reason
+	return ""
+
+
+func build_row(type_name: String, tiles: Array[Vector2i]) -> bool:
+	notice = build_row_reason(type_name, tiles)
+	if not notice.is_empty():
+		return false
+	_spend(_scaled_cost(building_cost(type_name), tiles.size()))
+	for tile: Vector2i in tiles:
+		buildings.append(_new_building(type_name, tile.x, tile.y, true))
+	revision += 1
+	_invalidate()
+	notice = "Raising %d %s segments." % [tiles.size(), str(building_specs[type_name]["name"])]
+	return true
+
+
+func _wall_match(x: int, y: int, type_name: String, tier: int) -> int:
+	for b: Dictionary in buildings:
+		if int(b["x"]) == x and int(b["y"]) == y and str(b["type"]) == type_name and int(b["tier"]) == tier and float(b["hp"]) > 0:
+			return int(b["id"])
+	return -1
+
+
+func wall_row(id: int) -> Array[int]:
+	var selected: Dictionary = get_building(id)
+	if selected.is_empty() or str(selected["type"]) not in ["wall", "stonewall"] or int(selected["size"]) != 1:
+		return []
+	var type_name: String = str(selected["type"])
+	var tier: int = int(selected["tier"])
+	var x: int = int(selected["x"])
+	var y: int = int(selected["y"])
+	var horizontal: Array[int] = [id]
+	var vertical: Array[int] = [id]
+	for direction in [-1, 1]:
+		var cursor: int = x + direction
+		while cursor >= 0 and cursor < 20:
+			var found: int = _wall_match(cursor, y, type_name, tier)
+			if found < 0:
+				break
+			if direction < 0: horizontal.push_front(found)
+			else: horizontal.append(found)
+			cursor += direction
+	for direction in [-1, 1]:
+		var cursor: int = y + direction
+		while cursor >= 0 and cursor < 16:
+			var found: int = _wall_match(x, cursor, type_name, tier)
+			if found < 0:
+				break
+			if direction < 0: vertical.push_front(found)
+			else: vertical.append(found)
+			cursor += direction
+	return horizontal if horizontal.size() >= vertical.size() else vertical
+
+
+func upgrade_wall_row_reason(id: int) -> String:
+	var ids: Array[int] = wall_row(id)
+	if ids.size() <= 1:
+		return "No matching wall row is connected here."
+	var total: Dictionary = {}
+	for wall_id: int in ids:
+		var b: Dictionary = get_building(wall_id)
+		if float(b["remaining"]) > 0 or float(b["hp"]) <= 0:
+			return "Finish or repair the whole row first."
+		var spec: Dictionary = building_specs[b["type"]]
+		if int(b["tier"]) >= spec["tiers"].size():
+			return "This row is already at maximum tier."
+		var next: int = int(b["tier"]) + 1
+		var required: int = int(spec.get("tierGates", {}).get(str(next), 1))
+		if village_level() < required:
+			return "Requires village level %d." % required
+		var cost: Dictionary = building_cost(str(b["type"]), next)
+		for resource: Variant in cost:
+			total[resource] = int(total.get(resource, 0)) + int(cost[resource])
+	return "" if _affordable(total) else "Not enough resources to upgrade the whole row."
+
+
+func upgrade_wall_row(id: int) -> bool:
+	notice = upgrade_wall_row_reason(id)
+	if not notice.is_empty():
+		return false
+	var ids: Array[int] = wall_row(id)
+	var total: Dictionary = {}
+	for wall_id: int in ids:
+		var b: Dictionary = get_building(wall_id)
+		var cost: Dictionary = building_cost(str(b["type"]), int(b["tier"]) + 1)
+		for resource: Variant in cost:
+			total[resource] = int(total.get(resource, 0)) + int(cost[resource])
+	_spend(total)
+	for wall_id: int in ids:
+		var b: Dictionary = get_building(wall_id)
+		b["tier"] = int(b["tier"]) + 1
+		b["max_hp"] = float(building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]["hp"])
+		b["remaining"] = float(building_specs[b["type"]]["buildSeconds"])
+		b["hp"] = float(b["max_hp"])
+	revision += 1
+	_invalidate()
+	notice = "Wall row upgrade underway / %d segments." % ids.size()
+	return true
+
+
 func move_building(id: int, x: int, y: int) -> bool:
 	var b: Dictionary = get_building(id)
 	if b.is_empty() or b["remaining"] > 0:
@@ -1223,7 +1371,9 @@ func _fighter(u: Dictionary, dt: float) -> void:
 	if gap <= _stat(u, "range"):
 		u["phase"] = "attack"
 		if u["cooldown"] <= 0:
-			enemy["hp"] -= _stat(u, "damage")
+			var damage: float = _stat(u, "damage")
+			enemy["hp"] -= damage
+			events.append({"kind": "hit", "x": float(enemy["x"]), "y": float(enemy["y"]), "amount": damage, "friendly": false})
 			u["cooldown"] = 1.0
 			if u["type"] == "archer":
 				_shot(here, position_of(enemy))
@@ -1245,15 +1395,42 @@ func start_raid() -> bool:
 	return true
 
 
-func _active_faction() -> Dictionary:
-	# Faction identity is campaign progression, not a colour swap: each has its
-	# own roster shape and stat profile.
+func _faction_for_wave(wave_number: int) -> Dictionary:
 	var chosen: Dictionary = {}
 	for entry: Dictionary in world_specs.get("enemyFactions", []):
-		if wave < int(entry.get("minWave", 1)): continue
+		if wave_number < int(entry.get("minWave", 1)): continue
 		if village_level() < int(entry.get("minLevel", 1)): continue
 		chosen = entry
 	return chosen
+
+
+func _active_faction() -> Dictionary:
+	return _faction_for_wave(maxi(1, wave))
+
+
+func faction_color(id: String) -> Color:
+	for entry: Dictionary in world_specs.get("enemyFactions", []):
+		if str(entry.get("id", "")) == id:
+			return Color(str(entry.get("color", "#997747")))
+	return Color("997747")
+
+
+func raid_faction_name() -> String:
+	if raid_active and not enemies.is_empty():
+		var faction_id: String = str(enemies[0].get("faction", "thornband"))
+		for entry: Dictionary in world_specs.get("enemyFactions", []):
+			if str(entry.get("id", "")) == faction_id:
+				return str(entry.get("name", "Raiders"))
+	var next_faction: Dictionary = _faction_for_wave(maxi(1, wave + 1))
+	return str(next_faction.get("name", "Raiders"))
+
+
+func raid_direction() -> String:
+	var wave_number: int = wave if raid_active else wave + 1
+	var count: int = mini(int(world_specs["homeRaids"].get("maxCount", 8)), wave_number + 1)
+	if count >= 4:
+		return "ALL SIDES"
+	return ["WEST", "EAST", "NORTH", "SOUTH"][(wave_number - 1) % 4]
 
 
 func _role_stats(role: String) -> Dictionary:
@@ -1315,6 +1492,13 @@ func _tower_target(origin: Vector2) -> Dictionary:
 
 func _raid_tick(dt: float) -> void:
 	if not raid_active:
+		# Ambient raids stay out of the onboarding lane until the Chronicle has
+		# taught defenses. Manual/test and scripted warnings still proceed.
+		if not raid_warning and elapsed < 600.0 and "the-first-horn" not in completed_quests:
+			# Give a new player ten active minutes to learn the village unless the
+			# Chronicle deliberately summons the first defense lesson sooner.
+			next_raid_at = maxf(next_raid_at, elapsed + 90.0)
+			return
 		if _hall().get("hp", 0) > 0 and elapsed >= next_raid_at - 25:
 			raid_warning = true
 		if raid_warning and elapsed >= next_raid_at:
@@ -1329,9 +1513,11 @@ func _raid_tick(dt: float) -> void:
 			continue
 		var enemy: Dictionary = _tower_target(center(b))
 		if not enemy.is_empty() and center(b).distance_to(position_of(enemy)) <= float(stats["range"]):
-			enemy["hp"] -= float(stats["damage"])
+			var damage: float = float(stats["damage"])
+			enemy["hp"] -= damage
 			b["cooldown"] = (3.0 if chronicle.effect("command:trap-reset") else 5.0) if b["type"] == "trap" else 1.0
 			_shot(center(b), position_of(enemy))
+			events.append({"kind": "hit", "x": float(enemy["x"]), "y": float(enemy["y"]), "amount": damage, "friendly": false})
 	for enemy in enemies:
 		if enemy["hp"] <= 0:
 			continue
@@ -1347,7 +1533,9 @@ func _raid_tick(dt: float) -> void:
 			enemy["fx"] = float(opponent["x"])
 			enemy["fy"] = float(opponent["y"])
 			if enemy["cooldown"] <= 0:
-				opponent["hp"] = maxf(0, float(opponent["hp"]) - (8 + wave * 2) * float(_role_stats(str(enemy.get("role", "raider"))).get("damage", 1.0)))
+				var damage: float = (8 + wave * 2) * float(_role_stats(str(enemy.get("role", "raider"))).get("damage", 1.0))
+				opponent["hp"] = maxf(0, float(opponent["hp"]) - damage)
+				events.append({"kind": "hit", "x": float(opponent["x"]), "y": float(opponent["y"]), "amount": damage, "friendly": true})
 				enemy["cooldown"] = 1
 			continue
 		var objective: Dictionary = _hall()
@@ -1370,7 +1558,9 @@ func _raid_tick(dt: float) -> void:
 				# Gate Engineering braces a gate while a ram works on it.
 				if str(objective["type"]) == "gate" and chronicle.effect("command:gate-brace"):
 					wall_mult *= 0.6
-				objective["hp"] = maxf(0, float(objective["hp"]) - (8 + wave * 2) * wall_mult)
+				var damage: float = (8 + wave * 2) * wall_mult
+				objective["hp"] = maxf(0, float(objective["hp"]) - damage)
+				events.append({"kind": "hit", "x": center(objective).x, "y": center(objective).y, "amount": damage, "friendly": true})
 				enemy["cooldown"] = 1
 				if objective["hp"] <= 0:
 					raid_stats["built_lost"] = int(raid_stats["built_lost"]) + 1
@@ -1383,6 +1573,7 @@ func _raid_tick(dt: float) -> void:
 	for index in range(enemies.size() - 1, -1, -1):
 		if enemies[index]["hp"] <= 0:
 			paths.erase(int(enemies[index]["id"]))
+			events.append({"kind": "defeat", "x": float(enemies[index]["x"]), "y": float(enemies[index]["y"]), "friendly": false})
 			var role: String = str(enemies[index].get("role", "raider"))
 			raid_stats["kills"] = int(raid_stats["kills"]) + 1
 			var by_role: Dictionary = raid_stats["kills_by"]
@@ -1423,6 +1614,7 @@ func _finish_raid(victory: bool) -> void:
 		notice = "The Manor fell / salvage Wood waits. Repair and rise again."
 		_reward({"wood": 80})
 	raid_stats["seconds_held"] = maxf(held, 0.0)
+	events.append({"kind": "raid_result", "victory": victory})
 
 
 func _reward(rewards: Dictionary) -> void:
