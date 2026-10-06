@@ -28,6 +28,17 @@ func _run() -> void:
 	game._enter_village()
 	await process_frame
 	check(game.started and not game.sim.paused, "enter actually starts village")
+	game.music.score = game.music._score_data({"echo": {"seconds": 0.24, "gain": 0.12}})
+	game.music._apply_echo()
+	var music_bus: int = AudioServer.get_bus_index("Music")
+	var echo_delay: AudioEffectDelay = null
+	if music_bus >= 0:
+		for effect_index in AudioServer.get_bus_effect_count(music_bus):
+			var effect: AudioEffect = AudioServer.get_bus_effect(music_bus, effect_index)
+			if effect is AudioEffectDelay:
+				echo_delay = effect
+				break
+	check(echo_delay != null and is_equal_approx(echo_delay.tap1_delay_ms, 240.0), "music echo seconds convert to 240ms")
 	var picked: Vector2 = game.pick_ground(game.camera.unproject_position(game.world_position(Vector2(1.5, 1.5))))
 	check(picked.distance_to(Vector2(1.5, 1.5)) < 0.001, "perspective-independent world picking on Y-up ground")
 	game._choose_build("farm")
@@ -42,6 +53,19 @@ func _run() -> void:
 	game._confirm_placement()
 	check(game.sim.buildings.size() == 10 and game.sim.resources["wood"] == wood - 55, "UI confirmation creates real building and charges exact cost")
 	check(game.building_views.size() == 10, "building model updates after confirmed state change")
+	game._open_panel("build")
+	check(game.build_cards.has("farm") and game.build_cards["farm"].disabled, "shop disables farm at the level-1 cap")
+	check(game.build_cards.has("storehouse") and game.build_cards["storehouse"].disabled, "shop reflects minimum village-level locks")
+	game._close_panel()
+	var attacked: Dictionary = game.sim.buildings[0]
+	var attacked_view: Dictionary = game.building_views[int(attacked["id"])]
+	attacked_view["danger_until"] = game.sim.elapsed + 1.0
+	game.details.update(game, 0.0)
+	check(attacked_view["label"].modulate == Color("ff8270"), "attack warning turns building label red")
+	game.sim.elapsed += 2.0
+	game._update_actors(0.0)
+	game.details.update(game, 0.0)
+	check(attacked_view["label"].modulate == Color("d4b275"), "attack warning label returns to gold")
 	game.selected_building = int(game.sim.buildings[1]["id"])
 	game._open_panel("building")
 	game.sim.buildings[1]["reserve"] = 0
@@ -62,7 +86,11 @@ func _run() -> void:
 	var elapsed: float = game.sim.elapsed
 	game._process(1)
 	check(game.sim.elapsed == elapsed and game.sim.paused, "pause button stops20Hz clock")
-	game._close_panel()
+	game._toggle_more()
+	game._process(0.1)
+	check(not game.paused and not game.sim.paused and game.more_sheet.visible, "opening More from pause resumes the simulation")
+	game._toggle_more()
+	elapsed = game.sim.elapsed
 	game._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
 	game._process(1)
 	check(game.sim.elapsed == elapsed, "focus loss does not produce offline progress")
