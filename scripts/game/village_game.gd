@@ -66,6 +66,11 @@ var left_pressed: bool = false
 var left_dragged: bool = false
 var press_point := Vector2.ZERO
 var last_pointer := Vector2.ZERO
+var touches: Dictionary = {}
+var pinch_dist: float = 0.0
+var pinch_zoom: float = 0.0
+var pinch_mid := Vector2.ZERO
+var pinch_has_mid: bool = false
 var save_blocked: bool = false
 var save_path: String = "user://village-v1.json"
 var target := Vector3(0, 0, 0)
@@ -731,7 +736,7 @@ func _ui() -> void:
 	welcome.add_child(intro)
 	ui.heading("THE MANOR STANDS", intro)
 	ui.body("Build your village beneath the moon.\nGather, grow, and hold the walls.", intro)
-	ui.body("Drag to pan / wheel to zoom / Q-E to orbit.\nBuild previews never spend resources until you confirm.\nClick a building to collect, upgrade, move or repair.\nSelect a fighter, then click ground to give orders.", intro)
+	ui.body("Drag to pan / wheel to zoom / Q-E to orbit.\nPhone: drag to pan / pinch to zoom.\nBuild previews never spend resources until you confirm.\nClick a building to collect, upgrade, move or repair.\nSelect a fighter, then click ground to give orders.", intro)
 	ui.body("Core-loop prototype / local saves / no offline progress", intro, 12)
 	_button("Enter Village", _enter_village, intro)
 	_button("Day / Night", _toggle_day, intro)
@@ -972,6 +977,8 @@ func _pause_panel() -> void:
 	_label("Simulation is paused. Your village saves locally; closed time does not generate resources.", side_content)
 	_button("Resume", _close_panel, side_content)
 	_button("Save now", _save_now, side_content)
+	var update_btn: Button = _button("Update Game", _update_game, side_content)
+	update_btn.tooltip_text = "Save the village and reload the latest build."
 	_button("Day / Night", _toggle_day, side_content)
 	_button("Sound On / Off", _toggle_sound, side_content)
 	_button("Recenter camera", _recenter, side_content)
@@ -1173,6 +1180,20 @@ func _save_now() -> void:
 		if sim.save_game(save_path):
 			sim.notice = "Village saved."
 	_refresh_hud()
+
+
+func _update_game() -> void:
+	# Live update: save the village, then reload so the newest
+	# deployed build boots. Web saves live in user:// (IndexedDB),
+	# so progress survives the refresh.
+	if not no_save and not save_blocked:
+		sim.save_game(save_path)
+	sim.notice = "Village saved. Loading the latest build…"
+	_refresh_hud()
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("location.reload()")
+	else:
+		get_tree().reload_current_scene()
 
 
 func _toggle_day() -> void:
@@ -1393,10 +1414,81 @@ func _input(event: InputEvent) -> void:
 			if not left_dragged and get_viewport().gui_get_hovered_control() == null:
 				_map_click(event.position)
 			left_pressed = false
-	if event is InputEventScreenTouch and event.index == 0 and not event.pressed and left_pressed:
-		if not left_dragged:
-			_map_click(event.position)
-		left_pressed = false
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			touches[event.index] = event.position
+			if touches.size() >= 2:
+				_pinch_begin()
+			elif event.index == 0 and get_viewport().gui_get_hovered_control() == null:
+				left_pressed = true
+				left_dragged = false
+				press_point = event.position
+				last_pointer = event.position
+		else:
+			touches.erase(event.index)
+			if touches.size() >= 2:
+				_pinch_begin()
+			else:
+				pinch_has_mid = false
+				pinch_dist = 0.0
+			if event.index == 0 and left_pressed:
+				var was_drag: bool = left_dragged
+				left_pressed = false
+				left_dragged = false
+				if not was_drag and get_viewport().gui_get_hovered_control() == null:
+					_map_click(event.position)
+			if touches.size() == 1:
+				_pinch_rebase_single()
+		return
+	if event is InputEventScreenDrag:
+		touches[event.index] = event.position
+		if touches.size() >= 2:
+			_pinch_update()
+		elif touches.size() == 1 and left_pressed:
+			_drag_map(event.position)
+		return
+
+
+func _pinch_begin() -> void:
+	var pts: Array = touches.values()
+	if pts.size() < 2:
+		return
+	var a: Vector2 = pts[0]
+	var b: Vector2 = pts[1]
+	pinch_dist = maxf(a.distance_to(b), 1.0)
+	pinch_zoom = zoom
+	pinch_mid = (a + b) * 0.5
+	pinch_has_mid = false
+	left_pressed = false
+	left_dragged = true
+
+
+func _pinch_update() -> void:
+	var pts: Array = touches.values()
+	if pts.size() < 2 or pinch_zoom <= 0.0:
+		return
+	var a: Vector2 = pts[0]
+	var b: Vector2 = pts[1]
+	var cur_dist: float = maxf(a.distance_to(b), 1.0)
+	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, 55)
+	var mid: Vector2 = (a + b) * 0.5
+	if pinch_has_mid:
+		var movement: Vector2 = pick_ground(pinch_mid) - pick_ground(mid)
+		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
+		target.x = clampf(target.x, -20, 20)
+		target.z = clampf(target.z, -16, 16)
+	pinch_mid = mid
+	pinch_has_mid = true
+	_camera_update()
+	last_pointer = mid
+
+
+func _pinch_rebase_single() -> void:
+	for key in touches.keys():
+		last_pointer = touches[key]
+		press_point = touches[key]
+	left_pressed = true
+	left_dragged = true
 
 
 func _drag_map(pointer: Vector2) -> void:
@@ -1406,7 +1498,7 @@ func _drag_map(pointer: Vector2) -> void:
 		var point: Vector2 = pick_ground(pointer)
 		preview_tile = Vector2i(floori(point.x), floori(point.y))
 		_preview()
-	elif pointer.distance_to(press_point) > 8 or left_dragged:
+	elif pointer.distance_to(press_point) > 16.0 or left_dragged:
 		left_dragged = true
 		var movement: Vector2 = pick_ground(last_pointer) - pick_ground(pointer)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
@@ -1453,15 +1545,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		if panning:
 			target += Vector3(-event.relative.x, 0, -event.relative.y) * 0.025
 			_camera_update()
-	if event is InputEventScreenTouch and event.index == 0 and event.pressed:
-		left_pressed = true
-		left_dragged = false
-		press_point = event.position
-		last_pointer = event.position
-		if _placement_active():
-			_map_click(event.position)
-	if event is InputEventScreenDrag and event.index == 0:
-		_drag_map(event.position)
 	if event is InputEventPanGesture:
 		target += Vector3(event.delta.x, 0, event.delta.y) * 0.03
 		_camera_update()
