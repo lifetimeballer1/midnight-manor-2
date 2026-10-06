@@ -1224,7 +1224,23 @@ func _build_inspector() -> void:
 		if str(sim.building_specs[b["type"]].get("workplace", "")) == str(u["type"]):
 			var text: String = "Release " if int(u["workplace"]) == selected_building else "Assign "
 			_button(text + str(u["type"]).capitalize() + " #%d" % u["id"], _assign.bind(int(u["id"]), -1 if int(u["workplace"]) == selected_building else selected_building), side_content)
+	if b["type"] in ["wall", "stonewall", "gate"]:
+		_label("CONNECTED DEFENSE", side_content, true)
+		_button("Upgrade connected wall section", _upgrade_connected_wall, side_content)
+		_button("Repair connected wall section", _repair_connected_wall, side_content)
+	if b["type"] in ["tower", "archer_tower"]:
+		_label("TOWER TARGETING / " + str(b.get("target_mode", "closest")).capitalize(), side_content, true)
+		for mode in ["closest", "strongest", "weakest", "sappers", "manor"]:
+			var target_btn: Button = _button(str(mode).capitalize(), _set_tower_mode.bind(str(mode)), side_content)
+			target_btn.disabled = mode != "closest" and "watchtowers" not in sim.living.discoveries
+	if b["type"] in ["gate", "tower", "archer_tower", "guard_post"]:
+		_label("POST DEFENDERS", side_content, true)
+		var duty: String = "gate" if b["type"] in ["gate", "guard_post"] else "towers"
+		for u: Dictionary in sim.units:
+			if sim.troop_specs[u["type"]]["role"] == "combat":
+				_button("Post %s #%d here" % [str(sim.troop_specs[u["type"]]["name"]), int(u["id"])], _set_defender_priority.bind(int(u["id"]), duty), side_content)
 	_refresh_inspector()
+
 
 
 func _unit_inspector() -> void:
@@ -1239,13 +1255,19 @@ func _unit_inspector() -> void:
 	var training_cost: Dictionary = sim.troop_specs[u["type"]]["levelCost"].duplicate()
 	for resource in training_cost:
 		training_cost[resource] = float(training_cost[resource]) * int(u["level"])
-	_button("Train / " + _cost_text(training_cost), _train_selected, side_content).disabled = int(u["level"]) >= 25
+	_button("Train / " + _cost_text(training_cost), _train_selected, side_content).disabled = int(u["level"]) >= int(sim.troop_specs[u["type"]]["maxLevel"])
+	if sim.troop_specs[u["type"]]["role"] == "combat":
+		_label("Defense duty: " + str(u.get("defense_priority", "patrol")).capitalize(), side_content, true)
+		for priority in Sim.DEFENSE_PRIORITIES:
+			var duty_btn: Button = _button(str(priority).capitalize(), _set_defender_priority.bind(int(u["id"]), str(priority)), side_content)
+			duty_btn.disabled = priority == "rally" and sim.rally_point.x < 0
 	for b: Dictionary in sim.buildings:
 		if str(sim.building_specs[b["type"]].get("workplace", "")) == str(u["type"]) and b["hp"] > 0 and b["remaining"] <= 0:
 			_button("Assign to %s #%d" % [sim.building_specs[b["type"]]["name"], b["id"]], _assign.bind(selected_unit, int(b["id"])), side_content)
 	if int(u["workplace"]) >= 0:
 		_button("Release workplace", _assign.bind(selected_unit, -1), side_content)
 	_refresh_inspector()
+
 
 
 func _refresh_inspector() -> void:
