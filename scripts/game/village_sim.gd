@@ -1,10 +1,12 @@
 extends RefCounted
 
-const BUILD_TYPES: Array[String] = ["farm", "lumber", "timber_yard", "mine", "cottage", "pond", "pasture", "barracks", "tower", "archer_tower", "wall", "stonewall", "gate", "trap", "storehouse", "sawmill", "stone_quarry"]
+const BUILD_TYPES: Array[String] = ["farm", "lumber", "timber_yard", "mine", "cottage", "pond", "pasture", "barracks", "tower", "archer_tower", "wall", "stonewall", "gate", "trap", "storehouse", "sawmill", "stone_quarry", "guard_post", "mason_yard", "forge", "oathstone"]
 const Living = preload("res://scripts/game/living_village.gd")
 var living = Living.new()
 var navigation_revision: int = 0
-const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
+const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd", "mason", "weaponsmith", "warden", "longbowman"]
+const DEFENSE_PRIORITIES: Array[String] = ["patrol", "gate", "manor", "towers", "rally"]
+const ENEMY_TYPES: Array[String] = ["raider", "skirmisher", "brute", "marksman", "sapper"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
 const DIRECTIONS: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 
@@ -39,6 +41,11 @@ var paths: Dictionary = {}
 var job_timer: float = 0
 var workplace_specs: Dictionary = {}
 var stand_cache: Dictionary = {}
+var rally_point := Vector2(-1, -1)
+var last_raid_report: Dictionary = {}
+var raid_started_at: float = 0.0
+var raid_kills: int = 0
+var raid_baseline: Dictionary = {}
 
 const KITE_TRIGGER: float = 1.5
 const KITE_RELEASE_RATIO: float = 0.7
@@ -54,9 +61,23 @@ func _init() -> void:
 	building_specs["hall"]["storage"]["stone"] = living.config["stone"]["hall_storage"]
 	building_specs["storehouse"]["storage"]["stone"] = living.config["stone"]["storehouse_storage"]
 	building_specs["stone_quarry"] = living.config["quarry"].duplicate(true)
+	# Fortress & Command adapts dormant Manor data to the currently playable economy/art set.
+	var guard_post: Dictionary = building_specs["scout_post"].duplicate(true)
+	guard_post["name"] = "Guard Post"
+	guard_post["workplace"] = ""
+	guard_post["minLevel"] = 3
+	guard_post["maxCount"] = [1, 2, 3, 4, 4, 5, 5, 6, 6, 6, 6]
+	building_specs["guard_post"] = guard_post
+	building_specs["mason_yard"]["minLevel"] = 3
+	building_specs["forge"]["minLevel"] = 5
+	building_specs["oathstone"]["minLevel"] = 4
+	building_specs["oathstone"]["maxCount"] = 1
+	building_specs["oathstone"]["cost"] = {"wood": 80, "stone": 100, "gold": 100}
 	var work_spec: Dictionary = _json("workplaces")
 	workplace_specs = work_spec["workplaces"] if work_spec.get("workplaces") is Dictionary else work_spec
 	workplace_specs["stone_quarry"] = {"stands": [[-1.5, -0.5], [1.5, -0.5]], "target": [0, 0]}
+	workplace_specs["mason_yard"] = workplace_specs.get("mason_yard", {"stands": [[-1.5, 0.0], [1.5, 0.0]], "target": [0, 0]})
+	workplace_specs["forge"] = workplace_specs.get("forge", {"stands": [[-1.5, 0.0], [1.5, 0.0]], "target": [0, 0]})
 	var all_quests: Array = JSON.parse_string(FileAccess.get_file_as_string("res://data/quests.json"))
 	quests = all_quests.slice(0, 11)
 	resources = world_specs["startingResources"].duplicate(true)
@@ -83,16 +104,21 @@ func _new_building(type_name: String, x: int, y: int, constructing: bool) -> Dic
 	var hp: float = float(spec["tiers"][0]["hp"])
 	return {"id": _id(), "type": type_name, "x": x, "y": y, "size": int(spec["size"]), "tier": 1,
 		"hp": hp, "max_hp": hp, "remaining": float(spec["buildSeconds"]) if constructing else 0.0,
-		"reserve": 0.0, "cooldown": 0.0}
+		"reserve": 0.0, "cooldown": 0.0, "target_mode": "closest"}
 
 
 func _add_unit(role: String) -> void:
 	var hp: float = float(troop_specs[role]["base"]["hp"])
+	var defense_priority: String = "patrol"
+	if role in ["warrior", "warden"]:
+		defense_priority = "gate" if role == "warrior" else "manor"
+	elif role in ["archer", "longbowman"]:
+		defense_priority = "towers"
 	units.append({"id": _id(), "type": role, "x": 8.0 + (units.size() % 6) * 0.65, "y": 10.8,
 		"hp": hp, "max_hp": hp, "phase": "idle", "workplace": -1, "carry": 0.0, "carry_resource": "",
 		"level": 1, "cooldown": 0.0, "order": [], "hold": false,
 		"fx": -1.0, "fy": -1.0, "rx": -1.0, "ry": -1.0, "kite": false, "think": 0.0,
-		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0})
+		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0, "defense_priority": defense_priority})
 
 
 func _invalidate() -> void:
@@ -173,9 +199,182 @@ func building_limit(type_name: String) -> int:
 	return int(limit)
 
 
+func wall_line_tiles(start: Vector2i, finish: Vector2i) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	if not _inside(start) or not _inside(finish):
+		return result
+	var horizontal: bool = abs(finish.x - start.x) >= abs(finish.y - start.y)
+	if horizontal:
+		var y: int = start.y
+		for x in range(mini(start.x, finish.x), maxi(start.x, finish.x) + 1):
+			result.append(Vector2i(x, y))
+	else:
+		var x: int = start.x
+		for y in range(mini(start.y, finish.y), maxi(start.y, finish.y) + 1):
+			result.append(Vector2i(x, y))
+	return result
+
+
+func wall_line_reason(type_name: String, start: Vector2i, finish: Vector2i) -> String:
+	if type_name not in ["wall", "stonewall"]:
+		return "Choose a wall type."
+	if "fortifications" not in living.discoveries:
+		return "Research Fortifications for wall-line construction."
+	var tiles: Array[Vector2i] = wall_line_tiles(start, finish)
+	if tiles.is_empty():
+		return "Drag across valid village tiles."
+	var existing: int = 0
+	for b in buildings:
+		if b["type"] == type_name and b["hp"] > 0:
+			existing += 1
+	if existing + tiles.size() > building_limit(type_name):
+		return "Building limit reached."
+	for tile in tiles:
+		var bounds := Rect2i(tile.x, tile.y, 1, 1)
+		for b in buildings:
+			if b["hp"] > 0 and bounds.intersects(Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"]))):
+				return "Wall line crosses an occupied tile."
+	var total: Dictionary = {}
+	var one: Dictionary = building_cost(type_name)
+	for resource in one:
+		total[resource] = float(one[resource]) * tiles.size()
+	return "" if _affordable(total) else "Not enough resources for the full wall line."
+
+
+func build_wall_line(type_name: String, start: Vector2i, finish: Vector2i) -> bool:
+	notice = wall_line_reason(type_name, start, finish)
+	if not notice.is_empty():
+		return false
+	var tiles: Array[Vector2i] = wall_line_tiles(start, finish)
+	var total: Dictionary = {}
+	var one: Dictionary = building_cost(type_name)
+	for resource in one:
+		total[resource] = float(one[resource]) * tiles.size()
+	_spend(total)
+	for tile in tiles:
+		buildings.append(_new_building(type_name, tile.x, tile.y, true))
+	revision += 1
+	_invalidate()
+	notice = "Raising %d connected wall segments." % tiles.size()
+	return true
+
+
+func _connected_barriers(id: int) -> Array[Dictionary]:
+	var origin: Dictionary = get_building(id)
+	if origin.is_empty() or origin["type"] not in ["wall", "stonewall", "gate"]:
+		return []
+	var result: Array[Dictionary] = []
+	var queue: Array[Dictionary] = [origin]
+	var seen: Dictionary = {int(origin["id"]): true}
+	while not queue.is_empty():
+		var current: Dictionary = queue.pop_front()
+		result.append(current)
+		var rect := Rect2i(int(current["x"]) - 1, int(current["y"]) - 1, int(current["size"]) + 2, int(current["size"]) + 2)
+		for candidate in buildings:
+			if candidate["type"] not in ["wall", "stonewall", "gate"] or candidate["hp"] <= 0 or seen.has(int(candidate["id"])):
+				continue
+			var c_rect := Rect2i(int(candidate["x"]), int(candidate["y"]), int(candidate["size"]), int(candidate["size"]))
+			if rect.intersects(c_rect):
+				seen[int(candidate["id"])] = true
+				queue.append(candidate)
+	return result
+
+
+func upgrade_wall_line(id: int) -> bool:
+	var group: Array[Dictionary] = _connected_barriers(id)
+	if group.is_empty():
+		return false
+	var total: Dictionary = {}
+	var eligible: Array[Dictionary] = []
+	for b in group:
+		var spec: Dictionary = building_specs[b["type"]]
+		if b["remaining"] > 0 or int(b["tier"]) >= spec["tiers"].size():
+			continue
+		var next: int = int(b["tier"]) + 1
+		if village_level() < int(spec.get("tierGates", {}).get(str(next), 1)):
+			continue
+		eligible.append(b)
+		for resource in building_cost(b["type"], next):
+			total[resource] = float(total.get(resource, 0)) + float(building_cost(b["type"], next)[resource])
+	if eligible.is_empty():
+		notice = "No connected wall segments can upgrade."
+		return false
+	if not _affordable(total):
+		notice = "Not enough resources for the connected wall upgrade."
+		return false
+	_spend(total)
+	for b in eligible:
+		b["tier"] = int(b["tier"]) + 1
+		b["max_hp"] = float(building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]["hp"])
+		b["hp"] = b["max_hp"]
+		b["remaining"] = float(building_specs[b["type"]]["buildSeconds"])
+	revision += 1
+	_invalidate()
+	notice = "Upgrading %d connected defenses." % eligible.size()
+	return true
+
+
+func repair_wall_line(id: int) -> bool:
+	var group: Array[Dictionary] = _connected_barriers(id)
+	if group.is_empty():
+		return false
+	var available: int = int(resources.get("wood", 0))
+	var spent: int = 0
+	for b in group:
+		if b["remaining"] > 0 or b["hp"] >= b["max_hp"] or available <= 0:
+			continue
+		var needed: int = ceili((float(b["max_hp"]) - float(b["hp"])) / 15.0)
+		var use: int = mini(available, needed)
+		b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + use * 15.0)
+		available -= use
+		spent += use
+	if spent <= 0:
+		notice = "No connected wall damage can be repaired."
+		return false
+	resources["wood"] = float(resources.get("wood", 0)) - spent
+	revision += 1
+	_invalidate()
+	notice = "Repaired connected defenses / %d Wood." % spent
+	return true
+
+
+func set_rally(x: float, y: float) -> bool:
+	if "fortifications" not in living.discoveries:
+		notice = "Research Fortifications first."
+		return false
+	var tile := Vector2i(floori(x), floori(y))
+	if not _inside(tile) or _blocked(tile, false):
+		notice = "Place the rally point on open ground."
+		return false
+	rally_point = Vector2(x, y)
+	notice = "Defender rally point set."
+	return true
+
+
+func set_defense_priority(id: int, priority: String) -> bool:
+	var u: Dictionary = get_unit(id)
+	if u.is_empty() or troop_specs[u["type"]]["role"] != "combat" or priority not in DEFENSE_PRIORITIES:
+		return false
+	if priority == "rally" and rally_point.x < 0:
+		notice = "Place a rally point first."
+		return false
+	u["defense_priority"] = priority
+	u["hold"] = false
+	u["order"] = []
+	paths.erase(id)
+	notice = "%s assigned to %s defense." % [str(troop_specs[u["type"]]["name"]), priority.capitalize()]
+	return true
+
+
 func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> String:
 	if type_name == "stone_quarry" and ignore_id < 0 and "stoneworking" not in living.discoveries:
 		return "Research Stoneworking first."
+	if type_name in ["guard_post", "mason_yard"] and ignore_id < 0 and "fortifications" not in living.discoveries:
+		return "Research Fortifications first."
+	if type_name == "oathstone" and ignore_id < 0 and "gate_engineering" not in living.discoveries:
+		return "Research Gate Engineering first."
+	if type_name == "forge" and ignore_id < 0 and "watchtowers" not in living.discoveries:
+		return "Research Watchtower Doctrine first."
 	if type_name not in BUILD_TYPES and ignore_id < 0:
 		return "That structure is not in this prototype."
 	var spec: Dictionary = building_specs.get(type_name, {})
@@ -332,17 +531,28 @@ func beds() -> int:
 	return total
 
 
+func _ready_building(type_name: String) -> bool:
+	for b in buildings:
+		if b["type"] == type_name and b["hp"] > 0 and b["remaining"] <= 0:
+			return true
+	return false
+
+
 func recruit_reason(role: String) -> String:
 	if role not in ROLES:
 		return "Unknown role."
 	if units.size() >= beds():
 		return "No free beds / build or upgrade a Cottage."
+	if role == "mason" and ("fortifications" not in living.discoveries or not _ready_building("mason_yard")):
+		return "Research Fortifications and finish a Mason Yard."
+	if role == "weaponsmith" and ("watchtowers" not in living.discoveries or not _ready_building("forge")):
+		return "Research Watchtower Doctrine and finish an Emberforge."
+	if role == "warden" and ("gate_engineering" not in living.discoveries or not _ready_building("oathstone")):
+		return "Research Gate Engineering and raise an Oathstone."
+	if role == "longbowman" and ("watchtowers" not in living.discoveries or not _ready_building("archer_tower")):
+		return "Research Watchtower Doctrine and finish an Archer Tower."
 	if troop_specs[role]["role"] == "combat":
-		var found: bool = false
-		for b in buildings:
-			if b["type"] == "barracks" and b["hp"] > 0 and b["remaining"] <= 0:
-				found = true
-		if not found:
+		if not _ready_building("barracks"):
 			return "Finish a Barracks first."
 	return "" if _affordable(troop_specs[role]["recruitCost"]) else "Not enough resources to hire."
 
@@ -443,7 +653,15 @@ func train(id: int) -> bool:
 
 func _stat(u: Dictionary, stat: String) -> float:
 	var spec: Dictionary = troop_specs[u["type"]]
-	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1))
+	var value: float = float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1))
+	if stat == "damage" and troop_specs[u["type"]]["role"] == "combat":
+		for smith in units:
+			if smith["type"] == "weaponsmith" and smith["hp"] > 0 and int(smith["workplace"]) >= 0:
+				var forge: Dictionary = get_building(int(smith["workplace"]))
+				if not forge.is_empty() and forge["type"] == "forge" and forge["hp"] > 0 and forge["remaining"] <= 0:
+					value *= 1.1
+					break
+	return value
 
 
 func _inside(tile: Vector2i) -> bool:
@@ -748,7 +966,7 @@ func _walk(u: Dictionary, target: Vector2, dt: float, enemy: bool = false) -> bo
 	var steps: Array = cached["steps"]
 	var waypoint: Vector2 = Vector2(steps[0]) + Vector2.ONE * 0.5 if not steps.is_empty() else target
 	var before: Vector2 = position_of(u)
-	var speed: float = (1.2 if enemy else _stat(u, "speed") * living.speed_at(before)) * dt
+	var speed: float = (float(u.get("speed", 1.2)) if enemy else _stat(u, "speed") * living.speed_at(before)) * dt
 	var point: Vector2 = before.move_toward(waypoint, speed)
 	if not enemy:
 		living.walked(before, point, elapsed)
