@@ -57,6 +57,7 @@ jobs:
           godot --headless --path . --script res://tests/test_workers_defense.gd -- --no-save
           godot --headless --path . --script res://tests/test_living_village.gd -- --no-save
           godot --headless --path . --script res://tests/test_update2_scene.gd -- --no-save
+          godot --headless --path . --script res://tests/test_fortress_command.gd -- --no-save
 
       - name: Export Web
         run: |
