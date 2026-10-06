@@ -3,6 +3,8 @@ extends Node3D
 const Sim = preload("res://scripts/game/village_sim.gd")
 const UI = preload("res://scripts/game/village_ui.gd")
 const Details = preload("res://scripts/game/village_details.gd")
+const ManorScore = preload("res://scripts/game/manor_music.gd")
+var music = ManorScore.new()
 var details = Details.new()
 const NAVY := Color("152334")
 const GOLD := Color("d4b275")
@@ -143,6 +145,8 @@ func _ready() -> void:
 	add_child(ghost_layer)
 	add_child(details)
 	details.setup_warnings(self)
+	add_child(music)
+	music.set_enabled(false)
 	_ground()
 	_setup_roads()
 	_lighting()
@@ -178,14 +182,17 @@ func world_position(tile: Vector2, height: float = 0) -> Vector3:
 func _load_settings() -> void:
 	if FileAccess.file_exists(SETTINGS_PATH):
 		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(SETTINGS_PATH))
-		if parsed is Dictionary and (parsed as Dictionary).has("show_grid"):
-			show_grid = bool((parsed as Dictionary)["show_grid"])
+		if parsed is Dictionary:
+			if (parsed as Dictionary).has("show_grid"):
+				show_grid = bool((parsed as Dictionary)["show_grid"])
+			if (parsed as Dictionary).has("sound"):
+				sound = bool((parsed as Dictionary)["sound"])
 
 
 func _save_settings() -> void:
 	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 	if f != null:
-		f.store_string(JSON.stringify({"show_grid": show_grid}))
+		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound}))
 
 
 func _build_grid() -> void:
@@ -1222,6 +1229,9 @@ func _enter_village() -> void:
 	welcome.hide()
 	if not save_blocked:
 		sim.notice = "The Manor stands. Raise a second farm, then dig a pond."
+	music.enter("night" if night else "day")
+	music.set_calm(sim.paused)
+	music.set_enabled(sound)
 	_refresh_hud()
 
 
@@ -1429,12 +1439,15 @@ func _update_game() -> void:
 
 func _toggle_day() -> void:
 	night = not night
+	music.set_mood("night" if night else "day")
 	_apply_lighting()
 
 
 func _toggle_sound() -> void:
 	sound = not sound
 	sim.notice = "Sound on" if sound else "Sound off"
+	music.set_enabled(sound)
+	_save_settings()
 
 
 func _recenter() -> void:
@@ -1482,10 +1495,14 @@ func _refresh_hud() -> void:
 	quest_label.text = "Village Path complete" if quest.is_empty() else "PATH / " + str(quest["name"])
 	if sim.raid_active:
 		raid_hud.text = "WAVE %d / %d raiders / HOLD THE MANOR" % [sim.wave, sim.enemies.size()]
+		music.set_mood("danger")
 	elif sim.raid_warning:
-		raid_hud.text = "HORNS / %.0fs / prepare the walls" % maxf(0, sim.next_raid_at - sim.elapsed)
+		raid_hud.text = "HORNS / %.0fs / prepare the walls" % maxf(0.0, sim.next_raid_at - sim.elapsed)
+		music.set_mood("tension")
 	else:
 		raid_hud.text = "Quiet / next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
+		music.set_mood("night" if night else "day")
+	music.set_calm(sim.paused)
 	if _is_small():
 		hud.text = "People %d/%d / Lv%d" % [sim.units.size(), sim.beds(), sim.village_level()]
 		quest_label.text = "Path complete" if quest.is_empty() else str(quest["name"])

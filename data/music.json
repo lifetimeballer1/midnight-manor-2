@@ -1,0 +1,791 @@
+{
+  "themes": [
+    {
+      "id": "ember",
+      "name": "Ember Vale",
+      "bpm": 72,
+      "rootHz": 73.416,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        3,
+        5,
+        7,
+        9,
+        10
+      ],
+      "progression": [
+        [
+          0,
+          3,
+          7,
+          10
+        ],
+        [
+          5,
+          9,
+          12,
+          14
+        ],
+        [
+          -2,
+          2,
+          5,
+          9
+        ],
+        [
+          -5,
+          0,
+          2,
+          5
+        ]
+      ],
+      "melodySlots": [
+        0,
+        2,
+        5
+      ],
+      "calmMelodySlots": [
+        0
+      ],
+      "voices": {
+        "bass": 0.08,
+        "pad": 0.085,
+        "pluck": 0.105
+      },
+      "gain": 0.7,
+      "echo": {
+        "seconds": 0.24,
+        "gain": 0.12
+      },
+      "moods": [
+        "day",
+        "night",
+        "calm"
+      ]
+    },
+    {
+      "id": "grove",
+      "name": "Midnight Grove",
+      "bpm": 58,
+      "rootHz": 61.735,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "progression": [
+        [
+          0,
+          3,
+          7,
+          10
+        ],
+        [
+          -5,
+          0,
+          3,
+          7
+        ],
+        [
+          2,
+          5,
+          8,
+          12
+        ],
+        [
+          -2,
+          2,
+          5,
+          8
+        ]
+      ],
+      "melodySlots": [
+        0,
+        3
+      ],
+      "calmMelodySlots": [
+        0
+      ],
+      "voices": {
+        "bass": 0.07,
+        "pad": 0.1,
+        "pluck": 0.09
+      },
+      "gain": 0.65,
+      "echo": {
+        "seconds": 0.32,
+        "gain": 0.14
+      },
+      "moods": [
+        "night",
+        "weather",
+        "calm"
+      ]
+    },
+    {
+      "id": "haze",
+      "name": "Horizon Haze",
+      "bpm": 66,
+      "rootHz": 82.407,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        4,
+        5,
+        7,
+        9,
+        10
+      ],
+      "progression": [
+        [
+          0,
+          4,
+          7,
+          11
+        ],
+        [
+          5,
+          9,
+          12,
+          16
+        ],
+        [
+          -3,
+          2,
+          5,
+          9
+        ],
+        [
+          2,
+          5,
+          9,
+          12
+        ]
+      ],
+      "melodySlots": [
+        1,
+        4
+      ],
+      "calmMelodySlots": [
+        1
+      ],
+      "voices": {
+        "bass": 0.075,
+        "pad": 0.09,
+        "pluck": 0.1
+      },
+      "gain": 0.68,
+      "echo": {
+        "seconds": 0.28,
+        "gain": 0.11
+      },
+      "moods": [
+        "day",
+        "weather",
+        "calm"
+      ]
+    },
+    {
+      "id": "lattice",
+      "name": "Lattice Light",
+      "bpm": 80,
+      "rootHz": 87.307,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        4,
+        5,
+        7,
+        9,
+        11
+      ],
+      "progression": [
+        [
+          0,
+          4,
+          7,
+          11
+        ],
+        [
+          2,
+          5,
+          9,
+          12
+        ],
+        [
+          5,
+          9,
+          12,
+          16
+        ],
+        [
+          0,
+          4,
+          7,
+          12
+        ]
+      ],
+      "melodySlots": [
+        0,
+        2,
+        3,
+        5
+      ],
+      "calmMelodySlots": [
+        0,
+        3
+      ],
+      "voices": {
+        "bass": 0.065,
+        "pad": 0.07,
+        "pluck": 0.12
+      },
+      "gain": 0.72,
+      "echo": {
+        "seconds": 0.18,
+        "gain": 0.09
+      },
+      "moods": [
+        "day",
+        "upbeat"
+      ]
+    },
+    {
+      "id": "dawn",
+      "name": "Dawn Over Timber",
+      "moods": [
+        "day",
+        "upbeat"
+      ],
+      "bpm": 76,
+      "rootHz": 73.416,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        4,
+        7,
+        9
+      ],
+      "progression": [
+        [
+          0,
+          4,
+          7,
+          12
+        ],
+        [
+          5,
+          9,
+          12,
+          16
+        ],
+        [
+          7,
+          11,
+          14,
+          19
+        ],
+        [
+          0,
+          4,
+          7,
+          11
+        ]
+      ],
+      "melodySlots": [
+        0,
+        2,
+        4
+      ],
+      "calmMelodySlots": [
+        0
+      ],
+      "voices": {
+        "bass": 0.065,
+        "pad": 0.072,
+        "pluck": 0.115
+      },
+      "gain": 0.69,
+      "echo": {
+        "seconds": 0.2,
+        "gain": 0.1
+      }
+    },
+    {
+      "id": "hearth",
+      "name": "Hammer & Hearth",
+      "moods": [
+        "day",
+        "upbeat"
+      ],
+      "bpm": 88,
+      "rootHz": 82.407,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        4,
+        5,
+        7,
+        9,
+        11
+      ],
+      "progression": [
+        [
+          0,
+          4,
+          7,
+          11
+        ],
+        [
+          5,
+          9,
+          12,
+          16
+        ],
+        [
+          2,
+          5,
+          9,
+          12
+        ],
+        [
+          7,
+          11,
+          14,
+          17
+        ]
+      ],
+      "melodySlots": [
+        0,
+        1,
+        3,
+        5
+      ],
+      "calmMelodySlots": [
+        0,
+        3
+      ],
+      "voices": {
+        "bass": 0.07,
+        "pad": 0.06,
+        "pluck": 0.125
+      },
+      "gain": 0.72,
+      "echo": {
+        "seconds": 0.16,
+        "gain": 0.08
+      }
+    },
+    {
+      "id": "road",
+      "name": "The Open Road",
+      "moods": [
+        "day",
+        "calm"
+      ],
+      "bpm": 74,
+      "rootHz": 65.406,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        4,
+        7,
+        9,
+        11
+      ],
+      "progression": [
+        [
+          0,
+          4,
+          7,
+          11
+        ],
+        [
+          2,
+          7,
+          9,
+          14
+        ],
+        [
+          -5,
+          0,
+          4,
+          7
+        ],
+        [
+          0,
+          4,
+          9,
+          12
+        ]
+      ],
+      "melodySlots": [
+        0,
+        2,
+        5
+      ],
+      "calmMelodySlots": [
+        2
+      ],
+      "voices": {
+        "bass": 0.065,
+        "pad": 0.075,
+        "pluck": 0.11
+      },
+      "gain": 0.68,
+      "echo": {
+        "seconds": 0.26,
+        "gain": 0.11
+      }
+    },
+    {
+      "id": "slate",
+      "name": "Rain on Slate",
+      "moods": [
+        "weather",
+        "night",
+        "calm"
+      ],
+      "bpm": 62,
+      "rootHz": 69.296,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "progression": [
+        [
+          0,
+          3,
+          7,
+          10
+        ],
+        [
+          -5,
+          0,
+          3,
+          7
+        ],
+        [
+          -2,
+          2,
+          5,
+          8
+        ],
+        [
+          3,
+          7,
+          10,
+          14
+        ]
+      ],
+      "melodySlots": [
+        1,
+        4
+      ],
+      "calmMelodySlots": [
+        4
+      ],
+      "voices": {
+        "bass": 0.058,
+        "pad": 0.092,
+        "pluck": 0.085
+      },
+      "gain": 0.63,
+      "echo": {
+        "seconds": 0.34,
+        "gain": 0.15
+      }
+    },
+    {
+      "id": "lanterns",
+      "name": "Lanterns at Midnight",
+      "moods": [
+        "night",
+        "calm"
+      ],
+      "bpm": 54,
+      "rootHz": 55,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "progression": [
+        [
+          0,
+          3,
+          7,
+          10
+        ],
+        [
+          5,
+          8,
+          12,
+          15
+        ],
+        [
+          -2,
+          2,
+          5,
+          8
+        ],
+        [
+          -5,
+          0,
+          3,
+          7
+        ]
+      ],
+      "melodySlots": [
+        0,
+        4
+      ],
+      "calmMelodySlots": [
+        0
+      ],
+      "voices": {
+        "bass": 0.055,
+        "pad": 0.105,
+        "pluck": 0.078
+      },
+      "gain": 0.61,
+      "echo": {
+        "seconds": 0.4,
+        "gain": 0.17
+      }
+    },
+    {
+      "id": "firstlight",
+      "name": "First Light Returns",
+      "moods": [
+        "day",
+        "upbeat"
+      ],
+      "bpm": 92,
+      "rootHz": 87.307,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        4,
+        5,
+        7,
+        9,
+        11
+      ],
+      "progression": [
+        [
+          0,
+          4,
+          7,
+          12
+        ],
+        [
+          5,
+          9,
+          12,
+          16
+        ],
+        [
+          7,
+          11,
+          14,
+          19
+        ],
+        [
+          0,
+          4,
+          7,
+          11
+        ]
+      ],
+      "melodySlots": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "calmMelodySlots": [
+        0,
+        3
+      ],
+      "voices": {
+        "bass": 0.072,
+        "pad": 0.062,
+        "pluck": 0.13
+      },
+      "gain": 0.73,
+      "echo": {
+        "seconds": 0.15,
+        "gain": 0.075
+      }
+    },
+    {
+      "id": "watchfire",
+      "name": "Watchfire Weather",
+      "moods": [
+        "tension",
+        "night"
+      ],
+      "bpm": 68,
+      "rootHz": 61.735,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "progression": [
+        [
+          0,
+          3,
+          7,
+          10
+        ],
+        [
+          -2,
+          2,
+          5,
+          8
+        ],
+        [
+          -5,
+          0,
+          3,
+          7
+        ],
+        [
+          -7,
+          -2,
+          2,
+          5
+        ]
+      ],
+      "melodySlots": [
+        0,
+        3,
+        5
+      ],
+      "calmMelodySlots": [
+        0
+      ],
+      "voices": {
+        "bass": 0.075,
+        "pad": 0.082,
+        "pluck": 0.095
+      },
+      "gain": 0.66,
+      "echo": {
+        "seconds": 0.25,
+        "gain": 0.1
+      }
+    },
+    {
+      "id": "iron_gate",
+      "name": "Iron at the Gate",
+      "moods": [
+        "danger",
+        "tension"
+      ],
+      "bpm": 96,
+      "rootHz": 65.406,
+      "bars": 4,
+      "pulsesPerBar": 6,
+      "scale": [
+        0,
+        2,
+        3,
+        5,
+        7,
+        8,
+        10
+      ],
+      "progression": [
+        [
+          0,
+          3,
+          7,
+          10
+        ],
+        [
+          -2,
+          2,
+          5,
+          8
+        ],
+        [
+          3,
+          7,
+          10,
+          15
+        ],
+        [
+          -5,
+          0,
+          3,
+          7
+        ]
+      ],
+      "melodySlots": [
+        0,
+        1,
+        3,
+        4,
+        5
+      ],
+      "calmMelodySlots": [
+        0,
+        3
+      ],
+      "voices": {
+        "bass": 0.09,
+        "pad": 0.065,
+        "pluck": 0.115
+      },
+      "gain": 0.71,
+      "echo": {
+        "seconds": 0.14,
+        "gain": 0.07
+      }
+    }
+  ]
+}
