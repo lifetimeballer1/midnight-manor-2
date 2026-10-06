@@ -27,7 +27,7 @@ func _run() -> void:
 	game._toggle_research()
 	check(game.research_list.visible, "research panel expands on request")
 	game._toggle_research()
-	check(game.research_buttons.size() == 2, "only two actual research nodes are shown")
+	check(game.research_buttons.size() == 6, "research panel shows the two living-village nodes plus four fortress nodes")
 	check(game.research_buttons["stoneworking"].disabled, "level1 research gate is visible")
 	game.sim.xp = 100
 	game.sim.living.insight = 20
@@ -37,7 +37,7 @@ func _run() -> void:
 	check(game.sim.living.active == "stoneworking", "research UI starts real paid project")
 	game._open_panel("build")
 	check(game.build_category_order == ["Economy", "Homes", "Defense", "Roads"], "four build categories are present")
-	check(game.build_cards.size() == 17, "all current building types have cards")
+	check(game.build_cards.size() == 21, "all current building types including fortress support have cards")
 	for type_name in game.build_cards:
 		check(game.build_cards[type_name].icon != null, "thumbnail queued/cached for " + str(type_name))
 		check(game._asset_exists(game.thumbnail_asset(type_name)), "thumbnail comes from an existing GLB")
