@@ -24,6 +24,7 @@ var building_layer := Node3D.new()
 var actor_layer := Node3D.new()
 var ghost_layer := Node3D.new()
 var selection_marker := MeshInstance3D.new()
+var rally_marker := MeshInstance3D.new()
 var models: Dictionary = {}
 var actors: Dictionary = {}
 var building_views: Dictionary = {}
@@ -607,14 +608,17 @@ func _find_player(node: Node) -> AnimationPlayer:
 	return null
 
 
-func _tint_enemy(node: Node) -> void:
+func _tint_enemy(node: Node, tint: Color = Color("e7998e")) -> void:
 	if node is MeshInstance3D:
 		for surface in node.mesh.get_surface_count():
-			var material: StandardMaterial3D = node.get_active_material(surface).duplicate()
-			material.albedo_color = Color("e7998e")
-			node.set_surface_override_material(surface, material)
+			var source: Material = node.get_active_material(surface)
+			if source is StandardMaterial3D:
+				var material: StandardMaterial3D = source.duplicate()
+				material.albedo_color = tint
+				node.set_surface_override_material(surface, material)
 	for child in node.get_children():
-		_tint_enemy(child)
+		_tint_enemy(child, tint)
+
 
 
 func _update_actors(delta: float) -> void:
@@ -630,7 +634,13 @@ func _update_actors(delta: float) -> void:
 				var spawned: Node3D = _model("char_warrior" if enemy_group else "char_" + unit_asset)
 				actor_layer.add_child(spawned)
 				if enemy_group:
-					_tint_enemy(spawned)
+					var enemy_tints: Dictionary = {
+						"raider": Color("e7998e"), "skirmisher": Color("e6c77b"), "brute": Color("a85f58"),
+						"marksman": Color("a99ac7"), "sapper": Color("e88152")
+					}
+					_tint_enemy(spawned, enemy_tints.get(str(u["type"]), Color("e7998e")))
+					var enemy_scale: float = 1.25 if u["type"] == "brute" else (0.88 if u["type"] == "skirmisher" else 1.0)
+					spawned.scale = Vector3.ONE * enemy_scale
 				actors[id] = {"model": spawned, "player": _find_player(spawned), "clip": "", "previous": Vector3.ZERO}
 			var record: Dictionary = actors[id]
 			var model: Node3D = record["model"]
@@ -722,6 +732,11 @@ func _setup_marker() -> void:
 	selection_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(selection_marker)
 	selection_marker.visible = false
+	rally_marker.mesh = selection_marker.mesh
+	rally_marker.material_override = material.duplicate()
+	rally_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(rally_marker)
+	rally_marker.visible = false
 
 
 func tier_roof_color(family_hue: float, family_sat: float, tier: int) -> Color:
@@ -747,6 +762,11 @@ func _update_marker() -> void:
 	elif not u.is_empty():
 		selection_marker.position = world_position(sim.position_of(u), 0.035)
 		selection_marker.scale = Vector3(0.5, 1, 0.5)
+	rally_marker.visible = sim.rally_point.x >= 0
+	if rally_marker.visible:
+		rally_marker.position = world_position(sim.rally_point, 0.04)
+		rally_marker.scale = Vector3(0.72, 1, 0.72)
+
 
 
 func _button(text: String, action: Callable, parent: Node) -> Button:
@@ -1452,6 +1472,7 @@ func _confirm_placement() -> void:
 	if rallying:
 		if sim.set_rally(float(preview_tile.x) + 0.5, float(preview_tile.y) + 0.5):
 			_cancel_placement()
+			_update_marker()
 			_open_panel("defense")
 		_refresh_hud()
 		return
