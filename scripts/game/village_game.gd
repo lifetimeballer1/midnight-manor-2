@@ -506,10 +506,12 @@ func _asset_exists(asset_key: String) -> bool:
 # No stone_quarry GLB has been exported, so the quarry reuses the mine model as a
 # stone worksite. Every returned key is a real exported asset.
 func model_asset(type_name: String, tier: int) -> String:
-	var key: String = "%s_t%d" % [type_name, tier]
+	var aliases: Dictionary = {"guard_post": "tower", "mason_yard": "sawmill"}
+	var asset_type: String = str(aliases.get(type_name, type_name))
+	var key: String = "%s_t%d" % [asset_type, tier]
 	if _asset_exists(key):
 		return key
-	var base: String = "%s_t1" % type_name
+	var base: String = "%s_t1" % asset_type
 	if base != key and _asset_exists(base):
 		return base
 	return "mine_t1" if _asset_exists("mine_t1") else key
@@ -623,7 +625,9 @@ func _update_actors(delta: float) -> void:
 			var id: int = int(u["id"])
 			present[id] = true
 			if not actors.has(id):
-				var spawned: Node3D = _model("char_warrior" if enemy_group else "char_" + str(u["type"]))
+				var unit_aliases: Dictionary = {"mason": "builder", "weaponsmith": "builder", "warden": "warrior", "longbowman": "archer"}
+				var unit_asset: String = str(unit_aliases.get(str(u["type"]), str(u["type"])))
+				var spawned: Node3D = _model("char_warrior" if enemy_group else "char_" + unit_asset)
 				actor_layer.add_child(spawned)
 				if enemy_group:
 					_tint_enemy(spawned)
@@ -1350,23 +1354,26 @@ func _choose_build(type_name: String) -> void:
 	build_type = type_name
 	moving_id = -1
 	paving = false
+	rallying = false
+	wall_drag_start = Vector2i(-1, -1)
 	selected_building = -1
 	selected_unit = -1
 	preview_tile = Vector2i(-1, -1)
 	more_sheet.hide()
 	_close_panel()
 	placement_box.show()
-	placement_label.text = "Place " + str(sim.building_specs[type_name]["name"]) + " / click the map"
+	placement_label.text = "Place " + str(sim.building_specs[type_name]["name"]) + " / drag or tap the map"
 	confirm_button.disabled = true
 	confirm_button.text = "Confirm Build"
 
 
-# Paving mode: live reasons come from the living system, and nothing is spent until confirm.
 func _toggle_pave() -> void:
 	if paving:
 		_cancel_placement()
 		return
 	paving = true
+	rallying = false
+	wall_drag_start = Vector2i(-1, -1)
 	build_type = ""
 	moving_id = -1
 	selected_building = -1
@@ -1381,14 +1388,20 @@ func _toggle_pave() -> void:
 
 
 func _placement_active() -> bool:
-	return paving or not build_type.is_empty()
+	return rallying or paving or not build_type.is_empty()
 
 
 func _placement_reason() -> String:
 	if preview_tile.x < 0:
 		return "Click a tile on the map"
+	if rallying:
+		if "fortifications" not in sim.living.discoveries:
+			return "Research Fortifications first."
+		return "" if not sim._blocked(preview_tile, false) else "Place the rally point on open ground."
 	if paving:
 		return sim.living.pave_reason(sim, preview_tile)
+	if moving_id < 0 and build_type in ["wall", "stonewall"] and wall_drag_start.x >= 0:
+		return sim.wall_line_reason(build_type, wall_drag_start, preview_tile)
 	return sim.build_reason(build_type, preview_tile.x, preview_tile.y, moving_id)
 
 
@@ -1397,12 +1410,22 @@ func _preview() -> void:
 		return
 	var reason: String = _placement_reason()
 	confirm_button.disabled = not reason.is_empty()
-	var headline: String = "Stone road" if paving else str(sim.building_specs[build_type]["name"])
-	var detail: String = _cost_text({"stone": int(sim.living.config["stone"]["pave_cost"])})
-	if not paving:
-		detail = "Move here / no cost" if moving_id >= 0 else _cost_text(sim.building_cost(build_type))
+	var headline: String = "Rally point" if rallying else ("Stone road" if paving else str(sim.building_specs[build_type]["name"]))
+	var detail: String = "No cost" if rallying else _cost_text({"stone": int(sim.living.config["stone"]["pave_cost"])})
+	if not rallying and not paving:
+		if moving_id >= 0:
+			detail = "Move here / no cost"
+		elif build_type in ["wall", "stonewall"] and wall_drag_start.x >= 0:
+			var line_tiles: Array[Vector2i] = sim.wall_line_tiles(wall_drag_start, preview_tile)
+			var one: Dictionary = sim.building_cost(build_type)
+			var total: Dictionary = {}
+			for resource in one:
+				total[resource] = float(one[resource]) * line_tiles.size()
+			detail = "%d segments / %s" % [line_tiles.size(), _cost_text(total)]
+		else:
+			detail = _cost_text(sim.building_cost(build_type))
 	placement_label.text = "%s  /  tile %d, %d\n%s" % [headline, preview_tile.x, preview_tile.y, reason if not reason.is_empty() else detail]
-	var signature: String = "%s/%s/%s" % ["pave" if paving else build_type, preview_tile, reason]
+	var signature: String = "%s/%s/%s/%s" % ["rally" if rallying else ("pave" if paving else build_type), wall_drag_start, preview_tile, reason]
 	if signature == ghost_signature:
 		return
 	ghost_signature = signature
@@ -1411,25 +1434,41 @@ func _preview() -> void:
 		child.queue_free()
 	if preview_tile.x < 0:
 		return
-	var size: int = 1 if paving else int(sim.building_specs[build_type]["size"])
-	var tint: Color = Color("b9bcc0") if paving else Color("93d78a")
-	var centre := Vector2(preview_tile) + Vector2.ONE * size * 0.5
-	var ghost: MeshInstance3D = _box(Vector3(size * TILE - 0.1, 0.14, size * TILE - 0.1), world_position(centre, 0.12), tint if reason.is_empty() else Color("d26c62"), ghost_layer)
-	var material: StandardMaterial3D = ghost.material_override
-	material.albedo_color.a = 0.65
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var tint: Color = Color("d4b275") if rallying else (Color("b9bcc0") if paving else Color("93d78a"))
+	var tiles: Array = [preview_tile]
+	if not rallying and not paving and moving_id < 0 and build_type in ["wall", "stonewall"] and wall_drag_start.x >= 0:
+		tiles = sim.wall_line_tiles(wall_drag_start, preview_tile)
+	for tile in tiles:
+		var size: int = 1 if rallying or paving or build_type in ["wall", "stonewall"] else int(sim.building_specs[build_type]["size"])
+		var centre := Vector2(tile) + Vector2.ONE * size * 0.5
+		var ghost: MeshInstance3D = _box(Vector3(size * TILE - 0.1, 0.14, size * TILE - 0.1), world_position(centre, 0.12), tint if reason.is_empty() else Color("d26c62"), ghost_layer)
+		var material: StandardMaterial3D = ghost.material_override
+		material.albedo_color.a = 0.65
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 
 
 func _confirm_placement() -> void:
+	if rallying:
+		if sim.set_rally(float(preview_tile.x) + 0.5, float(preview_tile.y) + 0.5):
+			_cancel_placement()
+			_open_panel("defense")
+		_refresh_hud()
+		return
 	if paving:
 		# Paving stays active so a run of tiles can be laid; every tile is confirmed separately.
 		if sim.living.pave(sim, preview_tile):
 			_update_roads()
-		_refresh_hud()
-		_preview()
+			_refresh_hud()
+			_preview()
 		return
-	var success: bool = sim.move_building(moving_id, preview_tile.x, preview_tile.y) if moving_id >= 0 else sim.build(build_type, preview_tile.x, preview_tile.y)
+	var success: bool = false
+	if moving_id < 0 and build_type in ["wall", "stonewall"] and wall_drag_start.x >= 0:
+		success = sim.build_wall_line(build_type, wall_drag_start, preview_tile)
+		if success:
+			wall_drag_start = Vector2i(-1, -1)
+	else:
+		success = sim.move_building(moving_id, preview_tile.x, preview_tile.y) if moving_id >= 0 else sim.build(build_type, preview_tile.x, preview_tile.y)
 	if success:
 		if build_type not in ["wall", "stonewall", "gate"] or moving_id >= 0:
 			_cancel_placement()
@@ -1441,6 +1480,8 @@ func _confirm_placement() -> void:
 func _cancel_placement() -> void:
 	build_type = ""
 	paving = false
+	rallying = false
+	wall_drag_start = Vector2i(-1, -1)
 	moving_id = -1
 	ghost_signature = ""
 	confirm_button.text = "Confirm Build"
@@ -1518,9 +1559,55 @@ func _train_selected() -> void:
 	_open_panel("unit")
 
 
-func _test_raid() -> void:
-	sim.start_raid()
+
+func _toggle_rally() -> void:
+	build_type = ""
+	moving_id = -1
+	paving = false
+	rallying = true
+	wall_drag_start = Vector2i(-1, -1)
+	preview_tile = Vector2i(-1, -1)
 	_close_panel()
+	placement_box.show()
+	placement_label.text = "Place defender rally point / tap open ground"
+	confirm_button.disabled = true
+	confirm_button.text = "Set Rally"
+
+
+func _set_defender_priority(unit_id: int, priority: String) -> void:
+	sim.set_defense_priority(unit_id, priority)
+	if panel == "defense":
+		_open_panel("defense")
+	elif panel == "unit":
+		_open_panel("unit")
+	_refresh_hud()
+
+
+func _set_tower_mode(mode: String) -> void:
+	sim.set_tower_targeting(selected_building, mode)
+	if panel == "building":
+		_open_panel("building")
+	_refresh_hud()
+
+
+func _upgrade_connected_wall() -> void:
+	sim.upgrade_wall_line(selected_building)
+	_rebuild_buildings()
+	if panel == "building":
+		_open_panel("building")
+	_refresh_hud()
+
+
+func _repair_connected_wall() -> void:
+	sim.repair_wall_line(selected_building)
+	_rebuild_buildings()
+	if panel == "building":
+		_open_panel("building")
+	_refresh_hud()
+
+func _test_raid() -> void:
+	sim.start_raid(20.0)
+	_open_panel("defense")
 	_refresh_hud()
 
 
@@ -1610,10 +1697,20 @@ func _refresh_hud() -> void:
 	var quest: Dictionary = sim.quest_current()
 	quest_label.text = "Village Path complete" if quest.is_empty() else "PATH / " + str(quest["name"])
 	if sim.raid_active:
-		raid_hud.text = "WAVE %d / %d raiders / HOLD THE MANOR" % [sim.wave, sim.enemies.size()]
+		var active_counts: Dictionary = {}
+		for enemy in sim.enemies:
+			active_counts[enemy["type"]] = int(active_counts.get(enemy["type"], 0)) + 1
+		var active_parts: Array = []
+		for kind in active_counts:
+			active_parts.append("%d %s" % [int(active_counts[kind]), str(kind)])
+		raid_hud.text = "WAVE %d / %s / HOLD THE MANOR" % [sim.wave, ", ".join(active_parts)]
 		music.set_mood("danger")
 	elif sim.raid_warning:
-		raid_hud.text = "HORNS / %.0fs / prepare the walls" % maxf(0.0, sim.next_raid_at - sim.elapsed)
+		var intel: Dictionary = sim.raid_preview()
+		var warning_parts: Array = []
+		for kind in intel["composition"]:
+			warning_parts.append("%d %s" % [int(intel["composition"][kind]), str(kind)])
+		raid_hud.text = "HORNS %.0fs / %s / %s" % [maxf(0.0, sim.next_raid_at - sim.elapsed), ", ".join(intel["sides"]), ", ".join(warning_parts)]
 		music.set_mood("tension")
 	else:
 		raid_hud.text = "Quiet / next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
@@ -1780,6 +1877,8 @@ func _map_click(screen: Vector2) -> void:
 	if tile.x < 0 or tile.x >= 20 or tile.y < 0 or tile.y >= 16:
 		return
 	if _placement_active():
+		if not rallying and not paving and moving_id < 0 and build_type in ["wall", "stonewall"] and "fortifications" in sim.living.discoveries and wall_drag_start.x < 0:
+			wall_drag_start = tile
 		preview_tile = tile
 		_preview()
 		return
@@ -1898,7 +1997,14 @@ func _drag_map(pointer: Vector2) -> void:
 		return
 	if _placement_active():
 		var point: Vector2 = pick_ground(pointer)
-		preview_tile = Vector2i(floori(point.x), floori(point.y))
+		var tile := Vector2i(floori(point.x), floori(point.y))
+		if not rallying and not paving and moving_id < 0 and build_type in ["wall", "stonewall"] and "fortifications" in sim.living.discoveries:
+			if wall_drag_start.x < 0:
+				var start_point: Vector2 = pick_ground(press_point)
+				wall_drag_start = Vector2i(floori(start_point.x), floori(start_point.y))
+			if pointer.distance_to(press_point) > 8.0:
+				left_dragged = true
+		preview_tile = tile
 		_preview()
 	elif pointer.distance_to(press_point) > 16.0 or left_dragged:
 		left_dragged = true
