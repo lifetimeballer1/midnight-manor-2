@@ -31,6 +31,10 @@ func step(sim, seconds: float) -> void:
 func _run() -> void:
 	var sim = Sim.new()
 	check(sim.buildings.size() == 9 and sim.units.size() == 5, "original starting layout and roster")
+	var cap_sim = Sim.new()
+	check(cap_sim.building_limit("farm") == 2, "level-1 farm limit comes from the level curve")
+	cap_sim.xp = 100
+	check(cap_sim.building_limit("farm") == 3, "level-2 farm limit advances with village level")
 	check(sim.resources["wood"] == 320 and sim.resources["food"] == 180 and sim.resources["gold"] == 210, "original starting resources")
 	var farm: Dictionary = building(sim, "farm")
 	sim.units.clear()
@@ -117,6 +121,14 @@ func _run() -> void:
 	check(not sim.move_building(int(building(sim, "farm")["id"]), 1, 1), "warning prohibits relocation")
 	step(sim, 3.2)
 	check(sim.raid_active and sim.enemies.size() == 2, "first wave spawns two perimeter raiders")
+	var cache_enemy: Dictionary = sim.enemies[0]
+	var cache_goal: Vector2 = sim._cached_edge_goal(cache_enemy, building(sim, "hall"), true)
+	check(cache_goal.x >= 0 and cache_enemy.has("edge_goal"), "raid edge-goal cache is populated at runtime")
+	var raid_state: Dictionary = sim.export_state()
+	check(not raid_state["enemies"][0].has("edge_goal") and not raid_state["enemies"][0].has("edge_tile"), "runtime path caches stay out of exported saves")
+	var raid_json: Dictionary = JSON.parse_string(JSON.stringify(raid_state))
+	var raid_restored = Sim.new()
+	check(raid_restored.restore_state(raid_json) and raid_restored.raid_active and raid_restored.enemies.size() == 2, "mid-raid JSON save roundtrip restores cleanly")
 	# Force enemies into range to exercise real unit/tower combat, not clearing them manually.
 	for enemy: Dictionary in sim.enemies:
 		enemy["x"] = 6.0
