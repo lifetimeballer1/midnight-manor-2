@@ -102,6 +102,13 @@ func _run() -> void:
 		step(sim, 6.0)
 		var connected: Array[Dictionary] = sim._connected_barriers(int(first_wall["id"]))
 		check(connected.size() >= 3, "cardinal wall segments form one connected defense")
+		sim.resources["wood"] = 10000
+		sim.resources["gold"] = 10000
+		check(sim.insert_gate(int(first_wall["id"])), "Gate Engineering inserts a gate into an existing wall segment")
+		check(first_wall["type"] == "gate" and first_wall["gate_open"], "inserted gate keeps the connected segment identity and gate state")
+		step(sim, 6.0)
+		connected = sim._connected_barriers(int(first_wall["id"]))
+		check(connected.size() >= 3, "inserted gate remains part of the connected defense")
 		if sim.building_specs["wall"]["tiers"].size() > 1:
 			sim.resources["wood"] = 10000
 			sim.resources["gold"] = 10000
