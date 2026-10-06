@@ -118,7 +118,7 @@ func _add_unit(role: String) -> void:
 		"hp": hp, "max_hp": hp, "phase": "idle", "workplace": -1, "carry": 0.0, "carry_resource": "",
 		"level": 1, "cooldown": 0.0, "order": [], "hold": false,
 		"fx": -1.0, "fy": -1.0, "rx": -1.0, "ry": -1.0, "kite": false, "think": 0.0,
-		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0, "defense_priority": defense_priority, "defense_post": -1})
+		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0, "defense_priority": defense_priority, "defense_post": -1, "repair_clock": 0.0})
 
 
 func _invalidate() -> void:
@@ -1125,14 +1125,15 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 				_face_job(u, damaged)
 				if _walk(u, _edge_goal(u, damaged), dt):
 					u["phase"] = "repair"
-					u["cooldown"] += dt
-					if u["cooldown"] >= 1.0 and float(resources.get("wood", 0)) >= 1.0:
+					u["repair_clock"] = float(u.get("repair_clock", 0.0)) + dt
+					if float(u["repair_clock"]) >= 1.0 and float(resources.get("wood", 0)) >= 1.0:
 						resources["wood"] = float(resources.get("wood", 0)) - 1.0
 						var repair_amount: float = 22.5 if u["type"] == "mason" else 15.0
 						damaged["hp"] = minf(float(damaged["max_hp"]), float(damaged["hp"]) + repair_amount)
-						u["cooldown"] = 0.0
+						u["repair_clock"] = maxf(0.0, float(u["repair_clock"]) - 1.0)
 						revision += 1
 				return
+		u["repair_clock"] = 0.0
 		_clear_facing(u)
 		return
 	if float(u["carry"]) >= 1:
@@ -1753,6 +1754,8 @@ func restore_state(state: Dictionary) -> bool:
 				u["defense_priority"] = "patrol"
 		if not u.has("defense_post"):
 			u["defense_post"] = -1
+		if not u.has("repair_clock"):
+			u["repair_clock"] = 0.0
 	for enemy in enemies:
 		var stats: Dictionary = _enemy_stats(str(enemy["type"]))
 		for key in ["speed", "damage", "range", "attack_delay"]:
@@ -1888,6 +1891,8 @@ func _validate_state(state: Dictionary) -> bool:
 				if not u.get("kite", false) is bool:
 					return false
 				if u.has("defense_priority") and str(u["defense_priority"]) not in DEFENSE_PRIORITIES:
+					return false
+				if u.has("repair_clock") and not _number(u["repair_clock"]):
 					return false
 				if u.has("defense_post"):
 					var defense_post: Variant = u["defense_post"]
