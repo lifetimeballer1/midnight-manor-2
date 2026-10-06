@@ -115,6 +115,11 @@ func _score_data(raw: Variant) -> Dictionary:
 				progression.append(notes)
 	if progression.is_empty():
 		progression = DEFAULT_PROGRESSION
+	var moods: Array = []
+	if data.get("moods") is Array:
+		for m in (data["moods"] as Array):
+			if m is String:
+				moods.append(m)
 	return {
 		"bpm": _bounded(data.get("bpm"), 72.0, 48.0, 96.0),
 		"rootHz": _bounded(data.get("rootHz"), 73.416, 40.0, 180.0),
@@ -127,6 +132,7 @@ func _score_data(raw: Variant) -> Dictionary:
 		"voices": data.get("voices") if (data.get("voices") is Dictionary) else {},
 		"gain": _bounded(data.get("gain"), 0.7, 0.0, 1.0),
 		"echo": data.get("echo") if (data.get("echo") is Dictionary) else {},
+		"moods": moods,
 	}
 
 

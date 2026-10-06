@@ -134,8 +134,11 @@ func update(game, dt: float) -> void:
 		view["previous_hp"] = float(b["hp"])
 		if float(view["danger_until"]) > game.sim.elapsed and b["hp"] > 0:
 			view["label"].text = "UNDER ATTACK"
+			view["label_text"] = "UNDER ATTACK"
 			view["label"].modulate = Color("ff8270")
-		else: view["label"].modulate = Color("d4b275")
+		elif str(view.get("label_text", "")) == "UNDER ATTACK":
+			view["label_text"] = "###"
+			view["label"].modulate = Color("d4b275")
 		if view.has("gate_mesh"):
 			var part: MeshInstance3D = view["gate_mesh"]
 			var wanted: float = float(view["gate_base"]) + (0.65 if b.get("gate_open", true) else 0.0)

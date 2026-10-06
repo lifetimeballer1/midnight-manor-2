@@ -28,6 +28,10 @@ var raid_active: bool = false
 var raid_warning: bool = false
 var paused: bool = false
 var revision: int = 0
+# Transient per-tick caches (never saved): threat base ranks, tick counter.
+var threat_ranks: Dictionary = {}
+var threat_stamp: int = -1
+var tick_count: int = 0
 var notice: String = "The Manner stands."
 var next_id: int = 1
 var birth_timer: float = 0
@@ -689,6 +693,36 @@ func _edge_goal(u: Dictionary, b: Dictionary, enemy: bool = false) -> Vector2:
 	return Vector2(-1, -1)
 
 
+# Memoized edge goals: same result as _edge_goal, recomputed only when the
+# unit changed tiles, the target building changed, or the world revision
+# moved (walls/demolitions). Cached values ride on the unit dict, so they
+# vanish with the unit and never touch saves (validation ignores extra keys).
+func _cached_edge_goal(u: Dictionary, b: Dictionary, enemy: bool = false) -> Vector2:
+	var tile := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
+	var bid: int = int(b.get("id", -1))
+	if u.get("edge_rev") == revision and u.get("edge_tile") == tile and int(u.get("edge_bid", -999)) == bid and u.get("edge_goal") is Vector2:
+		return u["edge_goal"]
+	var goal: Vector2 = _edge_goal(u, b, enemy)
+	u["edge_goal"] = goal
+	u["edge_tile"] = tile
+	u["edge_rev"] = revision
+	u["edge_bid"] = bid
+	return goal
+
+
+# Reachability without a wasted pathfind: _walk's own paths cache already
+# proves a goal reachable for this revision, so only probe route() on miss.
+func _path_reachable(u: Dictionary, target: Vector2, enemy: bool) -> bool:
+	var goal := Vector2i(floori(target.x), floori(target.y))
+	var cached: Dictionary = paths.get(int(u["id"]), {})
+	if not cached.is_empty() and cached.get("goal") == goal and cached.get("revision") == revision:
+		return true
+	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
+	if start == goal:
+		return true
+	return not route(start, goal, enemy).is_empty()
+
+
 func _walk(u: Dictionary, target: Vector2, dt: float, enemy: bool = false) -> bool:
 	if target.x < 0:
 		return false
@@ -728,6 +762,7 @@ func _hall() -> Dictionary:
 func tick(dt: float) -> void:
 	if paused or not is_finite(dt) or dt <= 0 or dt > 1:
 		return
+	tick_count += 1
 	elapsed += dt
 	_gate_tick()
 	job_timer += dt
@@ -820,7 +855,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		return
 	if raid_active or raid_warning:
 		_clear_facing(u)
-		_walk(u, _edge_goal(u, _hall()), dt)
+		_walk(u, _cached_edge_goal(u, _hall()), dt)
 		return
 	if role == "builder":
 		for b in buildings:
@@ -875,9 +910,12 @@ func _nearest_enemy(point: Vector2) -> Dictionary:
 
 func _threat_rank(enemy: Dictionary) -> float:
 	# The Manor first, then any standing structure; proximity to the defender only breaks ties.
+	return _threat_base_rank(enemy, _hall())
+
+
+func _threat_base_rank(enemy: Dictionary, hall: Dictionary) -> float:
 	var point: Vector2 = position_of(enemy)
 	var rank: float = 0.0
-	var hall := _hall()
 	if not hall.is_empty():
 		rank += 60.0 / (1.0 + _building_distance(point, hall))
 	for b: Dictionary in buildings:
@@ -890,10 +928,17 @@ func _threat_enemy(u: Dictionary) -> Dictionary:
 	var best: Dictionary = {}
 	var best_rank: float = -INF
 	var here: Vector2 = position_of(u)
+	if threat_stamp != tick_count:
+		threat_stamp = tick_count
+		threat_ranks.clear()
+		var hall := _hall()
+		for enemy in enemies:
+			if enemy["hp"] > 0:
+				threat_ranks[int(enemy["id"])] = _threat_base_rank(enemy, hall)
 	for enemy in enemies:
 		if enemy["hp"] <= 0:
 			continue
-		var rank: float = _threat_rank(enemy) - 0.35 * here.distance_to(position_of(enemy))
+		var rank: float = float(threat_ranks.get(int(enemy["id"]), -INF)) - 0.35 * here.distance_to(position_of(enemy))
 		if rank > best_rank:
 			best_rank = rank
 			best = enemy
@@ -1067,9 +1112,8 @@ func _raid_tick(dt: float) -> void:
 				enemy["cooldown"] = 1
 			continue
 		var objective: Dictionary = _hall()
-		var goal: Vector2 = _edge_goal(enemy, objective, true)
-		var route_to_hall: Array[Vector2i] = route(Vector2i(floori(float(enemy["x"])), floori(float(enemy["y"]))), Vector2i(floori(goal.x), floori(goal.y)), true)
-		if route_to_hall.is_empty():
+		var goal: Vector2 = _cached_edge_goal(enemy, objective, true)
+		if not _path_reachable(enemy, goal, true):
 			var nearest: float = INF
 			for b in buildings:
 				if b["hp"] > 0 and b["type"] != "trap":
@@ -1077,7 +1121,7 @@ func _raid_tick(dt: float) -> void:
 					if distance < nearest:
 						nearest = distance
 						objective = b
-			goal = _edge_goal(enemy, objective, true)
+			goal = _cached_edge_goal(enemy, objective, true)
 		if _building_distance(position_of(enemy), objective) <= 0.8:
 			enemy["phase"] = "attack"
 			enemy["fx"] = center(objective).x

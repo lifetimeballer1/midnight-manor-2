@@ -73,12 +73,17 @@ var pinch_dist: float = 0.0
 var pinch_zoom: float = 0.0
 var pinch_mid := Vector2.ZERO
 var pinch_has_mid: bool = false
+var pinch_active: bool = false
 var save_blocked: bool = false
 var save_path: String = "user://village-v1.json"
 const SETTINGS_PATH := "user://manor-settings.json"
 var show_grid: bool = true
+var battery_saver: bool = false
+var shadows_on: bool = true
 var grid_layer := MeshInstance3D.new()
 var grid_button: Button
+var power_button: Button
+var shadow_button: Button
 var target := Vector3(0, 0, 0)
 var yaw: float = 0.66
 var tilt: float = 0.75
@@ -187,12 +192,39 @@ func _load_settings() -> void:
 				show_grid = bool((parsed as Dictionary)["show_grid"])
 			if (parsed as Dictionary).has("sound"):
 				sound = bool((parsed as Dictionary)["sound"])
+			if (parsed as Dictionary).has("battery_saver"):
+				battery_saver = bool((parsed as Dictionary)["battery_saver"])
+			if (parsed as Dictionary).has("shadows_on"):
+				shadows_on = bool((parsed as Dictionary)["shadows_on"])
+	_apply_power_settings()
 
 
 func _save_settings() -> void:
 	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 	if f != null:
-		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound}))
+		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound, "battery_saver": battery_saver, "shadows_on": shadows_on}))
+
+
+func _apply_power_settings() -> void:
+	Engine.max_fps = 30 if battery_saver else 0
+	sun.shadow_enabled = shadows_on
+	if is_instance_valid(power_button):
+		power_button.text = "Battery saver: On" if battery_saver else "Battery saver: Off"
+	if is_instance_valid(shadow_button):
+		shadow_button.text = "Shadows: On" if shadows_on else "Shadows: Off"
+
+
+func _toggle_power() -> void:
+	battery_saver = not battery_saver
+	_save_settings()
+	_apply_power_settings()
+	sim.notice = "Battery saver on / 30 fps" if battery_saver else "Battery saver off / full fps"
+
+
+func _toggle_shadows() -> void:
+	shadows_on = not shadows_on
+	_save_settings()
+	_apply_power_settings()
 
 
 func _build_grid() -> void:
@@ -401,7 +433,7 @@ func _lighting() -> void:
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	add_child(world)
 	sun.rotation_degrees = Vector3(-48, -35, 0)
-	sun.shadow_enabled = true
+	sun.shadow_enabled = shadows_on
 	sun.directional_shadow_max_distance = 48
 	sun.shadow_bias = 0.03
 	add_child(sun)
@@ -637,15 +669,17 @@ func _update_actors(delta: float) -> void:
 		model.visible = b["hp"] > 0
 		model.scale.y = model.scale.x
 		var label: Label3D = view["label"]
+		var label_text: String = ""
 		if b["hp"] <= 0:
-			label.text = "RUINS / REPAIR"
+			label_text = "RUINS / REPAIR"
 		elif b["remaining"] > 0:
-			label.text = "Building / %.0fs" % ceilf(b["remaining"])
+			label_text = "Building / %.0fs" % ceilf(b["remaining"])
 		elif b["reserve"] >= 150 or int(b["id"]) == selected_building:
 			var resource: String = str(sim.building_specs[b["type"]].get("production", ""))
-			label.text = ("+%d %s" % [int(b["reserve"]), resource.capitalize()]) if not resource.is_empty() and resource != "<null>" else ""
-		else:
-			label.text = ""
+			label_text = ("+%d %s" % [int(b["reserve"]), resource.capitalize()]) if not resource.is_empty() and resource != "<null>" else ""
+		if str(view.get("label_text", "###")) != label_text:
+			label.text = label_text
+			view["label_text"] = label_text
 	_update_marker()
 
 
@@ -785,7 +819,11 @@ func _build_more_sheet(root_control: Control) -> void:
 
 
 func _toggle_more() -> void:
-	_close_panel()
+	if panel == "pause":
+		sidebar.hide()
+		panel = ""
+	else:
+		_close_panel()
 	more_sheet.visible = not more_sheet.visible
 	_layout_ui()
 
@@ -969,8 +1007,8 @@ func _layout_ui() -> void:
 	resource_stack.position = Vector2(size.x - stack_width - safe, safe)
 	if small:
 		# Bottom sheet like the shop ref: full-width, above the bottom bar.
-		var sheet_h: float = clampf(size.y * 0.45, 240.0, size.y - bar_h - safe * 3.0 - 96.0)
-		sheet_h = maxf(sheet_h, 160.0)
+		var sheet_max: float = maxf(160.0, size.y - bar_h - safe * 3.0 - 96.0)
+		var sheet_h: float = clampf(size.y * 0.45, minf(160.0, sheet_max), sheet_max)
 		sidebar.position = Vector2(safe, size.y - bar_h - safe - 8.0 - sheet_h)
 		sidebar.size = Vector2(size.x - safe * 2.0, sheet_h)
 	else:
@@ -1003,6 +1041,7 @@ func _clear_sidebar() -> void:
 func _open_panel(which: String) -> void:
 	if panel == "pause" and which != "pause": paused = false
 	panel = which
+	more_sheet.hide()
 	sidebar.show()
 	_clear_sidebar()
 	match which:
@@ -1219,6 +1258,10 @@ func _pause_panel() -> void:
 	_button("Sound On / Off", _toggle_sound, side_content)
 	grid_button = _button("Grid: On" if show_grid else "Grid: Off", _toggle_grid, side_content)
 	grid_button.tooltip_text = "Show or hide the 20x16 tile grid."
+	power_button = _button("Battery saver: On" if battery_saver else "Battery saver: Off", _toggle_power, side_content)
+	power_button.tooltip_text = "Cap at 30 fps to save battery."
+	shadow_button = _button("Shadows: On" if shadows_on else "Shadows: Off", _toggle_shadows, side_content)
+	shadow_button.tooltip_text = "Toggle sun shadows (biggest phone speedup)."
 	_button("Recenter camera", _recenter, side_content)
 	_label("Core-loop prototype. Campaign, advanced gear/abilities and multiplayer remain future work.", side_content)
 
@@ -1247,6 +1290,7 @@ func _choose_build(type_name: String) -> void:
 	selected_building = -1
 	selected_unit = -1
 	preview_tile = Vector2i(-1, -1)
+	more_sheet.hide()
 	_close_panel()
 	placement_box.show()
 	placement_label.text = "Place " + str(sim.building_specs[type_name]["name"]) + " / click the map"
@@ -1265,6 +1309,7 @@ func _toggle_pave() -> void:
 	selected_building = -1
 	selected_unit = -1
 	preview_tile = Vector2i(-1, -1)
+	more_sheet.hide()
 	_close_panel()
 	placement_box.show()
 	placement_label.text = "Pave stone road / click a worn dirt trail"
@@ -1426,10 +1471,18 @@ func _save_now() -> void:
 func _update_game() -> void:
 	# Live update: save the village, then reload so the newest
 	# deployed build boots. Web saves live in user:// (IndexedDB),
-	# so progress survives the refresh.
+	# so progress survives the refresh. Never reload on a failed save.
 	if not no_save and not save_blocked:
-		sim.save_game(save_path)
-	sim.notice = "Village saved. Loading the latest build…"
+		if sim.save_game(save_path):
+			sim.notice = "Village saved. Loading the latest build…"
+		else:
+			sim.notice = "Save failed. Update cancelled — your village is untouched."
+			_refresh_hud()
+			return
+	else:
+		sim.notice = "Saving is blocked. Update cancelled."
+		_refresh_hud()
+		return
 	_refresh_hud()
 	if OS.has_feature("web"):
 		JavaScriptBridge.eval("location.reload()")
@@ -1557,6 +1610,7 @@ func _refresh_research() -> void:
 			state = "LOCKED"
 		button.text = "%s\n%s / %d Insight" % [str(node["name"]), state, int(node["insight"])]
 		button.disabled = state != "READY"
+		button.tooltip_text = str(node["description"]) if reason.is_empty() else reason
 
 
 func _setup_audio() -> void:
@@ -1701,7 +1755,8 @@ func _input(event: InputEvent) -> void:
 		if event.pressed:
 			touches[event.index] = event.position
 			if touches.size() >= 2:
-				_pinch_begin()
+				if get_viewport().gui_get_hovered_control() == null:
+					_pinch_begin()
 			elif event.index == 0 and get_viewport().gui_get_hovered_control() == null:
 				left_pressed = true
 				left_dragged = false
@@ -1714,18 +1769,18 @@ func _input(event: InputEvent) -> void:
 			else:
 				pinch_has_mid = false
 				pinch_dist = 0.0
-			if event.index == 0 and left_pressed:
-				var was_drag: bool = left_dragged
+				pinch_active = false
+			if touches.is_empty():
+				if event.index == 0 and left_pressed and not left_dragged and get_viewport().gui_get_hovered_control() == null:
+					_map_click(event.position)
 				left_pressed = false
 				left_dragged = false
-				if not was_drag and get_viewport().gui_get_hovered_control() == null:
-					_map_click(event.position)
-			if touches.size() == 1:
+			elif touches.size() == 1:
 				_pinch_rebase_single()
 		return
 	if event is InputEventScreenDrag:
 		touches[event.index] = event.position
-		if touches.size() >= 2:
+		if touches.size() >= 2 and pinch_active:
 			_pinch_update()
 		elif touches.size() == 1 and left_pressed:
 			_drag_map(event.position)
@@ -1742,6 +1797,7 @@ func _pinch_begin() -> void:
 	pinch_zoom = zoom
 	pinch_mid = (a + b) * 0.5
 	pinch_has_mid = false
+	pinch_active = true
 	left_pressed = false
 	left_dragged = true
 
@@ -1839,6 +1895,12 @@ func _unhandled_input(event: InputEvent) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		focused = false
+		touches.clear()
+		left_pressed = false
+		left_dragged = false
+		pinch_active = false
+		pinch_dist = 0.0
+		pinch_has_mid = false
 		if started and not no_save and not save_blocked:
 			sim.save_game(save_path)
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
