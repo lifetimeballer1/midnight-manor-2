@@ -1794,11 +1794,15 @@ func _validate_state(state: Dictionary) -> bool:
 			return false
 	if state.has("rally_point"):
 		var rally: Variant = state["rally_point"]
-		if not rally is Array or rally.size() != 2 or not _number(rally[0]) or not _number(rally[1]):
+		if not rally is Array or rally.size() != 2:
+			return false
+		if not (rally[0] is int or rally[0] is float) or not (rally[1] is int or rally[1] is float):
 			return false
 		var rx: float = float(rally[0])
 		var ry: float = float(rally[1])
-		if not ((rx == -1 and ry == -1) or (rx >= 0 and rx < 20 and ry >= 0 and ry < 16)):
+		if not is_finite(rx) or not is_finite(ry):
+			return false
+		if not ((rx == -1.0 and ry == -1.0) or (rx >= 0.0 and rx < 20.0 and ry >= 0.0 and ry < 16.0)):
 			return false
 	if state.has("last_raid_report") and not state["last_raid_report"] is Dictionary:
 		return false
