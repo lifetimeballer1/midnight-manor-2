@@ -73,6 +73,10 @@ var pinch_mid := Vector2.ZERO
 var pinch_has_mid: bool = false
 var save_blocked: bool = false
 var save_path: String = "user://village-v1.json"
+const SETTINGS_PATH := "user://manor-settings.json"
+var show_grid: bool = true
+var grid_layer := MeshInstance3D.new()
+var grid_button: Button
 var target := Vector3(0, 0, 0)
 var yaw: float = 0.66
 var tilt: float = 0.75
@@ -92,6 +96,11 @@ var research_label := Label.new()
 var build_cards: Dictionary = {}
 var build_category_order: Array[String] = []
 var workers_button: Button
+var nav: HFlowContainer
+var nav_shop: Button
+var nav_attack: Button
+var path_button: Button
+var research_button: Button
 var road_layer := Node3D.new()
 var road_dirt := MeshInstance3D.new()
 var road_stone := MeshInstance3D.new()
@@ -137,8 +146,10 @@ func _ready() -> void:
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camera.current = true
 	camera.far = 250
+	_load_settings()
 	_camera_update()
 	_setup_marker()
+	_build_grid()
 	_setup_audio()
 	_ui()
 	_rebuild_buildings()
@@ -146,6 +157,7 @@ func _ready() -> void:
 	_update_roads()
 	_refresh_hud()
 	get_viewport().size_changed.connect(_layout_ui)
+	get_window().size_changed.connect(_layout_ui)
 	_layout_ui()
 	if not capture_path.is_empty():
 		_enter_village()
@@ -156,6 +168,58 @@ func _ready() -> void:
 
 func world_position(tile: Vector2, height: float = 0) -> Vector3:
 	return MAP_ORIGIN + Vector3(tile.x * TILE, height, tile.y * TILE)
+
+
+func _load_settings() -> void:
+	if FileAccess.file_exists(SETTINGS_PATH):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(SETTINGS_PATH))
+		if parsed is Dictionary and (parsed as Dictionary).has("show_grid"):
+			show_grid = bool((parsed as Dictionary)["show_grid"])
+
+
+func _save_settings() -> void:
+	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+	if f != null:
+		f.store_string(JSON.stringify({"show_grid": show_grid}))
+
+
+func _build_grid() -> void:
+	# 20x16 tile grid overlay, toggleable from Settings. One line mesh.
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_LINES)
+	var col := Color(0.91, 0.86, 0.75, 0.22)
+	for gx in 21:
+		_add_grid_line(st, Vector2(gx, 0), Vector2(gx, 16), col)
+	for gz in 17:
+		_add_grid_line(st, Vector2(0, gz), Vector2(20, gz), col)
+	grid_layer.mesh = st.commit()
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.vertex_color_use_as_albedo = true
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.disable_receive_shadows = true
+	grid_layer.material_override = material
+	grid_layer.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	grid_layer.visible = show_grid
+	add_child(grid_layer)
+
+
+func _add_grid_line(st: SurfaceTool, a: Vector2, b: Vector2, col: Color) -> void:
+	st.set_color(col)
+	st.set_normal(Vector3.UP)
+	st.add_vertex(world_position(a, 0.025))
+	st.set_color(col)
+	st.set_normal(Vector3.UP)
+	st.add_vertex(world_position(b, 0.025))
+
+
+func _toggle_grid() -> void:
+	show_grid = not show_grid
+	grid_layer.visible = show_grid
+	_save_settings()
+	if is_instance_valid(grid_button):
+		grid_button.text = "Grid: On" if show_grid else "Grid: Off"
 
 
 func _box(size: Vector3, at: Vector3, color: Color, parent: Node = null) -> MeshInstance3D:
@@ -668,9 +732,9 @@ func _ui() -> void:
 	left_content.add_child(hud)
 	quest_label.add_theme_color_override("font_color", GOLD)
 	left_content.add_child(quest_label)
-	ui.button("Village Path", _open_panel.bind("quests"), left_content, 28.0)
+	path_button = ui.button("Village Path", _open_panel.bind("quests"), left_content, 28.0)
 	left_content.add_child(raid_hud)
-	ui.button("Research / expand", _toggle_research, left_content, 28)
+	research_button = ui.button("Research / expand", _toggle_research, left_content, 28)
 	research_label.add_theme_font_size_override("font_size", 13)
 	left_content.add_child(research_label)
 	left_content.add_child(research_list)
@@ -701,19 +765,27 @@ func _ui() -> void:
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message.add_theme_color_override("font_color", GOLD)
 	dock.add_child(message)
-	var nav := HFlowContainer.new()
+	nav = HFlowContainer.new()
+	nav.add_theme_constant_override("h_separation", 8)
+	nav.add_theme_constant_override("v_separation", 8)
 	dock.add_child(nav)
-	var shop_btn: Button = ui.button("Build", _open_panel.bind("build"), nav)
-	_paint_primary(shop_btn, UI.GOLD)
+	nav_shop = ui.button("Build", _open_panel.bind("build"), nav)
+	_paint_primary(nav_shop, UI.GOLD)
 	_button("Pave Roads", _toggle_pave, nav)
 	collect_button = _button("Collect", _collect_selected, nav)
 	upgrade_button = _button("Upgrade", _upgrade_selected, nav)
 	move_button = _button("Move", _move_selected, nav)
 	repair_button = _button("Repair", _repair_selected, nav)
 	workers_button = _button("People / Workers", _open_workers, nav)
-	var attack_btn: Button = _button("Horn", _test_raid, nav)
-	_paint_primary(attack_btn, UI.BLOOD)
+	nav_attack = _button("Horn", _test_raid, nav)
+	_paint_primary(nav_attack, UI.BLOOD)
+	_button("⟲", _orbit_left, nav)
+	_button("⟳", _orbit_right, nav)
 	_button("Pause / Save", _open_pause, nav)
+	for child in nav.get_children():
+		var b := child as Button
+		if b != null and b != nav_shop and b != nav_attack:
+			b.custom_minimum_size.y = UI.MIN_HIT
 	root_control.add_child(sidebar)
 	var side_scroll := ScrollContainer.new()
 	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -751,23 +823,69 @@ func _toggle_research() -> void:
 	_layout_ui()
 
 
+func _window_min() -> float:
+	# Physical window px drive the branches: with canvas_items/expand the
+	# logical rect inflates on phones (e.g. 390x844 -> 1440x3114), so
+	# logical-only tests never fire there.
+	var win: Vector2i = DisplayServer.window_get_size()
+	if win.x <= 0 or win.y <= 0:
+		return 1280.0
+	return minf(float(win.x), float(win.y))
+
+
+func _is_small() -> bool:
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	return _window_min() < 460.0 or size.x < 420.0
+
+
+func _is_narrow() -> bool:
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	return _window_min() < 800.0 or size.x < 760.0
+
+
 func _layout_ui() -> void:
 	var size: Vector2 = get_viewport().get_visible_rect().size
 	var safe: float = UI.SAFE_MARGIN
-	var narrow: bool = size.x < 760
-	var small: bool = size.x < 420
+	var narrow: bool = _is_narrow()
+	var small: bool = _is_small()
 	left_content.get_child(0).text = "MANOR II" if small else "MIDNIGHT MANOR II"
 	for label in [hud, raid_hud, quest_label, research_label]:
 		label.add_theme_font_size_override("font_size", 12 if small else 14)
-	bottom.offset_top = -maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y) - safe
+	# Portrait phones: collapse the left dock to title + HUD + raid so the
+	# world dominates; Path/Research stay one tap away in the bottom nav.
+	var compact_dock: bool = small
+	path_button.visible = not compact_dock
+	quest_label.visible = not compact_dock
+	research_button.visible = not compact_dock
+	research_label.visible = not compact_dock
+	if compact_dock:
+		research_list.hide()
+	var bar_h: float = maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y)
+	bottom.offset_left = safe
+	bottom.offset_right = -safe
+	bottom.offset_top = -bar_h - safe
+	bottom.offset_bottom = -safe
+	# SHOP first, ATTACK second so thumbs land on them in one row on phones.
+	if is_instance_valid(nav) and is_instance_valid(nav_shop) and is_instance_valid(nav_attack):
+		nav.move_child(nav_shop, 0)
+		nav.move_child(nav_attack, 1)
 	var dock_width: float = (size.x - 44) * 0.52 if narrow else UI.RAIL_WIDTH + 198.0
 	left_dock.size = Vector2(dock_width, 0)
 	left_dock.position = Vector2(safe, safe)
 	var stack_width: float = (size.x - 44) * 0.48 if narrow else 226.0
+	if small:
+		stack_width = minf(165.0, size.x - dock_width - safe * 3.0)
 	resource_stack.size = Vector2(stack_width, 0)
 	resource_stack.position = Vector2(size.x - stack_width - safe, safe)
-	sidebar.position = Vector2(safe, maxf(left_dock.get_combined_minimum_size().y, resource_stack.get_combined_minimum_size().y) + 30)
-	sidebar.size = Vector2(size.x - 32 if narrow else 310.0, maxf(130, size.y - sidebar.position.y - bottom.size.y - 28))
+	if small:
+		# Bottom sheet like the shop ref: full-width, above the bottom bar.
+		var sheet_h: float = clampf(size.y * 0.45, 240.0, size.y - bar_h - safe * 3.0 - 96.0)
+		sheet_h = maxf(sheet_h, 160.0)
+		sidebar.position = Vector2(safe, size.y - bar_h - safe - 8.0 - sheet_h)
+		sidebar.size = Vector2(size.x - safe * 2.0, sheet_h)
+	else:
+		sidebar.position = Vector2(safe, maxf(left_dock.get_combined_minimum_size().y, resource_stack.get_combined_minimum_size().y) + 30)
+		sidebar.size = Vector2(size.x - 32 if narrow else 310.0, maxf(130, size.y - sidebar.position.y - bottom.size.y - 28))
 	placement_box.position = Vector2(maxf(16, (size.x - 330) / 2), size.y - bottom.size.y - 146)
 	placement_box.size.x = minf(330, size.x - 32)
 	welcome.size = Vector2(minf(480, size.x - 36), 0)
@@ -981,6 +1099,8 @@ func _pause_panel() -> void:
 	update_btn.tooltip_text = "Save the village and reload the latest build."
 	_button("Day / Night", _toggle_day, side_content)
 	_button("Sound On / Off", _toggle_sound, side_content)
+	grid_button = _button("Grid: On" if show_grid else "Grid: Off", _toggle_grid, side_content)
+	grid_button.tooltip_text = "Show or hide the 20x16 tile grid."
 	_button("Recenter camera", _recenter, side_content)
 	_label("Core-loop prototype. Campaign, advanced gear/abilities and multiplayer remain future work.", side_content)
 
@@ -1214,6 +1334,19 @@ func _recenter() -> void:
 	_camera_update()
 
 
+func _orbit_step(direction: float) -> void:
+	yaw += direction * PI / 8.0
+	_camera_update()
+
+
+func _orbit_left() -> void:
+	_orbit_step(-1.0)
+
+
+func _orbit_right() -> void:
+	_orbit_step(1.0)
+
+
 func _refresh_hud() -> void:
 	if build_cards.has("stone_quarry") and is_instance_valid(build_cards["stone_quarry"]):
 		build_cards["stone_quarry"].disabled = "stoneworking" not in sim.living.discoveries
@@ -1239,7 +1372,7 @@ func _refresh_hud() -> void:
 		raid_hud.text = "HORNS / %.0fs / prepare the walls" % maxf(0, sim.next_raid_at - sim.elapsed)
 	else:
 		raid_hud.text = "Quiet / next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
-	if get_viewport().get_visible_rect().size.x < 420:
+	if _is_small():
 		hud.text = "People %d/%d / Lv%d" % [sim.units.size(), sim.beds(), sim.village_level()]
 		quest_label.text = "Path complete" if quest.is_empty() else str(quest["name"])
 		if not sim.raid_active and not sim.raid_warning:
