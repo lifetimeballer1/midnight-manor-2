@@ -1262,7 +1262,7 @@ func _build_inspector() -> void:
 		var duty: String = "gate" if b["type"] in ["gate", "guard_post"] else "towers"
 		for u: Dictionary in sim.units:
 			if sim.troop_specs[u["type"]]["role"] == "combat":
-				_button("Post %s #%d here" % [str(sim.troop_specs[u["type"]]["name"]), int(u["id"])], _set_defender_priority.bind(int(u["id"]), duty), side_content)
+				_button("Post %s #%d here" % [str(sim.troop_specs[u["type"]]["name"]), int(u["id"])], _post_defender_here.bind(int(u["id"])), side_content)
 	_refresh_inspector()
 
 
@@ -1601,6 +1601,13 @@ func _set_defender_priority(unit_id: int, priority: String) -> void:
 		_open_panel("defense")
 	elif panel == "unit":
 		_open_panel("unit")
+	_refresh_hud()
+
+
+func _post_defender_here(unit_id: int) -> void:
+	sim.assign_defense_post(unit_id, selected_building)
+	if panel == "building":
+		_open_panel("building")
 	_refresh_hud()
 
 
