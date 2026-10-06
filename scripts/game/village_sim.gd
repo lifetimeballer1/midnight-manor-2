@@ -1263,7 +1263,7 @@ func _shot(from: Vector2, to: Vector2) -> void:
 	events.append({"kind": "shot", "from_x": from.x, "from_y": from.y, "x": to.x, "y": to.y})
 
 
-func _nearest_ready_building(point: Vector2, types: Array[String]) -> Dictionary:
+func _nearest_ready_building(point: Vector2, types: Array) -> Dictionary:
 	var best: Dictionary = {}
 	var best_distance: float = INF
 	for b in buildings:
@@ -1301,7 +1301,7 @@ func _priority_bonus(u: Dictionary, enemy: Dictionary) -> float:
 	if priority == "manor":
 		var hall: Dictionary = _hall()
 		return 100.0 / (1.0 + _building_distance(point, hall)) if not hall.is_empty() else 0.0
-	var types: Array[String] = ["gate", "guard_post"] if priority == "gate" else (["tower", "archer_tower", "guard_post"] if priority == "towers" else [])
+	var types: Array = ["gate", "guard_post"] if priority == "gate" else (["tower", "archer_tower", "guard_post"] if priority == "towers" else [])
 	var bonus: float = 0.0
 	for b in buildings:
 		if str(b["type"]) in types and b["hp"] > 0:
@@ -1356,7 +1356,7 @@ func _enemy_stats(kind: String) -> Dictionary:
 
 func _enemy_objective(enemy: Dictionary) -> Dictionary:
 	var kind: String = str(enemy.get("type", "raider"))
-	var preferred: Array[String] = []
+	var preferred: Array = []
 	if kind == "sapper":
 		preferred = ["gate", "wall", "stonewall", "guard_post"]
 	elif kind == "brute":
