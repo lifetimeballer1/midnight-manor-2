@@ -1,0 +1,26 @@
+{
+  "asset": "forge_t6",
+  "file": "forge_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | forge | T06 Architecture",
+    "MMR | forge | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    2.7799999713897705,
+    2.3499999046325684
+  ],
+  "triangles": 3856,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "b20202147f4f63108634e6a8cd576f542cbb3fb859e4d0051593e39a6a33e43a",
+  "verified": true
+}

@@ -1,0 +1,27 @@
+{
+  "asset": "gate_t4",
+  "file": "gate_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | gate | T04 Architecture",
+    "MMR | gate | T04 Lift Gate",
+    "MMR | gate | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    2.7890000343322754,
+    1.2999999523162842
+  ],
+  "triangles": 1656,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "5d3c853cc306117d4d6d1f1f4798bcfefadc6261437a95c3d4ddd4a7cfbdcf80",
+  "verified": true
+}

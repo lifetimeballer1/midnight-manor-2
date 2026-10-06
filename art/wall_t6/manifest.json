@@ -1,0 +1,26 @@
+{
+  "asset": "wall_t6",
+  "file": "wall_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | wall | T06 Architecture",
+    "MMR | wall | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.809999942779541,
+    1.2999999523162842
+  ],
+  "triangles": 1008,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "cb461a49163acc750e133d94d77811bc756be6fff34f64e45d6ada260367d4ff",
+  "verified": true
+}

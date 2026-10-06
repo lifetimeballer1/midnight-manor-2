@@ -1,0 +1,27 @@
+{
+  "asset": "tower_t1",
+  "file": "tower_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | tower | T01 Architecture",
+    "MMR | tower | T01 Roof Supports",
+    "MMR | tower | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    2.424999952316284,
+    1.2999999523162842
+  ],
+  "triangles": 1344,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "597d202ef10842d983a46685d83b7881c988ae9378128514454920c571d34f49",
+  "verified": true
+}

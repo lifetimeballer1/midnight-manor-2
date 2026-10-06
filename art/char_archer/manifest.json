@@ -1,0 +1,40 @@
+{
+  "asset": "char_archer",
+  "file": "char_archer.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | archer Rig",
+    "MMR Character | archer Body",
+    "MMR Character | archer Held bow",
+    "MMR Character | archer Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.6861953735351562,
+    1.7288280725479126,
+    0.6486930847167969
+  ],
+  "triangles": 1276,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "attack"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Ranged_Bow_Draw",
+    "death": "Death_A",
+    "attack": "Ranged_Bow_Release"
+  },
+  "sha256": "d6c069ecc5f55f41693b1cd92372ec1f9a4aa09c07f19606db472697d9ce415e",
+  "verified": true
+}

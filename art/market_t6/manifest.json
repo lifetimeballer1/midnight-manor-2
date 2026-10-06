@@ -1,0 +1,26 @@
+{
+  "asset": "market_t6",
+  "file": "market_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | market | T06 Architecture",
+    "MMR | market | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    3.299999952316284,
+    1.5749999284744263,
+    3.299999952316284
+  ],
+  "triangles": 1952,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "a2ce655bbc7e71117b5a2e656f2fd2aff57e845eb7ec730d580ddc4236a73264",
+  "verified": true
+}

@@ -1,0 +1,1096 @@
+{
+  "width": 52,
+  "height": 44,
+  "seed": 7,
+  "tiles": [
+    {
+      "x": 3,
+      "y": 3,
+      "biome": "water",
+      "landmark": "Stillwater",
+      "claimed": true
+    },
+    {
+      "x": 15,
+      "y": 12,
+      "biome": "forest",
+      "landmark": "Timber Line",
+      "claimed": true
+    },
+    {
+      "x": 16,
+      "y": 4,
+      "biome": "plains",
+      "landmark": "Moonwell",
+      "claimed": true
+    },
+    {
+      "x": 45,
+      "y": 1,
+      "biome": "hills",
+      "landmark": "Starwatch Ridge",
+      "claimed": false
+    },
+    {
+      "x": 46,
+      "y": 10,
+      "biome": "forest",
+      "landmark": "Whisperwood",
+      "claimed": false
+    },
+    {
+      "x": 45,
+      "y": 26,
+      "biome": "hills",
+      "landmark": "Ashfall March",
+      "claimed": false
+    },
+    {
+      "x": 2,
+      "y": 38,
+      "biome": "water",
+      "landmark": "Blackwater Mouth",
+      "claimed": false
+    },
+    {
+      "x": 13,
+      "y": 38,
+      "biome": "plains",
+      "landmark": "Southreach Crossing",
+      "claimed": false
+    },
+    {
+      "x": 31,
+      "y": 38,
+      "biome": "plains",
+      "landmark": "Dawnfields",
+      "claimed": false
+    },
+    {
+      "x": 46,
+      "y": 39,
+      "biome": "water",
+      "landmark": "Pale Coast",
+      "claimed": false
+    }
+  ],
+  "startingResources": {
+    "wood": 320,
+    "food": 180,
+    "gold": 210,
+    "frostwood": 0,
+    "plate": 0,
+    "lumber": 0,
+    "flour": 0,
+    "bread": 0
+  },
+  "storageSettling": {"fractionPerSecond": 0.01, "flatPerSecond": 0.02},
+  "storageBase": {
+    "wood": 4000,
+    "food": 4000,
+    "gold": 3000,
+    "lumber": 800,
+    "flour": 800,
+    "bread": 800,
+    "frostwood": 600,
+    "plate": 600,
+    "rations": 800,
+    "feast-supplies": 400
+  },
+  "spawnBuffer": 2,
+  "townMeal": {
+    "secondsPerDay": 180,
+    "foodPerVillager": 5,
+    "breadPerVillager": 1,
+    "supply": {
+  "stages": [
+    {
+      "name": "Village supply",
+      "hallTier": 1,
+      "cost": {
+        "food": 200,
+        "wood": 150,
+        "gold": 25,
+        "bread": 5,
+        "flour": 25
+      },
+      "perVillager": {
+        "food": 10,
+        "wood": 5,
+        "flour": 2
+      }
+    },
+    {
+      "name": "Town supply",
+      "hallTier": 2,
+      "cost": {
+        "food": 750,
+        "wood": 600,
+        "gold": 100,
+        "bread": 20,
+        "flour": 150,
+        "lumber": 30
+      },
+      "perVillager": {
+        "food": 15,
+        "wood": 8,
+        "flour": 3
+      }
+    },
+    {
+      "name": "Kingdom supply",
+      "hallTier": 3,
+      "cost": {
+        "food": 1800,
+        "wood": 1200,
+        "gold": 200,
+        "bread": 40,
+        "flour": 300,
+        "lumber": 80,
+        "plate": 8
+      },
+      "perVillager": {
+        "food": 20,
+        "wood": 10,
+        "flour": 4
+      }
+    },
+    {
+      "name": "Grand works supply",
+      "hallTier": 3,
+      "projectTiers": 6,
+      "cost": {
+        "food": 3000,
+        "wood": 1800,
+        "gold": 300,
+        "bread": 60,
+        "flour": 500,
+        "lumber": 120,
+        "plate": 12,
+        "frostwood": 20
+      },
+      "perVillager": {
+        "food": 25,
+        "wood": 12,
+        "flour": 5
+      }
+    }
+  ],
+  "wellSupplied": {
+    "effects": {
+      "build": 0.05,
+      "heal": 0.1
+    },
+    "production": 0.05,
+    "repair": 0.1,
+    "growth": 0.1,
+    "jobXp": 0.15
+  }
+},
+    "wellFed": {
+      "effects": { "gather": 0.08, "xp": 0.05, "heal": 0.2 },
+      "growth": 0.25,
+      "jobXp": 0.25
+    }
+  },
+  "warChest": {
+    "minLevel": 5,
+    "investments": [
+      {
+        "id": "rations",
+        "name": "Rations",
+        "icon": "🍞",
+        "text": "Hot meals before the horn — the wounded mend mid-raid and more of the fallen rise.",
+        "cost": { "food": 600, "bread": 120 },
+        "max": 3,
+        "perLevel": { "heal": 0.25, "revive": 0.1 }
+      },
+      {
+        "id": "arrows",
+        "name": "Arrow Stockpile",
+        "icon": "🏹",
+        "text": "Bundled shafts for every bow — and better shot for every tower.",
+        "cost": { "lumber": 300, "plate": 20 },
+        "max": 3,
+        "perLevel": { "damage": 0.03 }
+      },
+      {
+        "id": "wagons",
+        "name": "Repair Wagons",
+        "icon": "🛠",
+        "text": "Crews roll out at dawn — damaged buildings are mended free after the raid.",
+        "cost": { "wood": 1200, "lumber": 120 },
+        "max": 2,
+        "perLevel": { "repairBuildings": 2 }
+      },
+      {
+        "id": "armor",
+        "name": "Reinforced Armor",
+        "icon": "🛡",
+        "text": "Fresh plate for the line — every defender shrugs off more.",
+        "cost": { "plate": 40 },
+        "max": 3,
+        "perLevel": { "armor": 0.03 }
+      },
+      {
+        "id": "stakes",
+        "name": "Frostwood Stakes",
+        "icon": "❄",
+        "text": "Cold-hardened stakes slow the charge and blunt siege blows against walls.",
+        "cost": { "frostwood": 150 },
+        "max": 3,
+        "perLevel": { "wallGuard": 0.12, "slow": 0.05 }
+      }
+    ]
+  },
+  "buildings": [
+    {
+      "type": "hall",
+      "x": 9,
+      "y": 7
+    },
+    {
+      "type": "farm",
+      "x": 6,
+      "y": 9
+    },
+    {
+      "type": "lumber",
+      "x": 12,
+      "y": 8
+    },
+    {
+      "type": "mine",
+      "x": 11,
+      "y": 5
+    },
+    {
+      "type": "tower",
+      "x": 5,
+      "y": 7
+    },
+    {
+      "type": "wall",
+      "x": 5,
+      "y": 8
+    },
+    {
+      "type": "wall",
+      "x": 5,
+      "y": 9
+    },
+    {
+      "type": "wall",
+      "x": 5,
+      "y": 10
+    },
+    {
+      "type": "barracks",
+      "x": 7,
+      "y": 5
+    }
+  ],
+  "troops": [
+    "warrior",
+    "archer",
+    "miner",
+    "builder",
+    "farmer"
+  ],
+  "locked": [
+    "trap",
+    "axe",
+    "warhammer",
+    "grove",
+    "watchfire",
+    "toolkit",
+    "orrery",
+    "herding-crook",
+    "berry-basket",
+    "apprentice",
+    "runed-forgehammer",
+    "etched-armorkit",
+    "fine-tinkerkit",
+    "oiled-awl",
+    "brass-chalice",
+    "pikewoman",
+    "stonewall",
+    "gate",
+    "rampart",
+    "archer_tower",
+    "ballista",
+    "pike",
+    "kite-shield",
+    "woodward",
+    "frostaxe",
+    "smelter",
+    "iron-cap",
+    "diver",
+    "net",
+    "sapper",
+    "glasspick",
+    "market",
+    "haggler",
+    "scales",
+    "oathsworn",
+    "oathblade",
+    "tower-shield",
+    "oathstone",
+    "fire-trap",
+    "siege-tongs",
+    "ashen-cloak",
+    "chorister",
+    "hymnal",
+    "choir-robe",
+    "bellcote",
+    "schoolroom",
+    "primer",
+    "masters-ring",
+    "halberdier",
+    "halberd",
+    "longbowman",
+    "longbow",
+    "banner-cloak",
+    "fletcher",
+    "shieldwall-yard",
+    "moon-dial",
+    "envoys-gift",
+    "banner-cloak-grey",
+    "starforged-oathblade",
+    "starforged-halberd",
+    "starforged-longbow",
+    "tidecaller",
+    "tidebell",
+    "divers-plate",
+    "sunken-chapel",
+    "squire",
+    "squires-blade",
+    "cairnfield",
+    "oathkeeper-armor",
+    "dawn-gate",
+    "regalia",
+    "dawnbringer",
+    "heartwarden",
+    "heartwood-axe",
+    "whisper-coat",
+    "mudlark",
+    "blackwater-net",
+    "mire-coat"
+  ],
+  "homeRaids": {
+    "firstAt": 300,
+    "interval": 240,
+    "warning": 15,
+    "firstCount": 2,
+    "baseCount": 3,
+    "perWave": 1,
+    "maxCount": 8,
+    "warningLines": [
+      "Horns on the night wind — riders under a pale moon. To the walls! They come in {count} heartbeats of {seconds}.",
+      "Dust on the border roads and a horn through the pines. {count} raiders, {seconds} breaths out. Light the lamps.",
+      "The watchfire gutters — hoofbeats past the treeline. {count} coming, {seconds} to bar the doors."
+    ],
+    "attackLines": [
+      "Wave {wave} — {count} raiders! Hold the manor!",
+      "They are over the fence! Wave {wave}, {count} strong — stand together!"
+    ],
+    "victoryLines": [
+      "The bell rings long — the Manner stands. {kills} fell, their pouches ours (+{loot} gold). Mend what broke.",
+      "Quiet again. {kills} raiders down, +{loot} gold in salvage. Oil the hinges and reset the traps."
+    ],
+    "defeatLines": [
+      "The hall is ash and the bell is silent. Take the salvage wood and raise the beams again at dawn.",
+      "They broke the manor and melted into the trees. Salvage what you can — the village rises again."
+    ],
+    "director": {
+      "minQuiet": 240,
+      "maxQuiet": 480,
+      "recovery": 180,
+      "defeatRecovery": 360,
+      "warning": 25
+    }
+  },
+  "enemyRoles": {
+    "raider": {
+      "hp": 1,
+      "damage": 1,
+      "speed": 0.95,
+      "range": 1.1
+    },
+    "scout": {
+      "hp": 0.7,
+      "damage": 0.75,
+      "speed": 1.5,
+      "range": 1.1
+    },
+    "archer": {
+      "hp": 0.75,
+      "damage": 0.8,
+      "speed": 0.85,
+      "range": 3.4
+    },
+    "breaker": {
+      "hp": 1.5,
+      "damage": 0.85,
+      "speed": 0.65,
+      "range": 1.1,
+      "wallDamage": 2.5
+    },
+    "ram": {
+      "hp": 2.2,
+      "damage": 0.7,
+      "speed": 0.5,
+      "range": 1.1,
+      "wallDamage": 4,
+      "siege": true
+    },
+    "bombard": {
+      "hp": 0.9,
+      "damage": 1.2,
+      "speed": 0.55,
+      "range": 4.5,
+      "wallDamage": 3,
+      "siege": true
+    }
+  },
+  "enemyFactions": [
+    {
+      "id": "thornband",
+      "name": "Thornband",
+      "minWave": 1,
+      "color": "#997747",
+      "roles": [
+        "raider",
+        "raider",
+        "scout"
+      ],
+      "lore": "Hungry woodland outlaws probe every unguarded road. Quick scouts fall easily to towers."
+    },
+    {
+      "id": "pale-host",
+      "name": "Pale Host",
+      "minWave": 3,
+      "color": "#799ba3",
+      "roles": [
+        "raider",
+        "archer",
+        "archer"
+      ],
+      "lore": "Silent bowmen follow the mist. Close the distance before their arrows wear down the watch."
+    },
+    {
+      "id": "cinder-clan",
+      "name": "Cinder Clan",
+      "minWave": 5,
+      "color": "#ad5948",
+      "roles": [
+        "breaker",
+        "raider",
+        "breaker",
+        "archer"
+      ],
+      "lore": "Iron mauls hammer the gates. Slow breakers punish weak walls; layered defenses buy time."
+    },
+    {
+      "id": "ember-legion",
+      "name": "Ember Legion",
+      "minWave": 8,
+      "minLevel": 8,
+      "color": "#c2502f",
+      "roles": [
+        "ram",
+        "breaker",
+        "bombard",
+        "raider"
+      ],
+      "lore": "The Cinder Clan's war-engine made flesh: rams for the gates, bombard-shells from afar. Kill the engines first."
+    },
+    {
+      "id": "pale-court",
+      "name": "Pale Court",
+      "minWave": 12,
+      "minLevel": 10,
+      "color": "#cfd8ea",
+      "roles": [
+        "breaker",
+        "archer",
+        "bombard",
+        "ram"
+      ],
+      "lore": "The Pale Host grown into a court: disciplined, gilded, merciless. Elites walk among them, and sometimes the Queen herself."
+    }
+  ],
+  "technologies": [
+    {
+      "id": "orchards",
+      "branch": "Survival",
+      "name": "Moon orchards",
+      "text": "Cultivate a dependable new food source.",
+      "unlocks": [
+        "grove"
+      ],
+      "requires": [],
+      "points": 10,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60
+    },
+    {
+      "id": "medicine",
+      "branch": "Survival",
+      "name": "Village medicine",
+      "text": "Train the choir and establish a recovery bell.",
+      "unlocks": [
+        "bellcote",
+        "chorister",
+        "hymnal"
+      ],
+      "requires": [
+        "orchards"
+      ],
+      "points": 30,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120
+    },
+    {
+      "id": "masonry",
+      "branch": "Construction",
+      "name": "Stone construction",
+      "text": "Replace exposed timber with stone defenses.",
+      "unlocks": [
+        "stonewall",
+        "gate",
+        "rampart"
+      ],
+      "requires": [],
+      "points": 10,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60
+    },
+    {
+      "id": "engineering",
+      "branch": "Construction",
+      "name": "Master engineering",
+      "text": "Equip your builders for large projects.",
+      "unlocks": [
+        "toolkit",
+        "fine-tinkerkit"
+      ],
+      "requires": [
+        "masonry"
+      ],
+      "points": 30,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120
+    },
+    {
+      "id": "fieldcraft",
+      "branch": "Warfare",
+      "name": "Defensive fieldcraft",
+      "text": "Prepare traps and better melee weapons.",
+      "unlocks": [
+        "trap",
+        "axe",
+        "archer_tower"
+      ],
+      "requires": [],
+      "points": 10,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60
+    },
+    {
+      "id": "watchfires",
+      "branch": "Warfare",
+      "name": "Organized watch",
+      "text": "Hold the perimeter with signal defenses and heavy weapons.",
+      "unlocks": [
+        "watchfire",
+        "warhammer",
+        "ballista"
+      ],
+      "requires": [
+        "fieldcraft"
+      ],
+      "points": 30,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120
+    },
+    {
+      "id": "forging",
+      "branch": "Industry",
+      "name": "Runic forging",
+      "text": "Improve the tools of smiths and armorers.",
+      "unlocks": [
+        "runed-forgehammer",
+        "etched-armorkit"
+      ],
+      "requires": [],
+      "points": 10,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60
+    },
+    {
+      "id": "smelting",
+      "branch": "Industry",
+      "name": "Metalworking",
+      "text": "Recruit smelters to turn the workshop economy toward plate.",
+      "unlocks": [
+        "smelter",
+        "iron-cap"
+      ],
+      "requires": [
+        "forging"
+      ],
+      "points": 30,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120
+    },
+    {
+      "id": "education",
+      "branch": "Society",
+      "name": "Education",
+      "text": "Open a school and recruit apprentices.",
+      "unlocks": [
+        "schoolroom",
+        "apprentice",
+        "primer"
+      ],
+      "requires": [],
+      "points": 10,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60
+    },
+    {
+      "id": "commerce",
+      "branch": "Society",
+      "name": "Frontier commerce",
+      "text": "Bring markets and specialist traders to town.",
+      "unlocks": [
+        "market",
+        "haggler",
+        "scales"
+      ],
+      "requires": [
+        "education"
+      ],
+      "points": 30,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120
+    },
+    {
+      "id": "woodcraft",
+      "branch": "Exploration",
+      "name": "Deep woodcraft",
+      "text": "Train specialists for the cold woods.",
+      "unlocks": [
+        "woodward",
+        "frostaxe"
+      ],
+      "requires": [],
+      "points": 10,
+      "cost": {
+        "wood": 90,
+        "gold": 50
+      },
+      "seconds": 60
+    },
+    {
+      "id": "watercraft",
+      "branch": "Exploration",
+      "name": "Waterway maps",
+      "text": "Recruit divers and equip them for new expeditions.",
+      "unlocks": [
+        "diver",
+        "net"
+      ],
+      "requires": [
+        "woodcraft"
+      ],
+      "points": 30,
+      "cost": {
+        "wood": 240,
+        "gold": 180
+      },
+      "seconds": 120
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "stillwater",
+      "x": 3,
+      "y": 3,
+      "name": "Stillwater",
+      "text": "The water is older than the Manor. Wren says the dark surface is honest: draw too hard from the land and even Stillwater will show the cost."
+    },
+    {
+      "id": "timber-line",
+      "x": 15,
+      "y": 12,
+      "name": "Timber Line",
+      "text": "Old tax cuts still scar the boundary trees. Joren's tollmen are gone, but the line remains—a reminder that roads remember who charged for passage."
+    },
+    {
+      "id": "moonwell",
+      "x": 16,
+      "y": 4,
+      "name": "Moonwell",
+      "text": "Moonstone dust shines in the mortar around the old well. The Mooncleric calls it borrowed light, never a miracle."
+    },
+    {
+      "id": "starwatch-ridge",
+      "x": 45,
+      "y": 1,
+      "name": "Starwatch Ridge",
+      "text": "Sorrel's chalk marks survive on the high stones: horn counts, wind arrows, and the names of watchmen who stood here through nights too long to number."
+    },
+    {
+      "id": "whisperwood",
+      "x": 46,
+      "y": 10,
+      "name": "Whisperwood",
+      "text": "The pines carry sound farther than they should. Wayfinders leave paired cuts on safe trunks so travelers can tell an echo from a road."
+    },
+    {
+      "id": "ashfall-march",
+      "x": 45,
+      "y": 26,
+      "name": "Ashfall March",
+      "text": "Charcoal lies under the grass in black seams. Failed hearths once stood here; Sarella says the ground remembers every fire that was asked to burn too long."
+    },
+    {
+      "id": "blackwater-mouth",
+      "x": 2,
+      "y": 38,
+      "name": "Blackwater Mouth",
+      "text": "Broken pilings vanish beneath the black current. Fishers still tie a white thread to the first post before crossing, a habit nobody admits is a prayer."
+    },
+    {
+      "id": "southreach",
+      "x": 13,
+      "y": 38,
+      "name": "Southreach Crossing",
+      "text": "Four old roads meet under one weathered marker. The Pale Envoy chose this place because every road arrives owing something to another."
+    },
+    {
+      "id": "dawnfields",
+      "x": 31,
+      "y": 38,
+      "name": "Dawnfields",
+      "text": "The field earned its name from a single pale morning after the Longest Night. Nobody claims the sun returned; they only remember that the dark finally thinned."
+    },
+    {
+      "id": "pale-coast",
+      "x": 46,
+      "y": 39,
+      "name": "Pale Coast",
+      "text": "Salt crusts the ruined steps above the tide. Grey-market sailors leave copper nails in the cracks for luck and take nothing from the water after midnight."
+    }
+  ],
+  "frontierEventTiming": {
+    "minDelay": 300,
+    "jitter": 180,
+    "retryDelay": 90
+  },
+  "frontierEvents": [
+    {
+      "id": "southreach-broken-axle",
+      "region": "southreach",
+      "minLevel": 5,
+      "title": "A Broken Axle at Southreach",
+      "text": "A Grey Road cart has thrown a wheel at the crossing. The driver has coin, but no timber worth trusting.",
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Send 60 wood",
+          "cost": {
+            "wood": 60
+          },
+          "reward": {
+            "gold": 90
+          },
+          "result": "Your builders reset the axle before moonrise. The driver pays fair coin and carries your name down the road."
+        },
+        {
+          "id": "pass",
+          "label": "Let the road handle it",
+          "result": "You leave the cart to the road crews. By morning only ruts and a broken spoke remain."
+        }
+      ]
+    },
+    {
+      "id": "starwatch-signal",
+      "region": "starwatch-ridge",
+      "minLevel": 6,
+      "title": "Three Lights on Starwatch Ridge",
+      "text": "A watchman answers the Manor with three shielded lanterns: travelers below, weather turning, supplies running thin.",
+      "choices": [
+        {
+          "id": "supply",
+          "label": "Send 40 wood + 30 food",
+          "cost": {
+            "wood": 40,
+            "food": 30
+          },
+          "reward": {
+            "gold": 85
+          },
+          "result": "The ridge stays manned through the bad weather. A grateful caravan leaves coin with the watch on its way through."
+        },
+        {
+          "id": "dark",
+          "label": "Keep the ridge dark",
+          "result": "The lanterns go out one by one. The travelers find another road and the watch keeps its stores."
+        }
+      ]
+    },
+    {
+      "id": "whisperwood-wayfinders",
+      "region": "whisperwood",
+      "minLevel": 6,
+      "title": "Wayfinders in Whisperwood",
+      "text": "Two wayfinders have found an old safe trail but need provisions before they can mark it clearly enough for caravans.",
+      "choices": [
+        {
+          "id": "provision",
+          "label": "Send 50 food",
+          "cost": {
+            "food": 50
+          },
+          "reward": {
+            "gold": 80
+          },
+          "result": "The paired cuts appear on the right trees by dawn. Traders use the safer trail and leave a road fee at the Manor."
+        },
+        {
+          "id": "leave",
+          "label": "Leave the trail unmarked",
+          "result": "The wayfinders keep the route in their private charts. The woods stay quiet and difficult."
+        }
+      ]
+    },
+    {
+      "id": "blackwater-ferry",
+      "region": "blackwater-mouth",
+      "minLevel": 5,
+      "title": "A Boat at Blackwater Mouth",
+      "text": "A ferryman has grounded his flatboat on a split piling. He can save the cargo if the village sends straight timber.",
+      "choices": [
+        {
+          "id": "timber",
+          "label": "Send 55 wood",
+          "cost": {
+            "wood": 55
+          },
+          "reward": {
+            "food": 95
+          },
+          "result": "The boat floats free before the tide turns. The ferryman leaves smoked fish and grain from the saved cargo."
+        },
+        {
+          "id": "wait",
+          "label": "Wait for the tide",
+          "result": "The tide frees the hull hours later, but half the cargo has gone to the black water."
+        }
+      ]
+    },
+    {
+      "id": "ashfall-hearth",
+      "region": "ashfall-march",
+      "minLevel": 7,
+      "title": "Smoke under Ashfall March",
+      "text": "A buried charcoal hearth has begun breathing again under the turf. Sarella says it can be made safe, but not ignored cheaply.",
+      "choices": [
+        {
+          "id": "stabilize",
+          "label": "Send 70 wood + 40 food",
+          "cost": {
+            "wood": 70,
+            "food": 40
+          },
+          "reward": {
+            "gold": 130
+          },
+          "result": "Crews cut a safe vent and brace the old pit. Salvaged fittings and charcoal sell well on the Grey Road."
+        },
+        {
+          "id": "seal",
+          "label": "Mark it and move on",
+          "result": "The march is marked with white stones. Nobody camps there until the ground cools."
+        }
+      ]
+    },
+    {
+      "id": "dawnfields-camp",
+      "region": "dawnfields",
+      "minLevel": 7,
+      "title": "Travelers in the Dawnfields",
+      "text": "A family caravan has stopped beside the old battle field. They ask for supper and offer tools cut from good northern timber.",
+      "choices": [
+        {
+          "id": "feed",
+          "label": "Send 65 food",
+          "cost": {
+            "food": 65
+          },
+          "reward": {
+            "wood": 110
+          },
+          "result": "The travelers eat at your fire and trade a bundle of seasoned timber before taking the south road."
+        },
+        {
+          "id": "road",
+          "label": "Point them toward the road",
+          "result": "They thank the watch and move on before dark, keeping their stores for the long road."
+        }
+      ]
+    },
+    {
+      "id": "pale-coast-wagon",
+      "region": "pale-coast",
+      "minLevel": 8,
+      "title": "Salt from the Pale Coast",
+      "text": "A coast wagon offers preserved fish and salt at a steep road price before the tide road closes.",
+      "choices": [
+        {
+          "id": "buy",
+          "label": "Pay 70 gold",
+          "cost": {
+            "gold": 70
+          },
+          "reward": {
+            "food": 125
+          },
+          "result": "The Manor stores fill with salt fish before the wagon turns inland. Winter meals will stretch farther."
+        },
+        {
+          "id": "decline",
+          "label": "Keep the coin",
+          "result": "The wagon rolls north looking for another buyer. The salt smell lingers after the wheels are gone."
+        }
+      ]
+    },
+    {
+      "id": "whisperwood-paired-cuts",
+      "region": "whisperwood",
+      "minLevel": 6,
+      "title": "Fresh Cuts in Whisperwood",
+      "text": "Tomm finds a fallen heartwood trunk across the paired-cut trail. The wardens can clear it before the next caravan, if the Manor sends supper.",
+      "choices": [
+        {
+          "id": "supper",
+          "label": "Send 50 food",
+          "cost": {"food": 50},
+          "reward": {"gold": 80},
+          "result": "The wardens clear the fallen trunk without touching the living pines. A caravan pays its road fee at the Manor before dawn."
+        },
+        {
+          "id": "rest",
+          "label": "Let the grove rest",
+          "result": "Tomm hangs a warning at the fork. The caravans take the longer road, and the grove keeps its quiet."
+        }
+      ]
+    },
+    {
+      "id": "blackwater-white-thread",
+      "region": "blackwater-mouth",
+      "minLevel": 6,
+      "title": "A Thread above Blackwater",
+      "text": "The Mooncleric finds the first post leaning into the current. The mudlarks ask for straight timber to keep the white thread above the returning boats.",
+      "choices": [
+        {
+          "id": "brace",
+          "label": "Send 55 wood",
+          "cost": {"wood": 55},
+          "reward": {"food": 95},
+          "result": "The mudlarks brace the post before the tide turns. Returning boats leave smoked fish at the Manor, and the white thread stays dry."
+        },
+        {
+          "id": "wait",
+          "label": "Wait on the bank",
+          "result": "The Mooncleric lifts the thread to a safer branch. The boats take the far channel while the old post settles into the mud."
+        }
+      ]
+    }
+  ],
+  "frontierCamps": [
+    {
+      "id": "thornband-whisper",
+      "region": "whisperwood",
+      "faction": "thornband",
+      "x": 48,
+      "y": 14,
+      "minWave": 1,
+      "name": "Thornband Cut-Camp",
+      "text": "Fresh-cut stakes, hide tents, and a low cookfire sit under the pines. Thornband lookouts use this camp to watch the northern road."
+    },
+    {
+      "id": "pale-starwatch",
+      "region": "starwatch-ridge",
+      "faction": "pale-host",
+      "x": 48,
+      "y": 2,
+      "minWave": 3,
+      "name": "Pale Host Watch",
+      "text": "White cloth tied below the ridge marks a quiet roadside camp. Its fires stay low and every approach is carefully watched."
+    },
+    {
+      "id": "cinder-ashfall",
+      "region": "ashfall-march",
+      "faction": "cinder-clan",
+      "x": 48,
+      "y": 27,
+      "minWave": 5,
+      "name": "Cinder Clan Road-Camp",
+      "text": "A heavy timber rack and a blackened firepit sit beside the old march road. The camp is built for long stays, not a single night."
+    },
+    {
+      "id": "ember-ashfall",
+      "region": "ashfall-march",
+      "faction": "ember-legion",
+      "x": 43,
+      "y": 30,
+      "minWave": 8,
+      "name": "Ember Legion Works",
+      "text": "Red canvas shelters carts, timber frames, and stacked supplies. The site feels more like a field workshop than a temporary camp."
+    },
+    {
+      "id": "pale-court-coast",
+      "region": "pale-coast",
+      "faction": "pale-court",
+      "x": 49,
+      "y": 40,
+      "minWave": 12,
+      "name": "Pale Court Shore Pavilion",
+      "text": "Pale banners stand in precise rows above the salt grass. Supplies are arranged by rank, giving the whole camp a ceremonial order."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "asset": "char_warrior",
+  "file": "char_warrior.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | warrior Rig",
+    "MMR Character | warrior Body",
+    "MMR Character | warrior Held sword",
+    "MMR Character | warrior Shield",
+    "MMR Character | warrior Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.532028317451477,
+    1.5429961681365967,
+    0.5258941650390625
+  ],
+  "triangles": 1167,
+  "meshes": 4,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "attack"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Melee_1H_Attack_Chop",
+    "death": "Death_A",
+    "attack": "Melee_1H_Attack_Chop"
+  },
+  "sha256": "37c8d091bcfb1818baa4ae2b46537253a0c4589c4d3af60fb86c5aab8334881c",
+  "verified": true
+}

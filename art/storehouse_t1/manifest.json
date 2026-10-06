@@ -1,0 +1,26 @@
+{
+  "asset": "storehouse_t1",
+  "file": "storehouse_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | storehouse | T01 Architecture",
+    "MMR | storehouse | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.9399999380111694,
+    2.3499999046325684
+  ],
+  "triangles": 1888,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "e6e56c0da85c4adb7d57cae69c4c801329aaad2467969ab5bfc02829af9441ce",
+  "verified": true
+}

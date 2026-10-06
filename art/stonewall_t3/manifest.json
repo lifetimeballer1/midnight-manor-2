@@ -1,0 +1,26 @@
+{
+  "asset": "stonewall_t3",
+  "file": "stonewall_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | stonewall | T03 Architecture",
+    "MMR | stonewall | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.3199999332427979,
+    1.2999999523162842
+  ],
+  "triangles": 1764,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "bd4b3f0bfb3e67e8765fa1cb0b8257d9163c3ca16498e581bf9af1e7535330b2",
+  "verified": true
+}

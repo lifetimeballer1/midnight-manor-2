@@ -1,0 +1,26 @@
+{
+  "asset": "mine_t2",
+  "file": "mine_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | mine | T02 Architecture",
+    "MMR | mine | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.1375000476837158,
+    1.2999999523162842
+  ],
+  "triangles": 1420,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "d2486226131ba986412015c8b674e9fd2a5818b9d5ee403452766756b3e1bca6",
+  "verified": true
+}

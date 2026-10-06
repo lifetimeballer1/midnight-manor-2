@@ -1,0 +1,9 @@
+.godot/
+.superpowers/
+__pycache__/
+*.pending.glb
+*.blend
+*.blend1
+*.mixar
+*.mixar1
+.mcp/

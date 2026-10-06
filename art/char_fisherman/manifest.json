@@ -1,0 +1,40 @@
+{
+  "asset": "char_fisherman",
+  "file": "char_fisherman.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | fisherman Rig",
+    "MMR Character | fisherman Body",
+    "MMR Character | fisherman Held rod",
+    "MMR Character | fisherman Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5277862548828125,
+    1.7288280725479126,
+    0.6290245056152344
+  ],
+  "triangles": 1083,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Fishing_Reeling",
+    "death": "Death_A",
+    "gather": "Fishing_Reeling"
+  },
+  "sha256": "619f0d3d98611cbfde495a8eea1ce6752aac9a825bc61f7ba600c582075ebd6f",
+  "verified": true
+}

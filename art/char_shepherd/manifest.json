@@ -1,0 +1,40 @@
+{
+  "asset": "char_shepherd",
+  "file": "char_shepherd.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | shepherd Rig",
+    "MMR Character | shepherd Body",
+    "MMR Character | shepherd Held crook",
+    "MMR Character | shepherd Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5236968994140625,
+    1.744652509689331,
+    0.7753982543945312
+  ],
+  "triangles": 1048,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Working_A",
+    "death": "Death_A",
+    "gather": "Working_A"
+  },
+  "sha256": "8d17e37e46b8958ea9ceff98c00af7973db463933be895162cda026c214179ba",
+  "verified": true
+}

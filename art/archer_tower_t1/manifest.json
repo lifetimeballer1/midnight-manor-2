@@ -1,0 +1,27 @@
+{
+  "asset": "archer_tower_t1",
+  "file": "archer_tower_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | archer_tower | T01 Architecture",
+    "MMR | archer_tower | T01 Roof Supports",
+    "MMR | archer_tower | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    2.5850000381469727,
+    1.2999999523162842
+  ],
+  "triangles": 1908,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "38f0be093b21a6f686b5c004a35608c4ea1c596f6f335b9c77fbcbc19b047254",
+  "verified": true
+}

@@ -1,0 +1,26 @@
+{
+  "asset": "scriptorium_t1",
+  "file": "scriptorium_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | scriptorium | T01 Architecture",
+    "MMR | scriptorium | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.4019999504089355,
+    1.2999999523162842
+  ],
+  "triangles": 2100,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "563738d0209626341c2a885c107fc7e165b6a784a8d2271ff73cfca07995b41c",
+  "verified": true
+}

@@ -1,0 +1,26 @@
+{
+  "asset": "wall_t5",
+  "file": "wall_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | wall | T05 Architecture",
+    "MMR | wall | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.6699999570846558,
+    1.2999999523162842
+  ],
+  "triangles": 1008,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "927000000ef5c4d23332a149ef90abcd38d97acf89702c28556f3844d5723298",
+  "verified": true
+}

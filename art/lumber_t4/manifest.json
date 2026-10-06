@@ -1,0 +1,26 @@
+{
+  "asset": "lumber_t4",
+  "file": "lumber_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | lumber | T04 Architecture",
+    "MMR | lumber | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.2912499904632568,
+    1.2999999523162842
+  ],
+  "triangles": 2204,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "91cf5471e7c32c20d222c95d0b08bf3de64bd293c03d58a5092b0b48b2075b19",
+  "verified": true
+}

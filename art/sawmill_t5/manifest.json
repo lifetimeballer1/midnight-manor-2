@@ -1,0 +1,29 @@
+{
+  "asset": "sawmill_t5",
+  "file": "sawmill_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | sawmill | T05 Architecture",
+    "MMR | sawmill | T05 Drive Wheel",
+    "MMR | sawmill | T05 Header Frame",
+    "MMR | sawmill | T05 Saw Blade",
+    "MMR | sawmill | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    2.259791851043701,
+    2.3499999046325684
+  ],
+  "triangles": 3236,
+  "meshes": 5,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "443cb07ebce15399661c91261c55516f90852d39283c7e034ddbe34a79fa6ceb",
+  "verified": true
+}

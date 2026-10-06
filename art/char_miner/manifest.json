@@ -1,0 +1,40 @@
+{
+  "asset": "char_miner",
+  "file": "char_miner.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | miner Rig",
+    "MMR Character | miner Body",
+    "MMR Character | miner Held pickaxe",
+    "MMR Character | miner Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5441076755523682,
+    1.7248719930648804,
+    0.6626510620117188
+  ],
+  "triangles": 1129,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Pickaxing",
+    "death": "Death_A",
+    "gather": "Pickaxing"
+  },
+  "sha256": "77d3d5b0711f15c95ef9258f5e730b55684152570f985820bd7ca7fc9a1b15c3",
+  "verified": true
+}

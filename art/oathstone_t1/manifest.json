@@ -1,0 +1,26 @@
+{
+  "asset": "oathstone_t1",
+  "file": "oathstone_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | oathstone | T01 Architecture",
+    "MMR | oathstone | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.6099998950958252,
+    1.2999999523162842
+  ],
+  "triangles": 760,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "ca4bb5699015c3f763b44fc4e289622c5e915fb6d4ebff19f680e930ca6ea695",
+  "verified": true
+}

@@ -1,0 +1,26 @@
+{
+  "asset": "mine_t6",
+  "file": "mine_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | mine | T06 Architecture",
+    "MMR | mine | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.2574999332427979,
+    1.2999999523162842
+  ],
+  "triangles": 1592,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "770a0102730bd658f0990f7e97c5279b97b926eba52d4b91651ac6fdc75e7f1a",
+  "verified": true
+}

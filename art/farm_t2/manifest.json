@@ -1,0 +1,26 @@
+{
+  "asset": "farm_t2",
+  "file": "farm_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | farm | T02 Architecture",
+    "MMR | farm | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    0.7639999985694885,
+    2.3499999046325684
+  ],
+  "triangles": 1660,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "3cc456e15448ea4dd9abdf5f9e93da68bb3240aa9626e1a2c6ab62b1d985366c",
+  "verified": true
+}

@@ -1,0 +1,26 @@
+{
+  "asset": "trap_t2",
+  "file": "trap_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | trap | T02 Architecture",
+    "MMR | trap | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    0.6650000214576721,
+    1.2999999523162842
+  ],
+  "triangles": 780,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "6eb55cff07aca400cb93f5a15034ab8021c1c15122f3f5e86e74f5439076c4c5",
+  "verified": true
+}

@@ -1,0 +1,27 @@
+{
+  "asset": "farm_t4",
+  "file": "farm_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | farm | T04 Architecture",
+    "MMR | farm | T04 Shelter Supports",
+    "MMR | farm | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.34499990940094,
+    2.3499999046325684
+  ],
+  "triangles": 2032,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "b9a7e054761b5642ff2e47c636bba3846f3a4a2472f67c5e3b715926f96e4298",
+  "verified": true
+}

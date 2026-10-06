@@ -1,0 +1,28 @@
+{
+  "asset": "sawmill_t2",
+  "file": "sawmill_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | sawmill | T02 Architecture",
+    "MMR | sawmill | T02 Header Frame",
+    "MMR | sawmill | T02 Saw Blade",
+    "MMR | sawmill | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    2.0888137817382812,
+    2.3499999046325684
+  ],
+  "triangles": 2240,
+  "meshes": 4,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "f4dd33523662f683ee6118d95eadb60e5b573b1a1c16fa19ab4558eb7afa42fd",
+  "verified": true
+}

@@ -1,0 +1,26 @@
+{
+  "asset": "pasture_t4",
+  "file": "pasture_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | pasture | T04 Architecture",
+    "MMR | pasture | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.59499990940094,
+    2.3499999046325684
+  ],
+  "triangles": 2228,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "1acc34831b2c79a2f7c49f0c987962d0c7a36fcd3dfbd0d2f0a830d190a9e156",
+  "verified": true
+}

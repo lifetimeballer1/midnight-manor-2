@@ -1,0 +1,26 @@
+{
+  "asset": "pond_t5",
+  "file": "pond_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | pond | T05 Architecture",
+    "MMR | pond | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.4649999141693115,
+    2.3499999046325684
+  ],
+  "triangles": 1840,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "5242cc83e2887765bee111e1998d79612b15d1ce6cba9b55b8bb4dc14a66f8a6",
+  "verified": true
+}

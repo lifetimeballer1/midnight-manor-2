@@ -1,0 +1,26 @@
+{
+  "asset": "forge_t3",
+  "file": "forge_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | forge | T03 Architecture",
+    "MMR | forge | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    2.2849998474121094,
+    2.3499999046325684
+  ],
+  "triangles": 2980,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "b15e1df51304bf22114052b2a7d952cd529fd9493283df2e5741a6e3ba6f307c",
+  "verified": true
+}

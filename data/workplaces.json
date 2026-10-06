@@ -1,0 +1,42 @@
+{
+	"version": 1,
+	"note": "Work stand and job targets per workplace type. Offsets are logical TILE offsets from the building centre (tile 0 spans 0.0-1.0, tile centres sit at n+0.5). A building of size 2 has its centre on a tile corner, so its ring tile centres are at odd half offsets (+/-0.5, +/-1.5); a size 1 building centres on its own tile, so ring tile centres are at whole offsets (+/-1.0). Every stand is a walkable tile OUTSIDE the footprint, the target is the actual job inside the workplace.",
+	"workplaces": {
+		"farm": {
+			"label": "Second-field",
+			"stands": [[0.5, 1.5], [-1.5, -0.5]],
+			"target": [0.0, -0.5],
+			"job": "crop rows on the field"
+		},
+		"lumber": {
+			"label": "Woodlot",
+			"stands": [[1.0, 0.0], [-1.0, 1.0]],
+			"target": [0.0, 0.0],
+			"job": "timber felled at the woodlot"
+		},
+		"timber_yard": {
+			"label": "Timber Yard",
+			"stands": [[-1.0, 0.0], [0.0, 1.0]],
+			"target": [0.0, 0.0],
+			"job": "sawn-timber stack"
+		},
+		"mine": {
+			"label": "Quarry",
+			"stands": [[1.0, 0.0], [0.0, -1.0]],
+			"target": [0.0, 0.0],
+			"job": "mine mouth"
+		},
+		"pond": {
+			"label": "Pond",
+			"stands": [[-1.5, 0.5], [1.5, 0.5]],
+			"target": [0.0, 0.0],
+			"job": "open water"
+		},
+		"pasture": {
+			"label": "Pasture",
+			"stands": [[-1.5, -0.5], [1.5, -0.5]],
+			"target": [0.5, -0.5],
+			"job": "feeding trough"
+		}
+	}
+}

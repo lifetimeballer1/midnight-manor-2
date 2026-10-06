@@ -1,0 +1,40 @@
+{
+  "asset": "char_lumberjack",
+  "file": "char_lumberjack.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | lumberjack Rig",
+    "MMR Character | lumberjack Body",
+    "MMR Character | lumberjack Held fellingaxe",
+    "MMR Character | lumberjack Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.551803708076477,
+    1.7288280725479126,
+    0.593048095703125
+  ],
+  "triangles": 967,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Chopping",
+    "death": "Death_A",
+    "gather": "Chopping"
+  },
+  "sha256": "129e1dd01df65e312f55d76371f8a2a5dd1cc01c2929775be017b57363162795",
+  "verified": true
+}

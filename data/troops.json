@@ -1,0 +1,1485 @@
+{
+  "warrior": {
+    "name": "Warrior",
+    "role": "combat",
+    "sprite": "troop_warrior_32x32.png",
+    "color": "#e7b777",
+    "maxLevel": 25,
+    "base": {
+      "hp": 140,
+      "damage": 20,
+      "speed": 1.5,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "sword",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "cleave",
+      "10": "armor",
+      "15": "heal",
+      "20": "veteran",
+      "25": "warlord"
+    }
+  },
+  "archer": {
+    "name": "Archer",
+    "role": "combat",
+    "sprite": "troop_archer_32x32.png",
+    "color": "#9dce7a",
+    "maxLevel": 25,
+    "base": {
+      "hp": 85,
+      "damage": 14,
+      "speed": 1.8,
+      "range": 3.8
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "bow",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "cleave",
+      "10": "armor",
+      "15": "heal",
+      "20": "veteran",
+      "25": "warlord"
+    }
+  },
+  "miner": {
+    "name": "Miner",
+    "role": "collector",
+    "sprite": "troop_miner_32x32.png",
+    "color": "#c0adf2",
+    "maxLevel": 25,
+    "base": {
+      "hp": 105,
+      "damage": 10,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "pickaxe",
+    "gatherResource": "gold",
+    "carry": 10,
+    "job": {
+      "workplace": "mine",
+      "effect": "delve",
+      "text": "Delves the Moonstone Mine; assigned miners empty it faster."
+    },
+    "abilities": {
+      "5": "haste",
+      "10": "ward",
+      "15": "steady-hands",
+      "20": "second-wind",
+      "25": "harvest-master"
+    }
+  },
+  "builder": {
+    "name": "Builder",
+    "role": "builder",
+    "sprite": "troop_builder_32x32.png",
+    "color": "#ebcf85",
+    "maxLevel": 25,
+    "base": {
+      "hp": 110,
+      "damage": 8,
+      "speed": 1.4,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "hammer",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "ward",
+      "10": "steady-hands",
+      "15": "second-wind",
+      "20": "haste",
+      "25": "armor"
+    },
+    "emergency": "repair"
+  },
+  "farmer": {
+    "name": "Farmer",
+    "role": "collector",
+    "sprite": "troop_farmer_32x32.png",
+    "color": "#83caaa",
+    "maxLevel": 25,
+    "base": {
+      "hp": 85,
+      "damage": 6,
+      "speed": 1.4,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "sickle",
+    "gatherResource": "food",
+    "carry": 10,
+    "job": {
+      "workplace": "farm",
+      "effect": "sow",
+      "text": "Sows the Wheat Farm rows; assigned hands raise the yield."
+    },
+    "abilities": {
+      "5": "haste",
+      "10": "ward",
+      "15": "steady-hands",
+      "20": "second-wind",
+      "25": "harvest-master"
+    }
+  },
+  "fisherman": {
+    "name": "Fisherman",
+    "role": "collector",
+    "sprite": "troop_fisherman_32x32.png",
+    "color": "#6fb7c9",
+    "maxLevel": 25,
+    "base": {
+      "hp": 85,
+      "damage": 6,
+      "speed": 1.4,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "rod",
+    "gatherResource": "food",
+    "gatherFrom": "pond",
+    "carry": 12,
+    "job": {
+      "workplace": "pond",
+      "effect": "catch",
+      "text": "Casts lines at the Stillwater Pond; each delivery lands bonus fish."
+    },
+    "abilities": {
+      "5": "haste",
+      "10": "ward",
+      "15": "steady-hands",
+      "20": "second-wind",
+      "25": "harvest-master"
+    }
+  },
+  "shepherd": {
+    "name": "Shepherd",
+    "role": "collector",
+    "sprite": "troop_shepherd_32x32.png",
+    "color": "#b9cfa4",
+    "maxLevel": 25,
+    "base": {
+      "hp": 90,
+      "damage": 6,
+      "speed": 1.4,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "crook",
+    "gatherResource": "food",
+    "gatherFrom": "pasture",
+    "carry": 12,
+    "job": {
+      "workplace": "pasture",
+      "effect": "tend",
+      "text": "Tends the Night Pasture flocks; the herd yields steadier food."
+    },
+    "abilities": {
+      "5": "haste",
+      "10": "ward",
+      "15": "steady-hands",
+      "20": "second-wind",
+      "25": "harvest-master"
+    }
+  },
+  "lumberjack": {
+    "name": "Lumberjack",
+    "role": "collector",
+    "sprite": "troop_lumberjack_32x32.png",
+    "color": "#8aa85e",
+    "maxLevel": 25,
+    "base": {
+      "hp": 110,
+      "damage": 10,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "fellingaxe",
+    "gatherResource": "wood",
+    "carry": 12,
+    "expedition": {
+      "yields": {
+        "wood": 40
+      },
+      "durationSec": 75,
+      "risk": 0.12
+    },
+    "job": {
+      "workplace": "lumber",
+      "effect": "fell",
+      "text": "Works the Timber Yard; assigned jacks raise its output."
+    },
+    "abilities": {
+      "5": "haste",
+      "10": "ward",
+      "15": "steady-hands",
+      "20": "second-wind",
+      "25": "harvest-master"
+    }
+  },
+  "butcher": {
+    "name": "Butcher",
+    "role": "collector",
+    "sprite": "troop_butcher_32x32.png",
+    "color": "#d9a0a0",
+    "maxLevel": 25,
+    "base": {
+      "hp": 100,
+      "damage": 8,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "cleaver",
+    "gatherResource": null,
+    "carry": 10,
+    "job": {
+      "workplace": "butchery",
+      "effect": "produce",
+      "resource": "food",
+      "rate": 0.8,
+      "text": "Smokes joints at the Butchery into steady food."
+    },
+    "abilities": {
+      "5": "haste",
+      "10": "ward",
+      "15": "steady-hands",
+      "20": "second-wind",
+      "25": "harvest-master"
+    }
+  },
+  "scholar": {
+    "name": "Scholar",
+    "role": "keeper",
+    "sprite": "troop_scholar_32x32.png",
+    "color": "#9a8fd0",
+    "maxLevel": 25,
+    "base": {
+      "hp": 70,
+      "damage": 4,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "tome",
+    "gatherResource": null,
+    "carry": 6,
+    "job": {
+      "workplace": "scriptorium",
+      "effect": "study",
+      "text": "Studies moon-charts at the Scriptorium; the village earns XP."
+    },
+    "abilities": {
+      "5": "second-wind",
+      "10": "ward",
+      "15": "heal",
+      "20": "armor",
+      "25": "focus"
+    }
+  },
+  "scout": {
+    "name": "Wayfinder",
+    "role": "keeper",
+    "sprite": "troop_scout_32x32.png",
+    "color": "#7fa877",
+    "maxLevel": 25,
+    "base": {
+      "hp": 90,
+      "damage": 9,
+      "speed": 2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "compass",
+    "gatherResource": null,
+    "carry": 8,
+    "expedition": {
+      "yields": {
+        "gold": 20,
+        "food": 15
+      },
+      "durationSec": 90,
+      "risk": 0.05,
+      "finds": 1.5
+    },
+    "job": {
+      "workplace": "scout_post",
+      "effect": "survey",
+      "text": "Charts the dark treeline; surveys earn XP and wild harvests."
+    },
+    "abilities": {
+      "5": "second-wind",
+      "10": "ward",
+      "15": "heal",
+      "20": "armor",
+      "25": "focus"
+    }
+  },
+  "healer": {
+    "name": "Mooncleric",
+    "role": "keeper",
+    "sprite": "troop_healer_32x32.png",
+    "color": "#e8e0c8",
+    "maxLevel": 25,
+    "base": {
+      "hp": 80,
+      "damage": 5,
+      "speed": 1.4,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "chalice",
+    "gatherResource": null,
+    "carry": 6,
+    "job": {
+      "workplace": "chapel",
+      "effect": "mend",
+      "text": "Keeps a lantern lit at the Moonchapel; the village mends."
+    },
+    "abilities": {
+      "5": "second-wind",
+      "10": "ward",
+      "15": "heal",
+      "20": "armor",
+      "25": "focus"
+    },
+    "emergency": "heal"
+  },
+  "weaponsmith": {
+    "name": "Weaponsmith",
+    "role": "keeper",
+    "sprite": "troop_weaponsmith_32x32.png",
+    "color": "#c79a5e",
+    "maxLevel": 25,
+    "base": {
+      "hp": 115,
+      "damage": 12,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "forgehammer",
+    "gatherResource": null,
+    "carry": 8,
+    "job": {
+      "workplace": "forge",
+      "effect": "sharpen",
+      "text": "Sharpens every blade at the Emberforge; warriors hit harder."
+    },
+    "abilities": {
+      "5": "second-wind",
+      "10": "ward",
+      "15": "heal",
+      "20": "armor",
+      "25": "focus"
+    }
+  },
+  "armorer": {
+    "name": "Armorer",
+    "role": "keeper",
+    "sprite": "troop_armorer_32x32.png",
+    "color": "#9aa8b8",
+    "maxLevel": 25,
+    "base": {
+      "hp": 120,
+      "damage": 9,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "armorkit",
+    "gatherResource": null,
+    "carry": 8,
+    "job": {
+      "workplace": "armory",
+      "effect": "plate",
+      "text": "Fits ward-plates at the Armory; the village shrugs off blows."
+    },
+    "abilities": {
+      "5": "second-wind",
+      "10": "ward",
+      "15": "heal",
+      "20": "armor",
+      "25": "focus"
+    }
+  },
+  "toolsmith": {
+    "name": "Toolsmith",
+    "role": "keeper",
+    "sprite": "troop_toolsmith_32x32.png",
+    "color": "#a8b89a",
+    "maxLevel": 25,
+    "base": {
+      "hp": 100,
+      "damage": 8,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "tinkerkit",
+    "gatherResource": null,
+    "carry": 8,
+    "job": {
+      "workplace": "workshop",
+      "effect": "tinker",
+      "text": "Tunes every tool at the Workshop; gatherers work faster."
+    },
+    "abilities": {
+      "5": "second-wind",
+      "10": "ward",
+      "15": "heal",
+      "20": "armor",
+      "25": "focus"
+    }
+  },
+  "leatherworker": {
+    "name": "Leatherworker",
+    "role": "keeper",
+    "sprite": "troop_leatherworker_32x32.png",
+    "color": "#c79175",
+    "maxLevel": 25,
+    "base": {
+      "hp": 95,
+      "damage": 7,
+      "speed": 1.35,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "awl",
+    "gatherResource": null,
+    "carry": 10,
+    "job": {
+      "workplace": "tannery",
+      "effect": "pack",
+      "text": "Stitches stout packs at the Tannery; carriers haul more."
+    },
+    "abilities": {
+      "5": "second-wind",
+      "10": "ward",
+      "15": "heal",
+      "20": "armor",
+      "25": "focus"
+    }
+  },
+  "mason": {
+    "name": "Mason",
+    "role": "builder",
+    "sprite": "troop_mason_32x32.png",
+    "color": "#a09a8a",
+    "maxLevel": 25,
+    "base": {
+      "hp": 120,
+      "damage": 9,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "trowel",
+    "gatherResource": null,
+    "carry": 10,
+    "job": {
+      "workplace": "mason_yard",
+      "effect": "lay",
+      "text": "Lays true courses at the Mason Yard; building goes faster."
+    },
+    "abilities": {
+      "5": "ward",
+      "10": "steady-hands",
+      "15": "second-wind",
+      "20": "haste",
+      "25": "armor"
+    },
+    "emergency": "repair"
+  },
+  "warden": {
+    "name": "Warden",
+    "role": "combat",
+    "sprite": "troop_warden_32x32.png",
+    "color": "#7b96b8",
+    "maxLevel": 25,
+    "base": {
+      "hp": 210,
+      "damage": 16,
+      "speed": 1,
+      "range": 1
+    },
+    "growth": {
+      "hp": 0.1,
+      "damage": 0.08,
+      "speed": 0.005
+    },
+    "levelCost": {
+      "gold": 22,
+      "food": 14
+    },
+    "recruitCost": {
+      "food": 45,
+      "gold": 30
+    },
+    "defaultGear": "sword",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "cleave",
+      "10": "armor",
+      "15": "heal",
+      "20": "veteran",
+      "25": "warlord"
+    },
+    "oathbound": true
+  },
+  "ranger": {
+    "name": "Ranger",
+    "role": "combat",
+    "sprite": "troop_ranger_32x32.png",
+    "color": "#5f8f5a",
+    "maxLevel": 25,
+    "base": {
+      "hp": 70,
+      "damage": 18,
+      "speed": 2.2,
+      "range": 5
+    },
+    "growth": {
+      "hp": 0.08,
+      "damage": 0.09,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 20,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 40,
+      "gold": 25
+    },
+    "defaultGear": "bow",
+    "gatherResource": null,
+    "carry": 8,
+    "abilities": {
+      "5": "cleave",
+      "10": "armor",
+      "15": "heal",
+      "20": "veteran",
+      "25": "warlord"
+    }
+  },
+  "forager": {
+    "name": "Forager",
+    "role": "collector",
+    "sprite": "troop_forager_32x32.png",
+    "color": "#c9713f",
+    "maxLevel": 25,
+    "base": {
+      "hp": 80,
+      "damage": 5,
+      "speed": 1.8,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.08,
+      "speed": 0.008
+    },
+    "levelCost": {
+      "gold": 15,
+      "food": 10
+    },
+    "recruitCost": {
+      "food": 30,
+      "gold": 15
+    },
+    "defaultGear": "sickle",
+    "gatherResource": "food",
+    "gatherFrom": "grove",
+    "carry": 8,
+    "expedition": {
+      "yields": {
+        "food": 25,
+        "wood": 15
+      },
+      "durationSec": 60,
+      "risk": 0.1
+    },
+    "job": {
+      "workplace": "grove",
+      "effect": "pick",
+      "text": "Picks moonberries at the Grove; posted hands keep baskets full."
+    },
+    "abilities": {
+      "5": "haste",
+      "10": "ward",
+      "15": "steady-hands",
+      "20": "second-wind",
+      "25": "harvest-master"
+    }
+  },
+  "apprentice": {
+    "name": "Apprentice",
+    "role": "keeper",
+    "sprite": "troop_apprentice_32x32.png",
+    "color": "#e9dab2",
+    "maxLevel": 15,
+    "base": {
+      "hp": 75,
+      "damage": 5,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.08,
+      "damage": 0.075,
+      "speed": 0.005
+    },
+    "levelCost": {
+      "gold": 15,
+      "food": 10
+    },
+    "recruitCost": {
+      "food": 30,
+      "gold": 15
+    },
+    "defaultGear": "apron",
+    "gatherResource": null,
+    "carry": 6,
+    "job": {
+      "workplace": "cottage",
+      "effect": "welcome",
+      "text": "Keeps the cottage lamps lit; every posted apprentice makes room for one more villager."
+    },
+    "abilities": {
+      "5": "attune",
+      "10": "armor",
+      "15": "mend"
+    },
+    "promotions": {
+      "healer": {
+        "minLevel": 15,
+        "from": [
+          "cottage",
+          "schoolroom"
+        ],
+        "text": "Takes the healer vows under the chapel lamp."
+      },
+      "haggler": {
+        "minLevel": 15,
+        "from": [
+          "schoolroom"
+        ],
+        "text": "Learns the true weights in Tam school market-term."
+      }
+    }
+  },
+  "pikewoman": {
+    "name": "Pikewoman",
+    "role": "combat",
+    "sprite": "troop_pikewoman_32x32.png",
+    "color": "#9db3c7",
+    "maxLevel": 25,
+    "base": {
+      "hp": 150,
+      "damage": 14,
+      "speed": 1.1,
+      "range": 1.6
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 40,
+      "gold": 25
+    },
+    "defaultGear": "pike",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "brace",
+      "10": "armor",
+      "15": "rally",
+      "20": "veteran",
+      "25": "phalanx"
+    }
+  },
+  "woodward": {
+    "name": "Woodward",
+    "role": "collector",
+    "sprite": "troop_woodward_32x32.png",
+    "color": "#a9c6de",
+    "maxLevel": 25,
+    "base": {
+      "hp": 120,
+      "damage": 10,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "frostaxe",
+    "gatherResource": "frostwood",
+    "gatherFrom": "frostgrove",
+    "carry": 14,
+    "job": {
+      "workplace": "frostgrove",
+      "effect": "split",
+      "text": "Splits frostwood at the Frostwood Grove; posted wardens keep the cold piles high."
+    },
+    "abilities": {
+      "5": "swift",
+      "10": "sturdy",
+      "15": "rich",
+      "20": "harvest-lord",
+      "25": "master"
+    }
+  },
+  "heartwarden": {
+    "name": "Heartwarden",
+    "role": "collector",
+    "sprite": "troop_heartwarden_32x32.png",
+    "color": "#bb8b52",
+    "maxLevel": 25,
+    "base": {"hp": 120, "damage": 10, "speed": 1.3, "range": 0.85},
+    "growth": {"hp": 0.09, "damage": 0.085, "speed": 0.006},
+    "levelCost": {"gold": 18, "food": 12},
+    "recruitCost": {"food": 35, "gold": 20},
+    "defaultGear": "heartwood-axe",
+    "gatherResource": "wood",
+    "gatherFrom": "whisper-grove",
+    "carry": 14,
+    "job": {
+      "workplace": "whisper-grove",
+      "effect": "split",
+      "text": "Cuts only the paired-marked trees at the Whisper Grove; posted wardens haul straight heartwood to the Manor."
+    },
+    "abilities": {"5": "swift", "10": "sturdy", "15": "rich", "20": "harvest-lord", "25": "master"}
+  },
+  "smelter": {
+    "name": "Smelter",
+    "role": "builder",
+    "sprite": "troop_smelter_32x32.png",
+    "color": "#d08a4e",
+    "maxLevel": 25,
+    "base": {
+      "hp": 115,
+      "damage": 9,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "tongs",
+    "gatherResource": null,
+    "carry": 10,
+    "job": {
+      "workplace": "smeltery",
+      "effect": "produce",
+      "resource": "plate",
+      "rate": 0.6,
+      "text": "Pours cold plate at the Ember Smeltery; posted smelters keep the armor racks full."
+    },
+    "abilities": {
+      "5": "brisk",
+      "10": "sturdy",
+      "15": "discount",
+      "20": "foreman",
+      "25": "master-builder"
+    }
+  },
+  "diver": {
+    "name": "Diver",
+    "role": "collector",
+    "sprite": "troop_diver_32x32.png",
+    "color": "#35707f",
+    "maxLevel": 25,
+    "base": {
+      "hp": 95,
+      "damage": 7,
+      "speed": 1.4,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "net",
+    "gatherResource": "food",
+    "gatherFrom": "deephole",
+    "carry": 14,
+    "job": {
+      "workplace": "deephole",
+      "effect": "haul",
+      "text": "Hauls the Deephole's dark water; posted divers land bonus fish from below."
+    },
+    "abilities": {
+      "5": "swift",
+      "10": "sturdy",
+      "15": "rich",
+      "20": "harvest-lord",
+      "25": "master"
+    }
+  },
+  "mudlark": {
+    "name": "Mudlark",
+    "role": "collector",
+    "sprite": "troop_mudlark_32x32.png",
+    "color": "#7eac9b",
+    "maxLevel": 25,
+    "base": {"hp": 95, "damage": 7, "speed": 1.4, "range": 0.85},
+    "growth": {"hp": 0.09, "damage": 0.085, "speed": 0.006},
+    "levelCost": {"gold": 18, "food": 12},
+    "recruitCost": {"food": 35, "gold": 20},
+    "defaultGear": "blackwater-net",
+    "gatherResource": "food",
+    "gatherFrom": "blackwater-weir",
+    "carry": 14,
+    "job": {
+      "workplace": "blackwater-weir",
+      "effect": "haul",
+      "text": "Lifts the woven catch baskets at the Blackwater Weir; posted mudlarks bring the river's supper home."
+    },
+    "abilities": {"5": "swift", "10": "sturdy", "15": "rich", "20": "harvest-lord", "25": "master"}
+  },
+  "sapper": {
+    "name": "Sapper",
+    "role": "collector",
+    "sprite": "troop_sapper_32x32.png",
+    "color": "#c2502f",
+    "maxLevel": 25,
+    "base": {
+      "hp": 125,
+      "damage": 11,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "glasspick",
+    "gatherResource": "gold",
+    "gatherFrom": "emberglass",
+    "carry": 12,
+    "job": {
+      "workplace": "emberglass",
+      "effect": "cut",
+      "text": "Cuts the Emberglass seams; posted sappers keep the glowing gold coming."
+    },
+    "abilities": {
+      "5": "swift",
+      "10": "sturdy",
+      "15": "rich",
+      "20": "harvest-lord",
+      "25": "master"
+    }
+  },
+  "haggler": {
+    "name": "Haggler",
+    "role": "keeper",
+    "sprite": "troop_haggler_32x32.png",
+    "color": "#d9b64a",
+    "maxLevel": 25,
+    "base": {
+      "hp": 80,
+      "damage": 5,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "scales",
+    "gatherResource": null,
+    "carry": 6,
+    "job": {
+      "workplace": "market",
+      "effect": "trade",
+      "text": "Works the stalls of the Wild Market; every posted haggler barters a tenth better on every trader's deal."
+    },
+    "abilities": {
+      "5": "haggle",
+      "10": "ward",
+      "15": "appraise",
+      "20": "veteran-x",
+      "25": "master"
+    }
+  },
+  "oathsworn": {
+    "name": "Oathsworn",
+    "role": "combat",
+    "sprite": "troop_oathsworn_32x32.png",
+    "color": "#b9c4d6",
+    "maxLevel": 25,
+    "base": {
+      "hp": 260,
+      "damage": 18,
+      "speed": 0.9,
+      "range": 1
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 24,
+      "food": 16
+    },
+    "recruitCost": {
+      "food": 60,
+      "gold": 45
+    },
+    "defaultGear": "oathblade",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "bulwark",
+      "10": "armor-ii",
+      "15": "oath",
+      "20": "veteran",
+      "25": "unbroken"
+    }
+  },
+  "chorister": {
+    "name": "Chorister",
+    "role": "keeper",
+    "sprite": "troop_chorister_32x32.png",
+    "color": "#cfd8ea",
+    "maxLevel": 25,
+    "base": {
+      "hp": 85,
+      "damage": 6,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "hymnal",
+    "gatherResource": null,
+    "carry": 6,
+    "job": {
+      "workplace": "chapel",
+      "effect": "chorus",
+      "text": "Sings the night offices; every posted chorister lifts the chapel's mending."
+    },
+    "abilities": {
+      "5": "attune",
+      "10": "armor",
+      "15": "mend",
+      "20": "veteran-x",
+      "25": "sage"
+    },
+    "emergency": "heal"
+  },
+  "halberdier": {
+    "name": "Halberdier",
+    "role": "combat",
+    "sprite": "troop_halberdier_32x32.png",
+    "color": "#a33f31",
+    "maxLevel": 25,
+    "base": {
+      "hp": 170,
+      "damage": 20,
+      "speed": 1.1,
+      "range": 1.9
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 45,
+      "gold": 30
+    },
+    "defaultGear": "halberd",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "brace",
+      "10": "armor",
+      "15": "rally",
+      "20": "veteran",
+      "25": "phalanx"
+    }
+  },
+  "longbowman": {
+    "name": "Longbowman",
+    "role": "combat",
+    "sprite": "troop_longbowman_32x32.png",
+    "color": "#6b7f5e",
+    "maxLevel": 25,
+    "base": {
+      "hp": 75,
+      "damage": 22,
+      "speed": 1.3,
+      "range": 5.5
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 45,
+      "gold": 30
+    },
+    "defaultGear": "longbow",
+    "gatherResource": null,
+    "carry": 10,
+    "abilities": {
+      "5": "volley",
+      "10": "keen",
+      "15": "camouflage",
+      "20": "veteran",
+      "25": "arrowstorm"
+    }
+  },
+  "tidecaller": {
+    "name": "Tidecaller",
+    "role": "keeper",
+    "sprite": "troop_tidecaller_32x32.png",
+    "color": "#2e5f7a",
+    "maxLevel": 25,
+    "base": {
+      "hp": 90,
+      "damage": 7,
+      "speed": 1.2,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.005
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "tidebell",
+    "gatherResource": null,
+    "carry": 6,
+    "job": {
+      "workplace": "sunken-chapel",
+      "effect": "tide",
+      "rate": 0.5,
+      "text": "Keeps the sunken offices; posted tidecallers raise every catch and every table."
+    },
+    "abilities": {
+      "5": "attune",
+      "10": "armor",
+      "15": "mend",
+      "20": "veteran-x",
+      "25": "sage"
+    },
+    "emergency": "heal"
+  },
+  "squire": {
+    "name": "Squire",
+    "role": "combat",
+    "sprite": "troop_squire_32x32.png",
+    "color": "#7a8ba0",
+    "maxLevel": 25,
+    "base": {
+      "hp": 100,
+      "damage": 10,
+      "speed": 1.4,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 15,
+      "food": 10
+    },
+    "recruitCost": {
+      "food": 30,
+      "gold": 15
+    },
+    "defaultGear": "squires-blade",
+    "gatherResource": null,
+    "carry": 8,
+    "abilities": {
+      "5": "brace",
+      "10": "armor",
+      "15": "rally",
+      "20": "veteran",
+      "25": "phalanx"
+    }
+  },
+  "miller": {
+    "name": "Miller",
+    "role": "keeper",
+    "sprite": "miller.png",
+    "color": "#d9c084",
+    "maxLevel": 25,
+    "base": {
+      "hp": 100,
+      "damage": 8,
+      "speed": 1.35,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.08,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "sickle",
+    "gatherResource": null,
+    "carry": 10,
+    "job": {
+      "workplace": "mill",
+      "effect": "refine",
+      "text": "Mills wheat into flour and bakes bread at the Gristmill; posted millers keep the ovens warm."
+    },
+    "abilities": {
+      "5": "brisk",
+      "10": "sturdy",
+      "15": "discount",
+      "20": "foreman",
+      "25": "master-builder"
+    }
+  },
+  "sawyer": {
+    "name": "Sawyer",
+    "role": "keeper",
+    "sprite": "sawyer.png",
+    "color": "#b08a5e",
+    "maxLevel": 25,
+    "base": {
+      "hp": 110,
+      "damage": 10,
+      "speed": 1.3,
+      "range": 0.85
+    },
+    "growth": {
+      "hp": 0.09,
+      "damage": 0.085,
+      "speed": 0.006
+    },
+    "levelCost": {
+      "gold": 18,
+      "food": 12
+    },
+    "recruitCost": {
+      "food": 35,
+      "gold": 20
+    },
+    "defaultGear": "fellingaxe",
+    "gatherResource": null,
+    "carry": 10,
+    "job": {
+      "workplace": "sawmill",
+      "effect": "refine",
+      "text": "Saws timber into lumber at the Sawmill; posted sawyers keep the planks coming."
+    },
+    "abilities": {
+      "5": "ward",
+      "10": "steady-hands",
+      "15": "second-wind",
+      "20": "haste",
+      "25": "armor"
+    }
+  }
+}

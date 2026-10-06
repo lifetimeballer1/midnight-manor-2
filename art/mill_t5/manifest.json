@@ -1,0 +1,28 @@
+{
+  "asset": "mill_t5",
+  "file": "mill_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | mill | T05 Architecture",
+    "MMR | mill | T05 Water Wheel",
+    "MMR | mill | T05 Wind Rotor",
+    "MMR | mill | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    3.5503485202789307,
+    2.3499999046325684
+  ],
+  "triangles": 2484,
+  "meshes": 4,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "98424b9c8fd86dc120c2b54d697683e77617d2b7226f380cede6f4d528dd3c6e",
+  "verified": true
+}

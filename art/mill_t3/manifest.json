@@ -1,0 +1,27 @@
+{
+  "asset": "mill_t3",
+  "file": "mill_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | mill | T03 Architecture",
+    "MMR | mill | T03 Wind Rotor",
+    "MMR | mill | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    3.3103485107421875,
+    2.3499999046325684
+  ],
+  "triangles": 1932,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "57165914989c3857584e83edf1b0ff5f28ab9e484be0c7627a9b62b27ce1501e",
+  "verified": true
+}

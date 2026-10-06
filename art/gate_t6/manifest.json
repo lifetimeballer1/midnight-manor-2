@@ -1,0 +1,27 @@
+{
+  "asset": "gate_t6",
+  "file": "gate_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | gate | T06 Architecture",
+    "MMR | gate | T06 Lift Gate",
+    "MMR | gate | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    3.321000099182129,
+    1.2999999523162842
+  ],
+  "triangles": 1656,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "b01f15897d3f52ce070e4260d019b357798e267e4bf312c58d67f1446564fd99",
+  "verified": true
+}

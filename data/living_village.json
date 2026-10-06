@@ -1,0 +1,17 @@
+{
+  "trail": {"crossings": 150, "faint_crossings": 25, "decay_delay": 600, "decay_seconds": 3600},
+  "stone": {"base_storage": 800, "hall_storage": 400, "storehouse_storage": 1600, "pave_cost": 8, "speed_bonus": 0.15},
+  "quarry": {
+    "name": "Stone Quarry", "size": 2, "cost": {"wood": 80, "gold": 40}, "buildSeconds": 6,
+    "production": "stone", "rate": 1, "workplace": "miner", "maxCount": 2,
+    "harvest": {"capacity": 500, "perTier": 500, "notifyAt": 150},
+    "tiers": [{"hp": 260, "rateMultiplier": 1, "damage": 0, "range": 0.75}]
+  },
+  "research": {
+    "rate_per_minute": 6, "insight_cap": 100,
+    "nodes": {
+      "stoneworking": {"name": "Stoneworking", "level": 2, "insight": 20, "cost": {"wood": 40, "gold": 20}, "seconds": 60, "requires": "", "description": "Unlock the Stone Quarry and a new mineral supply."},
+      "road_masonry": {"name": "Road Masonry", "level": 2, "insight": 30, "cost": {"stone": 40}, "seconds": 90, "requires": "stoneworking", "description": "Pave established dirt paths. Friendly units travel 15% faster on stone."}
+    }
+  }
+}

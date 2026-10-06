@@ -1,0 +1,27 @@
+{
+  "asset": "farm_t6",
+  "file": "farm_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | farm | T06 Architecture",
+    "MMR | farm | T06 Shelter Supports",
+    "MMR | farm | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.649999976158142,
+    2.3499999046325684
+  ],
+  "triangles": 2104,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "0f0fe656438c0f2f0333eb2fe2af23bce46bbcd31d6ee649e8c17f1a56489c09",
+  "verified": true
+}

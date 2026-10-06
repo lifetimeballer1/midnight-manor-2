@@ -1,0 +1,26 @@
+{
+  "asset": "cottage_t4",
+  "file": "cottage_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | cottage | T04 Architecture",
+    "MMR | cottage | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.959999918937683,
+    2.3499999046325684
+  ],
+  "triangles": 3652,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "ab2d212b0a7ebc9fd969d9c1a5bfe1701417e640e8b941f0946bddb75a74edc0",
+  "verified": true
+}

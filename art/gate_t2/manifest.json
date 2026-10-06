@@ -1,0 +1,27 @@
+{
+  "asset": "gate_t2",
+  "file": "gate_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | gate | T02 Architecture",
+    "MMR | gate | T02 Lift Gate",
+    "MMR | gate | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    2.0829999446868896,
+    1.2999999523162842
+  ],
+  "triangles": 1272,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "2734e4031be069e25ae3c8ede90a2531a9a71f3f81a4128b3c3f1f2e9d803d0e",
+  "verified": true
+}

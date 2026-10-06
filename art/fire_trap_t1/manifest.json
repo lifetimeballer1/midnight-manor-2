@@ -1,0 +1,26 @@
+{
+  "asset": "fire_trap_t1",
+  "file": "fire_trap_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | fire-trap | T01 Architecture",
+    "MMR | fire-trap | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    0.6349999904632568,
+    1.2999999523162842
+  ],
+  "triangles": 820,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "882cf335c3ff27814679b39a367e7ec07ed3c72255509988f40d3954c2c4ff2a",
+  "verified": true
+}

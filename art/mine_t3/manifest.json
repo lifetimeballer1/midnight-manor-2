@@ -1,0 +1,26 @@
+{
+  "asset": "mine_t3",
+  "file": "mine_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | mine | T03 Architecture",
+    "MMR | mine | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.1675000190734863,
+    1.2999999523162842
+  ],
+  "triangles": 1436,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "c8904e761f016ebc013faa4c8a1c95afeb272068147fc28c390d44e926e60bd7",
+  "verified": true
+}

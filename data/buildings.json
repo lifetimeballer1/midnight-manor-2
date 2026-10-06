@@ -1,0 +1,2195 @@
+{
+  "hall": {
+    "name": "Manor Hall",
+    "size": 2,
+    "cost": {},
+    "buildSeconds": 0,
+    "production": null,
+    "rate": 0,
+    "storage": {
+      "wood": 2000,
+      "food": 2000,
+      "gold": 1500,
+      "lumber": 400,
+      "flour": 400,
+      "bread": 400,
+      "frostwood": 300,
+      "plate": 300
+    },
+    "tiers": [
+      {
+        "sprite": "building_manor_tier1_32x32.png",
+        "hp": 850,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "building_manor_tier2_32x32.png",
+        "hp": 1700,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "hall-3.png",
+        "hp": 2550,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "farm": {
+    "costCurve": [1, 2, 9],
+    "tierCosts": {"3": {"lumber": 30}},
+    "maxCount": [2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 6],
+    "name": "Wheat Farm",
+    "size": 2,
+    "cost": {
+      "wood": 55
+    },
+    "buildSeconds": 4,
+    "production": "food",
+    "rate": 2,
+    "reserve": 400,
+    "workplace": "farmer",
+    "tiers": [
+      {
+        "sprite": "farm-1.png",
+        "hp": 160,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "farm-2.png",
+        "hp": 320,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "farm-3.png",
+        "hp": 480,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "lumber": {
+    "costCurve": [1, 2, 8],
+    "tierCosts": {"3": {"lumber": 15}},
+    "maxCount": [2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 5],
+    "name": "Timber Yard",
+    "size": 1,
+    "cost": {
+      "wood": 40,
+      "gold": 15
+    },
+    "buildSeconds": 4,
+    "production": "wood",
+    "rate": 2,
+    "reserve": 500,
+    "workplace": "lumberjack",
+    "tiers": [
+      {
+        "sprite": "lumber-1.png",
+        "hp": 190,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "lumber-2.png",
+        "hp": 380,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "lumber-3.png",
+        "hp": 570,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "timber_yard": {
+    "maxCount": 2,
+    "name": "Timber Camp",
+    "size": 1,
+    "cost": {
+      "wood": 30
+    },
+    "buildSeconds": 3,
+    "production": "wood",
+    "rate": 1,
+    "reserve": 300,
+    "workplace": "lumberjack",
+    "hosts": [
+      "lumberjack"
+    ],
+    "tiers": [
+      {
+        "sprite": "building_timber_yard_tier1_32x32.png",
+        "hp": 150,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "mine": {
+    "costCurve": [1, 2, 9],
+    "tierCosts": {"3": {"lumber": 35}},
+    "maxCount": [2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5],
+    "name": "Moonstone Mine",
+    "size": 1,
+    "cost": {
+      "wood": 75,
+      "food": 25
+    },
+    "buildSeconds": 4,
+    "production": "gold",
+    "rate": 2,
+    "reserve": 600,
+    "workplace": "miner",
+    "tiers": [
+      {
+        "sprite": "mine-1.png",
+        "hp": 230,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "mine-2.png",
+        "hp": 460,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "mine-3.png",
+        "hp": 690,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "barracks": {
+    "costCurve": [1, 2, 9],
+    "tierCosts": {"3": {"lumber": 30, "plate": 10}},
+    "maxCount": [2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3],
+    "name": "Barracks",
+    "size": 2,
+    "cost": {
+      "wood": 110,
+      "gold": 55
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "tiers": [
+      {
+        "sprite": "barracks-1.png",
+        "hp": 350,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "barracks-2.png",
+        "hp": 700,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "barracks-3.png",
+        "hp": 1050,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "wall": {
+    "costCurve": [1, 2, 8],
+    "name": "Palisade",
+    "size": 1,
+    "cost": {
+      "wood": 12
+    },
+    "buildSeconds": 4,
+    "production": null,
+    "rate": 0,
+    "repeatPlace": true,
+    "tiers": [
+      {
+        "sprite": "wall-1.png",
+        "hp": 230,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "wall-2.png",
+        "hp": 460,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "wall-3.png",
+        "hp": 690,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "stonewall": {
+    "costCurve": [1, 2, 8, 20],
+    "tierCosts": {"4": {"plate": 6}},
+    "name": "Stone Wall",
+    "size": 1,
+    "cost": {
+      "wood": 30,
+      "gold": 25
+    },
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "repeatPlace": true,
+    "tiers": [
+      {
+        "sprite": "stonewall-1.png",
+        "hp": 520,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "stonewall-2.png",
+        "hp": 1040,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "stonewall-3.png",
+        "hp": 1560,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "stonewall-4.png",
+        "hp": 2600,
+        "rateMultiplier": 4,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "tierGates": {
+      "4": 10
+    }
+  },
+  "gate": {
+    "costCurve": [1, 2, 8, 20],
+    "tierCosts": {"4": {"plate": 6}},
+    "name": "Timber Gate",
+    "size": 1,
+    "cost": {
+      "wood": 30,
+      "gold": 15
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "repeatPlace": true,
+    "gate": true,
+    "tiers": [
+      {
+        "sprite": "gate-1.png",
+        "hp": 420,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "gate-2.png",
+        "hp": 840,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "gate-3.png",
+        "hp": 1260,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "gate-4.png",
+        "hp": 2000,
+        "rateMultiplier": 4,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "tierGates": {
+      "4": 10
+    }
+  },
+  "rampart": {
+    "costCurve": [1, 2, 8, 20],
+    "tierCosts": {"4": {"plate": 8}},
+    "name": "Earthen Rampart",
+    "size": 1,
+    "cost": {
+      "wood": 45,
+      "gold": 35
+    },
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "repeatPlace": true,
+    "tiers": [
+      {
+        "sprite": "rampart-1.png",
+        "hp": 700,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "rampart-2.png",
+        "hp": 1400,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "rampart-3.png",
+        "hp": 2100,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "rampart-4.png",
+        "hp": 3200,
+        "rateMultiplier": 4,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "tierGates": {
+      "4": 11
+    }
+  },
+  "tower": {
+    "costCurve": [1, 2, 9, 24],
+    "tierCosts": {"4": {"plate": 20, "lumber": 30}},
+    "name": "Watchtower",
+    "size": 1,
+    "cost": {
+      "wood": 80,
+      "gold": 45
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "tiers": [
+      {
+        "sprite": "tower-1.png",
+        "hp": 320,
+        "rateMultiplier": 1,
+        "damage": 15,
+        "range": 4.3
+      },
+      {
+        "sprite": "tower-2.png",
+        "hp": 640,
+        "rateMultiplier": 2,
+        "damage": 30,
+        "range": 4.6
+      },
+      {
+        "sprite": "tower-3.png",
+        "hp": 960,
+        "rateMultiplier": 3,
+        "damage": 45,
+        "range": 4.9
+      },
+      {
+        "sprite": "tower-4.png",
+        "hp": 1280,
+        "rateMultiplier": 4,
+        "damage": 65,
+        "range": 5.2
+      }
+    ],
+    "tierGates": {
+      "4": 8
+    }
+  },
+  "archer_tower": {
+    "costCurve": [1, 2, 9, 24],
+    "tierCosts": {"4": {"plate": 24, "lumber": 40}},
+    "name": "Archer Tower",
+    "size": 1,
+    "cost": {
+      "wood": 100,
+      "gold": 60
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "tiers": [
+      {
+        "sprite": "archer_tower-1.png",
+        "hp": 280,
+        "rateMultiplier": 1,
+        "damage": 12,
+        "range": 6.2
+      },
+      {
+        "sprite": "archer_tower-2.png",
+        "hp": 560,
+        "rateMultiplier": 2,
+        "damage": 24,
+        "range": 6.6
+      },
+      {
+        "sprite": "archer_tower-3.png",
+        "hp": 840,
+        "rateMultiplier": 3,
+        "damage": 38,
+        "range": 7.0
+      },
+      {
+        "sprite": "archer_tower-4.png",
+        "hp": 1200,
+        "rateMultiplier": 4,
+        "damage": 55,
+        "range": 7.4
+      }
+    ],
+    "tierGates": {
+      "4": 11
+    }
+  },
+  "ballista": {
+    "costCurve": [1, 2, 10],
+    "tierCosts": {"3": {"plate": 15, "lumber": 25}},
+    "name": "Ballista Tower",
+    "size": 1,
+    "cost": {
+      "wood": 150,
+      "gold": 100
+    },
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "tiers": [
+      {
+        "sprite": "ballista-1.png",
+        "hp": 380,
+        "rateMultiplier": 1,
+        "damage": 45,
+        "range": 4.2,
+        "cooldown": 2.6
+      },
+      {
+        "sprite": "ballista-2.png",
+        "hp": 760,
+        "rateMultiplier": 2,
+        "damage": 90,
+        "range": 4.5,
+        "cooldown": 2.6
+      },
+      {
+        "sprite": "ballista-3.png",
+        "hp": 1100,
+        "rateMultiplier": 3,
+        "damage": 150,
+        "range": 4.8,
+        "cooldown": 2.6,
+        "siegebane": 1.0
+      }
+    ],
+    "tierGates": {
+      "3": 10
+    }
+  },
+  "bastion": {
+    "name": "Grand Bastion",
+    "size": 1,
+    "cost": {
+      "wood": 250,
+      "gold": 200,
+      "plate": 15
+    },
+    "buildSeconds": 8,
+    "production": null,
+    "rate": 0,
+    "minLevel": 10,
+    "tiers": [
+      {
+        "sprite": "bastion-1.png",
+        "hp": 600,
+        "rateMultiplier": 1,
+        "damage": 70,
+        "range": 5.0,
+        "cooldown": 2.0,
+        "siegebane": 1.0,
+        "prefer": ["boss", "siege"]
+      },
+      {
+        "sprite": "bastion-2.png",
+        "hp": 1200,
+        "rateMultiplier": 2,
+        "damage": 120,
+        "range": 5.4,
+        "cooldown": 2.0,
+        "siegebane": 1.0,
+        "prefer": ["boss", "siege"]
+      }
+    ],
+    "tierGates": {
+      "2": 11
+    }
+  },
+  "trap": {
+    "costCurve": [1, 2, 8],
+    "name": "Spike Trap",
+    "size": 1,
+    "cost": {
+      "wood": 20,
+      "gold": 15
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "tiers": [
+      {
+        "sprite": "trap-1.png",
+        "hp": 60,
+        "rateMultiplier": 1,
+        "damage": 45,
+        "range": 0.75
+      },
+      {
+        "sprite": "trap-2.png",
+        "hp": 120,
+        "rateMultiplier": 2,
+        "damage": 90,
+        "range": 0.75
+      },
+      {
+        "sprite": "trap-3.png",
+        "hp": 180,
+        "rateMultiplier": 3,
+        "damage": 135,
+        "range": 0.75
+      }
+    ]
+  },
+  "cottage": {
+    "costCurve": [1, 2, 8],
+    "name": "Moonlit Cottage",
+    "size": 2,
+    "cost": {
+      "wood": 80,
+      "gold": 20
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "housing": [
+      6,
+      10,
+      16
+    ],
+    "workplace": "apprentice",
+    "tiers": [
+      {
+        "sprite": "cottage-1.png",
+        "hp": 200,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "cottage-2.png",
+        "hp": 420,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "cottage-3.png",
+        "hp": 640,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "longhouse": {
+    "name": "Longhouse",
+    "size": 3,
+    "cost": {
+      "wood": 180,
+      "gold": 90
+    },
+    "buildSeconds": 8,
+    "production": null,
+    "rate": 0,
+    "housing": [
+      14
+    ],
+    "minLevel": 5,
+    "tiers": [
+      {
+        "sprite": "longhouse-1.png",
+        "hp": 900,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "pond": {
+    "costCurve": [1, 2, 8],
+    "tierCosts": {"3": {"lumber": 20}},
+    "maxCount": [2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4],
+    "name": "Stillwater Pond",
+    "size": 2,
+    "cost": {
+      "wood": 60
+    },
+    "buildSeconds": 4,
+    "production": "food",
+    "rate": 1,
+    "reserve": 300,
+    "workplace": "fisherman",
+    "tiers": [
+      {
+        "sprite": "pond-1.png",
+        "hp": 160,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "pond-2.png",
+        "hp": 320,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "pond-3.png",
+        "hp": 480,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    },
+    "hosts": [
+      "tidecaller"
+    ]
+  },
+  "pasture": {
+    "maxCount": [2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+    "name": "Night Pasture",
+    "size": 2,
+    "cost": {
+      "wood": 70,
+      "food": 20
+    },
+    "buildSeconds": 4,
+    "production": "food",
+    "rate": 1.5,
+    "reserve": 400,
+    "workplace": "shepherd",
+    "tiers": [
+      {
+        "sprite": "pasture-1.png",
+        "hp": 180,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "pasture-2.png",
+        "hp": 360,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "butchery": {
+    "maxCount": 2,
+    "name": "Smokehouse Butchery",
+    "size": 1,
+    "cost": {
+      "wood": 60,
+      "gold": 30
+    },
+    "buildSeconds": 4,
+    "production": "food",
+    "rate": 1,
+    "reserve": 300,
+    "workplace": "butcher",
+    "tiers": [
+      {
+        "sprite": "butchery-1.png",
+        "hp": 150,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "butchery-2.png",
+        "hp": 300,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "scriptorium": {
+    "costCurve": [1, 2, 8],
+    "tierCosts": {"3": {"lumber": 20}},
+    "maxCount": 3,
+    "name": "Scriptorium",
+    "size": 1,
+    "cost": {
+      "wood": 70,
+      "gold": 40
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "scholar",
+    "xpRate": 0.12,
+    "tierGates": {
+      "3": 7
+    },
+    "tiers": [
+      {
+        "sprite": "scriptorium-1.png",
+        "hp": 150,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "scriptorium-2.png",
+        "hp": 300,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "scriptorium-3.png",
+        "hp": 450,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "researchRate": 0.15
+  },
+  "scout_post": {
+    "maxCount": 2,
+    "name": "Wayfinder Post",
+    "size": 1,
+    "cost": {
+      "wood": 60,
+      "gold": 20
+    },
+    "buildSeconds": 4,
+    "production": null,
+    "rate": 0,
+    "workplace": "scout",
+    "surveyRate": 1,
+    "tiers": [
+      {
+        "sprite": "scout_post-1.png",
+        "hp": 150,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "scout_post-2.png",
+        "hp": 300,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "chapel": {
+    "costCurve": [1, 2, 8],
+    "tierCosts": {"3": {"lumber": 25}},
+    "maxCount": 3,
+    "name": "Moonchapel",
+    "size": 2,
+    "cost": {
+      "wood": 90,
+      "gold": 40
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "healer",
+    "healRate": 1.5,
+    "tiers": [
+      {
+        "sprite": "chapel-1.png",
+        "hp": 220,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "chapel-2.png",
+        "hp": 440,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "chapel-3.png",
+        "hp": 660,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "tierUnlocks": {
+      "3": [
+        "bellcote"
+      ]
+    }
+  },
+  "forge": {
+    "maxCount": 3,
+    "name": "Emberforge",
+    "size": 2,
+    "cost": {
+      "wood": 100,
+      "gold": 60
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "weaponsmith",
+    "damageAura": 0.1,
+    "tiers": [
+      {
+        "sprite": "forge-1.png",
+        "hp": 240,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "forge-2.png",
+        "hp": 480,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "armory": {
+    "maxCount": 3,
+    "name": "Wardarmory",
+    "size": 1,
+    "cost": {
+      "wood": 80,
+      "gold": 50
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "armorer",
+    "armorAura": 0.1,
+    "tiers": [
+      {
+        "sprite": "armory-1.png",
+        "hp": 170,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "armory-2.png",
+        "hp": 340,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "workshop": {
+    "maxCount": 3,
+    "name": "Tinker Workshop",
+    "size": 1,
+    "cost": {
+      "wood": 80,
+      "gold": 50
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "toolsmith",
+    "gatherAura": 0.15,
+    "tiers": [
+      {
+        "sprite": "workshop-1.png",
+        "hp": 170,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "workshop-2.png",
+        "hp": 340,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "tannery": {
+    "maxCount": 2,
+    "name": "Hide Tannery",
+    "size": 1,
+    "cost": {
+      "wood": 60,
+      "gold": 30
+    },
+    "buildSeconds": 4,
+    "production": null,
+    "rate": 0,
+    "workplace": "leatherworker",
+    "carryBonus": 6,
+    "tiers": [
+      {
+        "sprite": "tannery-1.png",
+        "hp": 150,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "tannery-2.png",
+        "hp": 300,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "grove": {
+    "maxCount": [1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3],
+    "name": "Moonberry Grove",
+    "size": 2,
+    "cost": {
+      "wood": 55,
+      "food": 15
+    },
+    "buildSeconds": 4,
+    "production": "food",
+    "rate": 1.2,
+    "reserve": 350,
+    "workplace": "forager",
+    "tiers": [
+      {
+        "sprite": "grove-1.png",
+        "hp": 170,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "grove-2.png",
+        "hp": 340,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "whisper-grove": {
+    "name": "Whisper Grove",
+    "size": 2,
+    "cost": {"wood": 90, "food": 30},
+    "buildSeconds": 5,
+    "production": "wood",
+    "rate": 1.8,
+    "reserve": 400,
+    "workplace": "heartwarden",
+    "minLevel": 6,
+    "requiresBuilding": {"type": "grove", "level": 2},
+    "maxCount": [1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4],
+    "tiers": [
+      {"sprite": "whisper-grove-1.png", "hp": 200, "rateMultiplier": 1, "damage": 0, "range": 0.75},
+      {"sprite": "whisper-grove-2.png", "hp": 400, "rateMultiplier": 2, "damage": 0, "range": 0.75}
+    ],
+    "harvest": {"capacity": 500, "notifyAt": 150, "perTier": 500}
+  },
+  "watchfire": {
+    "costCurve": [1, 2, 8],
+    "tierCosts": {"3": {"lumber": 20}},
+    "name": "Signal Watchfire",
+    "size": 1,
+    "cost": {
+      "wood": 65,
+      "gold": 35
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "tiers": [
+      {
+        "sprite": "watchfire-1.png",
+        "hp": 200,
+        "rateMultiplier": 1,
+        "damage": 10,
+        "range": 5.5
+      },
+      {
+        "sprite": "watchfire-2.png",
+        "hp": 400,
+        "rateMultiplier": 2,
+        "damage": 20,
+        "range": 6
+      },
+      {
+        "sprite": "watchfire-3.png",
+        "hp": 600,
+        "rateMultiplier": 3,
+        "damage": 30,
+        "range": 6.5
+      }
+    ],
+    "tierGates": {
+      "3": 8
+    }
+  },
+  "mason_yard": {
+    "maxCount": 2,
+    "name": "Mason Yard",
+    "size": 2,
+    "cost": {
+      "wood": 90,
+      "gold": 30
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "mason",
+    "buildAura": 0.25,
+    "tiers": [
+      {
+        "sprite": "mason_yard-1.png",
+        "hp": 220,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "mason_yard-2.png",
+        "hp": 440,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "frostgrove": {
+    "maxCount": [1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4],
+    "name": "Frostwood Grove",
+    "size": 2,
+    "cost": {
+      "wood": 90,
+      "food": 30
+    },
+    "buildSeconds": 5,
+    "production": "frostwood",
+    "rate": 1.5,
+    "reserve": 400,
+    "workplace": "woodward",
+    "minLevel": 6,
+    "tiers": [
+      {
+        "sprite": "frostgrove-1.png",
+        "hp": 200,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "frostgrove-2.png",
+        "hp": 400,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "smeltery": {
+    "maxCount": [1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3],
+    "name": "Ember Smeltery",
+    "size": 2,
+    "cost": {
+      "wood": 120,
+      "gold": 80,
+      "frostwood": 40
+    },
+    "buildSeconds": 6,
+    "production": "plate",
+    "rate": 0.6,
+    "reserve": 400,
+    "workplace": "smelter",
+    "requiresBuilding": {
+      "type": "frostgrove",
+      "level": 2
+    },
+    "tiers": [
+      {
+        "sprite": "smeltery-1.png",
+        "hp": 220,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "smeltery-2.png",
+        "hp": 440,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "deephole": {
+    "maxCount": [1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3],
+    "name": "Deephole",
+    "size": 1,
+    "cost": {
+      "wood": 70,
+      "food": 40
+    },
+    "buildSeconds": 4,
+    "production": "food",
+    "rate": 2.2,
+    "reserve": 350,
+    "workplace": "diver",
+    "requiresBuilding": {
+      "type": "pond",
+      "level": 2
+    },
+    "tiers": [
+      {
+        "sprite": "deephole-1.png",
+        "hp": 170,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "deephole-2.png",
+        "hp": 340,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    },
+    "hosts": [
+      "tidecaller"
+    ]
+  },
+  "blackwater-weir": {
+    "name": "Blackwater Weir",
+    "size": 1,
+    "cost": {"wood": 70, "food": 40},
+    "buildSeconds": 4,
+    "production": "food",
+    "rate": 2.2,
+    "reserve": 350,
+    "workplace": "mudlark",
+    "minLevel": 6,
+    "requiresBuilding": {"type": "pond", "level": 2},
+    "maxCount": [1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3],
+    "tiers": [
+      {"sprite": "blackwater-weir-1.png", "hp": 170, "rateMultiplier": 1, "damage": 0, "range": 0.75},
+      {"sprite": "blackwater-weir-2.png", "hp": 340, "rateMultiplier": 2, "damage": 0, "range": 0.75}
+    ],
+    "harvest": {"capacity": 500, "notifyAt": 150, "perTier": 500}
+  },
+  "emberglass": {
+    "maxCount": [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3],
+    "name": "Emberglass Mine",
+    "size": 1,
+    "cost": {
+      "wood": 110,
+      "food": 40,
+      "frostwood": 30
+    },
+    "buildSeconds": 5,
+    "production": "gold",
+    "rate": 2.4,
+    "reserve": 500,
+    "workplace": "sapper",
+    "requiresBuilding": {
+      "type": "mine",
+      "level": 2
+    },
+    "tiers": [
+      {
+        "sprite": "emberglass-1.png",
+        "hp": 240,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "emberglass-2.png",
+        "hp": 480,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "harvest": {
+      "capacity": 500,
+      "notifyAt": 150,
+      "perTier": 500
+    }
+  },
+  "market": {
+    "maxCount": 2,
+    "name": "Wild Market",
+    "size": 3,
+    "cost": {
+      "wood": 150,
+      "gold": 120,
+      "frostwood": 60
+    },
+    "buildSeconds": 8,
+    "production": null,
+    "rate": 0,
+    "workplace": "haggler",
+    "tradeAura": 0.1,
+    "tiers": [
+      {
+        "sprite": "market-1.png",
+        "hp": 400,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "market-2.png",
+        "hp": 800,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "oathstone": {
+    "name": "Oathstone",
+    "size": 1,
+    "cost": {
+      "wood": 100,
+      "gold": 100,
+      "plate": 6
+    },
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "proximityAura": {
+      "armor": 0.1,
+      "radius": 3
+    },
+    "tiers": [
+      {
+        "sprite": "oathstone-1.png",
+        "hp": 400,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "fire-trap": {
+    "name": "Fire Trap",
+    "size": 1,
+    "cost": {
+      "wood": 40,
+      "gold": 40,
+      "frostwood": 20
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "tiers": [
+      {
+        "sprite": "fire-trap-1.png",
+        "hp": 120,
+        "rateMultiplier": 1,
+        "damage": 60,
+        "range": 0.75,
+        "burn": 4,
+        "burnDuration": 3
+      }
+    ]
+  },
+  "bellcote": {
+    "maxCount": 2,
+    "name": "Bellcote",
+    "size": 1,
+    "cost": {
+      "wood": 90,
+      "gold": 70
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "reviveMult": 0.5,
+    "tiers": [
+      {
+        "sprite": "bellcote-1.png",
+        "hp": 220,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "schoolroom": {
+    "maxCount": 2,
+    "name": "Schoolroom",
+    "size": 2,
+    "cost": {
+      "wood": 120,
+      "gold": 100
+    },
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "workplace": "apprentice",
+    "xpRate": 0.06,
+    "tutorDiscount": 0.34,
+    "tiers": [
+      {
+        "sprite": "schoolroom-1.png",
+        "hp": 260,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "schoolroom-2.png",
+        "hp": 520,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ],
+    "hosts": [
+      "apprentice"
+    ]
+  },
+  "fletcher": {
+    "maxCount": 2,
+    "name": "Fletcher",
+    "size": 1,
+    "cost": {
+      "wood": 100,
+      "gold": 60
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "stockRate": 0.008333333333333333,
+    "arrowBuff": {
+      "roles": [
+        "archer",
+        "ranger",
+        "longbowman"
+      ],
+      "stat": "damage",
+      "value": 0.15
+    },
+    "tiers": [
+      {
+        "sprite": "fletcher-1.png",
+        "hp": 200,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "shieldwall-yard": {
+    "maxCount": 2,
+    "name": "Shieldwall Yard",
+    "size": 2,
+    "cost": {
+      "wood": 120,
+      "gold": 80
+    },
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "serviceArmor": true,
+    "tiers": [
+      {
+        "sprite": "shieldwall-yard-1.png",
+        "hp": 300,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "moon-dial": {
+    "name": "Moon Dial",
+    "size": 1,
+    "cost": {
+      "gold": 150,
+      "frostwood": 80
+    },
+    "buildSeconds": 7,
+    "production": null,
+    "rate": 0,
+    "moonDial": true,
+    "maxPerVillage": 1,
+    "tiers": [
+      {
+        "sprite": "moon-dial-1.png",
+        "hp": 260,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "bell-tower": {
+    "name": "Bell Tower",
+    "size": 2,
+    "cost": {
+      "wood": 200,
+      "gold": 200,
+      "plate": 10
+    },
+    "buildSeconds": 8,
+    "production": null,
+    "rate": 0,
+    "minLevel": 9,
+    "prestigeAura": true,
+    "tiers": [
+      {
+        "sprite": "bell-tower-1.png",
+        "hp": 520,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "sunken-chapel": {
+    "name": "Sunken Chapel",
+    "size": 2,
+    "cost": {
+      "wood": 160,
+      "gold": 140,
+      "plate": 8
+    },
+    "buildSeconds": 8,
+    "production": null,
+    "rate": 0,
+    "workplace": "tidecaller",
+    "healRate": 1,
+    "foodAura": 0.5,
+    "hosts": [
+      "diver",
+      "tidecaller"
+    ],
+    "requiresBuildings": [
+      {
+        "type": "chapel",
+        "level": 3
+      },
+      {
+        "type": "deephole",
+        "level": 2
+      }
+    ],
+    "tiers": [
+      {
+        "sprite": "sunken-chapel-1.png",
+        "hp": 420,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "sunken-chapel-2.png",
+        "hp": 840,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "cairnfield": {
+    "name": "Cairnfield",
+    "size": 2,
+    "cost": {
+      "wood": 60
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "cairn": true,
+    "tiers": [
+      {
+        "sprite": "cairnfield-1.png",
+        "hp": 300,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "dawn-gate": {
+    "name": "Dawn Gate",
+    "size": 3,
+    "cost": {
+      "wood": 400,
+      "food": 300,
+      "gold": 1000,
+      "frostwood": 100,
+      "plate": 20
+    },
+    "buildSeconds": 20,
+    "production": null,
+    "rate": 0,
+    "dawnAura": 0.05,
+    "maxPerVillage": 1,
+    "tiers": [
+      {
+        "sprite": "dawn-gate-1.png",
+        "hp": 1200,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "sawmill": {
+    "maxCount": [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3],
+    "name": "Sawmill",
+    "size": 2,
+    "cost": {
+      "wood": 60,
+      "gold": 20
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "sawyer",
+    "refine": [
+      {
+        "in": {
+          "wood": 2
+        },
+        "out": {
+          "lumber": 2
+        },
+        "perSec": 0.5
+      }
+    ],
+    "tiers": [
+      {
+        "sprite": "sawmill-1.png",
+        "hp": 200,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "sawmill-2.png",
+        "hp": 400,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "storehouse": {
+    "costCurve": [1, 2, 10],
+    "tierCosts": {"3": {"lumber": 60, "plate": 20}},
+    "maxCount": [2, 2, 2, 3, 4, 5, 5, 6, 6, 6, 6],
+    "name": "Storehouse",
+    "size": 2,
+    "cost": {
+      "wood": 140,
+      "gold": 80
+    },
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "minLevel": 4,
+    "storage": {
+      "wood": 6000,
+      "food": 6000,
+      "gold": 4000,
+      "lumber": 2000,
+      "flour": 2000,
+      "bread": 2000,
+      "frostwood": 1200,
+      "plate": 1200
+    },
+    "tierGates": {
+      "2": 6,
+      "3": 10
+    },
+    "tiers": [
+      {
+        "sprite": "storehouse-1.png",
+        "hp": 420,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "storehouse-2.png",
+        "hp": 840,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "storehouse-3.png",
+        "hp": 1260,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "mill": {
+    "maxCount": [1, 1, 2, 2, 2, 2, 3, 3, 4, 5, 5],
+    "name": "Gristmill",
+    "size": 2,
+    "cost": {
+      "wood": 70,
+      "food": 20
+    },
+    "buildSeconds": 5,
+    "production": null,
+    "rate": 0,
+    "workplace": "miller",
+    "refine": [
+      {
+        "in": {
+          "food": 3
+        },
+        "out": {
+          "flour": 3
+        },
+        "perSec": 0.5
+      },
+      {
+        "in": {
+          "flour": 2
+        },
+        "out": {
+          "bread": 1
+        },
+        "perSec": 0.3
+      }
+    ],
+    "tiers": [
+      {
+        "sprite": "mill-1.png",
+        "hp": 200,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "mill-2.png",
+        "hp": 400,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "bakery": {
+    "maxCount": [0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3],
+    "name": "Bakery",
+    "size": 2,
+    "cost": {
+      "wood": 150,
+      "food": 60
+    },
+    "minLevel": 6,
+    "buildSeconds": 8,
+    "production": null,
+    "rate": 0,
+    "workplace": "miller",
+    "hosts": ["miller"],
+    "refine": [
+      {
+        "in": {
+          "flour": 2
+        },
+        "out": {
+          "bread": 1
+        },
+        "perSec": 0.5
+      },
+      {
+        "in": {
+          "food": 2,
+          "flour": 2
+        },
+        "out": {
+          "rations": 2
+        },
+        "perSec": 0.4
+      },
+      {
+        "in": {
+          "bread": 2,
+          "gold": 20
+        },
+        "out": {
+          "feast-supplies": 1
+        },
+        "perSec": 0.3
+      }
+    ],
+    "tiers": [
+      {
+        "sprite": "bakery-1.png",
+        "hp": 220,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "bakery-2.png",
+        "hp": 450,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "market-square": {
+    "name": "Grand Market Square",
+    "project": true,
+    "size": 3,
+    "cost": {
+      "lumber": 2500,
+      "wood": 2000,
+      "gold": 1200,
+      "plate": 15
+    },
+    "buildSeconds": 12,
+    "production": null,
+    "rate": 0,
+    "minLevel": 6,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierGates": { "3": 9 },
+    "flatAuras": {
+      "trade": 0.04,
+      "carry": 2,
+      "xp": 0.02
+    },
+    "tiers": [
+      { "sprite": "market-square-1.png", "hp": 500, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "market-square-2.png", "hp": 1000, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "market-square-3.png", "hp": 1600, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "grand-granary": {
+    "name": "Grand Granary",
+    "project": true,
+    "size": 2,
+    "cost": {
+      "wood": 2500,
+      "lumber": 2000,
+      "gold": 400
+    },
+    "buildSeconds": 10,
+    "production": null,
+    "rate": 0,
+    "minLevel": 5,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierGates": { "3": 8 },
+    "storage": {
+      "food": 3000,
+      "flour": 2000,
+      "bread": 2000
+    },
+    "tiers": [
+      { "sprite": "grand-granary-1.png", "hp": 420, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "grand-granary-2.png", "hp": 840, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "grand-granary-3.png", "hp": 1260, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "manor-gardens": {
+    "name": "Manor Gardens",
+    "project": true,
+    "size": 2,
+    "cost": {
+      "wood": 1500,
+      "food": 1200,
+      "gold": 800
+    },
+    "buildSeconds": 10,
+    "production": null,
+    "rate": 0,
+    "minLevel": 5,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierGates": { "3": 9 },
+    "housing": [10, 16, 24],
+    "flatAuras": {
+      "heal": 0.1,
+      "gather": 0.02
+    },
+    "tiers": [
+      { "sprite": "manor-gardens-1.png", "hp": 300, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "manor-gardens-2.png", "hp": 600, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "manor-gardens-3.png", "hp": 900, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "stone-road": {
+    "name": "Stone Road Network",
+    "project": true,
+    "size": 2,
+    "cost": { "wood": 2000, "lumber": 2000, "gold": 1000 },
+    "buildSeconds": 12,
+    "production": null,
+    "rate": 0,
+    "minLevel": 6,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierCosts": { "3": { "plate": 120 } },
+    "tierGates": { "3": 9 },
+    "flatAuras": { "carry": 1, "trade": 0.02 },
+    "tiers": [
+      { "sprite": "stone-road-1.png", "hp": 420, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "stone-road-2.png", "hp": 840, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "stone-road-3.png", "hp": 1260, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "city-wall": {
+    "name": "City Wall Project",
+    "project": true,
+    "size": 2,
+    "cost": { "lumber": 2500, "plate": 30, "gold": 1200 },
+    "buildSeconds": 12,
+    "production": null,
+    "rate": 0,
+    "minLevel": 7,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierGates": { "3": 10 },
+    "flatAuras": { "armor": 0.02, "heal": 0.1 },
+    "tiers": [
+      { "sprite": "city-wall-1.png", "hp": 600, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "city-wall-2.png", "hp": 1200, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "city-wall-3.png", "hp": 1800, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "forge-quarter": {
+    "name": "Royal Forge Quarter",
+    "project": true,
+    "size": 2,
+    "cost": { "lumber": 2500, "plate": 40, "gold": 1200 },
+    "buildSeconds": 12,
+    "production": null,
+    "rate": 0,
+    "minLevel": 7,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierCosts": { "3": { "plate": 240 } },
+    "tierGates": { "3": 10 },
+    "flatAuras": { "damage": 0.02, "discount": 0.01 },
+    "tiers": [
+      { "sprite": "forge-quarter-1.png", "hp": 600, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "forge-quarter-2.png", "hp": 1200, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "forge-quarter-3.png", "hp": 1800, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "lantern-rows": {
+    "name": "Lantern Rows",
+    "project": true,
+    "size": 2,
+    "cost": { "wood": 2500, "gold": 1000 },
+    "buildSeconds": 12,
+    "production": null,
+    "rate": 0,
+    "minLevel": 6,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierCosts": { "3": { "frostwood": 80 } },
+    "tierGates": { "3": 9 },
+    "flatAuras": { "survey": 0.05, "xp": 0.02 },
+    "tiers": [
+      { "sprite": "lantern-rows-1.png", "hp": 420, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "lantern-rows-2.png", "hp": 840, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "lantern-rows-3.png", "hp": 1260, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "monument": {
+    "name": "Monument of the Manner",
+    "project": true,
+    "size": 2,
+    "cost": {
+      "gold": 2500,
+      "plate": 50,
+      "frostwood": 150
+    },
+    "buildSeconds": 12,
+    "production": null,
+    "rate": 0,
+    "minLevel": 8,
+    "maxPerVillage": 1,
+    "costCurve": [1, 2, 8],
+    "tierGates": { "3": 10 },
+    "reviveMult": 0.6,
+    "flatAuras": {
+      "xp": 0.06,
+      "survey": 0.25
+    },
+    "tiers": [
+      { "sprite": "monument-1.png", "hp": 600, "rateMultiplier": 1, "damage": 0, "range": 0.75 },
+      { "sprite": "monument-2.png", "hp": 1200, "rateMultiplier": 2, "damage": 0, "range": 0.75 },
+      { "sprite": "monument-3.png", "hp": 1800, "rateMultiplier": 3, "damage": 0, "range": 0.75 }
+    ]
+  },
+  "manner-citadel": {
+    "name": "The Manner Citadel",
+    "project": true,
+    "size": 3,
+    "cost": {
+      "wood": 10000,
+      "lumber": 5000,
+      "gold": 10000,
+      "plate": 1000,
+      "frostwood": 250,
+      "food": 2000,
+      "bread": 500
+    },
+    "buildSeconds": 16,
+    "production": null,
+    "rate": 0,
+    "minLevel": 10,
+    "maxPerVillage": 1,
+    "costCurve": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "tierCosts": {
+      "2": {
+        "plate": 12000,
+        "frostwood": 2000
+      },
+      "3": {
+        "plate": 19000,
+        "frostwood": 7500
+      },
+      "4": {
+        "plate": 19000,
+        "frostwood": 13000
+      }
+    },
+    "tierGates": {
+      "4": 11
+    },
+    "flatAuras": {
+      "armor": 0.02,
+      "heal": 0.1
+    },
+    "tiers": [
+      {
+        "sprite": "manner-citadel-1.png",
+        "hp": 800,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "manner-citadel-2.png",
+        "hp": 1600,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "manner-citadel-3.png",
+        "hp": 2400,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "manner-citadel-4.png",
+        "hp": 3200,
+        "rateMultiplier": 4,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
+  "grand-watchtower": {
+    "name": "Grand Watchtower",
+    "project": true,
+    "size": 2,
+    "cost": {
+      "wood": 3000,
+      "lumber": 2000,
+      "gold": 3300,
+      "plate": 100,
+      "frostwood": 250,
+      "food": 1000,
+      "bread": 250
+    },
+    "buildSeconds": 14,
+    "production": null,
+    "rate": 0,
+    "minLevel": 9,
+    "maxPerVillage": 1,
+    "costCurve": [
+      1,
+      2,
+      7
+    ],
+    "tierCosts": {
+      "2": {
+        "plate": 5700
+      },
+      "3": {
+        "plate": 13300,
+        "frostwood": 5750
+      }
+    },
+    "tierGates": {
+      "3": 10
+    },
+    "flatAuras": {
+      "damage": 0.02,
+      "survey": 0.05
+    },
+    "tiers": [
+      {
+        "sprite": "grand-watchtower-1.png",
+        "hp": 600,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "grand-watchtower-2.png",
+        "hp": 1200,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "grand-watchtower-3.png",
+        "hp": 2000,
+        "rateMultiplier": 3,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  }
+}

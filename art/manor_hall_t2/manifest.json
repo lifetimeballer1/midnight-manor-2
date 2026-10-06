@@ -1,0 +1,26 @@
+{
+  "asset": "manor_hall_t2",
+  "file": "manor_hall_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | hall | T02 Architecture",
+    "MMR | hall | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    2.0399999618530273,
+    2.3499999046325684
+  ],
+  "triangles": 3012,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "0c55fc6dfe1bf687a42ac9d7836a36ab18461f41a6920589f23abb1d278698a3",
+  "verified": true
+}

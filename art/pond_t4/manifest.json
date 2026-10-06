@@ -1,0 +1,26 @@
+{
+  "asset": "pond_t4",
+  "file": "pond_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | pond | T04 Architecture",
+    "MMR | pond | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.4649999141693115,
+    2.3499999046325684
+  ],
+  "triangles": 1840,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "1af579e74e370cb2a4677a37de87f2dd054eab50a60b99ee7ada48b588d84a8c",
+  "verified": true
+}

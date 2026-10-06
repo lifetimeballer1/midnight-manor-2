@@ -1,0 +1,26 @@
+{
+  "asset": "barracks_t2",
+  "file": "barracks_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | barracks | T02 Architecture",
+    "MMR | barracks | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499999046325684,
+    1.9749999046325684,
+    2.3499999046325684
+  ],
+  "triangles": 2268,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "0f857f3511e9aca02b97d1489cd39f4dca44997e1a3082a0a6c6602692b4644c",
+  "verified": true
+}

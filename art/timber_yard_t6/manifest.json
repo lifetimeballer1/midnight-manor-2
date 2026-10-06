@@ -1,0 +1,26 @@
+{
+  "asset": "timber_yard_t6",
+  "file": "timber_yard_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | timber_yard | T06 Architecture",
+    "MMR | timber_yard | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999999523162842,
+    1.3362499475479126,
+    1.2999999523162842
+  ],
+  "triangles": 2172,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "6db89bcd2504410765aab0cdda2c1f389349e4e3846e001f68e43a0e17753481",
+  "verified": true
+}
