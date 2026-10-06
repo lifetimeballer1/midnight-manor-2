@@ -97,7 +97,10 @@ func research_reason(sim, id: String) -> String:
 	if not active.is_empty(): return "Another research project is active."
 	if sim.raid_active or sim.raid_warning: return "Research waits until the alarm passes."
 	if sim.village_level() < int(node["level"]): return "Requires village level %d." % node["level"]
-	if not str(node["requires"]).is_empty() and str(node["requires"]) not in discoveries: return "Requires Stoneworking."
+	var prerequisite: String = str(node.get("requires", ""))
+	if not prerequisite.is_empty() and prerequisite not in discoveries:
+		var required_node: Dictionary = config["research"]["nodes"].get(prerequisite, {})
+		return "Requires %s." % str(required_node.get("name", prerequisite.capitalize()))
 	if insight < float(node["insight"]): return "Requires %d Insight." % node["insight"]
 	return "" if sim._affordable(node["cost"]) else "Not enough research resources."
 
@@ -155,8 +158,12 @@ func valid(data: Variant) -> bool:
 		if not id is String or not config["research"]["nodes"].has(id) or seen.has(id): return false
 		seen[id] = true
 	if data["active"] in seen: return false
-	if "road_masonry" in seen and "stoneworking" not in seen: return false
-	if data["active"] == "road_masonry" and "stoneworking" not in seen: return false
+	for id in seen:
+		var prerequisite: String = str(config["research"]["nodes"][id].get("requires", ""))
+		if not prerequisite.is_empty() and prerequisite not in seen: return false
+	if data["active"] != "":
+		var active_requires: String = str(config["research"]["nodes"][data["active"]].get("requires", ""))
+		if not active_requires.is_empty() and active_requires not in seen: return false
 	if data["active"] == "" and data["remaining"] != 0: return false
 	if data["active"] != "" and data["remaining"] > config["research"]["nodes"][data["active"]]["seconds"]: return false
 	for id in data["cells"]:
