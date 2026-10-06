@@ -281,6 +281,48 @@ func _connected_barriers(id: int) -> Array[Dictionary]:
 
 
 
+func insert_gate(id: int) -> bool:
+	var b: Dictionary = get_building(id)
+	if b.is_empty() or b["type"] not in ["wall", "stonewall"]:
+		return false
+	if "gate_engineering" not in living.discoveries:
+		notice = "Research Gate Engineering first."
+		return false
+	if raid_active or raid_warning:
+		notice = "Gate work waits until the raid alarm passes."
+		return false
+	if b["remaining"] > 0 or b["hp"] <= 0:
+		notice = "Finish or repair this wall segment first."
+		return false
+	var gate_count: int = 0
+	for other in buildings:
+		if other["type"] == "gate" and other["hp"] > 0:
+			gate_count += 1
+	if gate_count >= building_limit("gate"):
+		notice = "Building limit reached."
+		return false
+	var cost: Dictionary = building_cost("gate")
+	if not _spend(cost):
+		notice = "Not enough resources to insert a gate."
+		return false
+	var health_ratio: float = clampf(float(b["hp"]) / maxf(1.0, float(b["max_hp"])), 0.0, 1.0)
+	var gate_spec: Dictionary = building_specs["gate"]
+	var gate_tier: int = mini(int(b["tier"]), gate_spec["tiers"].size())
+	b["type"] = "gate"
+	b["tier"] = gate_tier
+	b["max_hp"] = float(gate_spec["tiers"][gate_tier - 1]["hp"])
+	b["hp"] = maxf(1.0, float(b["max_hp"]) * health_ratio)
+	b["remaining"] = float(gate_spec["buildSeconds"])
+	b["reserve"] = 0.0
+	b["cooldown"] = 0.0
+	b["target_mode"] = "closest"
+	b["gate_open"] = true
+	revision += 1
+	_invalidate()
+	notice = "Gate inserted into the connected wall."
+	return true
+
+
 func upgrade_wall_line(id: int) -> bool:
 	var group: Array[Dictionary] = _connected_barriers(id)
 	if group.is_empty():
