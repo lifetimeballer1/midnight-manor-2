@@ -91,16 +91,20 @@ var resource_stack := PanelContainer.new()
 var resource_rows: Dictionary = {}
 var resource_bars: Dictionary = {}
 var research_buttons: Dictionary = {}
+var research_sheet_buttons: Dictionary = {}
 var quest_label := Label.new()
 var research_label := Label.new()
 var build_cards: Dictionary = {}
 var build_category_order: Array[String] = []
 var workers_button: Button
-var nav: HFlowContainer
+var nav: HBoxContainer
 var nav_shop: Button
 var nav_attack: Button
 var path_button: Button
 var research_button: Button
+var toast := PanelContainer.new()
+var toast_label := Label.new()
+var more_sheet := PanelContainer.new()
 var road_layer := Node3D.new()
 var road_dirt := MeshInstance3D.new()
 var road_stone := MeshInstance3D.new()
@@ -157,7 +161,8 @@ func _ready() -> void:
 	_update_roads()
 	_refresh_hud()
 	get_viewport().size_changed.connect(_layout_ui)
-	get_window().size_changed.connect(_layout_ui)
+	if not get_window().size_changed.is_connected(_layout_ui):
+		get_window().size_changed.connect(_layout_ui)
 	_layout_ui()
 	if not capture_path.is_empty():
 		_enter_village()
@@ -710,6 +715,74 @@ func _paint_primary(node: Button, accent: Color) -> void:
 	node.add_theme_color_override("font_color", UI.PAPER)
 
 
+func _paint_ring(node: Button, accent: Color, d: float) -> void:
+	# Floating hero disc: AA-safe radius (not d/2), soft lift shadow.
+	var r: int = clampi(int(d * 0.5) - 10, 8, int(d * 0.5) - 1)
+	node.custom_minimum_size = Vector2(d, d)
+	node.focus_mode = Control.FOCUS_NONE
+	node.add_theme_font_size_override("font_size", 19 if d >= 72.0 else 15)
+	node.add_theme_color_override("font_color", UI.PAPER)
+	node.add_theme_color_override("font_hover_color", UI.PAPER)
+	for state in ["normal", "hover", "pressed"]:
+		var box := StyleBoxFlat.new()
+		var fill_col: Color = accent.darkened(0.62)
+		if state == "hover":
+			fill_col = accent.darkened(0.42)
+		elif state == "pressed":
+			fill_col = accent.darkened(0.76)
+		box.bg_color = Color(fill_col, 0.97)
+		box.border_color = accent.lightened(0.15) if state != "normal" else accent
+		box.set_border_width_all(2)
+		box.set_corner_radius_all(r)
+		box.shadow_size = 6 if d >= 72.0 else 3
+		box.shadow_color = Color(0, 0, 0, 0.35)
+		box.shadow_offset = Vector2(0, 2)
+		box.set_content_margin_all(4)
+		node.add_theme_stylebox_override(state, box)
+
+
+func _action_button(text: String, action: Callable, parent: Node) -> Button:
+	var made: Button = _button(text, action, parent)
+	made.custom_minimum_size = Vector2(0, 56.0)
+	made.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return made
+
+
+func _build_more_sheet(root_control: Control) -> void:
+	# All secondary actions live here now; selection callbacks read
+	# selected_building live, so reparenting changes nothing.
+	more_sheet.add_theme_stylebox_override("panel", ui.style(UI.NAVY, UI.EDGE))
+	root_control.add_child(more_sheet)
+	var mv := VBoxContainer.new()
+	mv.add_theme_constant_override("separation", 8)
+	more_sheet.add_child(mv)
+	ui.heading("ACTIONS", mv)
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	mv.add_child(grid)
+	_action_button("Pave Roads", _toggle_pave, grid)
+	collect_button = _action_button("Collect", _collect_selected, grid)
+	upgrade_button = _action_button("Upgrade", _upgrade_selected, grid)
+	move_button = _action_button("Move", _move_selected, grid)
+	repair_button = _action_button("Repair", _repair_selected, grid)
+	workers_button = _action_button("People", _open_workers, grid)
+	_action_button("Village Path", _open_panel.bind("quests"), grid)
+	_action_button("Research", _open_panel.bind("research"), grid)
+	_action_button("⟲ Orbit", _orbit_left, grid)
+	_action_button("⟳ Orbit", _orbit_right, grid)
+	_action_button("Pause / Save", _open_pause, grid)
+	_action_button("Close", _toggle_more, grid)
+	more_sheet.hide()
+
+
+func _toggle_more() -> void:
+	_close_panel()
+	more_sheet.visible = not more_sheet.visible
+	_layout_ui()
+
+
 func _label(text: String, parent: Node, large: bool = false) -> Label:
 	return ui.heading(text, parent) if large else ui.body(text, parent)
 
@@ -760,32 +833,45 @@ func _ui() -> void:
 	bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	bottom.offset_left = 16
 	bottom.offset_right = -16
+	bottom.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var dock := VBoxContainer.new()
+	dock.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dock.add_theme_constant_override("separation", 10)
 	bottom.add_child(dock)
-	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	message.add_theme_color_override("font_color", GOLD)
-	dock.add_child(message)
-	nav = HFlowContainer.new()
-	nav.add_theme_constant_override("h_separation", 8)
-	nav.add_theme_constant_override("v_separation", 8)
+	var toast_center := CenterContainer.new()
+	toast_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dock.add_child(toast_center)
+	toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	toast.add_theme_stylebox_override("panel", ui.style(UI.NAVY, UI.EDGE))
+	toast_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	toast_label.custom_minimum_size = Vector2(280, 0)
+	toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast_label.add_theme_font_size_override("font_size", 13)
+	toast_label.add_theme_color_override("font_color", GOLD)
+	toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	toast.add_child(toast_label)
+	toast_center.add_child(toast)
+	nav = HBoxContainer.new()
+	nav.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	nav.add_theme_constant_override("separation", 12)
 	dock.add_child(nav)
+	nav_attack = ui.button("Horn", _test_raid, nav)
+	_paint_ring(nav_attack, UI.BLOOD, 84.0)
+	var spacer_left := Control.new()
+	spacer_left.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	spacer_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nav.add_child(spacer_left)
+	var more_btn: Button = ui.button("···", _toggle_more, nav)
+	_paint_ring(more_btn, UI.SLATE, 56.0)
+	more_btn.tooltip_text = "More actions"
+	var spacer_right := Control.new()
+	spacer_right.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	spacer_right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nav.add_child(spacer_right)
 	nav_shop = ui.button("Build", _open_panel.bind("build"), nav)
-	_paint_primary(nav_shop, UI.GOLD)
-	_button("Pave Roads", _toggle_pave, nav)
-	collect_button = _button("Collect", _collect_selected, nav)
-	upgrade_button = _button("Upgrade", _upgrade_selected, nav)
-	move_button = _button("Move", _move_selected, nav)
-	repair_button = _button("Repair", _repair_selected, nav)
-	workers_button = _button("People / Workers", _open_workers, nav)
-	nav_attack = _button("Horn", _test_raid, nav)
-	_paint_primary(nav_attack, UI.BLOOD)
-	_button("⟲", _orbit_left, nav)
-	_button("⟳", _orbit_right, nav)
-	_button("Pause / Save", _open_pause, nav)
-	for child in nav.get_children():
-		var b := child as Button
-		if b != null and b != nav_shop and b != nav_attack:
-			b.custom_minimum_size.y = UI.MIN_HIT
+	_paint_ring(nav_shop, UI.GOLD, 84.0)
+	_build_more_sheet(root_control)
 	root_control.add_child(sidebar)
 	var side_scroll := ScrollContainer.new()
 	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -865,10 +951,7 @@ func _layout_ui() -> void:
 	bottom.offset_right = -safe
 	bottom.offset_top = -bar_h - safe
 	bottom.offset_bottom = -safe
-	# SHOP first, ATTACK second so thumbs land on them in one row on phones.
-	if is_instance_valid(nav) and is_instance_valid(nav_shop) and is_instance_valid(nav_attack):
-		nav.move_child(nav_shop, 0)
-		nav.move_child(nav_attack, 1)
+	# Corners are structural now (ATTACK left, SHOP right): no reorder needed.
 	var dock_width: float = (size.x - 44) * 0.52 if narrow else UI.RAIL_WIDTH + 198.0
 	left_dock.size = Vector2(dock_width, 0)
 	left_dock.position = Vector2(safe, safe)
@@ -886,6 +969,13 @@ func _layout_ui() -> void:
 	else:
 		sidebar.position = Vector2(safe, maxf(left_dock.get_combined_minimum_size().y, resource_stack.get_combined_minimum_size().y) + 30)
 		sidebar.size = Vector2(size.x - 32 if narrow else 310.0, maxf(130, size.y - sidebar.position.y - bottom.size.y - 28))
+	more_sheet.position = sidebar.position
+	more_sheet.size = sidebar.size
+	# Compact resource pills on phones: values only, bars stay on desktop.
+	for resource: String in resource_bars:
+		var gauge: ProgressBar = resource_bars[resource]
+		if is_instance_valid(gauge):
+			gauge.visible = not small
 	placement_box.position = Vector2(maxf(16, (size.x - 330) / 2), size.y - bottom.size.y - 146)
 	placement_box.size.x = minf(330, size.x - 32)
 	welcome.size = Vector2(minf(480, size.x - 36), 0)
@@ -896,6 +986,7 @@ func _layout_ui() -> void:
 func _clear_sidebar() -> void:
 	hire_buttons.clear()
 	build_cards.clear()
+	research_sheet_buttons.clear()
 	for child in side_content.get_children():
 		side_content.remove_child(child)
 		child.queue_free()
@@ -937,6 +1028,24 @@ func _open_panel(which: String) -> void:
 		"building":
 			_build_inspector()
 			sidebar.hide()
+		"research":
+			_label("RESEARCH", side_content, true)
+			_label("Insight %d / %d. Research pauses during alarms." % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"])], side_content)
+			for id: Variant in sim.living.config["research"]["nodes"]:
+				var node: Dictionary = sim.living.config["research"]["nodes"][id]
+				var key := str(id)
+				var state := "READY"
+				if key in sim.living.discoveries:
+					state = "DONE"
+				elif sim.living.active == key:
+					state = "%.0fs LEFT" % sim.living.remaining
+				var reason: String = sim.living.research_reason(sim, key)
+				if state == "READY" and not reason.is_empty():
+					state = "LOCKED"
+				var button: Button = _button("%s\n%s / %d Insight" % [str(node["name"]), state, int(node["insight"])], _begin_research.bind(key), side_content)
+				button.disabled = state != "READY"
+				button.tooltip_text = str(node["description"]) if reason.is_empty() else reason
+				research_sheet_buttons[key] = button
 		"workers":
 			_build_inspector()
 		"unit":
@@ -978,9 +1087,11 @@ func _build_catalog() -> void:
 				if str(b.get("type", "")) == type_name and float(b.get("hp", 0.0)) > 0.0:
 					owned += 1
 			var lock: String = ""
+			var cap_raw: Variant = spec.get("maxCount", 999)
+			var cap: int = 999 if cap_raw is Array else int(cap_raw)
 			if type_name == "stone_quarry" and "stoneworking" not in sim.living.discoveries:
 				lock = "Research Stoneworking first."
-			elif owned >= int(spec.get("maxCount", 999)) and not (spec.get("maxCount") is Array):
+			elif owned >= cap:
 				lock = "Village limit reached."
 			var state: int = ui.card_state_of(not lock.is_empty(), 1.0 if owned > 0 else 0.0)
 			var caption := "%s\n%s / %d owned" % [str(spec["name"]), _cost_text(sim.building_cost(type_name)), owned]
@@ -991,7 +1102,7 @@ func _build_catalog() -> void:
 			var card: Button = ui.button(caption, _choose_build.bind(type_name), side_content, 52.0)
 			card.icon = ui.texture(thumbnail_asset(type_name), _model_factory)
 			card.expand_icon = true
-			card.icon_max_width = 72
+			card.add_theme_constant_override("icon_max_width", 72)
 			card.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			card.add_theme_font_size_override("font_size", 13)
 			if state == UI.CardState.LOCKED:
@@ -1359,7 +1470,10 @@ func _refresh_hud() -> void:
 	for resource: String in resource_rows:
 		var cap: int = int(sim.storage_cap(resource))
 		var held: int = int(sim.resources.get(resource, 0))
-		resource_rows[resource].text = "%s  %d / %d" % [resource.capitalize(), held, cap]
+		if _is_small():
+			resource_rows[resource].text = "%s %d" % [resource.capitalize(), held]
+		else:
+			resource_rows[resource].text = "%s  %d / %d" % [resource.capitalize(), held, cap]
 		var gauge: ProgressBar = resource_bars[resource]
 		gauge.max_value = maxf(1.0, float(cap))
 		gauge.value = float(held)
@@ -1385,6 +1499,7 @@ func _refresh_hud() -> void:
 	else:
 		research_label.text = "Insight %d / %d" % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"])]
 	message.text = ("PAUSED / " if sim.paused else "") + sim.notice
+	toast_label.text = ("PAUSED / " if sim.paused else "") + sim.notice
 	_refresh_inspector()
 	_layout_ui()
 
@@ -1407,6 +1522,24 @@ func _refresh_research() -> void:
 		button.text = "%s\n%s / %d Insight" % [str(node["name"]), state, int(node["insight"])]
 		button.disabled = state != "READY" or not reason.is_empty()
 		button.tooltip_text = _research_cost(node) + "\n" + str(node["description"]) + ("\n" + reason if not reason.is_empty() else "")
+	for id: Variant in research_sheet_buttons:
+		var key := str(id)
+		var button: Button = research_sheet_buttons[key]
+		if not is_instance_valid(button):
+			continue
+		var node: Dictionary = sim.living.config["research"]["nodes"].get(key, {})
+		if node.is_empty():
+			continue
+		var state := "READY"
+		if key in sim.living.discoveries:
+			state = "DONE"
+		elif sim.living.active == key:
+			state = "%.0fs LEFT" % sim.living.remaining
+		var reason: String = sim.living.research_reason(sim, key)
+		if state == "READY" and not reason.is_empty():
+			state = "LOCKED"
+		button.text = "%s\n%s / %d Insight" % [str(node["name"]), state, int(node["insight"])]
+		button.disabled = state != "READY"
 
 
 func _setup_audio() -> void:
