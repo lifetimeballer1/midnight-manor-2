@@ -80,6 +80,17 @@ func attach(game, b: Dictionary, view: Dictionary) -> void:
 	view["previous_hp"] = float(b["hp"])
 	view["danger_until"] = 0.0
 	view["danger_label_active"] = false
+	var damage := Node3D.new()
+	damage.name = "BattleDamage"
+	root_node.add_child(damage)
+	var scar_a: MeshInstance3D = box(damage, Vector3(0.08, 0.95, 0.08), Vector3(-0.34, 0.62, 0.38), Color("302820"))
+	scar_a.rotation.z = 0.62
+	var scar_b: MeshInstance3D = box(damage, Vector3(0.07, 0.72, 0.07), Vector3(0.28, 0.52, 0.42), Color("433128"))
+	scar_b.rotation.z = -0.48
+	var scar_c: MeshInstance3D = box(damage, Vector3(0.10, 0.55, 0.10), Vector3(0.02, 0.36, -0.46), Color("241f1a"))
+	scar_c.rotation.x = 0.35
+	damage.visible = false
+	view["damage"] = damage
 	if type_name in ["hall", "cottage", "barracks"] and smoke_count < 8:
 		var smoke := CPUParticles3D.new()
 		smoke.name = "ChimneySmoke"
@@ -133,6 +144,15 @@ func update(game, dt: float) -> void:
 		view["progress"].scale.x = maxf(0.03, 1 - float(b["remaining"]) / maxf(0.1, duration))
 		if float(b["hp"]) < float(view["previous_hp"]): view["danger_until"] = game.sim.elapsed + 2
 		view["previous_hp"] = float(b["hp"])
+		var hp_ratio: float = float(b["hp"]) / maxf(1.0, float(b["max_hp"]))
+		if view.has("damage"):
+			var damage: Node3D = view["damage"]
+			damage.visible = b["hp"] > 0 and hp_ratio < 0.75
+			if damage.visible:
+				var scars: Array[Node] = damage.get_children()
+				if scars.size() > 0: scars[0].visible = hp_ratio < 0.75
+				if scars.size() > 1: scars[1].visible = hp_ratio < 0.50
+				if scars.size() > 2: scars[2].visible = hp_ratio < 0.30
 		if float(view["danger_until"]) > game.sim.elapsed and b["hp"] > 0:
 			view["label"].text = "UNDER ATTACK"
 			view["label_text"] = "UNDER ATTACK"
@@ -149,4 +169,5 @@ func update(game, dt: float) -> void:
 			part.position.y = move_toward(part.position.y, wanted, dt * 1.6) if not game.sim.paused else part.position.y
 		if view.has("smoke"):
 			var smoke: CPUParticles3D = view["smoke"]
-			smoke.emitting = b["hp"] > 0 and b["remaining"] <= 0 and not game.sim.paused
+			var damaged_smoke: bool = b["hp"] > 0 and hp_ratio < 0.45
+			smoke.emitting = b["hp"] > 0 and b["remaining"] <= 0 and not game.sim.paused and (damaged_smoke or b["type"] in ["hall", "cottage", "barracks"])
