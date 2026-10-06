@@ -51,6 +51,17 @@ jobs:
           godot --headless --path . --export-release "Web" build/web/index.html
           ls -la build/web
 
+      # Standing rule: the web build must stay Safari-playable.
+      # Threaded exports need COOP/COEP headers GitHub Pages cannot send,
+      # so Safari (and every other browser) refuses to boot them.
+      - name: Guard Safari compatibility (single-threaded)
+        run: |
+          grep -q 'variant/thread_support=false' export_presets.cfg \
+            || (echo "FAIL: export_presets.cfg must keep variant/thread_support=false for Safari" && exit 1)
+          grep -q 'GODOT_THREADS_ENABLED = false' build/web/index.html \
+            || (echo "FAIL: exported index.html has threads enabled; Safari cannot boot it" && exit 1)
+          echo "Safari guard PASS: single-threaded web build"
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

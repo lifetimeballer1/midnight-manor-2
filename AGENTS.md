@@ -7,4 +7,5 @@
 - Use art/catalog.json as the authoritative delivered-asset list. Do not silently export reference layouts, LOD duplicates or catalogue-wide rigs.
 - Verify with scripts/verify_assets.py, the Python tests and Godot scripts/ArtCheck.gd. Do not claim desktop checks establish web/mobile performance.
 - Also run the five GDScript gameplay suites: test_village, test_game_scene, test_workers_defense, test_living_village and test_update2_scene. Use the console Godot executable to reliably capture errors and PASS markers. Keep save-v1 path compatibility while migrating the payload to version2.
+- Keep the web export Safari-playable: variant/thread_support=false in export_presets.cfg (threaded builds need COOP/COEP headers GitHub Pages cannot send). CI guards this; never re-enable threads without a host that sends those headers.
 - Do not commit, push or deploy without the user's request.

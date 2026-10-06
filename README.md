@@ -12,6 +12,14 @@ A Clash-style 3D base-builder prototype in **Godot 4.7 / GDScript**: raise a moo
 | Browser (recommended) | Open https://lifetimeballer1.github.io/midnight-manor-2/ — built automatically on every push to `main` (see `.github/workflows/web.yml`) |
 | Godot editor | Open `project.godot` in Godot 4.7.2+, run `scenes/game.tscn`, press **Enter Village** |
 
+### Safari / iPhone / iPad
+
+The web build is exported **single-threaded** on purpose: threaded Godot builds need cross-origin isolation headers that GitHub Pages cannot send, so Safari refuses to boot them. CI enforces this (`Guard Safari compatibility` step fails the build if threads come back). If the page ever shows a "features missing" error or an old build:
+
+1. Hard-refresh (hold Shift + tap reload, or Cmd+Shift+R on Mac)
+2. Or open the link in a private window to force a fresh load
+3. Requires WebGL2 (iOS 15+, any recent Safari)
+
 ### Controls
 
 - **Build:** pick a structure card → click/slide the ghost preview → **Confirm Build**. Cancelling never spends resources. Walls/gates stay in placement mode for repeated segments.
