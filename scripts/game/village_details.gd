@@ -79,6 +79,7 @@ func attach(game, b: Dictionary, view: Dictionary) -> void:
 	view["progress"] = bar
 	view["previous_hp"] = float(b["hp"])
 	view["danger_until"] = 0.0
+	view["danger_label_active"] = false
 	if type_name in ["hall", "cottage", "barracks"] and smoke_count < 8:
 		var smoke := CPUParticles3D.new()
 		smoke.name = "ChimneySmoke"
@@ -135,9 +136,12 @@ func update(game, dt: float) -> void:
 		if float(view["danger_until"]) > game.sim.elapsed and b["hp"] > 0:
 			view["label"].text = "UNDER ATTACK"
 			view["label_text"] = "UNDER ATTACK"
+			view["danger_label_active"] = true
 			view["label"].modulate = Color("ff8270")
-		elif str(view.get("label_text", "")) == "UNDER ATTACK":
-			view["label_text"] = "###"
+		elif bool(view.get("danger_label_active", false)):
+			# village_game may already have restored the normal text this frame;
+			# track the alert state separately so the gold colour is always restored.
+			view["danger_label_active"] = false
 			view["label"].modulate = Color("d4b275")
 		if view.has("gate_mesh"):
 			var part: MeshInstance3D = view["gate_mesh"]
