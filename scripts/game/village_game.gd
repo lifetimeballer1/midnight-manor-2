@@ -838,12 +838,25 @@ func _build_more_sheet(root_control: Control) -> void:
 	_action_button("Village Path", _open_panel.bind("quests"), grid)
 	_action_button("Research", _open_panel.bind("research"), grid)
 	_action_button("Defense", _open_panel.bind("defense"), grid)
+	_action_button("Commands", _open_selected_commands, grid)
 	_action_button("⟲ Orbit", _orbit_left, grid)
 	_action_button("⟳ Orbit", _orbit_right, grid)
 	_action_button("Pause / Save", _open_pause, grid)
 	_action_button("Close", _toggle_more, grid)
 	more_sheet.hide()
 
+
+
+func _open_selected_commands() -> void:
+	more_sheet.hide()
+	if selected_building >= 0 and not sim.get_building(selected_building).is_empty():
+		_open_panel("building")
+		sidebar.show()
+	elif selected_unit >= 0 and not sim.get_unit(selected_unit).is_empty():
+		_open_panel("unit")
+	else:
+		_open_panel("defense")
+	_layout_ui()
 
 func _toggle_more() -> void:
 	# Leaving the pause panel through More must resume the simulation.
@@ -1252,6 +1265,10 @@ func _build_inspector() -> void:
 		_label("CONNECTED DEFENSE", side_content, true)
 		_button("Upgrade connected wall section", _upgrade_connected_wall, side_content)
 		_button("Repair connected wall section", _repair_connected_wall, side_content)
+		if b["type"] in ["wall", "stonewall"]:
+			var gate_btn: Button = _button("Insert engineered gate", _insert_gate_selected, side_content)
+			gate_btn.disabled = "gate_engineering" not in sim.living.discoveries or sim.raid_active or sim.raid_warning or b["remaining"] > 0
+			gate_btn.tooltip_text = "Research Gate Engineering first." if "gate_engineering" not in sim.living.discoveries else "Replace this segment with a connected gate."
 	if b["type"] in ["tower", "archer_tower"]:
 		_label("TOWER TARGETING / " + str(b.get("target_mode", "closest")).capitalize(), side_content, true)
 		for mode in ["closest", "strongest", "weakest", "sappers", "manor"]:
@@ -1632,6 +1649,13 @@ func _repair_connected_wall() -> void:
 	if panel == "building":
 		_open_panel("building")
 	_refresh_hud()
+
+func _insert_gate_selected() -> void:
+	if sim.insert_gate(selected_building):
+		_rebuild_buildings()
+		_open_selected_commands()
+	_refresh_hud()
+
 
 func _test_raid() -> void:
 	sim.start_raid(20.0)
