@@ -68,6 +68,9 @@ func _run() -> void:
 	check(attacked_view["label"].modulate == Color("d4b275"), "attack warning label returns to gold")
 	game.selected_building = int(game.sim.buildings[1]["id"])
 	game._open_panel("building")
+	check(not game.sidebar.visible, "ordinary building selection stays compact")
+	game._open_selected_commands()
+	check(game.sidebar.visible and game.panel == "building", "More Commands exposes selected-building fortress controls")
 	game.sim.buildings[1]["reserve"] = 0
 	game._refresh_inspector()
 	check(game.collect_button.disabled, "empty workplace collect action disabled")
