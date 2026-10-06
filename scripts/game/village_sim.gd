@@ -1886,10 +1886,11 @@ func _validate_state(state: Dictionary) -> bool:
 				if u.has("defense_priority") and str(u["defense_priority"]) not in DEFENSE_PRIORITIES:
 					return false
 				if u.has("defense_post"):
-					if not _integer(u["defense_post"]):
+					var defense_post: Variant = u["defense_post"]
+					if not (defense_post is int or defense_post is float) or not is_finite(float(defense_post)) or floorf(float(defense_post)) != float(defense_post) or float(defense_post) < -1.0:
 						return false
-					if int(u["defense_post"]) != -1:
-						if not building_index.has(int(u["defense_post"])) or str(building_index[int(u["defense_post"])]["type"]) not in ["gate", "tower", "archer_tower", "guard_post"]:
+					if int(defense_post) != -1:
+						if not building_index.has(int(defense_post)) or str(building_index[int(defense_post)]["type"]) not in ["gate", "tower", "archer_tower", "guard_post"]:
 							return false
 				if not _integer(u.get("slot", 0)) or int(u.get("slot", 0)) < 0:
 					return false
