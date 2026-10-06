@@ -1451,7 +1451,7 @@ func _fighter(u: Dictionary, dt: float) -> void:
 
 
 
-func start_raid() -> bool:
+func start_raid(prep_seconds: float = 3.0) -> bool:
 	if raid_active or raid_warning:
 		notice = "A raid is already on the road."
 		return false
@@ -1459,9 +1459,10 @@ func start_raid() -> bool:
 		notice = "Repair the Manor Hall before testing defenses."
 		return false
 	raid_warning = true
-	next_raid_at = elapsed + 3
-	notice = "Test wave / horns in 3 seconds."
+	next_raid_at = elapsed + clampf(prep_seconds, 0.1, 25.0)
+	notice = "Raid horns / %.0f seconds to prepare." % maxf(0.1, prep_seconds)
 	return true
+
 
 
 func _spawn_raid() -> void:
