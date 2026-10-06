@@ -994,10 +994,13 @@ func _layout_ui() -> void:
 	bottom.offset_top = -bar_h - safe
 	bottom.offset_bottom = -safe
 	# Corners are structural now (ATTACK left, SHOP right): no reorder needed.
-	var dock_width: float = (size.x - 44) * 0.52 if narrow else UI.RAIL_WIDTH + 198.0
+	# Reserve both safe margins plus a real gap so portrait widths never overlap.
+	var corner_gap: float = 8.0
+	var corner_width: float = maxf(0.0, size.x - safe * 2.0 - corner_gap)
+	var dock_width: float = corner_width * 0.52 if narrow else UI.RAIL_WIDTH + 198.0
 	left_dock.size = Vector2(dock_width, 0)
 	left_dock.position = Vector2(safe, safe)
-	var stack_width: float = (size.x - 44) * 0.48 if narrow else 226.0
+	var stack_width: float = corner_width * 0.48 if narrow else 226.0
 	if small:
 		stack_width = minf(165.0, size.x - dock_width - safe * 3.0)
 	resource_stack.size = Vector2(stack_width, 0)
