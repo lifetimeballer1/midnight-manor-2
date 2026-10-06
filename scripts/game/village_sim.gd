@@ -118,7 +118,7 @@ func _add_unit(role: String) -> void:
 		"hp": hp, "max_hp": hp, "phase": "idle", "workplace": -1, "carry": 0.0, "carry_resource": "",
 		"level": 1, "cooldown": 0.0, "order": [], "hold": false,
 		"fx": -1.0, "fy": -1.0, "rx": -1.0, "ry": -1.0, "kite": false, "think": 0.0,
-		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0, "defense_priority": defense_priority})
+		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0, "defense_priority": defense_priority, "defense_post": -1})
 
 
 func _invalidate() -> void:
@@ -269,15 +269,16 @@ func _connected_barriers(id: int) -> Array[Dictionary]:
 	while not queue.is_empty():
 		var current: Dictionary = queue.pop_front()
 		result.append(current)
-		var rect := Rect2i(int(current["x"]) - 1, int(current["y"]) - 1, int(current["size"]) + 2, int(current["size"]) + 2)
 		for candidate in buildings:
-			if candidate["type"] not in ["wall", "stonewall", "gate"] or candidate["hp"] <= 0 or seen.has(int(candidate["id"])):
+			if candidate["type"] not in ["wall", "stonewall", "gate"] or seen.has(int(candidate["id"])):
 				continue
-			var c_rect := Rect2i(int(candidate["x"]), int(candidate["y"]), int(candidate["size"]), int(candidate["size"]))
-			if rect.intersects(c_rect):
+			var dx: int = absi(int(candidate["x"]) - int(current["x"]))
+			var dy: int = absi(int(candidate["y"]) - int(current["y"]))
+			if dx + dy == 1:
 				seen[int(candidate["id"])] = true
 				queue.append(candidate)
 	return result
+
 
 
 func upgrade_wall_line(id: int) -> bool:
@@ -359,11 +360,30 @@ func set_defense_priority(id: int, priority: String) -> bool:
 		notice = "Place a rally point first."
 		return false
 	u["defense_priority"] = priority
+	u["defense_post"] = -1
 	u["hold"] = false
 	u["order"] = []
 	paths.erase(id)
 	notice = "%s assigned to %s defense." % [str(troop_specs[u["type"]]["name"]), priority.capitalize()]
 	return true
+
+
+func assign_defense_post(unit_id: int, building_id: int) -> bool:
+	var u: Dictionary = get_unit(unit_id)
+	var b: Dictionary = get_building(building_id)
+	if u.is_empty() or b.is_empty() or troop_specs[u["type"]]["role"] != "combat":
+		return false
+	if b["type"] not in ["gate", "tower", "archer_tower", "guard_post"] or b["hp"] <= 0 or b["remaining"] > 0:
+		notice = "That defensive post is not ready."
+		return false
+	u["defense_post"] = building_id
+	u["defense_priority"] = "gate" if b["type"] in ["gate", "guard_post"] else "towers"
+	u["hold"] = false
+	u["order"] = []
+	paths.erase(unit_id)
+	notice = "%s posted at %s #%d." % [str(troop_specs[u["type"]]["name"]), str(building_specs[b["type"]]["name"]), building_id]
+	return true
+
 
 
 func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> String:
@@ -1278,6 +1298,9 @@ func _nearest_ready_building(point: Vector2, types: Array) -> Dictionary:
 
 func _defense_anchor(u: Dictionary) -> Vector2:
 	var priority: String = str(u.get("defense_priority", "patrol"))
+	var posted: Dictionary = get_building(int(u.get("defense_post", -1)))
+	if not posted.is_empty() and posted["hp"] > 0 and posted["remaining"] <= 0:
+		return _cached_edge_goal(u, posted)
 	if priority == "rally" and rally_point.x >= 0:
 		return rally_point
 	var b: Dictionary = {}
@@ -1728,6 +1751,8 @@ func restore_state(state: Dictionary) -> bool:
 				u["defense_priority"] = "towers"
 			else:
 				u["defense_priority"] = "patrol"
+		if not u.has("defense_post"):
+			u["defense_post"] = -1
 	for enemy in enemies:
 		var stats: Dictionary = _enemy_stats(str(enemy["type"]))
 		for key in ["speed", "damage", "range", "attack_delay"]:
@@ -1860,6 +1885,12 @@ func _validate_state(state: Dictionary) -> bool:
 					return false
 				if u.has("defense_priority") and str(u["defense_priority"]) not in DEFENSE_PRIORITIES:
 					return false
+				if u.has("defense_post"):
+					if not _integer(u["defense_post"]):
+						return false
+					if int(u["defense_post"]) != -1:
+						if not building_index.has(int(u["defense_post"])) or str(building_index[int(u["defense_post"])]["type"]) not in ["gate", "tower", "archer_tower", "guard_post"]:
+							return false
 				if not _integer(u.get("slot", 0)) or int(u.get("slot", 0)) < 0:
 					return false
 				var reserved: Variant = u.get("post", -1)
