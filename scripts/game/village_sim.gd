@@ -1472,7 +1472,7 @@ func _spawn_raid() -> void:
 	raid_kills = 0
 	raid_baseline.clear()
 	for b in buildings:
-		raid_baseline[int(b["id"])] = float(b["hp"])
+		raid_baseline[str(int(b["id"]))] = float(b["hp"])
 	var manifest: Array[String] = raid_manifest(wave)
 	for index in manifest.size():
 		var side: int = index % 4 if manifest.size() >= 4 else (wave - 1) % 4
@@ -1593,7 +1593,7 @@ func _finish_raid(victory: bool) -> void:
 	var damaged: int = 0
 	var destroyed: int = 0
 	for b in buildings:
-		var before: float = float(raid_baseline.get(int(b["id"]), b["hp"]))
+		var before: float = float(raid_baseline.get(str(int(b["id"])), b["hp"]))
 		if float(b["hp"]) < before:
 			damaged += 1
 		if before > 0 and b["hp"] <= 0:
@@ -1679,7 +1679,9 @@ func export_state() -> Dictionary:
 	return {"version": 2, "living": living.state(), "buildings": buildings.duplicate(true), "units": _save_entities(units), "enemies": _save_entities(enemies),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "elapsed": elapsed, "xp": xp, "wave": wave, "next_raid_at": next_raid_at,
-		"raid_active": raid_active, "raid_warning": raid_warning, "next_id": next_id, "birth_timer": birth_timer}
+		"raid_active": raid_active, "raid_warning": raid_warning, "next_id": next_id, "birth_timer": birth_timer,
+		"rally_point": [rally_point.x, rally_point.y], "last_raid_report": last_raid_report.duplicate(true),
+		"raid_started_at": raid_started_at, "raid_kills": raid_kills, "raid_baseline": raid_baseline.duplicate(true)}
 
 
 func _number(value: Variant) -> bool:
@@ -1706,6 +1708,32 @@ func restore_state(state: Dictionary) -> bool:
 	raid_warning = state["raid_warning"]
 	next_id = int(state["next_id"])
 	birth_timer = float(state["birth_timer"])
+	var rally: Array = state.get("rally_point", [-1.0, -1.0])
+	rally_point = Vector2(float(rally[0]), float(rally[1]))
+	last_raid_report = state.get("last_raid_report", {}).duplicate(true)
+	raid_started_at = float(state.get("raid_started_at", elapsed if raid_active else 0.0))
+	raid_kills = int(state.get("raid_kills", 0))
+	raid_baseline = state.get("raid_baseline", {}).duplicate(true)
+	for b in buildings:
+		if not b.has("target_mode"):
+			b["target_mode"] = "closest"
+	for u in units:
+		if not u.has("defense_priority"):
+			if u["type"] in ["warrior"]:
+				u["defense_priority"] = "gate"
+			elif u["type"] in ["warden"]:
+				u["defense_priority"] = "manor"
+			elif u["type"] in ["archer", "longbowman"]:
+				u["defense_priority"] = "towers"
+			else:
+				u["defense_priority"] = "patrol"
+	for enemy in enemies:
+		var stats: Dictionary = _enemy_stats(str(enemy["type"]))
+		for key in ["speed", "damage", "range", "attack_delay"]:
+			if not enemy.has(key):
+				enemy[key] = stats[key]
+		if not enemy.has("fx"): enemy["fx"] = -1.0
+		if not enemy.has("fy"): enemy["fy"] = -1.0
 	living.restore(state.get("living", Living.new().state()))
 	navigation_revision = living.navigation_revision
 	_invalidate()
@@ -1735,6 +1763,25 @@ func _validate_state(state: Dictionary) -> bool:
 	for key in ["elapsed", "xp", "wave", "next_raid_at", "next_id", "birth_timer"]:
 		if not _number(state.get(key)):
 			return false
+	for key in ["raid_started_at", "raid_kills"]:
+		if state.has(key) and not _number(state[key]):
+			return false
+	if state.has("rally_point"):
+		var rally: Variant = state["rally_point"]
+		if not rally is Array or rally.size() != 2 or not _number(rally[0]) or not _number(rally[1]):
+			return false
+		var rx: float = float(rally[0])
+		var ry: float = float(rally[1])
+		if not ((rx == -1 and ry == -1) or (rx >= 0 and rx < 20 and ry >= 0 and ry < 16)):
+			return false
+	if state.has("last_raid_report") and not state["last_raid_report"] is Dictionary:
+		return false
+	if state.has("raid_baseline"):
+		if not state["raid_baseline"] is Dictionary:
+			return false
+		for value in state["raid_baseline"].values():
+			if not _number(value):
+				return false
 	if int(state["version"]) == 2:
 		for cell: Dictionary in state["living"]["cells"].values():
 			if float(cell["last"]) > float(state["elapsed"]) + 0.01: return false
@@ -1762,6 +1809,8 @@ func _validate_state(state: Dictionary) -> bool:
 			return false
 		if ids.has(int(b["id"])) or int(b["id"]) >= int(state["next_id"]) or b["hp"] > b["max_hp"]:
 			return false
+		if b.has("target_mode") and str(b["target_mode"]) not in ["closest", "strongest", "weakest", "sappers", "manor"]:
+			return false
 		for other: Dictionary in building_index.values():
 			if Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"])).intersects(Rect2i(int(other["x"]), int(other["y"]), int(other["size"]), int(other["size"]))):
 				return false
@@ -1775,7 +1824,7 @@ func _validate_state(state: Dictionary) -> bool:
 			if not u is Dictionary:
 				return false
 			var hostile: bool = group == state["enemies"]
-			if (hostile and u.get("type") != "raider") or (not hostile and u.get("type") not in ROLES):
+			if (hostile and u.get("type") not in ENEMY_TYPES) or (not hostile and u.get("type") not in ROLES):
 				return false
 			for key in ["id", "x", "y", "hp", "max_hp", "cooldown"]:
 				if not _number(u.get(key)):
@@ -1807,6 +1856,8 @@ func _validate_state(state: Dictionary) -> bool:
 				if (float(u.get("sx", -1.0)) >= 0) != (float(u.get("sy", -1.0)) >= 0):
 					return false
 				if not u.get("kite", false) is bool:
+					return false
+				if u.has("defense_priority") and str(u["defense_priority"]) not in DEFENSE_PRIORITIES:
 					return false
 				if not _integer(u.get("slot", 0)) or int(u.get("slot", 0)) < 0:
 					return false
