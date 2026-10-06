@@ -1035,16 +1035,18 @@ func tick(dt: float) -> void:
 
 
 func _gate_tick() -> void:
+	var trigger: float = 3.0 if "gate_engineering" in living.discoveries else 1.8
 	for b in buildings:
 		if b["type"] != "gate": continue
 		var open: bool = true
 		for enemy in enemies:
-			if enemy["hp"] > 0 and center(b).distance_to(position_of(enemy)) < 1.8:
+			if enemy["hp"] > 0 and center(b).distance_to(position_of(enemy)) < trigger:
 				open = false
 		if bool(b.get("gate_open", true)) != open:
 			b["gate_open"] = open
 			revision += 1
 			_invalidate()
+
 
 
 func _refine(recipe: Dictionary, dt: float) -> void:
@@ -1090,6 +1092,27 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 				if _walk(u, _edge_goal(u, b), dt):
 					u["phase"] = "work"
 				return
+		if "defensive_logistics" in living.discoveries:
+			var damaged: Dictionary = {}
+			var best_gap: float = INF
+			for b in buildings:
+				if b["remaining"] <= 0 and b["hp"] > 0 and b["hp"] < b["max_hp"]:
+					var gap: float = position_of(u).distance_squared_to(center(b))
+					if gap < best_gap:
+						best_gap = gap
+						damaged = b
+			if not damaged.is_empty():
+				_face_job(u, damaged)
+				if _walk(u, _edge_goal(u, damaged), dt):
+					u["phase"] = "repair"
+					u["cooldown"] += dt
+					if u["cooldown"] >= 1.0 and float(resources.get("wood", 0)) >= 1.0:
+						resources["wood"] = float(resources.get("wood", 0)) - 1.0
+						var repair_amount: float = 22.5 if u["type"] == "mason" else 15.0
+						damaged["hp"] = minf(float(damaged["max_hp"]), float(damaged["hp"]) + repair_amount)
+						u["cooldown"] = 0.0
+						revision += 1
+				return
 		_clear_facing(u)
 		return
 	if float(u["carry"]) >= 1:
@@ -1112,13 +1135,16 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 	if _walk(u, stand, dt):
 		u["phase"] = "work"
 		u["cooldown"] += dt
-		if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(troop_specs[u["type"]]["carry"]):
-			var amount: int = mini(floori(float(workplace["reserve"])), int(troop_specs[u["type"]]["carry"]))
-			if amount > 0:
-				workplace["reserve"] -= amount
-				u["carry"] = amount
-				u["carry_resource"] = str(building_specs[workplace["type"]]["production"])
-				u["cooldown"] = 0
+		var production: Variant = building_specs[workplace["type"]].get("production")
+		if production != null and str(production) != "":
+			if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(troop_specs[u["type"]]["carry"]):
+				var amount: int = mini(floori(float(workplace["reserve"])), int(troop_specs[u["type"]]["carry"]))
+				if amount > 0:
+					workplace["reserve"] -= amount
+					u["carry"] = amount
+					u["carry_resource"] = str(production)
+					u["cooldown"] = 0
+
 
 
 func _nearest_enemy(point: Vector2) -> Dictionary:
@@ -1164,11 +1190,14 @@ func _threat_enemy(u: Dictionary) -> Dictionary:
 	for enemy in enemies:
 		if enemy["hp"] <= 0:
 			continue
-		var rank: float = float(threat_ranks.get(int(enemy["id"]), -INF)) - 0.35 * here.distance_to(position_of(enemy))
+		var rank: float = float(threat_ranks.get(int(enemy["id"]), -INF)) - 0.35 * here.distance_to(position_of(enemy)) + _priority_bonus(u, enemy)
+		if str(enemy.get("type", "")) == "sapper":
+			rank += 18.0
 		if rank > best_rank:
 			best_rank = rank
 			best = enemy
 	return best
+
 
 
 func _flee_point(u: Dictionary, enemy: Dictionary, release: float) -> Vector2:
@@ -1234,18 +1263,174 @@ func _shot(from: Vector2, to: Vector2) -> void:
 	events.append({"kind": "shot", "from_x": from.x, "from_y": from.y, "x": to.x, "y": to.y})
 
 
+func _nearest_ready_building(point: Vector2, types: Array[String]) -> Dictionary:
+	var best: Dictionary = {}
+	var best_distance: float = INF
+	for b in buildings:
+		if str(b["type"]) not in types or b["hp"] <= 0 or b["remaining"] > 0:
+			continue
+		var distance: float = point.distance_squared_to(center(b))
+		if distance < best_distance:
+			best_distance = distance
+			best = b
+	return best
+
+
+func _defense_anchor(u: Dictionary) -> Vector2:
+	var priority: String = str(u.get("defense_priority", "patrol"))
+	if priority == "rally" and rally_point.x >= 0:
+		return rally_point
+	var b: Dictionary = {}
+	match priority:
+		"manor":
+			b = _hall()
+		"gate":
+			b = _nearest_ready_building(position_of(u), ["gate", "guard_post"])
+		"towers":
+			b = _nearest_ready_building(position_of(u), ["tower", "archer_tower", "guard_post"])
+	if not b.is_empty():
+		return _cached_edge_goal(u, b)
+	return Vector2(-1, -1)
+
+
+func _priority_bonus(u: Dictionary, enemy: Dictionary) -> float:
+	var priority: String = str(u.get("defense_priority", "patrol"))
+	var point: Vector2 = position_of(enemy)
+	if priority == "rally" and rally_point.x >= 0:
+		return 80.0 / (1.0 + point.distance_to(rally_point))
+	if priority == "manor":
+		var hall: Dictionary = _hall()
+		return 100.0 / (1.0 + _building_distance(point, hall)) if not hall.is_empty() else 0.0
+	var types: Array[String] = ["gate", "guard_post"] if priority == "gate" else (["tower", "archer_tower", "guard_post"] if priority == "towers" else [])
+	var bonus: float = 0.0
+	for b in buildings:
+		if str(b["type"]) in types and b["hp"] > 0:
+			bonus = maxf(bonus, 90.0 / (1.0 + _building_distance(point, b)))
+	return bonus
+
+
+func raid_manifest(for_wave: int = -1) -> Array[String]:
+	var w: int = wave + 1 if for_wave < 0 else maxi(1, for_wave)
+	var count: int = mini(8, w + 1)
+	var result: Array[String] = []
+	for index in count:
+		var kind: String = "raider"
+		if w >= 5 and index % 5 == 4:
+			kind = "sapper"
+		elif w >= 4 and index % 4 == 2:
+			kind = "marksman"
+		elif w >= 3 and index % 4 == 0:
+			kind = "brute"
+		elif w >= 2 and index % 3 == 1:
+			kind = "skirmisher"
+		result.append(kind)
+	return result
+
+
+func raid_preview() -> Dictionary:
+	var manifest: Array[String] = raid_manifest(wave + 1)
+	var composition: Dictionary = {}
+	var sides: Array[String] = []
+	var side_names: Array[String] = ["West", "East", "North", "South"]
+	for index in manifest.size():
+		composition[manifest[index]] = int(composition.get(manifest[index], 0)) + 1
+		var side: int = index % 4 if manifest.size() >= 4 else wave % 4
+		if side_names[side] not in sides:
+			sides.append(side_names[side])
+	return {"wave": wave + 1, "composition": composition, "sides": sides}
+
+
+func _enemy_stats(kind: String) -> Dictionary:
+	match kind:
+		"skirmisher":
+			return {"hp": 55.0 + wave * 7.0, "speed": 1.8, "damage": 7.0 + wave * 1.5, "range": 1.0, "delay": 0.75}
+		"brute":
+			return {"hp": 150.0 + wave * 18.0, "speed": 0.8, "damage": 16.0 + wave * 3.0, "range": 1.0, "delay": 1.25}
+		"marksman":
+			return {"hp": 65.0 + wave * 8.0, "speed": 1.05, "damage": 10.0 + wave * 2.0, "range": 4.0, "delay": 1.35}
+		"sapper":
+			return {"hp": 85.0 + wave * 10.0, "speed": 1.25, "damage": 22.0 + wave * 3.0, "range": 1.0, "delay": 1.1}
+		_:
+			return {"hp": 70.0 + wave * 10.0, "speed": 1.2, "damage": 8.0 + wave * 2.0, "range": 1.0, "delay": 1.0}
+
+
+func _enemy_objective(enemy: Dictionary) -> Dictionary:
+	var kind: String = str(enemy.get("type", "raider"))
+	var preferred: Array[String] = []
+	if kind == "sapper":
+		preferred = ["gate", "wall", "stonewall", "guard_post"]
+	elif kind == "brute":
+		preferred = ["wall", "stonewall", "gate"]
+	if not preferred.is_empty():
+		var chosen: Dictionary = _nearest_ready_building(position_of(enemy), preferred)
+		if not chosen.is_empty():
+			return chosen
+	return _hall()
+
+
+func _tower_target(b: Dictionary) -> Dictionary:
+	var mode: String = str(b.get("target_mode", "closest"))
+	var candidates: Array[Dictionary] = []
+	for enemy in enemies:
+		if enemy["hp"] > 0 and center(b).distance_to(position_of(enemy)) <= float(building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]["range"]):
+			candidates.append(enemy)
+	if candidates.is_empty():
+		return {}
+	if mode == "sappers":
+		for enemy in candidates:
+			if str(enemy.get("type", "")) == "sapper":
+				return enemy
+	if mode == "strongest":
+		var best: Dictionary = candidates[0]
+		for enemy in candidates:
+			if float(enemy["hp"]) > float(best["hp"]):
+				best = enemy
+		return best
+	if mode == "weakest":
+		var best: Dictionary = candidates[0]
+		for enemy in candidates:
+			if float(enemy["hp"]) < float(best["hp"]):
+				best = enemy
+		return best
+	if mode == "manor":
+		var hall: Dictionary = _hall()
+		var best: Dictionary = candidates[0]
+		for enemy in candidates:
+			if _building_distance(position_of(enemy), hall) < _building_distance(position_of(best), hall):
+				best = enemy
+		return best
+	return _nearest_enemy(center(b))
+
+
+func set_tower_targeting(id: int, mode: String) -> bool:
+	var b: Dictionary = get_building(id)
+	if b.is_empty() or b["type"] not in ["tower", "archer_tower", "guard_post"]:
+		return false
+	if mode not in ["closest", "strongest", "weakest", "sappers", "manor"]:
+		return false
+	if mode != "closest" and "watchtowers" not in living.discoveries:
+		notice = "Research Watchtower Doctrine first."
+		return false
+	b["target_mode"] = mode
+	notice = "%s targeting: %s." % [str(building_specs[b["type"]]["name"]), mode.capitalize()]
+	return true
+
+
 func _fighter(u: Dictionary, dt: float) -> void:
 	var enemy: Dictionary = _threat_enemy(u)
 	if enemy.is_empty():
 		_clear_facing(u)
 		_close_kite(u)
+		if (raid_warning or raid_active) and not u["hold"]:
+			var anchor: Vector2 = _defense_anchor(u)
+			if anchor.x >= 0:
+				_walk(u, anchor, dt)
 		return
 	var here: Vector2 = position_of(u)
 	var gap: float = here.distance_to(position_of(enemy))
 	u["fx"] = position_of(enemy).x
 	u["fy"] = position_of(enemy).y
-	if str(u["type"]) == "archer" and not u["hold"]:
-		# Survival comes first: break from whatever is actually swinging at this archer.
+	if str(u["type"]) in ["archer", "longbowman"] and not u["hold"]:
 		var closest: Dictionary = _nearest_enemy(here)
 		if not closest.is_empty() and (here.distance_to(position_of(closest)) <= KITE_TRIGGER or bool(u.get("kite", false))):
 			var space: Vector2 = _archer_space(u, closest)
@@ -1258,11 +1443,12 @@ func _fighter(u: Dictionary, dt: float) -> void:
 		if u["cooldown"] <= 0:
 			enemy["hp"] -= _stat(u, "damage")
 			u["cooldown"] = 1.0
-			if u["type"] == "archer":
+			if u["type"] in ["archer", "longbowman"]:
 				_shot(here, position_of(enemy))
 		return
 	if not u["hold"]:
 		_walk(u, position_of(enemy), dt)
+
 
 
 func start_raid() -> bool:
@@ -1282,18 +1468,26 @@ func _spawn_raid() -> void:
 	raid_warning = false
 	raid_active = true
 	wave += 1
-	var count: int = mini(8, wave + 1)
-	for index in count:
-		var side: int = index % 4 if count >= 4 else (wave - 1) % 4
+	raid_started_at = elapsed
+	raid_kills = 0
+	raid_baseline.clear()
+	for b in buildings:
+		raid_baseline[int(b["id"])] = float(b["hp"])
+	var manifest: Array[String] = raid_manifest(wave)
+	for index in manifest.size():
+		var side: int = index % 4 if manifest.size() >= 4 else (wave - 1) % 4
 		var point := Vector2(0.5, 3.5 + index * 1.1)
 		match side:
 			1: point = Vector2(19.5, 4.5 + index)
 			2: point = Vector2(5.5 + index, 0.5)
 			3: point = Vector2(6.5 + index, 15.5)
-		var hp: float = 70 + wave * 10
-		enemies.append({"id": _id(), "type": "raider", "x": point.x, "y": point.y, "hp": hp, "max_hp": hp,
-			"phase": "walk", "cooldown": 0.0})
-	notice = "Wave %d / hold the Manor!" % wave
+		var kind: String = manifest[index]
+		var stats: Dictionary = _enemy_stats(kind)
+		enemies.append({"id": _id(), "type": kind, "x": point.x, "y": point.y, "hp": stats["hp"], "max_hp": stats["hp"],
+			"phase": "walk", "cooldown": 0.0, "speed": stats["speed"], "damage": stats["damage"], "range": stats["range"], "attack_delay": stats["delay"],
+			"fx": -1.0, "fy": -1.0})
+	notice = "Wave %d / mixed raiders at the walls!" % wave
+
 
 
 func _building_distance(point: Vector2, b: Dictionary) -> float:
@@ -1314,30 +1508,41 @@ func _raid_tick(dt: float) -> void:
 		var stats: Dictionary = building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]
 		if float(stats["damage"]) <= 0:
 			continue
-		var enemy: Dictionary = _nearest_enemy(center(b))
-		if not enemy.is_empty() and center(b).distance_to(position_of(enemy)) <= float(stats["range"]):
+		var enemy: Dictionary = _tower_target(b)
+		if not enemy.is_empty():
 			enemy["hp"] -= float(stats["damage"])
-			b["cooldown"] = 5.0 if b["type"] == "trap" else 1.0
+			b["cooldown"] = float(stats.get("cooldown", 5.0 if b["type"] == "trap" else 1.0))
 			_shot(center(b), position_of(enemy))
 	for enemy in enemies:
 		if enemy["hp"] <= 0:
 			continue
 		enemy["cooldown"] = maxf(0, float(enemy["cooldown"]) - dt)
 		enemy["phase"] = "idle"
+		var attack_range: float = float(enemy.get("range", 1.0))
 		var opponent: Dictionary = {}
+		var opponent_gap: float = INF
 		for u in units:
-			if u["hp"] > 0 and troop_specs[u["type"]]["role"] == "combat" and position_of(enemy).distance_to(position_of(u)) < 1.1:
-				opponent = u
-				break
+			if u["hp"] > 0 and troop_specs[u["type"]]["role"] == "combat":
+				var gap: float = position_of(enemy).distance_to(position_of(u))
+				if gap <= attack_range and gap < opponent_gap:
+					opponent = u
+					opponent_gap = gap
 		if not opponent.is_empty():
 			enemy["phase"] = "attack"
 			enemy["fx"] = float(opponent["x"])
 			enemy["fy"] = float(opponent["y"])
 			if enemy["cooldown"] <= 0:
-				opponent["hp"] = maxf(0, float(opponent["hp"]) - (8 + wave * 2))
-				enemy["cooldown"] = 1
+				var hit: float = float(enemy.get("damage", 8 + wave * 2))
+				if opponent["type"] == "warden":
+					hit *= 0.85
+				opponent["hp"] = maxf(0, float(opponent["hp"]) - hit)
+				enemy["cooldown"] = float(enemy.get("attack_delay", 1.0))
+				if attack_range > 1.5:
+					_shot(position_of(enemy), position_of(opponent))
 			continue
-		var objective: Dictionary = _hall()
+		var objective: Dictionary = _enemy_objective(enemy)
+		if objective.is_empty():
+			continue
 		var goal: Vector2 = _cached_edge_goal(enemy, objective, true)
 		if not _path_reachable(enemy, goal, true):
 			var nearest: float = INF
@@ -1348,13 +1553,20 @@ func _raid_tick(dt: float) -> void:
 						nearest = distance
 						objective = b
 			goal = _cached_edge_goal(enemy, objective, true)
-		if _building_distance(position_of(enemy), objective) <= 0.8:
+		if _building_distance(position_of(enemy), objective) <= attack_range:
 			enemy["phase"] = "attack"
 			enemy["fx"] = center(objective).x
 			enemy["fy"] = center(objective).y
 			if enemy["cooldown"] <= 0:
-				objective["hp"] = maxf(0, float(objective["hp"]) - (8 + wave * 2))
-				enemy["cooldown"] = 1
+				var hit: float = float(enemy.get("damage", 8 + wave * 2))
+				if objective["type"] == "gate" and "gate_engineering" in living.discoveries:
+					hit *= 0.7
+				elif objective["type"] in ["wall", "stonewall"] and "fortifications" in living.discoveries:
+					hit *= 0.85
+				objective["hp"] = maxf(0, float(objective["hp"]) - hit)
+				enemy["cooldown"] = float(enemy.get("attack_delay", 1.0))
+				if attack_range > 1.5:
+					_shot(position_of(enemy), center(objective))
 				if objective["hp"] <= 0:
 					revision += 1
 					_invalidate()
@@ -1362,6 +1574,7 @@ func _raid_tick(dt: float) -> void:
 			_walk(enemy, goal, dt, true)
 	for index in range(enemies.size() - 1, -1, -1):
 		if enemies[index]["hp"] <= 0:
+			raid_kills += 1
 			paths.erase(int(enemies[index]["id"]))
 			enemies.remove_at(index)
 	if _hall().get("hp", 0) <= 0:
@@ -1370,12 +1583,31 @@ func _raid_tick(dt: float) -> void:
 		_finish_raid(true)
 
 
+
 func _reward(rewards: Dictionary) -> void:
 	for resource in rewards:
 		pending_rewards[resource] = float(pending_rewards.get(resource, 0)) + float(rewards[resource])
 
 
 func _finish_raid(victory: bool) -> void:
+	var damaged: int = 0
+	var destroyed: int = 0
+	for b in buildings:
+		var before: float = float(raid_baseline.get(int(b["id"]), b["hp"]))
+		if float(b["hp"]) < before:
+			damaged += 1
+		if before > 0 and b["hp"] <= 0:
+			destroyed += 1
+	var knocked: int = 0
+	for u in units:
+		if u["hp"] <= 0:
+			knocked += 1
+	var reward: Dictionary = {"gold": 20 + wave * 10} if victory else {"wood": 80}
+	last_raid_report = {
+		"wave": wave, "victory": victory, "enemies_defeated": raid_kills, "buildings_damaged": damaged,
+		"buildings_destroyed": destroyed, "defenders_knocked_out": knocked,
+		"duration": maxf(0.0, elapsed - raid_started_at), "reward": reward.duplicate(true)
+	}
 	raid_active = false
 	raid_warning = false
 	enemies.clear()
@@ -1387,8 +1619,9 @@ func _finish_raid(victory: bool) -> void:
 			u["x"] = 8.0
 			u["y"] = 10.8
 			u["phase"] = "idle"
-	_reward({"gold": 20 + wave * 10} if victory else {"wood": 80})
-	notice = "The Manner stands / salvage and recovery." if victory else "The Manor fell / salvage Wood waits. Repair and rise again."
+	_reward(reward)
+	notice = "The Manner stands / battle report ready." if victory else "The Manor fell / battle report ready. Repair and rise again."
+
 
 
 func quest_current() -> Dictionary:
