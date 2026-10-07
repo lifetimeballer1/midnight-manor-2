@@ -76,7 +76,6 @@ var build_type: String = ""
 var moving_id: int = -1
 var paving: bool = false
 var preview_tile := Vector2i(-1, -1)
-var drag_anchor := Vector2i(-1, -1)
 var ghost_signature: String = ""
 var view_revision: int = -1
 var tick_accumulator: float = 0.0
@@ -102,6 +101,14 @@ var pinch_zoom: float = 0.0
 var pinch_mid := Vector2.ZERO
 var pinch_has_mid: bool = false
 var pinch_active: bool = false
+var pinch_angle: float = 0.0
+var pinch_yaw: float = 0.0
+var touch_mode: bool = false
+var placement_anchor := Vector2i(-1, -1)
+var placement_row: Array[Vector2i] = []
+var actor_accumulator: float = 0.0
+var detail_accumulator: float = 0.0
+var lamp_accumulator: float = 0.0
 var save_blocked: bool = false
 var save_path: String = "user://village-v1.json"
 const SETTINGS_PATH := "user://manor-settings.json"
@@ -166,6 +173,15 @@ var inspect_collect: Button
 var inspect_upgrade: Button
 var path_button: Button
 var research_button: Button
+var row_upgrade_button: Button
+var more_pave_button: Button
+var more_chronicle_button: Button
+var more_tech_button: Button
+var more_frontier_button: Button
+var more_board_button: Button
+var more_doctrine_button: Button
+var welcome_help: Label
+var combat_banner := Label.new()
 var toast := PanelContainer.new()
 var toast_label := Label.new()
 var more_sheet := PanelContainer.new()
@@ -894,9 +910,9 @@ func _apply_lighting() -> void:
 		environment.fog_light_color = environment.fog_light_color.lerp(Color("5c6b7a"), 0.35 * rain_level)
 	var dark: bool = b < 0.5
 	if is_instance_valid(fireflies):
-		fireflies.visible = dark
+		fireflies.visible = dark and not battery_saver
 	if is_instance_valid(mist):
-		mist.visible = dark or rain_level > 0.35
+		mist.visible = (dark or rain_level > 0.35) and not battery_saver
 	if is_instance_valid(stars):
 		stars.visible = dark
 	if is_instance_valid(moon):
@@ -1214,22 +1230,70 @@ func _find_player_cached(asset_name: String, spawned: Node3D) -> AnimationPlayer
 	return player
 
 
-func _tint_enemy(node: Node) -> void:
-	# Tinted materials are shared across all raiders: same source mesh and
-	# same tint means the same override, so a raid's spawns share them
-	# instead of duplicating per surface per spawn.
+func _enemy_asset(u: Dictionary) -> String:
+	var role: String = str(u.get("role", "raider"))
+	if role in ["archer", "bombard"]:
+		return "char_archer"
+	if role in ["breaker", "ram"]:
+		return "char_builder"
+	if role == "scout":
+		return "char_lumberjack"
+	return "char_warrior"
+
+
+func _enemy_scale(role: String) -> float:
+	match role:
+		"scout": return 0.88
+		"breaker": return 1.10
+		"ram": return 1.22
+		"bombard": return 1.08
+	return 1.0
+
+
+func _tint_enemy(node: Node, tint: Color) -> void:
+	# Faction colour + role silhouette are deliberately restrained: readable at
+	# phone zoom without multiplying enemy materials every frame.
 	if node is MeshInstance3D:
 		var mesh: Mesh = (node as MeshInstance3D).mesh
 		if mesh != null:
 			for surface in mesh.get_surface_count():
-				var key := "%d/%d" % [mesh.get_rid().get_id(), surface]
+				var key := "%d/%d/%s" % [mesh.get_rid().get_id(), surface, tint.to_html(false)]
 				if not tint_cache.has(key):
-					var tinted: StandardMaterial3D = (node as MeshInstance3D).get_active_material(surface).duplicate()
-					tinted.albedo_color = Color("e7998e")
+					var active: Material = (node as MeshInstance3D).get_active_material(surface)
+					if active == null:
+						continue
+					var tinted: StandardMaterial3D = active.duplicate()
+					tinted.albedo_color = tint
 					tint_cache[key] = tinted
 				(node as MeshInstance3D).set_surface_override_material(surface, tint_cache[key])
 	for child in node.get_children():
-		_tint_enemy(child)
+		_tint_enemy(child, tint)
+
+
+func _physical_to_canvas(px: float) -> float:
+	if not touch_mode:
+		return px
+	var win := DisplayServer.window_get_size()
+	var canvas: Vector2 = get_viewport().get_visible_rect().size
+	if win.x <= 0 or win.y <= 0:
+		return px
+	return px * maxf(canvas.x / float(win.x), canvas.y / float(win.y))
+
+
+func _touch_slop() -> float:
+	return _physical_to_canvas(18.0) if touch_mode else 12.0
+
+
+func _selection_radius() -> float:
+	return _physical_to_canvas(30.0) if touch_mode else 18.0
+
+
+func _actor_should_render(at: Vector3) -> bool:
+	var elevated := at + Vector3(0, 0.8, 0)
+	if camera.is_position_behind(elevated):
+		return false
+	var point: Vector2 = camera.unproject_position(elevated)
+	return get_viewport().get_visible_rect().grow(_physical_to_canvas(96.0)).has_point(point)
 
 
 func _update_actors(delta: float) -> void:
@@ -1240,11 +1304,12 @@ func _update_actors(delta: float) -> void:
 			var id: int = int(u["id"])
 			present[id] = true
 			if not actors.has(id):
-				var asset: String = "char_" + str(ENEMY_MODELS.get(str(u.get("role", "raider")), "warrior")) if enemy_group else "char_" + str(u["type"])
+				var asset: String = _enemy_asset(u) if enemy_group else "char_" + str(u["type"])
 				var spawned: Node3D = _model(asset)
 				actor_layer.add_child(spawned)
 				if enemy_group:
-					_tint_enemy(spawned)
+					_tint_enemy(spawned, sim.faction_color(str(u.get("faction", "thornband"))))
+					spawned.scale = Vector3.ONE * _enemy_scale(str(u.get("role", "raider")))
 				actors[id] = {"model": spawned, "player": _find_player_cached(asset, spawned), "clip": "", "previous": Vector3.ZERO}
 				spawned.add_child(_ao_disc(1.4))
 			var record: Dictionary = actors[id]
@@ -1259,6 +1324,13 @@ func _update_actors(delta: float) -> void:
 			var player: AnimationPlayer = record["player"]
 			if player != null and not player.has_animation(requested):
 				requested = "idle"
+			var onscreen: bool = _actor_should_render(destination)
+			model.visible = onscreen
+			model.position = destination
+			if not onscreen:
+				if player != null:
+					player.speed_scale = 0.0
+				continue
 			# Aim at the job or the struck enemy; walk facing follows real travel only.
 			var facing: Vector3 = Vector3.ZERO
 			if requested in ["work", "attack"]:
@@ -1271,7 +1343,6 @@ func _update_actors(delta: float) -> void:
 					model.rotation.y = rotate_toward(model.rotation.y, wanted, 9.0 * delta)
 				elif delta <= 0:
 					model.rotation.y = wanted
-			model.position = destination
 			if player != null:
 				if record["clip"] != requested:
 					player.get_animation(requested).loop_mode = Animation.LOOP_NONE if requested == "death" else Animation.LOOP_LINEAR
@@ -1434,9 +1505,10 @@ func _build_more_sheet(root_control: Control) -> void:
 	command_grid.add_theme_constant_override("h_separation", 8)
 	command_grid.add_theme_constant_override("v_separation", 8)
 	mv.add_child(command_grid)
-	_action_button("Pave Roads", _toggle_pave, command_grid)
+	more_pave_button = _action_button("Pave Roads", _toggle_pave, command_grid)
 	collect_button = _action_button("Collect", _collect_selected, command_grid)
 	upgrade_button = _action_button("Upgrade", _upgrade_selected, command_grid)
+	row_upgrade_button = _action_button("Upgrade Row", _upgrade_wall_row, command_grid)
 	move_button = _action_button("Move", _move_selected, command_grid)
 	repair_button = _action_button("Repair", _repair_selected, command_grid)
 	workers_button = _action_button("People", _open_workers, command_grid)
@@ -1450,11 +1522,11 @@ func _build_more_sheet(root_control: Control) -> void:
 	campaign_grid.add_theme_constant_override("h_separation", 8)
 	campaign_grid.add_theme_constant_override("v_separation", 8)
 	mv.add_child(campaign_grid)
-	_action_button("Chronicle", _open_panel.bind("quests"), campaign_grid)
-	_action_button("Chart", _open_panel.bind("tech"), campaign_grid)
-	_action_button("Frontier", _open_panel.bind("frontier"), campaign_grid)
-	_action_button("Manor Board", _open_panel.bind("board"), campaign_grid)
-	_action_button("Doctrine", _open_panel.bind("doctrine"), campaign_grid)
+	more_chronicle_button = _action_button("Chronicle", _open_panel.bind("quests"), campaign_grid)
+	more_tech_button = _action_button("Chart", _open_panel.bind("tech"), campaign_grid)
+	more_frontier_button = _action_button("Frontier", _open_panel.bind("frontier"), campaign_grid)
+	more_board_button = _action_button("Manor Board", _open_panel.bind("board"), campaign_grid)
+	more_doctrine_button = _action_button("Doctrine", _open_panel.bind("doctrine"), campaign_grid)
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
 	var system_head := Label.new()
 	system_head.text = "VIEW & SYSTEM"
@@ -1603,6 +1675,13 @@ func _ui() -> void:
 	banner_row.add_child(banner_label)
 	banner_panel.modulate = Color(1, 1, 1, 0)
 	banner_panel.hide()
+	combat_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	combat_banner.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	combat_banner.add_theme_font_size_override("font_size", 28)
+	combat_banner.add_theme_color_override("font_color", UI.GOLD)
+	combat_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combat_banner.hide()
+	root_control.add_child(combat_banner)
 	nav = HBoxContainer.new()
 	nav.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	nav.add_theme_constant_override("separation", 12)
@@ -1674,6 +1753,9 @@ func _ui() -> void:
 	ui.rule(intro)
 	ui.body("Build your village beneath the moon.\nGather, grow, and hold the walls.", intro)
 	ui.body("Drag to pan. Pinch or scroll to zoom.\nTap a building for its actions. Confirm previews to build.", intro)
+	welcome_help = ui.body("", intro)
+	_refresh_input_copy()
+	ui.body("Your current Chronicle objective stays visible while you play. Builds never spend resources until you confirm.", intro, 12)
 	ui.body("Local saves / no offline progress", intro, 12)
 	var enter_button := ui.gold_button("Continue Village" if sim.elapsed > 0.0 else "Enter Village", _enter_village, intro, 48.0)
 	enter_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1691,6 +1773,57 @@ func _research_cost(node: Dictionary) -> String:
 func _toggle_research() -> void:
 	research_list.visible = not research_list.visible
 	_layout_ui()
+
+
+func _input_verb() -> String:
+	return "Tap" if touch_mode else "Click"
+
+
+func _refresh_input_copy() -> void:
+	if welcome_help == null or not is_instance_valid(welcome_help):
+		return
+	if touch_mode:
+		welcome_help.text = "One finger: tap to select or drag to pan.\nTwo fingers: pinch to zoom, move to pan, twist to orbit.\nSelect a fighter, then tap open ground to give orders."
+	else:
+		welcome_help.text = "Left-drag to pan / wheel to zoom / right-drag or Q-E to orbit.\nClick buildings or villagers to select them.\nSelect a fighter, then click open ground to give orders."
+
+
+func _research_surface_ready() -> bool:
+	var quest: Dictionary = sim.quest_current()
+	return sim.chronicle.act >= 3 or str(quest.get("id", "")) == "the-stone-line" or not sim.living.discoveries.is_empty() or not sim.living.active.is_empty()
+
+
+func _objective_summary(compact: bool = false) -> String:
+	var quest: Dictionary = sim.quest_current()
+	if quest.is_empty():
+		return "Chronicle complete"
+	for objective: Dictionary in quest.get("objectives", []):
+		var value: float = sim._objective_value(objective)
+		var target_value: float = sim._objective_target(objective)
+		if value < target_value:
+			var step: String = str(objective.get("text", objective.get("kind", "Next objective")))
+			if compact:
+				return "%s  %d/%d" % [step, int(minf(value, target_value)), int(target_value)]
+			return "%s\n%s  %d/%d" % [str(quest["name"]), step, int(minf(value, target_value)), int(target_value)]
+	return str(quest["name"])
+
+
+func _refresh_progressive_ui() -> void:
+	var defense_ready: bool = sim.chronicle.act >= 3 or sim.raid_warning or sim.raid_active
+	if nav_attack != null and is_instance_valid(nav_attack):
+		nav_attack.visible = defense_ready
+	if raid_hud != null and is_instance_valid(raid_hud):
+		raid_hud.visible = defense_ready
+	if more_pave_button != null and is_instance_valid(more_pave_button):
+		more_pave_button.visible = "road_masonry" in sim.living.discoveries
+	if more_tech_button != null and is_instance_valid(more_tech_button):
+		more_tech_button.visible = _research_surface_ready()
+	if more_frontier_button != null and is_instance_valid(more_frontier_button):
+		more_frontier_button.visible = sim.chronicle.act >= 4
+	if more_board_button != null and is_instance_valid(more_board_button):
+		more_board_button.visible = sim.chronicle.act >= 5
+	if more_doctrine_button != null and is_instance_valid(more_doctrine_button):
+		more_doctrine_button.visible = sim.chronicle.act >= 5
 
 
 func _window_min() -> float:
@@ -1728,9 +1861,11 @@ func _layout_ui() -> void:
 	# world dominates; Path/Research stay one tap away in the bottom nav.
 	var compact_dock: bool = small
 	path_button.visible = not compact_dock
-	quest_label.visible = not compact_dock
-	research_button.visible = not compact_dock
-	research_label.visible = not compact_dock
+	# The next objective stays visible on phones even when the Chronicle button
+	# collapses into More. New players should never have to guess what is next.
+	quest_label.visible = true
+	research_button.visible = not compact_dock and _research_surface_ready()
+	research_label.visible = not compact_dock and _research_surface_ready()
 	if compact_dock:
 		research_list.hide()
 	# Five bottom buttons fit phones only with tighter spacing and smaller hero discs.
@@ -1789,6 +1924,8 @@ func _layout_ui() -> void:
 	banner_panel.position = Vector2((size.x - banner_w) * 0.5, maxf(8.0, bar_h + safe * 2.0 + 120.0))
 	welcome.size = Vector2(minf(480, size.x - 36), 0)
 	welcome.position = Vector2((size.x - welcome.size.x) / 2, maxf(110, size.y * 0.28))
+	combat_banner.size = Vector2(minf(390.0, size.x - safe * 2.0), 58.0)
+	combat_banner.position = Vector2((size.x - combat_banner.size.x) * 0.5, maxf(96.0, size.y * 0.18))
 	_camera_update()
 
 
@@ -2326,7 +2463,7 @@ func _toggle_doctrine(id: String) -> void:
 func _build_catalog() -> void:
 	_label("RAISE THE VILLAGE", side_content, true)
 	ui.rule(side_content)
-	_label("Choose a structure, tap a tile, then confirm.\nThumbnails are the real exported models.", side_content)
+	_label("Choose a structure, %s a tile, then confirm.\nThumbnails are the real exported models." % _input_verb().to_lower(), side_content)
 	build_cards.clear()
 	build_category_order.clear()
 	for category: String in UI.CATEGORIES:
@@ -2482,7 +2619,7 @@ func _unit_inspector() -> void:
 	_label("%s / Level %d" % [str(u["type"]).capitalize(), u["level"]], side_content, true)
 	ui.rule(side_content)
 	inspect_text = _label("", side_content)
-	_label("Click open ground to move. Orders keep carried goods and assignments.", side_content)
+	_label("%s open ground to move. Orders keep carried goods and assignments." % _input_verb(), side_content)
 	_button("Hold position", _hold_selected, side_content)
 	_button("Resume duties", _resume_selected, side_content)
 	var training_cost: Dictionary = sim.troop_specs[u["type"]]["levelCost"].duplicate()
@@ -2534,10 +2671,20 @@ func _refresh_actions() -> void:
 	else:
 		collect_button.disabled = float(b.get("reserve", 0.0)) < 1 or float(b.get("hp", 0.0)) <= 0 or float(b.get("remaining", 0.0)) > 0
 		collect_button.tooltip_text = "Bank the on-site reserve of %s" % str(sim.building_specs[b["type"]]["name"])
+	upgrade_button.visible = not b.is_empty()
 	upgrade_button.disabled = b.is_empty() or not sim.upgrade_reason(selected_building).is_empty()
 	upgrade_button.tooltip_text = sim.upgrade_reason(selected_building) if not b.is_empty() else "Select a building"
+	if row_upgrade_button != null and is_instance_valid(row_upgrade_button):
+		var row_ids: Array[int] = sim.wall_row(selected_building)
+		row_upgrade_button.visible = row_ids.size() > 1
+		var row_reason: String = sim.upgrade_wall_row_reason(selected_building)
+		row_upgrade_button.disabled = row_ids.size() <= 1 or not row_reason.is_empty()
+		row_upgrade_button.text = "Upgrade Row ×%d" % row_ids.size() if row_ids.size() > 1 else "Upgrade Row"
+		row_upgrade_button.tooltip_text = row_reason if not row_reason.is_empty() else "Upgrade this connected wall row together"
+	repair_button.visible = not b.is_empty()
 	repair_button.disabled = b.is_empty() or float(b["hp"]) >= float(b["max_hp"]) or float(b["remaining"]) > 0
 	repair_button.tooltip_text = "Repair spends 15 HP per Wood" if not b.is_empty() else "Select a building"
+	move_button.visible = not b.is_empty()
 	move_button.disabled = b.is_empty() or sim.raid_active or sim.raid_warning or float(b.get("remaining", 0.0)) > 0
 	move_button.tooltip_text = "Relocate the site" if not b.is_empty() else "Select a building"
 	if workers_button != null:
@@ -2576,7 +2723,7 @@ func _pause_panel() -> void:
 	shadow_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var recenter_button := ui.command_button("Recenter camera", _recenter, side_content, 40.0)
 	recenter_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_label("Core-loop prototype. Campaign, advanced gear/abilities and multiplayer remain future work.", side_content)
+	_label("Chronicle, research, defenses, doctrines, regions and Great Works are live. Closed time does not advance the village.", side_content)
 	ui.command_button("Mentor: On" if mentor_enabled else "Mentor: Off", _toggle_mentor, side_content)
 	ui.command_button("New Game...", _request_new_game, side_content).disabled = save_blocked
 
@@ -2586,7 +2733,7 @@ func _enter_village() -> void:
 	sim.paused = paused or not focused
 	welcome.hide()
 	if not save_blocked:
-		sim.notice = _mentor_advice() if mentor_enabled else "The Manor stands. Your village awaits."
+		sim.notice = _mentor_advice() if mentor_enabled else "Next / " + _objective_summary(true)
 	music.enter("night" if night else "day")
 	music.set_calm(sim.paused)
 	music.set_enabled(sound)
@@ -2764,11 +2911,12 @@ func _choose_build(type_name: String) -> void:
 	selected_building = -1
 	selected_unit = -1
 	preview_tile = Vector2i(-1, -1)
-	drag_anchor = Vector2i(-1, -1)
+	placement_anchor = Vector2i(-1, -1)
+	placement_row.clear()
 	more_sheet.hide()
 	_close_panel()
 	placement_box.show()
-	placement_label.text = "Place " + str(sim.building_specs[type_name]["name"]) + " / click the map"
+	placement_label.text = "Place %s / %s the map" % [str(sim.building_specs[type_name]["name"]), _input_verb().to_lower()]
 	confirm_button.disabled = true
 	confirm_button.text = "Confirm Build"
 
@@ -2785,11 +2933,12 @@ func _toggle_pave() -> void:
 	selected_building = -1
 	selected_unit = -1
 	preview_tile = Vector2i(-1, -1)
-	drag_anchor = Vector2i(-1, -1)
+	placement_anchor = Vector2i(-1, -1)
+	placement_row.clear()
 	more_sheet.hide()
 	_close_panel()
 	placement_box.show()
-	placement_label.text = "Pave stone road / click a worn dirt trail"
+	placement_label.text = "Pave stone road / %s a worn dirt trail" % _input_verb().to_lower()
 	confirm_button.disabled = true
 	confirm_button.text = "Confirm Pave"
 
@@ -2798,45 +2947,60 @@ func _placement_active() -> bool:
 	return paving or not build_type.is_empty()
 
 
+func _is_wall_row_mode() -> bool:
+	return moving_id < 0 and build_type in ["wall", "stonewall"]
+
+
+func _wall_row_tiles(a: Vector2i, b: Vector2i) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	if a.x < 0 or b.x < 0:
+		return out
+	var dx: int = b.x - a.x
+	var dy: int = b.y - a.y
+	if absi(dx) >= absi(dy):
+		var step_x: int = 1 if dx >= 0 else -1
+		for x in range(a.x, b.x + step_x, step_x):
+			out.append(Vector2i(x, a.y))
+	else:
+		var step_y: int = 1 if dy >= 0 else -1
+		for y in range(a.y, b.y + step_y, step_y):
+			out.append(Vector2i(a.x, y))
+	return out
+
+
+func _cost_times(cost: Dictionary, count: int) -> Dictionary:
+	var total: Dictionary = {}
+	for resource: Variant in cost:
+		total[resource] = int(cost[resource]) * count
+	return total
+
+
+func _placement_tiles() -> Array[Vector2i]:
+	if _is_wall_row_mode() and not placement_row.is_empty():
+		return placement_row
+	var out: Array[Vector2i] = []
+	if preview_tile.x >= 0:
+		out.append(preview_tile)
+	return out
+
+
 func _placement_reason() -> String:
 	if preview_tile.x < 0:
-		return "Click a tile on the map"
+		return "%s a tile on the map" % _input_verb()
 	if paving:
 		return sim.living.pave_reason(sim, preview_tile)
-	if _is_repeat():
-		for tile in _row_tiles():
-			if sim.build_reason(build_type, tile.x, tile.y, moving_id).is_empty():
-				return ""
-			var existing: Dictionary = sim.building_at(tile.x, tile.y)
-			if not existing.is_empty() and str(existing.get("type", "")) == build_type and sim.upgrade_reason(int(existing["id"])).is_empty():
-				return ""
-		return sim.build_reason(build_type, preview_tile.x, preview_tile.y, moving_id)
+	if _is_wall_row_mode() and placement_row.size() > 1:
+		return sim.build_row_reason(build_type, placement_row)
 	return sim.build_reason(build_type, preview_tile.x, preview_tile.y, moving_id)
 
 
-func _is_repeat() -> bool:
-	if paving or moving_id >= 0 or build_type.is_empty():
-		return false
-	var spec: Dictionary = sim.building_specs.get(build_type, {})
-	return int(spec.get("size", 1)) == 1 and bool(spec.get("repeatPlace", false))
-
-
-func _row_tiles() -> Array[Vector2i]:
-	var single: Array[Vector2i] = []
-	if not _is_repeat() or preview_tile.x < 0 or drag_anchor.x < 0:
-		if preview_tile.x >= 0:
-			single.append(preview_tile)
-		return single
-	var tiles: Array[Vector2i] = []
-	if absi(preview_tile.x - drag_anchor.x) >= absi(preview_tile.y - drag_anchor.y):
-		var step: int = signi(preview_tile.x - drag_anchor.x) if drag_anchor.x != preview_tile.x else 0
-		for i in range(absi(preview_tile.x - drag_anchor.x) + 1):
-			tiles.append(Vector2i(drag_anchor.x + step * i, drag_anchor.y))
-	else:
-		var step: int = signi(preview_tile.y - drag_anchor.y) if drag_anchor.y != preview_tile.y else 0
-		for i in range(absi(preview_tile.y - drag_anchor.y) + 1):
-			tiles.append(Vector2i(drag_anchor.x, drag_anchor.y + step * i))
-	return tiles
+func _ghost_tile(tile: Vector2i, size: int, valid: bool, tint: Color) -> void:
+	var centre := Vector2(tile) + Vector2.ONE * size * 0.5
+	var ghost: MeshInstance3D = _box(Vector3(size * TILE - 0.1, 0.14, size * TILE - 0.1), world_position(centre, 0.12), tint if valid else Color("d26c62"), ghost_layer)
+	var material: StandardMaterial3D = ghost.material_override
+	material.albedo_color.a = 0.65
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 
 
 func _preview() -> void:
@@ -2844,14 +3008,21 @@ func _preview() -> void:
 		return
 	var reason: String = _placement_reason()
 	confirm_button.disabled = not reason.is_empty()
+	var tiles: Array[Vector2i] = _placement_tiles()
+	var row_count: int = tiles.size()
 	var headline: String = "Stone road" if paving else str(sim.building_specs[build_type]["name"])
 	var detail: String = _cost_text({"stone": int(sim.living.config["stone"]["pave_cost"])})
 	if not paving:
-		detail = "Move here / no cost" if moving_id >= 0 else _cost_text(sim.building_cost(build_type))
-		if _is_repeat() and _row_tiles().size() > 1:
-			detail += " x%d" % _row_tiles().size()
-	placement_label.text = "%s  /  tile %d, %d\n%s" % [headline, preview_tile.x, preview_tile.y, reason if not reason.is_empty() else detail]
-	var signature: String = "%s/%s/%s" % ["pave" if paving else build_type, _row_tiles(), reason]
+		if moving_id >= 0:
+			detail = "Move here / no cost"
+		elif _is_wall_row_mode() and row_count > 1:
+			headline += " row ×%d" % row_count
+			detail = _cost_text(_cost_times(sim.building_cost(build_type), row_count))
+		else:
+			detail = _cost_text(sim.building_cost(build_type))
+	var coord: String = "tile %d, %d" % [preview_tile.x, preview_tile.y] if preview_tile.x >= 0 else "choose a tile"
+	placement_label.text = "%s  /  %s\n%s" % [headline, coord, reason if not reason.is_empty() else detail]
+	var signature: String = "%s/%s/%s/%s" % ["pave" if paving else build_type, str(tiles), preview_tile, reason]
 	if signature == ghost_signature:
 		return
 	ghost_signature = signature
@@ -2860,54 +3031,37 @@ func _preview() -> void:
 		child.queue_free()
 	if preview_tile.x < 0:
 		return
+	if _is_wall_row_mode() and row_count > 1:
+		for tile: Vector2i in tiles:
+			_ghost_tile(tile, 1, reason.is_empty(), Color("93d78a"))
+		return
 	var size: int = 1 if paving else int(sim.building_specs[build_type]["size"])
-	var tint: Color = Color("b9bcc0") if paving else Color("93d78a")
-	var tiles: Array[Vector2i] = _row_tiles()
-	for tile in tiles:
-		var ok: bool = _placement_reason_for(tile).is_empty()
-		var centre := Vector2(tile) + Vector2.ONE * size * 0.5
-		var ghost: MeshInstance3D = _box(Vector3(size * TILE - 0.1, 0.14, size * TILE - 0.1), world_position(centre, 0.12), tint if ok else Color("d26c62"), ghost_layer)
-		var material: StandardMaterial3D = ghost.material_override
-		material.albedo_color.a = 0.65
-		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-
-
-func _placement_reason_for(tile: Vector2i) -> String:
-	if paving:
-		return sim.living.pave_reason(sim, tile)
-	if sim.build_reason(build_type, tile.x, tile.y, moving_id).is_empty():
-		return ""
-	var existing: Dictionary = sim.building_at(tile.x, tile.y)
-	if not existing.is_empty() and str(existing.get("type", "")) == build_type and sim.upgrade_reason(int(existing["id"])).is_empty():
-		return ""
-	return sim.build_reason(build_type, tile.x, tile.y, moving_id)
+	_ghost_tile(preview_tile, size, reason.is_empty(), Color("b9bcc0") if paving else Color("93d78a"))
 
 
 func _confirm_placement() -> void:
 	if paving:
-		# Paving stays active so a run of tiles can be laid; every tile is confirmed separately.
 		if sim.living.pave(sim, preview_tile):
 			_update_roads()
-		_refresh_hud()
-		_preview()
+			_refresh_hud()
+			_preview()
 		return
-	if _is_repeat() and preview_tile.x >= 0 and drag_anchor.x >= 0:
-		var placed: int = sim.build_line(build_type, drag_anchor.x, drag_anchor.y, preview_tile.x, preview_tile.y)
-		if placed > 0:
-			_play_sfx("confirm")
-			_poof((drag_anchor + preview_tile) / 2, Color(0.85, 0.8, 0.7))
-			_rebuild_buildings()
-		else:
-			_play_sfx("deny")
-		_preview()
-		_refresh_hud()
-		return
-	var success: bool = sim.move_building(moving_id, preview_tile.x, preview_tile.y) if moving_id >= 0 else sim.build(build_type, preview_tile.x, preview_tile.y)
+	var success: bool = false
+	if _is_wall_row_mode() and placement_row.size() > 1:
+		success = sim.build_row(build_type, placement_row)
+	elif moving_id >= 0:
+		success = sim.move_building(moving_id, preview_tile.x, preview_tile.y)
+	else:
+		success = sim.build(build_type, preview_tile.x, preview_tile.y)
 	if success:
-		_play_sfx("confirm")
-		_poof(preview_tile, Color(0.85, 0.8, 0.7))
-		_cancel_placement()
+		if build_type in ["wall", "stonewall", "gate"] and moving_id < 0:
+			preview_tile = Vector2i(-1, -1)
+			placement_anchor = Vector2i(-1, -1)
+			placement_row.clear()
+			ghost_signature = ""
+			confirm_button.disabled = true
+		else:
+			_cancel_placement()
 		_rebuild_buildings()
 	elif moving_id < 0:
 		_play_sfx("deny")
@@ -2919,7 +3073,9 @@ func _cancel_placement() -> void:
 	build_type = ""
 	paving = false
 	moving_id = -1
-	drag_anchor = Vector2i(-1, -1)
+	preview_tile = Vector2i(-1, -1)
+	placement_anchor = Vector2i(-1, -1)
+	placement_row.clear()
 	ghost_signature = ""
 	confirm_button.text = "Confirm Build"
 	placement_box.hide()
@@ -2985,6 +3141,12 @@ func _upgrade_selected() -> void:
 		_refresh_hud()
 	else:
 		_play_sfx("deny")
+
+
+func _upgrade_wall_row() -> void:
+	if sim.upgrade_wall_row(selected_building):
+		_rebuild_buildings()
+	_refresh_hud()
 
 
 func _repair_selected() -> void:
@@ -3227,14 +3389,14 @@ func _refresh_hud() -> void:
 		level_bar.max_value = maxf(1.0, float(upper - lower))
 		level_bar.value = clampf(float(sim.xp - lower), 0.0, maxf(1.0, float(upper - lower)))
 	var quest: Dictionary = sim.quest_current()
-	quest_label.text = "Endless Manor" if quest.is_empty() and sim.chronicle.endless else ("Chronicle complete" if quest.is_empty() else "%s / %s" % [str(sim.chronicle.act_data(sim.chronicle.act).get("numeral", "?")), str(quest["name"])])
+	quest_label.text = _objective_summary()
 	if sim.raid_active:
 		var score: Dictionary = sim.home_raid.summary()
-		raid_hud.text = "Raid %d / %d/3 stars\n%d%% destruction / %d raiders" % [sim.wave, score.get("stars", 0), score.get("destruction", 0), sim.enemies.size()]
-		raid_hud.tooltip_text = "Attackers: %s\nLoot taken: %s" % [_raid_stars(int(score.get("stars", 0))), _cost_text(score.get("loot", {}))]
+		raid_hud.text = "Raid %d / %d/3 stars / %d%% / %s / %d raiders" % [sim.wave, score.get("stars", 0), score.get("destruction", 0), sim.raid_faction_name(), sim.enemies.size()]
+		raid_hud.tooltip_text = "Attackers: %s / %s\nLoot taken: %s" % [_raid_stars(int(score.get("stars", 0))), sim.raid_direction(), _cost_text(score.get("loot", {}))]
 		music.set_mood("danger")
 	elif sim.raid_warning:
-		raid_hud.text = "HORNS / %.0fs / prepare the walls" % maxf(0.0, sim.next_raid_at - sim.elapsed)
+		raid_hud.text = "HORNS / %s / %.0fs" % [sim.raid_direction(), maxf(0.0, sim.next_raid_at - sim.elapsed)]
 		music.set_mood("tension")
 	else:
 		raid_hud.text = "Quiet / next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
@@ -3252,7 +3414,7 @@ func _refresh_hud() -> void:
 	music.set_calm(sim.paused)
 	if _is_small():
 		hud.text = "Lv%d" % sim.village_level()
-		quest_label.text = "Done" if quest.is_empty() else str(quest["name"])
+		quest_label.text = _objective_summary(true)
 		if not sim.raid_active and not sim.raid_warning:
 			raid_hud.text = "Horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
 	_refresh_research()
@@ -3266,6 +3428,8 @@ func _refresh_hud() -> void:
 	message.text = ("PAUSED / " if sim.paused else "") + sim.notice
 	toast_label.text = "◆ " + ("PAUSED / " if sim.paused else "") + sim.notice
 	toast_label.tooltip_text = sim.notice
+	repair_all_button.visible = repairable or sim.chronicle.act >= 3
+	_refresh_progressive_ui()
 	_refresh_shop()
 	_refresh_inspector()
 	_layout_ui()
@@ -3562,8 +3726,37 @@ func _consume_events() -> void:
 			tween.tween_callback(projectile.queue_free)
 			tween.tween_callback(_impact_burst.bind(to_point))
 		elif event.get("kind") == "hit":
-			var at: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 1.2)
-			_impact_burst(at, GOLD if str(event.get("side", "home")) == "home" else UI.BLOOD, 6, 0.8)
+			if event.has("amount"):
+				var hit_label := Label3D.new()
+				hit_label.text = "-%d" % int(event.get("amount", 0))
+				hit_label.modulate = Color("ff8b78") if bool(event.get("friendly", false)) else Color("f6d58a")
+				hit_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				hit_label.font_size = 28
+				hit_label.pixel_size = 0.012
+				hit_label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 2.0)
+				add_child(hit_label)
+				effect_nodes.append(hit_label)
+				var hit_tween: Tween = _effect_tween()
+				hit_tween.tween_property(hit_label, "position:y", hit_label.position.y + 0.9, 0.55)
+				hit_tween.parallel().tween_property(hit_label, "modulate:a", 0.0, 0.55)
+				hit_tween.tween_callback(hit_label.queue_free)
+			else:
+				var at: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 1.2)
+				_impact_burst(at, GOLD if str(event.get("side", "home")) == "home" else UI.BLOOD, 6, 0.8)
+		elif event.get("kind") == "defeat":
+			var down_label := Label3D.new()
+			down_label.text = "DOWN"
+			down_label.modulate = Color("ff8b78") if bool(event.get("friendly", false)) else Color("f6d58a")
+			down_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			down_label.font_size = 34
+			down_label.pixel_size = 0.012
+			down_label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 2.0)
+			add_child(down_label)
+			effect_nodes.append(down_label)
+			var down_tween: Tween = _effect_tween()
+			down_tween.tween_property(down_label, "position:y", down_label.position.y + 0.9, 0.55)
+			down_tween.parallel().tween_property(down_label, "modulate:a", 0.0, 0.55)
+			down_tween.tween_callback(down_label.queue_free)
 		elif event.get("kind") == "fall":
 			var rest: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 0.6)
 			_impact_burst(rest, UI.PAPER, 12, 1.0, true)
@@ -3571,6 +3764,8 @@ func _consume_events() -> void:
 			var rubble: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 1.0)
 			_impact_burst(rubble, Color("9aa0ad"), 16, 1.6)
 			_impact_burst(rubble, GOLD, 6, 1.0)
+		elif event.get("kind") == "raid_result":
+			_show_combat_banner("THE MANOR STANDS" if bool(event.get("victory", false)) else "THE MANOR FELL", bool(event.get("victory", false)))
 	sim.events.clear()
 	_pause_effects(sim.paused)
 
@@ -3598,6 +3793,17 @@ func _pause_effects(value: bool) -> void:
 		if not tween.is_valid(): continue
 		if value: tween.pause()
 		elif not tween.is_running(): tween.play()
+
+
+func _show_combat_banner(text: String, positive: bool) -> void:
+	combat_banner.text = text
+	combat_banner.add_theme_color_override("font_color", UI.READY if positive else UI.BLOOD)
+	combat_banner.modulate = Color(1, 1, 1, 1)
+	combat_banner.show()
+	var tween := create_tween()
+	tween.tween_interval(1.1)
+	tween.tween_property(combat_banner, "modulate:a", 0.0, 0.55)
+	tween.tween_callback(combat_banner.hide)
 
 
 func _process(delta: float) -> void:
@@ -3634,8 +3840,10 @@ func _process(delta: float) -> void:
 	if view_revision != sim.revision:
 		_rebuild_buildings()
 	_update_roads()
-	if night:
+	lamp_accumulator += delta
+	if night and lamp_accumulator >= (0.20 if battery_saver else 0.10):
 		_flicker_lamps()
+		lamp_accumulator = 0.0
 	else:
 		for shade in clouds:
 			if is_instance_valid(shade):
@@ -3648,10 +3856,15 @@ func _process(delta: float) -> void:
 			cricket_in = randf_range(3.0, 8.0)
 			if night:
 				_play_sfx("chirp")
-	var spike_actors_start: int = Time.get_ticks_usec() if spike_active else 0
-	_update_actors(delta)
+	actor_accumulator += delta
+	var actor_step: float = 0.08 if battery_saver else 0.05
+	if actor_accumulator >= actor_step:
+		var spike_actors_start: int = Time.get_ticks_usec() if spike_active else 0
+		_update_actors(actor_accumulator)
+		if spike_active:
+			spike_worst_actors = maxf(spike_worst_actors, float(Time.get_ticks_usec() - spike_actors_start) / 1000.0)
+		actor_accumulator = 0.0
 	if spike_active:
-		spike_worst_actors = maxf(spike_worst_actors, float(Time.get_ticks_usec() - spike_actors_start) / 1000.0)
 		spike_next -= delta
 		if spike_next <= 0.0:
 			spike_next = 1.0
@@ -3672,7 +3885,10 @@ func _process(delta: float) -> void:
 				if f != null:
 					f.store_string("\n".join(spike_lines) + "\n")
 				spike_lines.clear()
-	details.update(self, delta)
+	detail_accumulator += delta
+	if detail_accumulator >= (0.10 if battery_saver else 0.05):
+		details.update(self, detail_accumulator)
+		detail_accumulator = 0.0
 	_consume_events()
 	ui_accumulator += delta
 	if ui_accumulator >= 0.25:
@@ -3702,6 +3918,24 @@ func pick_ground(screen: Vector2) -> Vector2:
 	return Vector2(point.x, point.z) / TILE
 
 
+func _point_hits_ui(point: Vector2) -> bool:
+	for control: Control in [welcome, sidebar, more_sheet, bottom, left_dock, resource_stack, placement_box]:
+		if is_instance_valid(control) and control.visible and control.get_global_rect().has_point(point):
+			return true
+	return false
+
+
+func _touch_pair() -> Array[Vector2]:
+	var keys: Array = touches.keys()
+	keys.sort()
+	var pair: Array[Vector2] = []
+	for key: Variant in keys:
+		pair.append(touches[key])
+		if pair.size() == 2:
+			break
+	return pair
+
+
 func _map_click(screen: Vector2) -> void:
 	var point: Vector2 = pick_ground(screen)
 	var tile := Vector2i(floori(point.x), floori(point.y))
@@ -3721,15 +3955,29 @@ func _map_click(screen: Vector2) -> void:
 		return
 	if _placement_active():
 		preview_tile = tile
-		if drag_anchor.x < 0:
-			drag_anchor = tile
+		if _is_wall_row_mode():
+			placement_anchor = tile
+			placement_row.assign([tile])
 		_preview()
+		return
+	var chosen_id: int = -1
+	var chosen_distance: float = INF
+	var radius: float = _selection_radius()
+	for u: Dictionary in sim.units:
+		var p: Vector2 = camera.unproject_position(world_position(sim.position_of(u), 0.8))
+		var distance: float = p.distance_to(screen)
+		if distance < radius and distance < chosen_distance:
+			chosen_distance = distance
+			chosen_id = int(u["id"])
+	if chosen_id >= 0:
+		_select_unit(chosen_id)
 		return
 	for b: Dictionary in sim.buildings:
 		var bounds := Rect2(Vector2(float(b["x"]), float(b["y"])), Vector2.ONE * int(b["size"]))
 		if bounds.has_point(point):
 			selected_building = int(b["id"])
 			selected_unit = -1
+			_update_marker()
 			_open_panel("building")
 			return
 	if selected_unit >= 0:
@@ -3737,6 +3985,7 @@ func _map_click(screen: Vector2) -> void:
 		sim.notice = "Marching orders sent."
 	else:
 		selected_building = -1
+		_update_marker()
 		_close_panel()
 
 
@@ -3753,17 +4002,24 @@ func _input(event: InputEvent) -> void:
 				_map_click(event.position)
 			left_pressed = false
 	if event is InputEventScreenTouch:
+		if not touch_mode:
+			touch_mode = true
+			_refresh_input_copy()
 		if event.pressed:
+			if _point_hits_ui(event.position):
+				return
 			touches[event.index] = event.position
 			if touches.size() >= 2:
-				if get_viewport().gui_get_hovered_control() == null:
-					_pinch_begin()
-			elif event.index == 0 and get_viewport().gui_get_hovered_control() == null:
+				_pinch_begin()
+			elif touches.size() == 1:
 				left_pressed = true
 				left_dragged = false
 				press_point = event.position
 				last_pointer = event.position
 		else:
+			var was_world: bool = touches.has(event.index)
+			if not was_world:
+				return
 			touches.erase(event.index)
 			if touches.size() >= 2:
 				_pinch_begin()
@@ -3772,7 +4028,7 @@ func _input(event: InputEvent) -> void:
 				pinch_dist = 0.0
 				pinch_active = false
 			if touches.is_empty():
-				if event.index == 0 and left_pressed and not left_dragged and get_viewport().gui_get_hovered_control() == null:
+				if left_pressed and not left_dragged and not _point_hits_ui(event.position):
 					_map_click(event.position)
 				left_pressed = false
 				left_dragged = false
@@ -3780,6 +4036,8 @@ func _input(event: InputEvent) -> void:
 				_pinch_rebase_single()
 		return
 	if event is InputEventScreenDrag:
+		if not touches.has(event.index):
+			return
 		touches[event.index] = event.position
 		if touches.size() >= 2 and pinch_active:
 			_pinch_update()
@@ -3789,7 +4047,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _pinch_begin() -> void:
-	var pts: Array = touches.values()
+	var pts: Array[Vector2] = _touch_pair()
 	if pts.size() < 2:
 		return
 	var a: Vector2 = pts[0]
@@ -3797,6 +4055,8 @@ func _pinch_begin() -> void:
 	pinch_dist = maxf(a.distance_to(b), 1.0)
 	pinch_zoom = zoom
 	pinch_mid = (a + b) * 0.5
+	pinch_angle = atan2(b.y - a.y, b.x - a.x)
+	pinch_yaw = yaw
 	pinch_has_mid = false
 	pinch_active = true
 	left_pressed = false
@@ -3804,13 +4064,15 @@ func _pinch_begin() -> void:
 
 
 func _pinch_update() -> void:
-	var pts: Array = touches.values()
+	var pts: Array[Vector2] = _touch_pair()
 	if pts.size() < 2 or pinch_zoom <= 0.0:
 		return
 	var a: Vector2 = pts[0]
 	var b: Vector2 = pts[1]
 	var cur_dist: float = maxf(a.distance_to(b), 1.0)
 	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, 55)
+	var cur_angle: float = atan2(b.y - a.y, b.x - a.x)
+	yaw = pinch_yaw - wrapf(cur_angle - pinch_angle, -PI, PI)
 	var mid: Vector2 = (a + b) * 0.5
 	if pinch_has_mid:
 		var movement: Vector2 = pick_ground(pinch_mid) - pick_ground(mid)
@@ -3836,9 +4098,17 @@ func _drag_map(pointer: Vector2) -> void:
 		return
 	if _placement_active():
 		var point: Vector2 = pick_ground(pointer)
-		preview_tile = Vector2i(floori(point.x), floori(point.y))
+		var tile := Vector2i(floori(point.x), floori(point.y))
+		preview_tile = tile
+		if _is_wall_row_mode():
+			if placement_anchor.x < 0:
+				var start_point: Vector2 = pick_ground(press_point)
+				placement_anchor = Vector2i(floori(start_point.x), floori(start_point.y))
+			placement_row = _wall_row_tiles(placement_anchor, tile)
+			if pointer.distance_to(press_point) > _touch_slop():
+				left_dragged = true
 		_preview()
-	elif pointer.distance_to(press_point) > 16.0 or left_dragged:
+	elif pointer.distance_to(press_point) > _touch_slop() or left_dragged:
 		left_dragged = true
 		var movement: Vector2 = pick_ground(last_pointer) - pick_ground(pointer)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)

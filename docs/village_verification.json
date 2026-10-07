@@ -1,5 +1,5 @@
 {
-	"checks": 96,
+	"checks": 106,
 	"failures": [],
 	"passed": true,
 	"scope": "Core-loop simulation, commands, pathfinding, raid outcomes, original11quests and versioned save checks."

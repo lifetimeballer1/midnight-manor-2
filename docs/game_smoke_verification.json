@@ -1,5 +1,5 @@
 {
-	"checks": 20,
+	"checks": 27,
 	"failures": [],
 	"passed": true,
 	"scope": "Headless scene/control integration; real desktop rendering checked separately."

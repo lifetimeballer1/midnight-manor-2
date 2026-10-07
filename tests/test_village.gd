@@ -247,6 +247,40 @@ func _run() -> void:
 	bad["raid_active"] = true
 	bad["raid_warning"] = true
 	check(not sim.restore_state(bad), "inconsistent saved raid phase rejected")
+	# Command & Control: atomic straight-row placement and connected row upgrading.
+	var row_sim = Sim.new()
+	row_sim.buildings.clear()
+	row_sim.resources["wood"] = 5000
+	row_sim.resources["food"] = 5000
+	row_sim.resources["gold"] = 5000
+	row_sim.resources["lumber"] = 5000
+	row_sim.resources["stone"] = 5000
+	row_sim.xp = 10000
+	row_sim.chronicle.grant("wall", "test")
+	var row_tiles: Array[Vector2i] = [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1)]
+	var row_wood: float = float(row_sim.resources["wood"])
+	var one_wall_wood: int = int(row_sim.building_cost("wall").get("wood", 0))
+	check(row_sim.build_row_reason("wall", row_tiles).is_empty(), "straight wall row previews as one valid atomic command")
+	check(row_sim.build_row("wall", row_tiles), "wall row confirms as one command")
+	check(row_sim.buildings.size() == 4, "wall row creates every previewed segment")
+	check(is_equal_approx(float(row_sim.resources["wood"]), row_wood - one_wall_wood * 4), "wall row charges the full row exactly once")
+	var stable_row_count: int = row_sim.buildings.size()
+	var stable_row_wood: float = float(row_sim.resources["wood"])
+	var broken_row: Array[Vector2i] = [Vector2i(6, 1), Vector2i(8, 1)]
+	check(not row_sim.build_row_reason("wall", broken_row).is_empty(), "gapped wall row is rejected in preview")
+	check(not row_sim.build_row("wall", broken_row) and row_sim.buildings.size() == stable_row_count and is_equal_approx(float(row_sim.resources["wood"]), stable_row_wood), "invalid wall row spends nothing and builds nothing")
+	for wall: Dictionary in row_sim.buildings:
+		wall["remaining"] = 0.0
+	var row_ids: Array[int] = row_sim.wall_row(int(row_sim.buildings[1]["id"]))
+	check(row_ids.size() == 4, "connected wall row is discovered from any middle segment")
+	check(row_sim.upgrade_wall_row_reason(int(row_sim.buildings[1]["id"])).is_empty(), "whole connected wall row can validate one upgrade")
+	check(row_sim.upgrade_wall_row(int(row_sim.buildings[1]["id"])), "wall row upgrades as one command")
+	var tier_two: int = 0
+	for wall: Dictionary in row_sim.buildings:
+		if int(wall["tier"]) == 2 and float(wall["remaining"]) > 0.0:
+			tier_two += 1
+	check(tier_two == 4, "row upgrade advances every connected segment together")
+
 	var report := {"passed": failures.is_empty(), "checks": checks, "failures": failures,
 		"scope": "Core-loop simulation, commands, pathfinding, raid outcomes, original11quests and versioned save checks."}
 	var report_file := FileAccess.open("res://docs/village_verification.json", FileAccess.WRITE)
