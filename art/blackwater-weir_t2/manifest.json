@@ -1,0 +1,26 @@
+{
+  "asset": "blackwater-weir_t2",
+  "file": "blackwater-weir_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | blackwater-weir | T02 Architecture",
+    "MMR | blackwater-weir | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    0.8799999952316284,
+    1.3000030517578125
+  ],
+  "triangles": 1672,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "7cf060d64c70cb6e4f93d81c7a4d7ac01df866b4e13fc07d1a6373f3e3780bc7",
+  "verified": true
+}

@@ -1,0 +1,40 @@
+{
+  "asset": "char_squire",
+  "file": "char_squire.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | squire Rig",
+    "MMR Character | squire Body",
+    "MMR Character | squire Held squires-blade",
+    "MMR Character | squire Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.537872314453125,
+    1.7248719930648804,
+    0.5878829956054688
+  ],
+  "triangles": 1120,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "attack"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Melee_1H_Attack_Chop",
+    "death": "Death_A",
+    "attack": "Melee_1H_Attack_Chop"
+  },
+  "sha256": "ad631218320f4a5edba87bc9ce6b9a1d3ef333efb02337e44fa09eb359f3e159",
+  "verified": true
+}

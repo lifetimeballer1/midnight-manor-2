@@ -1,0 +1,40 @@
+{
+  "asset": "char_ranger",
+  "file": "char_ranger.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | ranger Rig",
+    "MMR Character | ranger Body",
+    "MMR Character | ranger Held bow",
+    "MMR Character | ranger Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.6861956119537354,
+    1.7300206422805786,
+    0.6304969787597656
+  ],
+  "triangles": 1250,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "attack"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Ranged_Bow_Draw",
+    "death": "Death_A",
+    "attack": "Ranged_Bow_Draw"
+  },
+  "sha256": "548d06badbe72a88fb62196d9baee2b06f9a6338e7530cd2e05ab7297c156eb5",
+  "verified": true
+}

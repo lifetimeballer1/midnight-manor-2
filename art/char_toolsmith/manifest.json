@@ -1,0 +1,40 @@
+{
+  "asset": "char_toolsmith",
+  "file": "char_toolsmith.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | toolsmith Rig",
+    "MMR Character | toolsmith Body",
+    "MMR Character | toolsmith Held tinkerkit",
+    "MMR Character | toolsmith Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.530374526977539,
+    1.7248719930648804,
+    0.6325874328613281
+  ],
+  "triangles": 1293,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Working_B",
+    "death": "Death_A",
+    "gather": "Working_B"
+  },
+  "sha256": "b6424f65e2f81ab91135fb279100378cf5d4e9cd2d1de2830f404e2a8dbbeda6",
+  "verified": true
+}

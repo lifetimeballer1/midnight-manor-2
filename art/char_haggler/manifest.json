@@ -1,0 +1,40 @@
+{
+  "asset": "char_haggler",
+  "file": "char_haggler.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | haggler Rig",
+    "MMR Character | haggler Body",
+    "MMR Character | haggler Held scales",
+    "MMR Character | haggler Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5615034103393555,
+    1.8038359880447388,
+    0.6790199279785156
+  ],
+  "triangles": 1067,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Use_Item",
+    "death": "Death_A",
+    "gather": "Use_Item"
+  },
+  "sha256": "be1a773d52e6083ac39cf369961e858f63ab047456f36fc3308632658ecd6b1e",
+  "verified": true
+}

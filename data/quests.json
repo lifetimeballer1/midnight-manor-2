@@ -1448,6 +1448,7 @@
     "name": "The Bell Remembers",
     "act": 8,
     "giver": "Old Bell",
+	"introduces": ["bell-tower"],
     "text": "Old Bell has hung the great bell herself and chalked three new ropes. Ring a level-25 veteran back to a recruit with all honors kept - prestige one troop at the Bell Tower - and let the village hear what remembering sounds like.",
     "objectives": [
       {
@@ -1522,6 +1523,7 @@
     "name": "Dawn of the Manner",
     "act": 8,
     "giver": "Issa the chart-keeper",
+	"introduces": ["dawn-gate"],
     "text": "Issa charted it, Tomm fenced it, Maro laid it stone by stone, Sarella fired it, Fen found the road, Wren blessed the water, Pella lit it, Rue warned it, Tam taught it, Old Bell rang it, and the Pale Envoy watched it all. Raise the Dawn Gate and let it stand - and hold a major assault while the masons finish.",
     "objectives": [
       {

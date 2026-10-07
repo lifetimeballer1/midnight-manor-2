@@ -32,6 +32,7 @@ var board: Dictionary = {}
 var board_seed: int = 1
 var board_clock: float = 0.0
 var banners: Array[Dictionary] = []
+var endless: bool = false
 
 
 func _init() -> void:
@@ -164,28 +165,23 @@ func developed_regions() -> Array[String]:
 
 
 func bonus(name: String) -> float:
-	# Behaviour is primary; these are supporting numbers only, never a whole reward.
 	var total: float = 0.0
-	if effect("moon-orchard") or has_doctrine("full-granaries"):
-		total += 0.05
-	if effect("recovery-bell"):
-		total += 0.25
-	if effect("triage"):
-		total += 0.20
-	if effect("recovery-drill"):
-		total += 0.25
-	if effect("repair-rationing") or has_doctrine("hold-the-line") or has_doctrine("master-craftsmen"):
-		total += 0.15
-	if effect("plate-yield"):
-		total += 0.10
-	if effect("forged-tools") or has_doctrine("master-craftsmen"):
-		total += 0.10
-	if effect("school-lessons"):
-		total += 0.15
-	if effect("prestige"):
-		total += 0.10
-	if effect("region-development"):
-		total += 0.02 * float(developed_regions().size())
+	match name:
+		"growth":
+			if effect("aura:moon-orchard") or has_doctrine("full-granaries"):
+				total += 0.05
+		"heal":
+			if effect("aura:recovery-bell"): total += 0.25
+			if effect("aura:triage"): total += 0.20
+			if effect("aura:recovery-drill"): total += 0.25
+		"repair":
+			if effect("aura:repair-rationing") or has_doctrine("hold-the-line") or has_doctrine("master-craftsmen"):
+				total += 0.15
+		"school-lessons":
+			if effect("command:school-lessons"): total += 0.15
+		"region-development":
+			if effect("aura:region-development") or effect("region-development"):
+				total += 0.02 * float(developed_regions().size())
 	return total
 
 
@@ -436,8 +432,14 @@ func board_offer() -> Array[Dictionary]:
 	var used: Array[String] = []
 	for slot: String in board_slots():
 		var pool: Array = []
+		var held: Dictionary = {}
+		for contract: Dictionary in board["active"].values():
+			if contract["slot"] == slot: held = contract
 		for entry: Dictionary in board_templates():
-			if str(entry["slot"]) == slot and not used.has(str(entry["id"])):
+			if not held.is_empty() and held["id"] == entry["id"]:
+				pool = [entry]
+				break
+			if str(entry["slot"]) == slot and not used.has(str(entry["id"])) and entry["id"] not in board["done"]:
 				pool.append(entry)
 		if pool.is_empty():
 			offers.append({})
@@ -463,6 +465,7 @@ func board_active_ids() -> Array[String]:
 
 
 func board_accept(id: String) -> String:
+	if id in board["done"]: return "Completed. Wait for the next board refresh."
 	if board_contract(id).has("id"):
 		return "Already on the board."
 	for entry: Dictionary in board_offer():
@@ -489,7 +492,7 @@ func board_advance(id: String, amount: float) -> void:
 	var contract: Dictionary = board_contract(id)
 	if contract.is_empty():
 		return
-	contract["progress"] = maxf(0.0, float(contract["progress"]) + amount)
+	contract["progress"] = clampf(float(contract["progress"]) + amount, 0.0, board_target(id))
 
 
 func board_complete(id: String) -> bool:
@@ -516,6 +519,7 @@ func board_tick(dt: float) -> bool:
 		return false
 	board_clock = 0.0
 	board_seed += 1
+	board["done"].clear()
 	return true
 
 
@@ -528,6 +532,7 @@ func state() -> Dictionary:
 		"great_works": great_works.duplicate(), "reputation": reputation,
 		"board": {"active": board["active"].duplicate(true), "done": board["done"].duplicate()},
 		"board_seed": board_seed, "board_clock": board_clock, "banners": banners.duplicate(true),
+		"endless": endless,
 	}
 
 
@@ -539,6 +544,7 @@ func valid(data: Variant) -> bool:
 		return false
 	if not _integer(payload.get("act")) or int(payload["act"]) < 1 or int(payload["act"]) > act_count():
 		return false
+	if payload.has("endless") and not payload["endless"] is bool: return false
 	for field in ["unlocked", "sources", "regions"]:
 		if not payload.get(field) is Dictionary:
 			return false
@@ -588,6 +594,7 @@ func valid(data: Variant) -> bool:
 			return false
 		if not _nonneg(contract.get("progress")) or str(contract.get("slot", "")) != str(template["slot"]):
 			return false
+		if contract.has("baseline") and not _nonneg(contract["baseline"]): return false
 		var objective: Dictionary = template.get("objective", {})
 		var target: float = float(objective.get("amount", objective.get("count", 1)))
 		if float(contract["progress"]) > target:
@@ -611,6 +618,7 @@ func restore(data: Dictionary) -> void:
 	board_seed = int(data["board_seed"])
 	board_clock = float(data["board_clock"])
 	banners.assign(data.get("banners", []))
+	endless = bool(data.get("endless", false))
 
 
 func _nonneg(value: Variant) -> bool:

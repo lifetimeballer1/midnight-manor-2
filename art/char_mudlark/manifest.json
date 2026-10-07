@@ -1,0 +1,40 @@
+{
+  "asset": "char_mudlark",
+  "file": "char_mudlark.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | mudlark Rig",
+    "MMR Character | mudlark Body",
+    "MMR Character | mudlark Held blackwater-net",
+    "MMR Character | mudlark Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.541428565979004,
+    1.7300206422805786,
+    0.6325874328613281
+  ],
+  "triangles": 1089,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Working_A",
+    "death": "Death_A",
+    "gather": "Working_A"
+  },
+  "sha256": "4299d3d2478e59533ad97d93cf60a97b57c359a296ac6d1a37c71cfbd562a630",
+  "verified": true
+}

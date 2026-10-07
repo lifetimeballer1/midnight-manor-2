@@ -1,0 +1,40 @@
+{
+  "asset": "char_tidecaller",
+  "file": "char_tidecaller.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | tidecaller Rig",
+    "MMR Character | tidecaller Body",
+    "MMR Character | tidecaller Held tidebell",
+    "MMR Character | tidecaller Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.4629573822021484,
+    1.7300206422805786,
+    0.5910453796386719
+  ],
+  "triangles": 1022,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Use_Item",
+    "death": "Death_A",
+    "gather": "Use_Item"
+  },
+  "sha256": "6dc26ff63a3c1e7fad832b6e0a49cff0be6ffce39ecbe443056bc636e51d53e8",
+  "verified": true
+}

@@ -1,0 +1,40 @@
+{
+  "asset": "char_chorister",
+  "file": "char_chorister.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | chorister Rig",
+    "MMR Character | chorister Body",
+    "MMR Character | chorister Held hymnal",
+    "MMR Character | chorister Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3194751739501953,
+    1.4825477600097656,
+    0.5064964294433594
+  ],
+  "triangles": 1050,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Use_Item",
+    "death": "Death_A",
+    "gather": "Use_Item"
+  },
+  "sha256": "c690c2ffa5a64778dbc43ded896442a8cf136dd5213b1af02115499bbf2dd33e",
+  "verified": true
+}

@@ -3622,6 +3622,5022 @@
       },
       "sha256": "8d17e37e46b8958ea9ceff98c00af7973db463933be895162cda026c214179ba",
       "verified": true
+    },
+    {
+      "asset": "grove_t1",
+      "file": "grove_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | grove | T01 Architecture",
+        "MMR | grove | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.535599946975708,
+        2.3499984741210938
+      ],
+      "triangles": 1856,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "effd11f0d656e808cd1604b128d1c0f008c225d4d29bde4e99a09d8d5cc73d30",
+      "verified": true
+    },
+    {
+      "asset": "grove_t2",
+      "file": "grove_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | grove | T02 Architecture",
+        "MMR | grove | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.63729989528656,
+        2.3499984741210938
+      ],
+      "triangles": 2080,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "09edf1f398a90d42ed302520ddc72120377c96042e510fbafdd8b728ee7937c8",
+      "verified": true
+    },
+    {
+      "asset": "grove_t3",
+      "file": "grove_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | grove | T03 Architecture",
+        "MMR | grove | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.7389999628067017,
+        2.3499984741210938
+      ],
+      "triangles": 2080,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "f0091d8704862441d17940357e73047097e429788b6dc427bc808a0e4401368f",
+      "verified": true
+    },
+    {
+      "asset": "grove_t4",
+      "file": "grove_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | grove | T04 Architecture",
+        "MMR | grove | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.8406999111175537,
+        2.3499984741210938
+      ],
+      "triangles": 2176,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "4c6d1af72468b726ac56662211e7a2fec604117b9affc3f9f456b7cd176a15f0",
+      "verified": true
+    },
+    {
+      "asset": "grove_t5",
+      "file": "grove_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | grove | T05 Architecture",
+        "MMR | grove | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3788528442382812,
+        1.9423999786376953,
+        2.3499984741210938
+      ],
+      "triangles": 2176,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "81f85a4b33ddf1edb6f01289c6526c5960875a42746cac0d32213221998ccf17",
+      "verified": true
+    },
+    {
+      "asset": "grove_t6",
+      "file": "grove_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | grove | T06 Architecture",
+        "MMR | grove | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.4257659912109375,
+        2.044100046157837,
+        2.3499984741210938
+      ],
+      "triangles": 2176,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "75a993b11d01ac57fded4716ef20a4e57c950ed1436dbad80cf6261cf04ce7e6",
+      "verified": true
+    },
+    {
+      "asset": "frostgrove_t1",
+      "file": "frostgrove_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | frostgrove | T01 Architecture",
+        "MMR | frostgrove | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.535599946975708,
+        2.3499984741210938
+      ],
+      "triangles": 1280,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "12650c881e4b432844770bfc5b51ce49690fd1d8dbfb612f2e7878d1e75e92c1",
+      "verified": true
+    },
+    {
+      "asset": "frostgrove_t2",
+      "file": "frostgrove_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | frostgrove | T02 Architecture",
+        "MMR | frostgrove | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.63729989528656,
+        2.3499984741210938
+      ],
+      "triangles": 1504,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c5b8b03da23059ade0de5cf5bd0f455700cbc25639f0851acd0baade6708fc0d",
+      "verified": true
+    },
+    {
+      "asset": "frostgrove_t3",
+      "file": "frostgrove_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | frostgrove | T03 Architecture",
+        "MMR | frostgrove | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.7389999628067017,
+        2.3499984741210938
+      ],
+      "triangles": 1504,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "1cda3121c5fdb0a19187a216acdf3d54c04baf1cce26de051785106544910892",
+      "verified": true
+    },
+    {
+      "asset": "frostgrove_t4",
+      "file": "frostgrove_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | frostgrove | T04 Architecture",
+        "MMR | frostgrove | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.8406999111175537,
+        2.3499984741210938
+      ],
+      "triangles": 1600,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "bfe96dd31e72e096478195e45b9b4c2bb1c2e9296fda24ba7b3451e85f5b1151",
+      "verified": true
+    },
+    {
+      "asset": "frostgrove_t5",
+      "file": "frostgrove_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | frostgrove | T05 Architecture",
+        "MMR | frostgrove | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3788528442382812,
+        1.9423999786376953,
+        2.3499984741210938
+      ],
+      "triangles": 1600,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "1789f0378d3c63c2a945b40fadccfdac01131e200b1a0efae29a6a970eae44d9",
+      "verified": true
+    },
+    {
+      "asset": "frostgrove_t6",
+      "file": "frostgrove_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | frostgrove | T06 Architecture",
+        "MMR | frostgrove | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.4257659912109375,
+        2.044100046157837,
+        2.3499984741210938
+      ],
+      "triangles": 1600,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "237a830bdde513535f428c37acbcd54b5288eb013f3e3f4560bf231787a0970d",
+      "verified": true
+    },
+    {
+      "asset": "whisper-grove_t1",
+      "file": "whisper-grove_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | whisper-grove | T01 Architecture",
+        "MMR | whisper-grove | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.5468000173568726,
+        2.3499984741210938
+      ],
+      "triangles": 1076,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "14dec273bc33a6fda2b9389cb91869a72892637aa1219c034c9d4956a45cbeb4",
+      "verified": true
+    },
+    {
+      "asset": "whisper-grove_t2",
+      "file": "whisper-grove_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | whisper-grove | T02 Architecture",
+        "MMR | whisper-grove | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.649399995803833,
+        2.3499984741210938
+      ],
+      "triangles": 1300,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "2ae411db79b9a1b461eda257fd681dfdfaca89ee2cd0cb2136c74593d9cf5429",
+      "verified": true
+    },
+    {
+      "asset": "whisper-grove_t3",
+      "file": "whisper-grove_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | whisper-grove | T03 Architecture",
+        "MMR | whisper-grove | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.751999855041504,
+        2.3499984741210938
+      ],
+      "triangles": 1300,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "bb4328b2a71cee15a2442fe5c0446278e2437696b8688926524ca9aedb9ad153",
+      "verified": true
+    },
+    {
+      "asset": "whisper-grove_t4",
+      "file": "whisper-grove_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | whisper-grove | T04 Architecture",
+        "MMR | whisper-grove | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.854599952697754,
+        2.3499984741210938
+      ],
+      "triangles": 1396,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "5573168005a425b4998a38c7461e0eae65584b4257e6068673818643075602c3",
+      "verified": true
+    },
+    {
+      "asset": "whisper-grove_t5",
+      "file": "whisper-grove_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | whisper-grove | T05 Architecture",
+        "MMR | whisper-grove | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.9571999311447144,
+        2.3499984741210938
+      ],
+      "triangles": 1396,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "057c9609871e6f6157baedb9187804fed4506395182b1dc8f507866f08544a1b",
+      "verified": true
+    },
+    {
+      "asset": "whisper-grove_t6",
+      "file": "whisper-grove_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | whisper-grove | T06 Architecture",
+        "MMR | whisper-grove | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.059799909591675,
+        2.3499984741210938
+      ],
+      "triangles": 1396,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "9578ddb95d1bc2632b69940bc1007a12ae9febb3dff71251899ec6543d9f1559",
+      "verified": true
+    },
+    {
+      "asset": "chapel_t1",
+      "file": "chapel_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | chapel | T01 Architecture",
+        "MMR | chapel | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.325000047683716,
+        2.3499984741210938
+      ],
+      "triangles": 2260,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c27603fa590a26bef50c8dc7b48bbf1997be9c749f3da2c9a567cf909957cbce",
+      "verified": true
+    },
+    {
+      "asset": "chapel_t2",
+      "file": "chapel_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | chapel | T02 Architecture",
+        "MMR | chapel | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.4149999618530273,
+        2.3499984741210938
+      ],
+      "triangles": 2260,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c5c26973efa4c18fa4e88fdebaa62c848a734328970d0005a98a6e7704e2446d",
+      "verified": true
+    },
+    {
+      "asset": "chapel_t3",
+      "file": "chapel_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | chapel | T03 Architecture",
+        "MMR | chapel | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.504999876022339,
+        2.3499984741210938
+      ],
+      "triangles": 2400,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "acdf4fbf400791b70226f5c8bd557f052bb1e948128617d8734de0c8e2acedac",
+      "verified": true
+    },
+    {
+      "asset": "chapel_t4",
+      "file": "chapel_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | chapel | T04 Architecture",
+        "MMR | chapel | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.5950000286102295,
+        2.3499984741210938
+      ],
+      "triangles": 2400,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "867d4a50f1a140b3997a73fde1b9be7dd3b973782f9129a57e7d074fb80300ca",
+      "verified": true
+    },
+    {
+      "asset": "chapel_t5",
+      "file": "chapel_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | chapel | T05 Architecture",
+        "MMR | chapel | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.684999942779541,
+        2.3499984741210938
+      ],
+      "triangles": 2456,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "22143191edaa56528274ecf56046511c3d067edb9cda5d5d4ffff0ad1048ed4d",
+      "verified": true
+    },
+    {
+      "asset": "chapel_t6",
+      "file": "chapel_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | chapel | T06 Architecture",
+        "MMR | chapel | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.7749998569488525,
+        2.3499984741210938
+      ],
+      "triangles": 2456,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b4add35614f0a8439b5a75663f7197b88267dbb81b955784dfb3aa5136b65c7f",
+      "verified": true
+    },
+    {
+      "asset": "sunken-chapel_t1",
+      "file": "sunken-chapel_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | sunken-chapel | T01 Architecture",
+        "MMR | sunken-chapel | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.1299999952316284,
+        2.3499984741210938
+      ],
+      "triangles": 1052,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "6da1f3c1fb2fee360090ad43f44b089dabee21c5a035675ed4582178b5a8a2c4",
+      "verified": true
+    },
+    {
+      "asset": "sunken-chapel_t2",
+      "file": "sunken-chapel_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | sunken-chapel | T02 Architecture",
+        "MMR | sunken-chapel | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.1299999952316284,
+        2.3499984741210938
+      ],
+      "triangles": 1052,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "e34eb8f641536b57bf4191ed5dece75c9dfe2b6c679ab026d704bf21923e3b94",
+      "verified": true
+    },
+    {
+      "asset": "sunken-chapel_t3",
+      "file": "sunken-chapel_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | sunken-chapel | T03 Architecture",
+        "MMR | sunken-chapel | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.59499990940094,
+        2.3499984741210938
+      ],
+      "triangles": 1440,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "bc856df8ab054b7536c0cc52978db68213bc37b4ea12a4399f5c658394266018",
+      "verified": true
+    },
+    {
+      "asset": "sunken-chapel_t4",
+      "file": "sunken-chapel_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | sunken-chapel | T04 Architecture",
+        "MMR | sunken-chapel | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.59499990940094,
+        2.3499984741210938
+      ],
+      "triangles": 1440,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "00a5b73420c63b68e4dbd3955e79cf83ed378c72b1c49bbc2d70a47c1895ad10",
+      "verified": true
+    },
+    {
+      "asset": "sunken-chapel_t5",
+      "file": "sunken-chapel_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | sunken-chapel | T05 Architecture",
+        "MMR | sunken-chapel | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.59499990940094,
+        2.3499984741210938
+      ],
+      "triangles": 1508,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "26763cb9d68e7d5219b827342d761469156d866eb853b2713137a9ab35dab7f5",
+      "verified": true
+    },
+    {
+      "asset": "sunken-chapel_t6",
+      "file": "sunken-chapel_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | sunken-chapel | T06 Architecture",
+        "MMR | sunken-chapel | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.59499990940094,
+        2.3499984741210938
+      ],
+      "triangles": 1508,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "69e5034bafab628a4e1e293c986e92f63bd8f86af2c3c7e13462c056eecc00c1",
+      "verified": true
+    },
+    {
+      "asset": "schoolroom_t1",
+      "file": "schoolroom_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | schoolroom | T01 Architecture",
+        "MMR | schoolroom | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.7400000095367432,
+        2.3499984741210938
+      ],
+      "triangles": 2116,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "006a48f235eb45ab5b3a33f935f2fd8caf01a48450eebd10f9281f913d81e362",
+      "verified": true
+    },
+    {
+      "asset": "schoolroom_t2",
+      "file": "schoolroom_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | schoolroom | T02 Architecture",
+        "MMR | schoolroom | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.8049999475479126,
+        2.3499984741210938
+      ],
+      "triangles": 2116,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "4e03a43c3cbc9122fcb7d54a155a9f248162c1b8025dd09b125dbe9ab2c6b574",
+      "verified": true
+    },
+    {
+      "asset": "schoolroom_t3",
+      "file": "schoolroom_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | schoolroom | T03 Architecture",
+        "MMR | schoolroom | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.8700000047683716,
+        2.3499984741210938
+      ],
+      "triangles": 2132,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "2dac71ffc61292a063a3c5acd4a8ca04774d5f42bdd8076273d362a9d48ea555",
+      "verified": true
+    },
+    {
+      "asset": "schoolroom_t4",
+      "file": "schoolroom_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | schoolroom | T04 Architecture",
+        "MMR | schoolroom | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        1.934999942779541,
+        2.3499984741210938
+      ],
+      "triangles": 2836,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "0790127cedbab1947d292db8733fada89d8ce78a1639a06c4a5ab414aa549d81",
+      "verified": true
+    },
+    {
+      "asset": "schoolroom_t5",
+      "file": "schoolroom_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | schoolroom | T05 Architecture",
+        "MMR | schoolroom | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.0,
+        2.3499984741210938
+      ],
+      "triangles": 2836,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "74a9721c4069e02b4952a819db574d8cda273b6460afb1dd42dccf01ed47669d",
+      "verified": true
+    },
+    {
+      "asset": "schoolroom_t6",
+      "file": "schoolroom_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | schoolroom | T06 Architecture",
+        "MMR | schoolroom | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.065000057220459,
+        2.3499984741210938
+      ],
+      "triangles": 3088,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "259c1fe0da9cbf036281eae4f0068b336860557ff6dd31c982b8af3ae5099b98",
+      "verified": true
+    },
+    {
+      "asset": "armory_t1",
+      "file": "armory_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | armory | T01 Architecture",
+        "MMR | armory | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2874999046325684,
+        1.2999992370605469
+      ],
+      "triangles": 2024,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "1cc6be4d466fa8f5fc0a002b053fa61fb4bd031f27cc7e96266002495d1e30e5",
+      "verified": true
+    },
+    {
+      "asset": "armory_t2",
+      "file": "armory_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | armory | T02 Architecture",
+        "MMR | armory | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.34375,
+        1.2999992370605469
+      ],
+      "triangles": 2024,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c24af3b1405a795d717d358eb5f570dac91487cca0d9359b4f08513af2552564",
+      "verified": true
+    },
+    {
+      "asset": "armory_t3",
+      "file": "armory_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | armory | T03 Architecture",
+        "MMR | armory | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.3999998569488525,
+        1.2999992370605469
+      ],
+      "triangles": 2428,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b5d9c74518f6f73d0093b5fe15ad7ac5d6ad08fc3174a6224c60cc7b10fa0c89",
+      "verified": true
+    },
+    {
+      "asset": "armory_t4",
+      "file": "armory_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | armory | T04 Architecture",
+        "MMR | armory | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4562499523162842,
+        1.2999992370605469
+      ],
+      "triangles": 2632,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "49d8ad925652d45511eed988909acd09497efd4ca4be87a45e494b3979cf50bf",
+      "verified": true
+    },
+    {
+      "asset": "armory_t5",
+      "file": "armory_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | armory | T05 Architecture",
+        "MMR | armory | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5125000476837158,
+        1.2999992370605469
+      ],
+      "triangles": 3336,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c4e4d41fdc110c5c660670ae668eddf011ed72ce5889f35b7569f04d84dc674d",
+      "verified": true
+    },
+    {
+      "asset": "armory_t6",
+      "file": "armory_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | armory | T06 Architecture",
+        "MMR | armory | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.568750023841858,
+        1.2999992370605469
+      ],
+      "triangles": 3404,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "d62a16fdb70f82694ad3af290c5007bb45f6d75c0157925cdc06ffa95cef5fe2",
+      "verified": true
+    },
+    {
+      "asset": "workshop_t1",
+      "file": "workshop_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | workshop | T01 Architecture",
+        "MMR | workshop | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2874999046325684,
+        1.2999992370605469
+      ],
+      "triangles": 2252,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "3529c7f17efeeb52ab3b20978175e82786dd7275e78765d33da0aeaf793ec91e",
+      "verified": true
+    },
+    {
+      "asset": "workshop_t2",
+      "file": "workshop_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | workshop | T02 Architecture",
+        "MMR | workshop | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.34375,
+        1.2999992370605469
+      ],
+      "triangles": 2252,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "7e560af6e5ee89e5f35f7595e7a02728c3d941465a862b3ff08f5280a9b91e1b",
+      "verified": true
+    },
+    {
+      "asset": "workshop_t3",
+      "file": "workshop_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | workshop | T03 Architecture",
+        "MMR | workshop | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.3999998569488525,
+        1.2999992370605469
+      ],
+      "triangles": 2268,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "fabc4798daa8f87fbb7f7ac919f52d5073c45f03fb72162e19917feb1df01c3a",
+      "verified": true
+    },
+    {
+      "asset": "workshop_t4",
+      "file": "workshop_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | workshop | T04 Architecture",
+        "MMR | workshop | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4562499523162842,
+        1.2999992370605469
+      ],
+      "triangles": 2472,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "dd2c8b3f0ee354def844609304be823c2455d3be4d42d10aaa719924bc77ccb6",
+      "verified": true
+    },
+    {
+      "asset": "workshop_t5",
+      "file": "workshop_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | workshop | T05 Architecture",
+        "MMR | workshop | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5125000476837158,
+        1.2999992370605469
+      ],
+      "triangles": 3176,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ee25886a029541bdd39bdb0e65ca705d12281e5cb804b7ab6b63c4af1252950b",
+      "verified": true
+    },
+    {
+      "asset": "workshop_t6",
+      "file": "workshop_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | workshop | T06 Architecture",
+        "MMR | workshop | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.568750023841858,
+        1.2999992370605469
+      ],
+      "triangles": 3244,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "d2b06b060a2e570971e45957d8a427b295e8d411ec4844a146de115734fb20d9",
+      "verified": true
+    },
+    {
+      "asset": "smeltery_t1",
+      "file": "smeltery_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | smeltery | T01 Architecture",
+        "MMR | smeltery | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.169999837875366,
+        2.3499984741210938
+      ],
+      "triangles": 1804,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "7494a0c8dddeb290475c06080eadc853af30a93c4cade10e605d14379607efb2",
+      "verified": true
+    },
+    {
+      "asset": "smeltery_t2",
+      "file": "smeltery_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | smeltery | T02 Architecture",
+        "MMR | smeltery | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.2799999713897705,
+        2.3499984741210938
+      ],
+      "triangles": 1888,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "a03c70ccaad233c19204293bcd6c5285ef5440552210777eba6b8ec3b10e72ae",
+      "verified": true
+    },
+    {
+      "asset": "smeltery_t3",
+      "file": "smeltery_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | smeltery | T03 Architecture",
+        "MMR | smeltery | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.3899998664855957,
+        2.3499984741210938
+      ],
+      "triangles": 1988,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "e68d2c2bc1760e9fdc7a412b423b66235e0aef2665cb2180405194a86fb5d3f6",
+      "verified": true
+    },
+    {
+      "asset": "smeltery_t4",
+      "file": "smeltery_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | smeltery | T04 Architecture",
+        "MMR | smeltery | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.5,
+        2.3499984741210938
+      ],
+      "triangles": 2072,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "f2428a939e4dc5e7617b6187680601a57fc07166aac30087551e68e7eedb1fbd",
+      "verified": true
+    },
+    {
+      "asset": "smeltery_t5",
+      "file": "smeltery_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | smeltery | T05 Architecture",
+        "MMR | smeltery | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.609999895095825,
+        2.3499984741210938
+      ],
+      "triangles": 2156,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "078eb88b72633aad1c9aa9011a393e53dfd091361db316d200c10bc7f48d0bae",
+      "verified": true
+    },
+    {
+      "asset": "smeltery_t6",
+      "file": "smeltery_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | smeltery | T06 Architecture",
+        "MMR | smeltery | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.8299999237060547,
+        2.3499984741210938
+      ],
+      "triangles": 2296,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "981fbd0b6266245214f8abf0fd3fd33844adc8a2ec6fa53f72e2169ac8679cc7",
+      "verified": true
+    },
+    {
+      "asset": "tannery_t1",
+      "file": "tannery_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | tannery | T01 Architecture",
+        "MMR | tannery | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2874999046325684,
+        1.2999992370605469
+      ],
+      "triangles": 1789,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "071adef06ec603419ce05f6070c09d39423ead2995589c56583c12ec5d6302c9",
+      "verified": true
+    },
+    {
+      "asset": "tannery_t2",
+      "file": "tannery_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | tannery | T02 Architecture",
+        "MMR | tannery | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.34375,
+        1.2999992370605469
+      ],
+      "triangles": 1789,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "7b71c4247f0a76f788e57b1676185bf28ea344c85ad6fc7eef914ee39389872e",
+      "verified": true
+    },
+    {
+      "asset": "tannery_t3",
+      "file": "tannery_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | tannery | T03 Architecture",
+        "MMR | tannery | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.3999998569488525,
+        1.2999992370605469
+      ],
+      "triangles": 1805,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "632e29ce3b88b935f710b01892ebb6d4d45f33982f8c8391b385118ce66e82cb",
+      "verified": true
+    },
+    {
+      "asset": "tannery_t4",
+      "file": "tannery_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | tannery | T04 Architecture",
+        "MMR | tannery | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4562499523162842,
+        1.2999992370605469
+      ],
+      "triangles": 2009,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "4bf359a63eb4532d4372598768d8d4c4109203d846cc88affbb30b4b80ae23ef",
+      "verified": true
+    },
+    {
+      "asset": "tannery_t5",
+      "file": "tannery_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | tannery | T05 Architecture",
+        "MMR | tannery | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5125000476837158,
+        1.2999992370605469
+      ],
+      "triangles": 2713,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "07a05af07bba1b985ba2168c3d5a9f0c390d3b7e7c0d2378896bb450133bbc67",
+      "verified": true
+    },
+    {
+      "asset": "tannery_t6",
+      "file": "tannery_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | tannery | T06 Architecture",
+        "MMR | tannery | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.568750023841858,
+        1.2999992370605469
+      ],
+      "triangles": 2781,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "2443356bade69697e8ad4d50511af9c8057d9240c399993692b54297cc72155b",
+      "verified": true
+    },
+    {
+      "asset": "butchery_t1",
+      "file": "butchery_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | butchery | T01 Architecture",
+        "MMR | butchery | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2874999046325684,
+        1.2999992370605469
+      ],
+      "triangles": 1808,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "e65904bc0123857bd24d8be7109d26c32e7aa813332b550d2bfc34fe8b0dccbd",
+      "verified": true
+    },
+    {
+      "asset": "butchery_t2",
+      "file": "butchery_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | butchery | T02 Architecture",
+        "MMR | butchery | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.34375,
+        1.2999992370605469
+      ],
+      "triangles": 1808,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c452c81421f245de819f8b6ffe2c1c4db548d72d1b5c77b6c3b1872ffde4ec54",
+      "verified": true
+    },
+    {
+      "asset": "butchery_t3",
+      "file": "butchery_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | butchery | T03 Architecture",
+        "MMR | butchery | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4824999570846558,
+        1.2999992370605469
+      ],
+      "triangles": 2188,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "eee866d9559ea16ac9859832b5298c8cb1e6328c94f2ab1d0ad316bec4a7e379",
+      "verified": true
+    },
+    {
+      "asset": "butchery_t4",
+      "file": "butchery_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | butchery | T04 Architecture",
+        "MMR | butchery | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5649999380111694,
+        1.2999992370605469
+      ],
+      "triangles": 2448,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "794b948ed6daf438a5aefd91e95005e55cd813611a2e6e9022bfa533329358d6",
+      "verified": true
+    },
+    {
+      "asset": "butchery_t5",
+      "file": "butchery_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | butchery | T05 Architecture",
+        "MMR | butchery | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5649999380111694,
+        1.2999992370605469
+      ],
+      "triangles": 3152,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "7100f93202d7f6083e9b98746e9d7435ba475d62b4ad3ea79c2a2fa0d8c8c6e7",
+      "verified": true
+    },
+    {
+      "asset": "butchery_t6",
+      "file": "butchery_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | butchery | T06 Architecture",
+        "MMR | butchery | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.6475000381469727,
+        1.2999992370605469
+      ],
+      "triangles": 3276,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "d764352b168a48c5fb064c0cfb631db67048091e400816e68e484728ca3bd525",
+      "verified": true
+    },
+    {
+      "asset": "bakery_t1",
+      "file": "bakery_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bakery | T01 Architecture",
+        "MMR | bakery | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.8399999141693115,
+        2.350006103515625
+      ],
+      "triangles": 2116,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "4c282935ee02e20a9376c418a12490ed16fe14bf40398010d37fea69731d8424",
+      "verified": true
+    },
+    {
+      "asset": "bakery_t2",
+      "file": "bakery_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bakery | T02 Architecture",
+        "MMR | bakery | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.9499999284744263,
+        2.350006103515625
+      ],
+      "triangles": 2172,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "8a0f9529e23736d3bdce16bc05689516bfe7e2a41dc0673dc04a5835e83d79c1",
+      "verified": true
+    },
+    {
+      "asset": "bakery_t3",
+      "file": "bakery_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bakery | T03 Architecture",
+        "MMR | bakery | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.9499999284744263,
+        2.350006103515625
+      ],
+      "triangles": 2188,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "190502dd763e381e898c3268b68b9ad625849a5b358e6ae2122fb246e389f517",
+      "verified": true
+    },
+    {
+      "asset": "bakery_t4",
+      "file": "bakery_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bakery | T04 Architecture",
+        "MMR | bakery | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.9499999284744263,
+        2.350006103515625
+      ],
+      "triangles": 2392,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "2e27c78eafe9894f7c9c65ae9c6802dd9ca5c8d08c4107195f9dfa656c34d870",
+      "verified": true
+    },
+    {
+      "asset": "bakery_t5",
+      "file": "bakery_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bakery | T05 Architecture",
+        "MMR | bakery | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.0,
+        2.350006103515625
+      ],
+      "triangles": 3096,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "de93c4ea1ddbad942d17547512dcc8e38cb7131c8d9691fc97dfa02f2be2f9c3",
+      "verified": true
+    },
+    {
+      "asset": "bakery_t6",
+      "file": "bakery_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bakery | T06 Architecture",
+        "MMR | bakery | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        2.075000047683716,
+        2.350006103515625
+      ],
+      "triangles": 3220,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ff9958a134741c6ead695c0df77211a2abe15d2ba81aa9fc6d79a88a04f54409",
+      "verified": true
+    },
+    {
+      "asset": "mason_yard_t1",
+      "file": "mason_yard_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | mason_yard | T01 Architecture",
+        "MMR | mason_yard | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.6449999809265137,
+        2.3499984741210938
+      ],
+      "triangles": 1444,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "e09e6843a88237d1e270449a9b1cda106d002e7a3f1fec19e5b1fdab2ef38fc6",
+      "verified": true
+    },
+    {
+      "asset": "mason_yard_t2",
+      "file": "mason_yard_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | mason_yard | T02 Architecture",
+        "MMR | mason_yard | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.6449999809265137,
+        2.3499984741210938
+      ],
+      "triangles": 1444,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "e8c2b0c092f241f8b9865b4bf29e085b1c9694e603829691b9edd5ca5300366c",
+      "verified": true
+    },
+    {
+      "asset": "mason_yard_t3",
+      "file": "mason_yard_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | mason_yard | T03 Architecture",
+        "MMR | mason_yard | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.6449999809265137,
+        2.356182098388672
+      ],
+      "triangles": 1772,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "9f205848dbd3f18b1dff719f0b3ab4baf0b0494ef86ee48320553653e056d08a",
+      "verified": true
+    },
+    {
+      "asset": "mason_yard_t4",
+      "file": "mason_yard_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | mason_yard | T04 Architecture",
+        "MMR | mason_yard | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.6449999809265137,
+        2.356182098388672
+      ],
+      "triangles": 1772,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "bff27e1be40f6cfdc5718a53f036b76191613c54fc837f3c8f22c4000ed448b9",
+      "verified": true
+    },
+    {
+      "asset": "mason_yard_t5",
+      "file": "mason_yard_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | mason_yard | T05 Architecture",
+        "MMR | mason_yard | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.6449999809265137,
+        2.356182098388672
+      ],
+      "triangles": 1772,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "638a7a4839ee7c178ae640b952729a372ac214b180910ab7d678f09bb345cab4",
+      "verified": true
+    },
+    {
+      "asset": "mason_yard_t6",
+      "file": "mason_yard_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | mason_yard | T06 Architecture",
+        "MMR | mason_yard | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.6449999809265137,
+        2.356182098388672
+      ],
+      "triangles": 1772,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "0638b280fabbb162cb78461e656f5c69539cefb4c332bf1c76c698b0844efa91",
+      "verified": true
+    },
+    {
+      "asset": "emberglass_t1",
+      "file": "emberglass_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | emberglass | T01 Architecture",
+        "MMR | emberglass | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1074999570846558,
+        1.3000030517578125
+      ],
+      "triangles": 1404,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ee102aa5eb71bc395cb9b249343b06a1ec67db94df3da8c178a0ea9ccbaea366",
+      "verified": true
+    },
+    {
+      "asset": "emberglass_t2",
+      "file": "emberglass_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | emberglass | T02 Architecture",
+        "MMR | emberglass | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1375000476837158,
+        1.3000030517578125
+      ],
+      "triangles": 1420,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "a2752db997dca429894b3ee7d27e9fe5dab0c7389219cf57a0dda7d6a541d655",
+      "verified": true
+    },
+    {
+      "asset": "emberglass_t3",
+      "file": "emberglass_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | emberglass | T03 Architecture",
+        "MMR | emberglass | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1675000190734863,
+        1.3000030517578125
+      ],
+      "triangles": 1436,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "527b77a3af4e7ad336f46cceee8adb5062b50aa9ca6f83c5858f270ed3d496c8",
+      "verified": true
+    },
+    {
+      "asset": "emberglass_t4",
+      "file": "emberglass_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | emberglass | T04 Architecture",
+        "MMR | emberglass | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1974999904632568,
+        1.3000030517578125
+      ],
+      "triangles": 1560,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c44aeab42c1330b7ef7742bb2bb7f858badf236af22244b44dc31fddf91f5063",
+      "verified": true
+    },
+    {
+      "asset": "emberglass_t5",
+      "file": "emberglass_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | emberglass | T05 Architecture",
+        "MMR | emberglass | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2274999618530273,
+        1.3000030517578125
+      ],
+      "triangles": 1576,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "6ac98c15e096f965b8d928b6c02eaf8bda8fea262925e431a0cefb814d9d7d01",
+      "verified": true
+    },
+    {
+      "asset": "emberglass_t6",
+      "file": "emberglass_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | emberglass | T06 Architecture",
+        "MMR | emberglass | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2574999332427979,
+        1.3000030517578125
+      ],
+      "triangles": 1592,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "34fbb980e5617aca3f4107f668015c32e6896d5127ee349eb6fc92934a267bd6",
+      "verified": true
+    },
+    {
+      "asset": "fletcher_t1",
+      "file": "fletcher_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | fletcher | T01 Architecture",
+        "MMR | fletcher | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2874999046325684,
+        1.2999999523162842
+      ],
+      "triangles": 1988,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b5ca3a1b2e74ffdb5bdb07be082e61b82a825855697bf293c0e69e3ebb82bb54",
+      "verified": true
+    },
+    {
+      "asset": "fletcher_t2",
+      "file": "fletcher_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | fletcher | T02 Architecture",
+        "MMR | fletcher | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.34375,
+        1.2999999523162842
+      ],
+      "triangles": 1988,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b3f6c7ab4b56eea0c9c0d0ec9edcf85fe3cc59faf6d7aac46f80a0eba7e1ea72",
+      "verified": true
+    },
+    {
+      "asset": "fletcher_t3",
+      "file": "fletcher_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | fletcher | T03 Architecture",
+        "MMR | fletcher | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.3999998569488525,
+        1.2999999523162842
+      ],
+      "triangles": 2004,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b94168650b1a8a7f997b5b03da6329a7675de859273d8ac21af345b59bfeb1e8",
+      "verified": true
+    },
+    {
+      "asset": "fletcher_t4",
+      "file": "fletcher_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | fletcher | T04 Architecture",
+        "MMR | fletcher | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4562499523162842,
+        1.2999999523162842
+      ],
+      "triangles": 2208,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "044dbbf23729a3256fe4d97f838777057689de8d29a6a63f0699e36d15abf23a",
+      "verified": true
+    },
+    {
+      "asset": "fletcher_t5",
+      "file": "fletcher_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | fletcher | T05 Architecture",
+        "MMR | fletcher | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5125000476837158,
+        1.2999999523162842
+      ],
+      "triangles": 2912,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "1bacd83c6bce6b7f6b3a2d46cbac1fefdca6de1e35b83d5bae8f29bd8f964a6b",
+      "verified": true
+    },
+    {
+      "asset": "fletcher_t6",
+      "file": "fletcher_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | fletcher | T06 Architecture",
+        "MMR | fletcher | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.29998779296875,
+        1.568750023841858,
+        1.2999999523162842
+      ],
+      "triangles": 2980,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b38bbbbfac47f8f2781ea031f62a5b15f057ed1e272f3a09944fe837550dde72",
+      "verified": true
+    },
+    {
+      "asset": "scout_post_t1",
+      "file": "scout_post_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | scout_post | T01 Architecture",
+        "MMR | scout_post | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5099999904632568,
+        1.2999992370605469
+      ],
+      "triangles": 1384,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "53c01cfe705126efad9e56ccbac2998c1dd589aa9844fbf58fbe63bbde7b555d",
+      "verified": true
+    },
+    {
+      "asset": "scout_post_t2",
+      "file": "scout_post_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | scout_post | T02 Architecture",
+        "MMR | scout_post | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5099999904632568,
+        1.2999992370605469
+      ],
+      "triangles": 1384,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ae8c85210cfff969a6eb282f3feb48cd3c85ea951eb221bb738995b4820b7139",
+      "verified": true
+    },
+    {
+      "asset": "scout_post_t3",
+      "file": "scout_post_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | scout_post | T03 Architecture",
+        "MMR | scout_post | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5099999904632568,
+        1.2999992370605469
+      ],
+      "triangles": 1400,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "14f270a36018508755ec8745e940329225d75810605416a5ce1e09471e2833c0",
+      "verified": true
+    },
+    {
+      "asset": "scout_post_t4",
+      "file": "scout_post_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | scout_post | T04 Architecture",
+        "MMR | scout_post | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5419999361038208,
+        1.2999992370605469
+      ],
+      "triangles": 1496,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "a11bc100881b8008ce414c68b761b9cd3d4b3a2ece8e308d94bf37d6bd4ea707",
+      "verified": true
+    },
+    {
+      "asset": "scout_post_t5",
+      "file": "scout_post_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | scout_post | T05 Architecture",
+        "MMR | scout_post | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.5740000009536743,
+        1.2999992370605469
+      ],
+      "triangles": 1496,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "a8bf25f81d8403a4d704eb1e609f22af50dd7ff992017ab3f14999e36f8f9b23",
+      "verified": true
+    },
+    {
+      "asset": "scout_post_t6",
+      "file": "scout_post_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | scout_post | T06 Architecture",
+        "MMR | scout_post | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.29998779296875,
+        1.6059999465942383,
+        1.2999992370605469
+      ],
+      "triangles": 1496,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "7c03ecf676b416bbd6d8b76d44765e56f14275764a46cbd4cd16174bcbe15e79",
+      "verified": true
+    },
+    {
+      "asset": "watchfire_t1",
+      "file": "watchfire_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | watchfire | T01 Architecture",
+        "MMR | watchfire | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        0.9549999833106995,
+        1.2999992370605469
+      ],
+      "triangles": 1052,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "d68ebb83bcd254618a60eeaa380712276e30d822e3d435be29bd473e2cd53f53",
+      "verified": true
+    },
+    {
+      "asset": "watchfire_t2",
+      "file": "watchfire_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | watchfire | T02 Architecture",
+        "MMR | watchfire | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        0.9950000047683716,
+        1.2999992370605469
+      ],
+      "triangles": 1052,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "8226a6c2ae38c4aeaa0c99f8d486bb072dbb62f3fdc965469a14a6ac00e08b25",
+      "verified": true
+    },
+    {
+      "asset": "watchfire_t3",
+      "file": "watchfire_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | watchfire | T03 Architecture",
+        "MMR | watchfire | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4375,
+        1.2999992370605469
+      ],
+      "triangles": 1220,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b6bb56b5bfce588c8ec55eb812366b5c1427601206699313bc3d999de48d765f",
+      "verified": true
+    },
+    {
+      "asset": "watchfire_t4",
+      "file": "watchfire_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | watchfire | T04 Architecture",
+        "MMR | watchfire | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4375,
+        1.2999992370605469
+      ],
+      "triangles": 1220,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "3878ffa32911202fbd4ed57117bdc3e3f41e0f4c7f5bcfcdd0bbff9136e68451",
+      "verified": true
+    },
+    {
+      "asset": "watchfire_t5",
+      "file": "watchfire_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | watchfire | T05 Architecture",
+        "MMR | watchfire | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.9749999046325684,
+        1.2999992370605469
+      ],
+      "triangles": 1288,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "bb6523274541da3f1b98d2d2c1ef3ee545da16dc6781f16f6e6eb8e114f7812c",
+      "verified": true
+    },
+    {
+      "asset": "watchfire_t6",
+      "file": "watchfire_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | watchfire | T06 Architecture",
+        "MMR | watchfire | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.29998779296875,
+        1.9749999046325684,
+        1.2999992370605469
+      ],
+      "triangles": 1288,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "204964fe2ddc73b2502c7a587d91583a559271fe562dd149a335e6c22fd318b9",
+      "verified": true
+    },
+    {
+      "asset": "ballista_t1",
+      "file": "ballista_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | ballista | T01 Architecture",
+        "MMR | ballista | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999999523162842,
+        1.997499942779541,
+        1.3000030517578125
+      ],
+      "triangles": 1344,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "8e50837768990d8a25f52660799d9db017ea92bb5eb9b274d7d83e8e641e6bf7",
+      "verified": true
+    },
+    {
+      "asset": "ballista_t2",
+      "file": "ballista_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | ballista | T02 Architecture",
+        "MMR | ballista | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000001907348633,
+        2.197499990463257,
+        1.3000030517578125
+      ],
+      "triangles": 1344,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ed53208740198dd3b1b5c6af56f5011a0701c8596cf0b7ec3768e55f64552afc",
+      "verified": true
+    },
+    {
+      "asset": "ballista_t3",
+      "file": "ballista_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | ballista | T03 Architecture",
+        "MMR | ballista | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        2.3974997997283936,
+        1.3000030517578125
+      ],
+      "triangles": 1344,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "8a07818b761177783eb6d077f5721202880cb906858d8393f723703b57f470d3",
+      "verified": true
+    },
+    {
+      "asset": "ballista_t4",
+      "file": "ballista_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | ballista | T04 Architecture",
+        "MMR | ballista | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        2.5974998474121094,
+        1.3000030517578125
+      ],
+      "triangles": 1468,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "d1c9efaaac31785d2dc6d687961dc3205dfb4150cffd5e90d4a2cf742aa06fde",
+      "verified": true
+    },
+    {
+      "asset": "ballista_t5",
+      "file": "ballista_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | ballista | T05 Architecture",
+        "MMR | ballista | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        2.797499895095825,
+        1.3000030517578125
+      ],
+      "triangles": 1468,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "a540287e0e252546918e794819a929cc5c7046d93ee7f02626ce0dc5bfe71b06",
+      "verified": true
+    },
+    {
+      "asset": "ballista_t6",
+      "file": "ballista_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | ballista | T06 Architecture",
+        "MMR | ballista | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        2.997499942779541,
+        1.3000030517578125
+      ],
+      "triangles": 1468,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "753f55e8df1b2562d3b6566341df801734c7ba683b476c1e5d39ab14f27edcae",
+      "verified": true
+    },
+    {
+      "asset": "bastion_t1",
+      "file": "bastion_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bastion | T01 Architecture",
+        "MMR | bastion | T01 Heavy Buttresses",
+        "MMR | bastion | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.997499942779541,
+        1.2999999523162842
+      ],
+      "triangles": 1484,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ca5f5cd952eff643edd6135d8a37aa21f7fa52886dbdd51f90f5536282859385",
+      "verified": true
+    },
+    {
+      "asset": "bastion_t2",
+      "file": "bastion_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bastion | T02 Architecture",
+        "MMR | bastion | T02 Heavy Buttresses",
+        "MMR | bastion | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        2.197499990463257,
+        1.2999999523162842
+      ],
+      "triangles": 1484,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "e64d717a3408cfff55d8af433800ddb2be920208accc063ff346e67741d4fd18",
+      "verified": true
+    },
+    {
+      "asset": "bastion_t3",
+      "file": "bastion_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bastion | T03 Architecture",
+        "MMR | bastion | T03 Heavy Buttresses",
+        "MMR | bastion | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        2.3974997997283936,
+        1.2999999523162842
+      ],
+      "triangles": 1484,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "91858e4ae2b12890e96632519e62f8877f6c1bc261da1305902477ed85ff01a8",
+      "verified": true
+    },
+    {
+      "asset": "bastion_t4",
+      "file": "bastion_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bastion | T04 Architecture",
+        "MMR | bastion | T04 Heavy Buttresses",
+        "MMR | bastion | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        2.5974998474121094,
+        1.2999999523162842
+      ],
+      "triangles": 1608,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "aca90bbdf9a4597f2ea7cf26877f7dccf59dce28d1feca9d6ce6994433fdd7ea",
+      "verified": true
+    },
+    {
+      "asset": "bastion_t5",
+      "file": "bastion_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bastion | T05 Architecture",
+        "MMR | bastion | T05 Heavy Buttresses",
+        "MMR | bastion | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        2.797499895095825,
+        1.2999999523162842
+      ],
+      "triangles": 1608,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "a6380aab26244ec48e7abf82e16fc5b747ea6aed16b2b513b248dee078b3da08",
+      "verified": true
+    },
+    {
+      "asset": "bastion_t6",
+      "file": "bastion_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bastion | T06 Architecture",
+        "MMR | bastion | T06 Heavy Buttresses",
+        "MMR | bastion | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        2.997499942779541,
+        1.2999999523162842
+      ],
+      "triangles": 1608,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "dd59160f360042b53ae3639ad5a2e42bd090c9e3401192ccf8e5e0aea385f33d",
+      "verified": true
+    },
+    {
+      "asset": "rampart_t1",
+      "file": "rampart_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | rampart | T01 Architecture",
+        "MMR | rampart | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999999523162842,
+        1.1749999523162842,
+        1.3000030517578125
+      ],
+      "triangles": 824,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "753b7c81dafd4f6fdc3e734855a099f0ab1167e2d2e8e954d8988a02d90f77ab",
+      "verified": true
+    },
+    {
+      "asset": "rampart_t2",
+      "file": "rampart_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | rampart | T02 Architecture",
+        "MMR | rampart | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000001907348633,
+        1.284999966621399,
+        1.3000030517578125
+      ],
+      "triangles": 824,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "926936f332d18d42311ed70e662737fe841b4b2c8ae885b9e91c6a5991e2fe3d",
+      "verified": true
+    },
+    {
+      "asset": "rampart_t3",
+      "file": "rampart_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | rampart | T03 Architecture",
+        "MMR | rampart | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        1.529999852180481,
+        1.3000030517578125
+      ],
+      "triangles": 1036,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "19701d596e75669dd29d0000ce5bcff95d3eda629114f0f8d44807c95b140d88",
+      "verified": true
+    },
+    {
+      "asset": "rampart_t4",
+      "file": "rampart_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | rampart | T04 Architecture",
+        "MMR | rampart | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        1.529999852180481,
+        1.3000030517578125
+      ],
+      "triangles": 1036,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "4632bc45236a9611d1ffa4ac20b45dee3bb2cfcdbe81f6b00d7d19de57597f5a",
+      "verified": true
+    },
+    {
+      "asset": "rampart_t5",
+      "file": "rampart_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | rampart | T05 Architecture",
+        "MMR | rampart | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        1.6149998903274536,
+        1.3000030517578125
+      ],
+      "triangles": 1036,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "bcaad662472465d9e033061f41ceabd9079a5bd46cd8acb2b0b5759bb27132f3",
+      "verified": true
+    },
+    {
+      "asset": "rampart_t6",
+      "file": "rampart_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | rampart | T06 Architecture",
+        "MMR | rampart | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.2999992370605469,
+        1.725000023841858,
+        1.3000030517578125
+      ],
+      "triangles": 1036,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "3bb2fce4f631a71a7267a2107a9feb9e59e65d19b99c8ef869bfee10c29aee67",
+      "verified": true
+    },
+    {
+      "asset": "longhouse_t1",
+      "file": "longhouse_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | longhouse | T01 Architecture",
+        "MMR | longhouse | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        3.3000030517578125,
+        1.7649999856948853,
+        3.3000001907348633
+      ],
+      "triangles": 1668,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "0054b96f138d65e619ecb36589ba8c20ea372d2d028742b2e411ec1bb3c6e17c",
+      "verified": true
+    },
+    {
+      "asset": "longhouse_t2",
+      "file": "longhouse_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | longhouse | T02 Architecture",
+        "MMR | longhouse | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        3.3000030517578125,
+        1.8799999952316284,
+        3.3000001907348633
+      ],
+      "triangles": 1920,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c2235db2fd4de70b1d814f14538b38649b51b44c0be549f5006835b7f35fa818",
+      "verified": true
+    },
+    {
+      "asset": "longhouse_t3",
+      "file": "longhouse_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | longhouse | T03 Architecture",
+        "MMR | longhouse | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        3.3000030517578125,
+        1.8849999904632568,
+        3.3000001907348633
+      ],
+      "triangles": 1936,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b5046af24f9fab189b47837680a5a1359b80215abe440552bd7ebecaa3653c9c",
+      "verified": true
+    },
+    {
+      "asset": "longhouse_t4",
+      "file": "longhouse_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | longhouse | T04 Architecture",
+        "MMR | longhouse | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        3.3000030517578125,
+        1.9449999332427979,
+        3.3000001907348633
+      ],
+      "triangles": 2152,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "3cf8fd882947a0d8a3d6edc485fd7b46fac35a758016ccaf366896621c27d72b",
+      "verified": true
+    },
+    {
+      "asset": "longhouse_t5",
+      "file": "longhouse_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | longhouse | T05 Architecture",
+        "MMR | longhouse | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        3.3000030517578125,
+        2.005000114440918,
+        3.3000001907348633
+      ],
+      "triangles": 2596,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "19c76945b9c1c33280528946d66eb603ab85e6d3ad6afeae5c82c9dc0d0c16a6",
+      "verified": true
+    },
+    {
+      "asset": "longhouse_t6",
+      "file": "longhouse_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | longhouse | T06 Architecture",
+        "MMR | longhouse | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        3.3000030517578125,
+        2.065000057220459,
+        3.3000001907348633
+      ],
+      "triangles": 2596,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "5f453da28adbeb2494ab5d369b81d9374c1d434bc85145df9380eea3c6637293",
+      "verified": true
+    },
+    {
+      "asset": "bellcote_t1",
+      "file": "bellcote_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bellcote | T01 Architecture",
+        "MMR | bellcote | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.7149999141693115,
+        1.2999992370605469
+      ],
+      "triangles": 1156,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c5ab6941f3d5eb4b249b92b15cf1dacbded75163c2d160e16d344ba5f7d57c2f",
+      "verified": true
+    },
+    {
+      "asset": "bell-tower_t1",
+      "file": "bell-tower_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bell-tower | T01 Architecture",
+        "MMR | bell-tower | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.254999876022339,
+        2.3499984741210938
+      ],
+      "triangles": 1500,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "2a761ee2545b15055d6e3ddaf7bb161d04f3f0c5365406c056043c03a31e9b59",
+      "verified": true
+    },
+    {
+      "asset": "bell-tower_t2",
+      "file": "bell-tower_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bell-tower | T02 Architecture",
+        "MMR | bell-tower | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.4149999618530273,
+        2.3499984741210938
+      ],
+      "triangles": 1500,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "bad095e02a5f30febaa95a9e83bbe27f30c3267d56adeeccdd0dde22b569ed70",
+      "verified": true
+    },
+    {
+      "asset": "bell-tower_t3",
+      "file": "bell-tower_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bell-tower | T03 Architecture",
+        "MMR | bell-tower | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.575000047683716,
+        2.3499984741210938
+      ],
+      "triangles": 1584,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "b78c442814242b88a884990c643a88b1ab794b2966be6ca196ed2cae3379576f",
+      "verified": true
+    },
+    {
+      "asset": "bell-tower_t4",
+      "file": "bell-tower_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bell-tower | T04 Architecture",
+        "MMR | bell-tower | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.734999895095825,
+        2.3499984741210938
+      ],
+      "triangles": 1584,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ecacee8d6f402ba022dae0d63b18344ae84d36a8c71ebea6cae5cb7c87aec91d",
+      "verified": true
+    },
+    {
+      "asset": "bell-tower_t5",
+      "file": "bell-tower_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bell-tower | T05 Architecture",
+        "MMR | bell-tower | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        2.8949999809265137,
+        2.3499984741210938
+      ],
+      "triangles": 1584,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "2e51f8aafd85b5ff75aa2f4f4c2a4fc56482a9d47e7d08ae2de6d76ad2904b6f",
+      "verified": true
+    },
+    {
+      "asset": "bell-tower_t6",
+      "file": "bell-tower_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | bell-tower | T06 Architecture",
+        "MMR | bell-tower | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.3499984741210938,
+        3.055000066757202,
+        2.3499984741210938
+      ],
+      "triangles": 1584,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "54024ef5504e4d55bede84a90456803aaebf73476149676b929727eb89cd2268",
+      "verified": true
+    },
+    {
+      "asset": "blackwater-weir_t1",
+      "file": "blackwater-weir_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | blackwater-weir | T01 Architecture",
+        "MMR | blackwater-weir | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        0.8799999952316284,
+        1.3000030517578125
+      ],
+      "triangles": 1672,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "aee157b138bf97623dd5164fa8e05e13aef470ec75d3d0e74a9bed151a419728",
+      "verified": true
+    },
+    {
+      "asset": "blackwater-weir_t2",
+      "file": "blackwater-weir_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | blackwater-weir | T02 Architecture",
+        "MMR | blackwater-weir | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        0.8799999952316284,
+        1.3000030517578125
+      ],
+      "triangles": 1672,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "7cf060d64c70cb6e4f93d81c7a4d7ac01df866b4e13fc07d1a6373f3e3780bc7",
+      "verified": true
+    },
+    {
+      "asset": "blackwater-weir_t3",
+      "file": "blackwater-weir_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | blackwater-weir | T03 Architecture",
+        "MMR | blackwater-weir | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        0.8799999952316284,
+        1.3000030517578125
+      ],
+      "triangles": 1672,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "4b005a3bbf0e07ec7776f4162546a15a9b9b6045d0556f8be0e3da7138bba959",
+      "verified": true
+    },
+    {
+      "asset": "blackwater-weir_t4",
+      "file": "blackwater-weir_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | blackwater-weir | T04 Architecture",
+        "MMR | blackwater-weir | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4649999141693115,
+        1.3000030517578125
+      ],
+      "triangles": 2088,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "f05a6a96e72a5de6b782b1d19af4a4a96f69ee31fc8b05971e9808ec2085a2b9",
+      "verified": true
+    },
+    {
+      "asset": "blackwater-weir_t5",
+      "file": "blackwater-weir_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | blackwater-weir | T05 Architecture",
+        "MMR | blackwater-weir | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4649999141693115,
+        1.3000030517578125
+      ],
+      "triangles": 2088,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ae1aa82058020da4078ff89b0c36b998b87925a052a04176f313dda722e82d73",
+      "verified": true
+    },
+    {
+      "asset": "blackwater-weir_t6",
+      "file": "blackwater-weir_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | blackwater-weir | T06 Architecture",
+        "MMR | blackwater-weir | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.4649999141693115,
+        1.3000030517578125
+      ],
+      "triangles": 2088,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "fef357df5e119f01653b7c8096c82e3435236cdb2eb67b3b9a2606227c8a1ef2",
+      "verified": true
+    },
+    {
+      "asset": "deephole_t1",
+      "file": "deephole_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | deephole | T01 Architecture",
+        "MMR | deephole | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1862499713897705,
+        1.3000030517578125
+      ],
+      "triangles": 1844,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "1e6f972c1878534785ae010dd556cef0e896bcf074f2c925208025d3ffa23a27",
+      "verified": true
+    },
+    {
+      "asset": "deephole_t2",
+      "file": "deephole_t2.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | deephole | T02 Architecture",
+        "MMR | deephole | Tier 02 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1862499713897705,
+        1.3000030517578125
+      ],
+      "triangles": 1860,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "1449f8b7f98f7286275b03b2a11b560a3d12ac00afc6e7e75ba0b7d57a66e449",
+      "verified": true
+    },
+    {
+      "asset": "deephole_t3",
+      "file": "deephole_t3.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | deephole | T03 Architecture",
+        "MMR | deephole | Tier 03 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1862499713897705,
+        1.3000030517578125
+      ],
+      "triangles": 1892,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "36c2489ec9214a4cd08434c17b06f4602c73e68db516fed6a431f72a441e24e1",
+      "verified": true
+    },
+    {
+      "asset": "deephole_t4",
+      "file": "deephole_t4.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | deephole | T04 Architecture",
+        "MMR | deephole | Tier 04 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.1974999904632568,
+        1.3000030517578125
+      ],
+      "triangles": 2016,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "6a34943cb7d7bab7bae2997f12ee6d34b8ad35323bb3dfd2f14dbd87e2580c0c",
+      "verified": true
+    },
+    {
+      "asset": "deephole_t5",
+      "file": "deephole_t5.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | deephole | T05 Architecture",
+        "MMR | deephole | Tier 05 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2274999618530273,
+        1.3000030517578125
+      ],
+      "triangles": 2032,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ad678d258f70179ea24dc63d72c0c687d318973cc76aafe4283ff8909f2e7804",
+      "verified": true
+    },
+    {
+      "asset": "deephole_t6",
+      "file": "deephole_t6.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | deephole | T06 Architecture",
+        "MMR | deephole | Tier 06 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        1.2574999332427979,
+        1.3000030517578125
+      ],
+      "triangles": 2048,
+      "meshes": 2,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "ea95b1815eb430c055283f66b642a354701106549815d692215ba2ec394a9c19",
+      "verified": true
+    },
+    {
+      "asset": "cairnfield_t1",
+      "file": "cairnfield_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | cairnfield | T01 Architecture",
+        "MMR | cairnfield | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        2.350006103515625,
+        1.0699999332427979,
+        2.3499984741210938
+      ],
+      "triangles": 1296,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "e83bd0ba9a8bd786cb3a98ded14951944dce9816855f441f44b10041673808a6",
+      "verified": true
+    },
+    {
+      "asset": "moon-dial_t1",
+      "file": "moon-dial_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | moon-dial | T01 Architecture",
+        "MMR | moon-dial | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3000030517578125,
+        0.761383056640625,
+        1.3000030517578125
+      ],
+      "triangles": 1084,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "0a4b4416b74250ecc2e946db4e37ee4e03a7aad983cbe9e9f84f7a22e0659e91",
+      "verified": true
+    },
+    {
+      "asset": "dawn-gate_t1",
+      "file": "dawn-gate_t1.glb",
+      "kind": "building",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR | dawn-gate | T01 Architecture",
+        "MMR | dawn-gate | T01 Lift Gate",
+        "MMR | dawn-gate | Tier 01 Ground"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        3.3000030517578125,
+        1.5649999380111694,
+        3.299999952316284
+      ],
+      "triangles": 1624,
+      "meshes": 3,
+      "materials": 2,
+      "images": 1,
+      "clips": [],
+      "clip_sources": {},
+      "sha256": "c603464fe94439d93a9849b123e74298c5bb81aa0c648f80a5ff215456793854",
+      "verified": true
+    },
+    {
+      "asset": "char_diver",
+      "file": "char_diver.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | diver Rig",
+        "MMR Character | diver Body",
+        "MMR Character | diver Held net",
+        "MMR Character | diver Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.541428565979004,
+        1.7248719930648804,
+        0.6325874328613281
+      ],
+      "triangles": 1339,
+      "meshes": 3,
+      "materials": 2,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Fishing_Reeling",
+        "death": "Death_A",
+        "gather": "Fishing_Reeling"
+      },
+      "sha256": "6b16563ac746135430af5978a8b9007ebdc7ecd9a5a96813250e258027e5f5e1",
+      "verified": true
+    },
+    {
+      "asset": "char_sapper",
+      "file": "char_sapper.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | sapper Rig",
+        "MMR Character | sapper Body",
+        "MMR Character | sapper Held glasspick",
+        "MMR Character | sapper Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.544107437133789,
+        1.7248719930648804,
+        0.6626510620117188
+      ],
+      "triangles": 1129,
+      "meshes": 3,
+      "materials": 2,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Pickaxing",
+        "death": "Death_A",
+        "gather": "Pickaxing"
+      },
+      "sha256": "8760ab099018bec50fbb2a92d29d79e974c2a6e1ddcf24b4fa436a77e27c8664",
+      "verified": true
+    },
+    {
+      "asset": "char_smelter",
+      "file": "char_smelter.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | smelter Rig",
+        "MMR Character | smelter Body",
+        "MMR Character | smelter Held tongs",
+        "MMR Character | smelter Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.5145423412322998,
+        1.7248719930648804,
+        0.5878829956054688
+      ],
+      "triangles": 1157,
+      "meshes": 3,
+      "materials": 2,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Working_B",
+        "death": "Death_A",
+        "gather": "Working_B"
+      },
+      "sha256": "1f4c82454b368ea404cecebbeaf84228166fa5274f2244d8dddb69e399d579f5",
+      "verified": true
+    },
+    {
+      "asset": "char_forager",
+      "file": "char_forager.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | forager Rig",
+        "MMR Character | forager Body",
+        "MMR Character | forager Held sickle",
+        "MMR Character | forager Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.5433769226074219,
+        1.7300206422805786,
+        0.6325874328613281
+      ],
+      "triangles": 954,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Working_A",
+        "death": "Death_A",
+        "gather": "Working_A"
+      },
+      "sha256": "863b3b926429d4a9213ff763352f56fb10630c89dd2625f29952ad188b1c4a4f",
+      "verified": true
+    },
+    {
+      "asset": "char_miller",
+      "file": "char_miller.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | miller Rig",
+        "MMR Character | miller Body",
+        "MMR Character | miller Held sickle",
+        "MMR Character | miller Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.5433769226074219,
+        1.7288280725479126,
+        0.593048095703125
+      ],
+      "triangles": 965,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Sawing",
+        "death": "Death_A",
+        "gather": "Sawing"
+      },
+      "sha256": "df9c3eb99b1fdb97146371ac1569338ba77cb30c7a6e8c1fbebb473c1828ebe6",
+      "verified": true
+    },
+    {
+      "asset": "char_butcher",
+      "file": "char_butcher.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | butcher Rig",
+        "MMR Character | butcher Body",
+        "MMR Character | butcher Held cleaver",
+        "MMR Character | butcher Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.477715015411377,
+        1.7288280725479126,
+        0.593048095703125
+      ],
+      "triangles": 1005,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Chopping",
+        "death": "Death_A",
+        "gather": "Chopping"
+      },
+      "sha256": "822f2cc1a5b97638abc6c06b2952d6fca3173c656d7e2d1e19e2f0488d56badc",
+      "verified": true
+    },
+    {
+      "asset": "char_haggler",
+      "file": "char_haggler.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | haggler Rig",
+        "MMR Character | haggler Body",
+        "MMR Character | haggler Held scales",
+        "MMR Character | haggler Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.5615034103393555,
+        1.8038359880447388,
+        0.6790199279785156
+      ],
+      "triangles": 1067,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Use_Item",
+        "death": "Death_A",
+        "gather": "Use_Item"
+      },
+      "sha256": "be1a773d52e6083ac39cf369961e858f63ab047456f36fc3308632658ecd6b1e",
+      "verified": true
+    },
+    {
+      "asset": "char_heartwarden",
+      "file": "char_heartwarden.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | heartwarden Rig",
+        "MMR Character | heartwarden Body",
+        "MMR Character | heartwarden Held heartwood-axe",
+        "MMR Character | heartwarden Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.5518035888671875,
+        1.7300206422805786,
+        0.6325874328613281
+      ],
+      "triangles": 956,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Chopping",
+        "death": "Death_A",
+        "gather": "Chopping"
+      },
+      "sha256": "4498f1b30dedb4baf27e7665a410f54428e4e578f294b0c4654432f851cdd00f",
+      "verified": true
+    },
+    {
+      "asset": "char_healer",
+      "file": "char_healer.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | healer Rig",
+        "MMR Character | healer Body",
+        "MMR Character | healer Held chalice",
+        "MMR Character | healer Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.266042709350586,
+        1.4825477600097656,
+        0.5420951843261719
+      ],
+      "triangles": 1094,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Use_Item",
+        "death": "Death_A",
+        "gather": "Use_Item"
+      },
+      "sha256": "04c16ee889c24f22664be83f817c20c4c1bb2d475cdd7b894ff0f6324cd95476",
+      "verified": true
+    },
+    {
+      "asset": "char_chorister",
+      "file": "char_chorister.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | chorister Rig",
+        "MMR Character | chorister Body",
+        "MMR Character | chorister Held hymnal",
+        "MMR Character | chorister Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3194751739501953,
+        1.4825477600097656,
+        0.5064964294433594
+      ],
+      "triangles": 1050,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Use_Item",
+        "death": "Death_A",
+        "gather": "Use_Item"
+      },
+      "sha256": "c690c2ffa5a64778dbc43ded896442a8cf136dd5213b1af02115499bbf2dd33e",
+      "verified": true
+    },
+    {
+      "asset": "char_sawyer",
+      "file": "char_sawyer.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | sawyer Rig",
+        "MMR Character | sawyer Body",
+        "MMR Character | sawyer Held fellingaxe",
+        "MMR Character | sawyer Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.551803708076477,
+        1.7288280725479126,
+        0.6507835388183594
+      ],
+      "triangles": 1023,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Sawing",
+        "death": "Death_A",
+        "gather": "Sawing"
+      },
+      "sha256": "55e168f08031d0ebbcbe0d734a6fd7378045470ed2a63dd7d59ee73a8d8e4d8f",
+      "verified": true
+    },
+    {
+      "asset": "char_woodward",
+      "file": "char_woodward.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | woodward Rig",
+        "MMR Character | woodward Body",
+        "MMR Character | woodward Held frostaxe",
+        "MMR Character | woodward Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.551803708076477,
+        1.7300206422805786,
+        0.6108283996582031
+      ],
+      "triangles": 964,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Chopping",
+        "death": "Death_A",
+        "gather": "Chopping"
+      },
+      "sha256": "7a930fef601549cf0cd06cafa66cd70fd6a1ecb10489f3e70085aa7147a288f2",
+      "verified": true
+    },
+    {
+      "asset": "char_halberdier",
+      "file": "char_halberdier.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | halberdier Rig",
+        "MMR Character | halberdier Body",
+        "MMR Character | halberdier Held halberd",
+        "MMR Character | halberdier Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.381072998046875,
+        1.6633214950561523,
+        0.5464210510253906
+      ],
+      "triangles": 1177,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "attack"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Melee_2H_Attack_Chop",
+        "death": "Death_A",
+        "attack": "Melee_2H_Attack_Chop"
+      },
+      "sha256": "4cb23792aad02f3f5c7b13fda21512dbdd899214b512af0a53d75fe65d1ad255",
+      "verified": true
+    },
+    {
+      "asset": "char_pikewoman",
+      "file": "char_pikewoman.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | pikewoman Rig",
+        "MMR Character | pikewoman Body",
+        "MMR Character | pikewoman Held pike",
+        "MMR Character | pikewoman Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.3810749053955078,
+        1.5429961681365967,
+        0.5258941650390625
+      ],
+      "triangles": 1055,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "attack"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Melee_2H_Attack_Chop",
+        "death": "Death_A",
+        "attack": "Melee_2H_Attack_Chop"
+      },
+      "sha256": "8dbbd02e85a6754ec58660104b2e77a2fee9fe3e4861fc86df2a620987dc5a94",
+      "verified": true
+    },
+    {
+      "asset": "char_oathsworn",
+      "file": "char_oathsworn.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | oathsworn Rig",
+        "MMR Character | oathsworn Body",
+        "MMR Character | oathsworn Held oathblade",
+        "MMR Character | oathsworn Shield",
+        "MMR Character | oathsworn Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.532029151916504,
+        1.6633214950561523,
+        0.5464210510253906
+      ],
+      "triangles": 1287,
+      "meshes": 4,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "attack"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Melee_1H_Attack_Chop",
+        "death": "Death_A",
+        "attack": "Melee_1H_Attack_Chop"
+      },
+      "sha256": "9b2364addb35a1573fca0fd56a6bedaf84269da31344fb9e21cba3bb8fb97bbd",
+      "verified": true
+    },
+    {
+      "asset": "char_warden",
+      "file": "char_warden.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | warden Rig",
+        "MMR Character | warden Body",
+        "MMR Character | warden Held sword",
+        "MMR Character | warden Shield",
+        "MMR Character | warden Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.5320281982421875,
+        1.6633214950561523,
+        0.5258941650390625
+      ],
+      "triangles": 1223,
+      "meshes": 4,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "attack"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Melee_1H_Attack_Chop",
+        "death": "Death_A",
+        "attack": "Melee_1H_Attack_Chop"
+      },
+      "sha256": "36c46777dcc11e9433933137b8af2b82082ff437453a301659688b150de8fabe",
+      "verified": true
+    },
+    {
+      "asset": "char_squire",
+      "file": "char_squire.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | squire Rig",
+        "MMR Character | squire Body",
+        "MMR Character | squire Held squires-blade",
+        "MMR Character | squire Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.537872314453125,
+        1.7248719930648804,
+        0.5878829956054688
+      ],
+      "triangles": 1120,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "attack"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Melee_1H_Attack_Chop",
+        "death": "Death_A",
+        "attack": "Melee_1H_Attack_Chop"
+      },
+      "sha256": "ad631218320f4a5edba87bc9ce6b9a1d3ef333efb02337e44fa09eb359f3e159",
+      "verified": true
+    },
+    {
+      "asset": "char_weaponsmith",
+      "file": "char_weaponsmith.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | weaponsmith Rig",
+        "MMR Character | weaponsmith Body",
+        "MMR Character | weaponsmith Held forgehammer",
+        "MMR Character | weaponsmith Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.4657058715820312,
+        1.6365172863006592,
+        0.5577659606933594
+      ],
+      "triangles": 1149,
+      "meshes": 3,
+      "materials": 2,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Hammering",
+        "death": "Death_A",
+        "gather": "Hammering"
+      },
+      "sha256": "236b6b9360b004d89d87ef080b91b2ecb8f717bb95bbf3bd97dd9331840cad31",
+      "verified": true
+    },
+    {
+      "asset": "char_armorer",
+      "file": "char_armorer.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | armorer Rig",
+        "MMR Character | armorer Body",
+        "MMR Character | armorer Held armorkit",
+        "MMR Character | armorer Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.530374526977539,
+        1.7248719930648804,
+        0.5878829956054688
+      ],
+      "triangles": 1093,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Hammering",
+        "death": "Death_A",
+        "gather": "Hammering"
+      },
+      "sha256": "f0d70dd661b6a44fbf5d68e61cfd7e8fd52305cb7e749bf47ccf14ff1a07733d",
+      "verified": true
+    },
+    {
+      "asset": "char_toolsmith",
+      "file": "char_toolsmith.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | toolsmith Rig",
+        "MMR Character | toolsmith Body",
+        "MMR Character | toolsmith Held tinkerkit",
+        "MMR Character | toolsmith Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.530374526977539,
+        1.7248719930648804,
+        0.6325874328613281
+      ],
+      "triangles": 1293,
+      "meshes": 3,
+      "materials": 2,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Working_B",
+        "death": "Death_A",
+        "gather": "Working_B"
+      },
+      "sha256": "b6424f65e2f81ab91135fb279100378cf5d4e9cd2d1de2830f404e2a8dbbeda6",
+      "verified": true
+    },
+    {
+      "asset": "char_mason",
+      "file": "char_mason.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | mason Rig",
+        "MMR Character | mason Body",
+        "MMR Character | mason Held trowel",
+        "MMR Character | mason Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.4867744445800781,
+        1.7288280725479126,
+        0.593048095703125
+      ],
+      "triangles": 962,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Hammering",
+        "death": "Death_A",
+        "gather": "Hammering"
+      },
+      "sha256": "6689c9683f728034049b03695780a14e055fb46e063d8e2b3727036ebfb934c0",
+      "verified": true
+    },
+    {
+      "asset": "char_apprentice",
+      "file": "char_apprentice.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | apprentice Rig",
+        "MMR Character | apprentice Body",
+        "MMR Character | apprentice Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.4489078521728516,
+        1.7288280725479126,
+        0.6507835388183594
+      ],
+      "triangles": 1005,
+      "meshes": 2,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Working_A",
+        "death": "Death_A",
+        "gather": "Working_A"
+      },
+      "sha256": "a18474f3ae7e4ff430fc6fbbf20eb76e3c867e341d549721e489cc1684ac2519",
+      "verified": true
+    },
+    {
+      "asset": "char_scholar",
+      "file": "char_scholar.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | scholar Rig",
+        "MMR Character | scholar Body",
+        "MMR Character | scholar Held tome",
+        "MMR Character | scholar Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.319474697113037,
+        1.4825477600097656,
+        0.5420951843261719
+      ],
+      "triangles": 1106,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Use_Item",
+        "death": "Death_A",
+        "gather": "Use_Item"
+      },
+      "sha256": "4202bad0e83bd2f15ad19b98200079a04b2681caf340a3abff9683ef886c545c",
+      "verified": true
+    },
+    {
+      "asset": "char_leatherworker",
+      "file": "char_leatherworker.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | leatherworker Rig",
+        "MMR Character | leatherworker Body",
+        "MMR Character | leatherworker Held awl",
+        "MMR Character | leatherworker Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.4755229949951172,
+        1.7288280725479126,
+        0.6507835388183594
+      ],
+      "triangles": 1037,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Working_A",
+        "death": "Death_A",
+        "gather": "Working_A"
+      },
+      "sha256": "cc8760dc77680b825ecc5e167e5fe507743b2f8aa8f222feac7191ea73208ac0",
+      "verified": true
+    },
+    {
+      "asset": "char_ranger",
+      "file": "char_ranger.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | ranger Rig",
+        "MMR Character | ranger Body",
+        "MMR Character | ranger Held bow",
+        "MMR Character | ranger Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.6861956119537354,
+        1.7300206422805786,
+        0.6304969787597656
+      ],
+      "triangles": 1250,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "attack"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Ranged_Bow_Draw",
+        "death": "Death_A",
+        "attack": "Ranged_Bow_Draw"
+      },
+      "sha256": "548d06badbe72a88fb62196d9baee2b06f9a6338e7530cd2e05ab7297c156eb5",
+      "verified": true
+    },
+    {
+      "asset": "char_longbowman",
+      "file": "char_longbowman.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | longbowman Rig",
+        "MMR Character | longbowman Body",
+        "MMR Character | longbowman Held longbow",
+        "MMR Character | longbowman Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.7525100708007812,
+        1.8783279657363892,
+        0.6486930847167969
+      ],
+      "triangles": 1288,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "attack"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Ranged_Bow_Draw",
+        "death": "Death_A",
+        "attack": "Ranged_Bow_Draw"
+      },
+      "sha256": "2dafe9ee5754462c73aff1aac701fa5152da961d036a755c7032566a9d2bf267",
+      "verified": true
+    },
+    {
+      "asset": "char_scout",
+      "file": "char_scout.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | scout Rig",
+        "MMR Character | scout Body",
+        "MMR Character | scout Held compass",
+        "MMR Character | scout Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.4489092826843262,
+        1.8783279657363892,
+        0.6290245056152344
+      ],
+      "triangles": 1073,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Use_Item",
+        "death": "Death_A",
+        "gather": "Use_Item"
+      },
+      "sha256": "e08439bb0d980579c6eaba6809858cd8383d7bc84bc5da712aa40345207052d6",
+      "verified": true
+    },
+    {
+      "asset": "char_mudlark",
+      "file": "char_mudlark.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | mudlark Rig",
+        "MMR Character | mudlark Body",
+        "MMR Character | mudlark Held blackwater-net",
+        "MMR Character | mudlark Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.541428565979004,
+        1.7300206422805786,
+        0.6325874328613281
+      ],
+      "triangles": 1089,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Working_A",
+        "death": "Death_A",
+        "gather": "Working_A"
+      },
+      "sha256": "4299d3d2478e59533ad97d93cf60a97b57c359a296ac6d1a37c71cfbd562a630",
+      "verified": true
+    },
+    {
+      "asset": "char_tidecaller",
+      "file": "char_tidecaller.glb",
+      "kind": "character",
+      "source_file": "Game Assets.blend",
+      "source_objects": [
+        "MMR Character | tidecaller Rig",
+        "MMR Character | tidecaller Body",
+        "MMR Character | tidecaller Held tidebell",
+        "MMR Character | tidecaller Wrist Connections"
+      ],
+      "pivot": "base_center",
+      "units": "metres",
+      "up_axis": "+Y",
+      "dimensions_m": [
+        1.4629573822021484,
+        1.7300206422805786,
+        0.5910453796386719
+      ],
+      "triangles": 1022,
+      "meshes": 3,
+      "materials": 1,
+      "images": 1,
+      "clips": [
+        "idle",
+        "walk",
+        "work",
+        "death",
+        "gather"
+      ],
+      "clip_sources": {
+        "idle": "Idle_A",
+        "walk": "Walking_A",
+        "work": "Use_Item",
+        "death": "Death_A",
+        "gather": "Use_Item"
+      },
+      "sha256": "6dc26ff63a3c1e7fad832b6e0a49cff0be6ffce39ecbe443056bc636e51d53e8",
+      "verified": true
     }
   ]
 }

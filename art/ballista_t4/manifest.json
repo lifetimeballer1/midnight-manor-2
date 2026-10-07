@@ -1,0 +1,26 @@
+{
+  "asset": "ballista_t4",
+  "file": "ballista_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | ballista | T04 Architecture",
+    "MMR | ballista | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999992370605469,
+    2.5974998474121094,
+    1.3000030517578125
+  ],
+  "triangles": 1468,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "d1c9efaaac31785d2dc6d687961dc3205dfb4150cffd5e90d4a2cf742aa06fde",
+  "verified": true
+}

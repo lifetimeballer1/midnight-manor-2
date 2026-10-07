@@ -1,0 +1,26 @@
+{
+  "asset": "smeltery_t3",
+  "file": "smeltery_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | smeltery | T03 Architecture",
+    "MMR | smeltery | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    2.3899998664855957,
+    2.3499984741210938
+  ],
+  "triangles": 1988,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "e68d2c2bc1760e9fdc7a412b423b66235e0aef2665cb2180405194a86fb5d3f6",
+  "verified": true
+}

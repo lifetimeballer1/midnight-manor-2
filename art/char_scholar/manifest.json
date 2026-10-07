@@ -1,0 +1,40 @@
+{
+  "asset": "char_scholar",
+  "file": "char_scholar.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | scholar Rig",
+    "MMR Character | scholar Body",
+    "MMR Character | scholar Held tome",
+    "MMR Character | scholar Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.319474697113037,
+    1.4825477600097656,
+    0.5420951843261719
+  ],
+  "triangles": 1106,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Use_Item",
+    "death": "Death_A",
+    "gather": "Use_Item"
+  },
+  "sha256": "4202bad0e83bd2f15ad19b98200079a04b2681caf340a3abff9683ef886c545c",
+  "verified": true
+}

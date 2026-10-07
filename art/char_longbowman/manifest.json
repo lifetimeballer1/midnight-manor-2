@@ -1,0 +1,40 @@
+{
+  "asset": "char_longbowman",
+  "file": "char_longbowman.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | longbowman Rig",
+    "MMR Character | longbowman Body",
+    "MMR Character | longbowman Held longbow",
+    "MMR Character | longbowman Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.7525100708007812,
+    1.8783279657363892,
+    0.6486930847167969
+  ],
+  "triangles": 1288,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "attack"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Ranged_Bow_Draw",
+    "death": "Death_A",
+    "attack": "Ranged_Bow_Draw"
+  },
+  "sha256": "2dafe9ee5754462c73aff1aac701fa5152da961d036a755c7032566a9d2bf267",
+  "verified": true
+}

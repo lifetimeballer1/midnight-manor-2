@@ -1,0 +1,40 @@
+{
+  "asset": "char_pikewoman",
+  "file": "char_pikewoman.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | pikewoman Rig",
+    "MMR Character | pikewoman Body",
+    "MMR Character | pikewoman Held pike",
+    "MMR Character | pikewoman Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3810749053955078,
+    1.5429961681365967,
+    0.5258941650390625
+  ],
+  "triangles": 1055,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "attack"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Melee_2H_Attack_Chop",
+    "death": "Death_A",
+    "attack": "Melee_2H_Attack_Chop"
+  },
+  "sha256": "8dbbd02e85a6754ec58660104b2e77a2fee9fe3e4861fc86df2a620987dc5a94",
+  "verified": true
+}

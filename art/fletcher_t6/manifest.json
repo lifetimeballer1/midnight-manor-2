@@ -1,0 +1,26 @@
+{
+  "asset": "fletcher_t6",
+  "file": "fletcher_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | fletcher | T06 Architecture",
+    "MMR | fletcher | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.29998779296875,
+    1.568750023841858,
+    1.2999999523162842
+  ],
+  "triangles": 2980,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "b38bbbbfac47f8f2781ea031f62a5b15f057ed1e272f3a09944fe837550dde72",
+  "verified": true
+}

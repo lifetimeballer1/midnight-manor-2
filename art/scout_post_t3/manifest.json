@@ -1,0 +1,26 @@
+{
+  "asset": "scout_post_t3",
+  "file": "scout_post_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | scout_post | T03 Architecture",
+    "MMR | scout_post | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.5099999904632568,
+    1.2999992370605469
+  ],
+  "triangles": 1400,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "14f270a36018508755ec8745e940329225d75810605416a5ce1e09471e2833c0",
+  "verified": true
+}

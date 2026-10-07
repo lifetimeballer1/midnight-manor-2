@@ -1,0 +1,26 @@
+{
+  "asset": "armory_t5",
+  "file": "armory_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | armory | T05 Architecture",
+    "MMR | armory | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.5125000476837158,
+    1.2999992370605469
+  ],
+  "triangles": 3336,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "c4e4d41fdc110c5c660670ae668eddf011ed72ce5889f35b7569f04d84dc674d",
+  "verified": true
+}

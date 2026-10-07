@@ -1,0 +1,26 @@
+{
+  "asset": "watchfire_t1",
+  "file": "watchfire_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | watchfire | T01 Architecture",
+    "MMR | watchfire | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    0.9549999833106995,
+    1.2999992370605469
+  ],
+  "triangles": 1052,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "d68ebb83bcd254618a60eeaa380712276e30d822e3d435be29bd473e2cd53f53",
+  "verified": true
+}

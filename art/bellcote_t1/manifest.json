@@ -1,0 +1,26 @@
+{
+  "asset": "bellcote_t1",
+  "file": "bellcote_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | bellcote | T01 Architecture",
+    "MMR | bellcote | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.7149999141693115,
+    1.2999992370605469
+  ],
+  "triangles": 1156,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "c5ab6941f3d5eb4b249b92b15cf1dacbded75163c2d160e16d344ba5f7d57c2f",
+  "verified": true
+}

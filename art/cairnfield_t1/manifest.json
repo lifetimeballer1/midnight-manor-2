@@ -1,0 +1,26 @@
+{
+  "asset": "cairnfield_t1",
+  "file": "cairnfield_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | cairnfield | T01 Architecture",
+    "MMR | cairnfield | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    1.0699999332427979,
+    2.3499984741210938
+  ],
+  "triangles": 1296,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "e83bd0ba9a8bd786cb3a98ded14951944dce9816855f441f44b10041673808a6",
+  "verified": true
+}

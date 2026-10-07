@@ -1,0 +1,40 @@
+{
+  "asset": "char_miller",
+  "file": "char_miller.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | miller Rig",
+    "MMR Character | miller Body",
+    "MMR Character | miller Held sickle",
+    "MMR Character | miller Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5433769226074219,
+    1.7288280725479126,
+    0.593048095703125
+  ],
+  "triangles": 965,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Sawing",
+    "death": "Death_A",
+    "gather": "Sawing"
+  },
+  "sha256": "df9c3eb99b1fdb97146371ac1569338ba77cb30c7a6e8c1fbebb473c1828ebe6",
+  "verified": true
+}

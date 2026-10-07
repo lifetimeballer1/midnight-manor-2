@@ -42,7 +42,7 @@ def validate(path, manifest):
 def main():
     catalog = json.loads((ROOT / 'art/catalog.json').read_text(encoding='utf-8'))
     declared = {entry['asset'] for entry in catalog['assets']}
-    assert len(declared) == len(catalog['assets']) == 133, 'Catalog count/duplicates'
+    assert len(declared) == len(catalog['assets']) == 310, 'Catalog count/duplicates'
     disk = {p.parent.name for p in (ROOT / 'art').glob('*/*.glb')}
     assert disk == declared, 'Uncatalogued or missing GLB: ' + str(disk ^ declared)
     records = []
@@ -51,7 +51,7 @@ def main():
         manifest = json.loads((folder / 'manifest.json').read_text(encoding='utf-8'))
         assert manifest == entry, 'Catalog manifest mismatch'
         records.append(validate(folder / manifest['file'], manifest))
-    assert len({r['asset']: r for r in records}) == 133
+    assert len({r['asset']: r for r in records}) == 310
     report = {'passed': True, 'assets': len(records), 'bytes': sum(r['bytes'] for r in records), 'records': records}
     (ROOT / 'docs/export_verification.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
     print('EXPORT_CHECK PASS assets=%d bytes=%d' % (len(records), report['bytes']))

@@ -1,0 +1,40 @@
+{
+  "asset": "char_weaponsmith",
+  "file": "char_weaponsmith.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | weaponsmith Rig",
+    "MMR Character | weaponsmith Body",
+    "MMR Character | weaponsmith Held forgehammer",
+    "MMR Character | weaponsmith Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.4657058715820312,
+    1.6365172863006592,
+    0.5577659606933594
+  ],
+  "triangles": 1149,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Hammering",
+    "death": "Death_A",
+    "gather": "Hammering"
+  },
+  "sha256": "236b6b9360b004d89d87ef080b91b2ecb8f717bb95bbf3bd97dd9331840cad31",
+  "verified": true
+}

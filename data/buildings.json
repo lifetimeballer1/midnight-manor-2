@@ -1865,6 +1865,40 @@
       }
     ]
   },
+  "bathhouse": {
+    "maxCount": [1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3],
+    "name": "Steam Bathhouse",
+    "size": 2,
+    "cost": {
+      "wood": 110,
+      "food": 40
+    },
+    "minLevel": 4,
+    "buildSeconds": 6,
+    "production": null,
+    "rate": 0,
+    "housing": [
+      6,
+      10
+    ],
+    "workplace": "healer",
+    "tiers": [
+      {
+        "sprite": "bathhouse-1.png",
+        "hp": 220,
+        "rateMultiplier": 1,
+        "damage": 0,
+        "range": 0.75
+      },
+      {
+        "sprite": "bathhouse-2.png",
+        "hp": 440,
+        "rateMultiplier": 2,
+        "damage": 0,
+        "range": 0.75
+      }
+    ]
+  },
   "market-square": {
     "name": "Grand Market Square",
     "project": true,

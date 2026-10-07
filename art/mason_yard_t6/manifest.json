@@ -1,0 +1,26 @@
+{
+  "asset": "mason_yard_t6",
+  "file": "mason_yard_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | mason_yard | T06 Architecture",
+    "MMR | mason_yard | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    1.6449999809265137,
+    2.356182098388672
+  ],
+  "triangles": 1772,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "0638b280fabbb162cb78461e656f5c69539cefb4c332bf1c76c698b0844efa91",
+  "verified": true
+}

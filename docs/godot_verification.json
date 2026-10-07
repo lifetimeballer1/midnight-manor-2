@@ -3880,15 +3880,6757 @@
 			"skinned_meshes": 3,
 			"textures": 1,
 			"triangles": 1048
+		},
+		{
+			"asset": "grove_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.53559994697571,
+			"kind": "building",
+			"manifest_height_m": 1.53559994697571,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.53559994697571,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1856
+		},
+		{
+			"asset": "grove_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.63729989528656,
+			"kind": "building",
+			"manifest_height_m": 1.63729989528656,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.63729989528656,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2080
+		},
+		{
+			"asset": "grove_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.7389999628067,
+			"kind": "building",
+			"manifest_height_m": 1.7389999628067,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.7389999628067,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2080
+		},
+		{
+			"asset": "grove_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.84069991111755,
+			"kind": "building",
+			"manifest_height_m": 1.84069991111755,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.84069991111755,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2176
+		},
+		{
+			"asset": "grove_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.9423999786377,
+			"kind": "building",
+			"manifest_height_m": 1.9423999786377,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.18941950798035,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.37884950637817,
+				1.9423999786377,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2176
+		},
+		{
+			"asset": "grove_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.04410004615784,
+			"kind": "building",
+			"manifest_height_m": 2.04410004615784,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.21287941932678,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.4257640838623,
+				2.04410004615784,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2176
+		},
+		{
+			"asset": "frostgrove_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.53559994697571,
+			"kind": "building",
+			"manifest_height_m": 1.53559994697571,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.53559994697571,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1280
+		},
+		{
+			"asset": "frostgrove_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.63729989528656,
+			"kind": "building",
+			"manifest_height_m": 1.63729989528656,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.63729989528656,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1504
+		},
+		{
+			"asset": "frostgrove_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.7389999628067,
+			"kind": "building",
+			"manifest_height_m": 1.7389999628067,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.7389999628067,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1504
+		},
+		{
+			"asset": "frostgrove_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.84069991111755,
+			"kind": "building",
+			"manifest_height_m": 1.84069991111755,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.84069991111755,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1600
+		},
+		{
+			"asset": "frostgrove_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.9423999786377,
+			"kind": "building",
+			"manifest_height_m": 1.9423999786377,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.18941950798035,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.37884950637817,
+				1.9423999786377,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1600
+		},
+		{
+			"asset": "frostgrove_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.04410004615784,
+			"kind": "building",
+			"manifest_height_m": 2.04410004615784,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.21287941932678,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.4257640838623,
+				2.04410004615784,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1600
+		},
+		{
+			"asset": "whisper-grove_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.54680001735687,
+			"kind": "building",
+			"manifest_height_m": 1.54680001735687,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.54680001735687,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1076
+		},
+		{
+			"asset": "whisper-grove_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64939999580383,
+			"kind": "building",
+			"manifest_height_m": 1.64939999580383,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64939999580383,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1300
+		},
+		{
+			"asset": "whisper-grove_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.7519998550415,
+			"kind": "building",
+			"manifest_height_m": 1.7519998550415,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.7519998550415,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1300
+		},
+		{
+			"asset": "whisper-grove_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.85459995269775,
+			"kind": "building",
+			"manifest_height_m": 1.85459995269775,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.85459995269775,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1396
+		},
+		{
+			"asset": "whisper-grove_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.95719993114471,
+			"kind": "building",
+			"manifest_height_m": 1.95719993114471,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.95719993114471,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1396
+		},
+		{
+			"asset": "whisper-grove_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.05979990959167,
+			"kind": "building",
+			"manifest_height_m": 2.05979990959167,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.05979990959167,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1396
+		},
+		{
+			"asset": "chapel_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.32500004768372,
+			"kind": "building",
+			"manifest_height_m": 2.32500004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.32500004768372,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2260
+		},
+		{
+			"asset": "chapel_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.41499996185303,
+			"kind": "building",
+			"manifest_height_m": 2.41499996185303,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.41499996185303,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2260
+		},
+		{
+			"asset": "chapel_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.50499987602234,
+			"kind": "building",
+			"manifest_height_m": 2.50499987602234,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.50499987602234,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2400
+		},
+		{
+			"asset": "chapel_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.59500002861023,
+			"kind": "building",
+			"manifest_height_m": 2.59500002861023,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.59500002861023,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2400
+		},
+		{
+			"asset": "chapel_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.68499994277954,
+			"kind": "building",
+			"manifest_height_m": 2.68499994277954,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.68499994277954,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2456
+		},
+		{
+			"asset": "chapel_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.77499985694885,
+			"kind": "building",
+			"manifest_height_m": 2.77499985694885,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.77499985694885,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2456
+		},
+		{
+			"asset": "sunken-chapel_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.12999999523163,
+			"kind": "building",
+			"manifest_height_m": 1.12999999523163,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.12999999523163,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1052
+		},
+		{
+			"asset": "sunken-chapel_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.12999999523163,
+			"kind": "building",
+			"manifest_height_m": 1.12999999523163,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.12999999523163,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1052
+		},
+		{
+			"asset": "sunken-chapel_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1440
+		},
+		{
+			"asset": "sunken-chapel_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1440
+		},
+		{
+			"asset": "sunken-chapel_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1508
+		},
+		{
+			"asset": "sunken-chapel_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1508
+		},
+		{
+			"asset": "schoolroom_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.74000000953674,
+			"kind": "building",
+			"manifest_height_m": 1.74000000953674,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.74000000953674,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2116
+		},
+		{
+			"asset": "schoolroom_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.80499994754791,
+			"kind": "building",
+			"manifest_height_m": 1.80499994754791,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.80499994754791,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2116
+		},
+		{
+			"asset": "schoolroom_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.87000000476837,
+			"kind": "building",
+			"manifest_height_m": 1.87000000476837,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.87000000476837,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2132
+		},
+		{
+			"asset": "schoolroom_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.93499994277954,
+			"kind": "building",
+			"manifest_height_m": 1.93499994277954,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.93499994277954,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2836
+		},
+		{
+			"asset": "schoolroom_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.0,
+			"kind": "building",
+			"manifest_height_m": 2.0,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.0,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2836
+		},
+		{
+			"asset": "schoolroom_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.06500005722046,
+			"kind": "building",
+			"manifest_height_m": 2.06500005722046,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.06500005722046,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3088
+		},
+		{
+			"asset": "armory_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2024
+		},
+		{
+			"asset": "armory_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2024
+		},
+		{
+			"asset": "armory_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2428
+		},
+		{
+			"asset": "armory_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2632
+		},
+		{
+			"asset": "armory_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3336
+		},
+		{
+			"asset": "armory_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3404
+		},
+		{
+			"asset": "workshop_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2252
+		},
+		{
+			"asset": "workshop_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2252
+		},
+		{
+			"asset": "workshop_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2268
+		},
+		{
+			"asset": "workshop_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2472
+		},
+		{
+			"asset": "workshop_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3176
+		},
+		{
+			"asset": "workshop_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3244
+		},
+		{
+			"asset": "smeltery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.16999983787537,
+			"kind": "building",
+			"manifest_height_m": 2.16999983787537,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.16999983787537,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1804
+		},
+		{
+			"asset": "smeltery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.27999997138977,
+			"kind": "building",
+			"manifest_height_m": 2.27999997138977,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.27999997138977,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1888
+		},
+		{
+			"asset": "smeltery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.3899998664856,
+			"kind": "building",
+			"manifest_height_m": 2.3899998664856,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.3899998664856,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1988
+		},
+		{
+			"asset": "smeltery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.5,
+			"kind": "building",
+			"manifest_height_m": 2.5,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.5,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2072
+		},
+		{
+			"asset": "smeltery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.60999989509583,
+			"kind": "building",
+			"manifest_height_m": 2.60999989509583,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.60999989509583,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2156
+		},
+		{
+			"asset": "smeltery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.82999992370605,
+			"kind": "building",
+			"manifest_height_m": 2.82999992370605,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.82999992370605,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2296
+		},
+		{
+			"asset": "tannery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1789
+		},
+		{
+			"asset": "tannery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1789
+		},
+		{
+			"asset": "tannery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1805
+		},
+		{
+			"asset": "tannery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2009
+		},
+		{
+			"asset": "tannery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2713
+		},
+		{
+			"asset": "tannery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2781
+		},
+		{
+			"asset": "butchery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1808
+		},
+		{
+			"asset": "butchery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1808
+		},
+		{
+			"asset": "butchery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.48249995708466,
+			"kind": "building",
+			"manifest_height_m": 1.48249995708466,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.48249995708466,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2188
+		},
+		{
+			"asset": "butchery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56499993801117,
+			"kind": "building",
+			"manifest_height_m": 1.56499993801117,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56499993801117,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2448
+		},
+		{
+			"asset": "butchery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56499993801117,
+			"kind": "building",
+			"manifest_height_m": 1.56499993801117,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56499993801117,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3152
+		},
+		{
+			"asset": "butchery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64750003814697,
+			"kind": "building",
+			"manifest_height_m": 1.64750003814697,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.64750003814697,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3276
+		},
+		{
+			"asset": "bakery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.83999991416931,
+			"kind": "building",
+			"manifest_height_m": 1.83999991416931,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.83999991416931,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2116
+		},
+		{
+			"asset": "bakery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.94999992847443,
+			"kind": "building",
+			"manifest_height_m": 1.94999992847443,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.94999992847443,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2172
+		},
+		{
+			"asset": "bakery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.94999992847443,
+			"kind": "building",
+			"manifest_height_m": 1.94999992847443,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.94999992847443,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2188
+		},
+		{
+			"asset": "bakery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.94999992847443,
+			"kind": "building",
+			"manifest_height_m": 1.94999992847443,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.94999992847443,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2392
+		},
+		{
+			"asset": "bakery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.0,
+			"kind": "building",
+			"manifest_height_m": 2.0,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.0,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3096
+		},
+		{
+			"asset": "bakery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.07500004768372,
+			"kind": "building",
+			"manifest_height_m": 2.07500004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.07500004768372,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3220
+		},
+		{
+			"asset": "mason_yard_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1444
+		},
+		{
+			"asset": "mason_yard_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1444
+		},
+		{
+			"asset": "mason_yard_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17808985710144
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1772
+		},
+		{
+			"asset": "mason_yard_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17808985710144
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1772
+		},
+		{
+			"asset": "mason_yard_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17808985710144
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1772
+		},
+		{
+			"asset": "mason_yard_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17808985710144
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1772
+		},
+		{
+			"asset": "emberglass_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.10749995708466,
+			"kind": "building",
+			"manifest_height_m": 1.10749995708466,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.10749995708466,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1404
+		},
+		{
+			"asset": "emberglass_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.13750004768372,
+			"kind": "building",
+			"manifest_height_m": 1.13750004768372,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.13750004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1420
+		},
+		{
+			"asset": "emberglass_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.16750001907349,
+			"kind": "building",
+			"manifest_height_m": 1.16750001907349,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.16750001907349,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1436
+		},
+		{
+			"asset": "emberglass_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 1.19749999046326,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1560
+		},
+		{
+			"asset": "emberglass_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.22749996185303,
+			"kind": "building",
+			"manifest_height_m": 1.22749996185303,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.22749996185303,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1576
+		},
+		{
+			"asset": "emberglass_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.2574999332428,
+			"kind": "building",
+			"manifest_height_m": 1.2574999332428,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.2574999332428,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1592
+		},
+		{
+			"asset": "fletcher_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1988
+		},
+		{
+			"asset": "fletcher_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1988
+		},
+		{
+			"asset": "fletcher_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2004
+		},
+		{
+			"asset": "fletcher_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2208
+		},
+		{
+			"asset": "fletcher_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2912
+		},
+		{
+			"asset": "fletcher_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2980
+		},
+		{
+			"asset": "scout_post_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.50999999046326,
+			"kind": "building",
+			"manifest_height_m": 1.50999999046326,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.50999999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1384
+		},
+		{
+			"asset": "scout_post_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.50999999046326,
+			"kind": "building",
+			"manifest_height_m": 1.50999999046326,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.50999999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1384
+		},
+		{
+			"asset": "scout_post_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.50999999046326,
+			"kind": "building",
+			"manifest_height_m": 1.50999999046326,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.50999999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1400
+		},
+		{
+			"asset": "scout_post_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.54199993610382,
+			"kind": "building",
+			"manifest_height_m": 1.54199993610382,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.54199993610382,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1496
+		},
+		{
+			"asset": "scout_post_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.57400000095367,
+			"kind": "building",
+			"manifest_height_m": 1.57400000095367,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.57400000095367,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1496
+		},
+		{
+			"asset": "scout_post_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.60599994659424,
+			"kind": "building",
+			"manifest_height_m": 1.60599994659424,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.60599994659424,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1496
+		},
+		{
+			"asset": "watchfire_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.954999983310699,
+			"kind": "building",
+			"manifest_height_m": 0.9549999833107,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.954999983310699,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1052
+		},
+		{
+			"asset": "watchfire_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.995000004768372,
+			"kind": "building",
+			"manifest_height_m": 0.995000004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.995000004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1052
+		},
+		{
+			"asset": "watchfire_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.4375,
+			"kind": "building",
+			"manifest_height_m": 1.4375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.4375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1220
+		},
+		{
+			"asset": "watchfire_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.4375,
+			"kind": "building",
+			"manifest_height_m": 1.4375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.4375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1220
+		},
+		{
+			"asset": "watchfire_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.97499990463257,
+			"kind": "building",
+			"manifest_height_m": 1.97499990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.97499990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1288
+		},
+		{
+			"asset": "watchfire_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.97499990463257,
+			"kind": "building",
+			"manifest_height_m": 1.97499990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.97499990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1288
+		},
+		{
+			"asset": "ballista_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 1.99749994277954,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1344
+		},
+		{
+			"asset": "ballista_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 2.19749999046326,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1344
+		},
+		{
+			"asset": "ballista_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.39749979972839,
+			"kind": "building",
+			"manifest_height_m": 2.39749979972839,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.39749979972839,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1344
+		},
+		{
+			"asset": "ballista_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.59749984741211,
+			"kind": "building",
+			"manifest_height_m": 2.59749984741211,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.59749984741211,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1468
+		},
+		{
+			"asset": "ballista_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.79749989509583,
+			"kind": "building",
+			"manifest_height_m": 2.79749989509583,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.79749989509583,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1468
+		},
+		{
+			"asset": "ballista_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 2.99749994277954,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1468
+		},
+		{
+			"asset": "bastion_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 1.99749994277954,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1484
+		},
+		{
+			"asset": "bastion_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 2.19749999046326,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1484
+		},
+		{
+			"asset": "bastion_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.39749979972839,
+			"kind": "building",
+			"manifest_height_m": 2.39749979972839,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.39749979972839,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1484
+		},
+		{
+			"asset": "bastion_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.59749984741211,
+			"kind": "building",
+			"manifest_height_m": 2.59749984741211,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.59749984741211,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1608
+		},
+		{
+			"asset": "bastion_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.79749989509583,
+			"kind": "building",
+			"manifest_height_m": 2.79749989509583,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.79749989509583,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1608
+		},
+		{
+			"asset": "bastion_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 2.99749994277954,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1608
+		},
+		{
+			"asset": "rampart_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.17499995231628,
+			"kind": "building",
+			"manifest_height_m": 1.17499995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.17499995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 824
+		},
+		{
+			"asset": "rampart_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.2849999666214,
+			"kind": "building",
+			"manifest_height_m": 1.2849999666214,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.2849999666214,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 824
+		},
+		{
+			"asset": "rampart_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.52999985218048,
+			"kind": "building",
+			"manifest_height_m": 1.52999985218048,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.52999985218048,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "rampart_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.52999985218048,
+			"kind": "building",
+			"manifest_height_m": 1.52999985218048,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.52999985218048,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "rampart_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.61499989032745,
+			"kind": "building",
+			"manifest_height_m": 1.61499989032745,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.61499989032745,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "rampart_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.72500002384186,
+			"kind": "building",
+			"manifest_height_m": 1.72500002384186,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.72500002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "longhouse_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.76499998569489,
+			"kind": "building",
+			"manifest_height_m": 1.76499998569489,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.76499998569489,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1668
+		},
+		{
+			"asset": "longhouse_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.87999999523163,
+			"kind": "building",
+			"manifest_height_m": 1.87999999523163,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.87999999523163,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1920
+		},
+		{
+			"asset": "longhouse_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.88499999046326,
+			"kind": "building",
+			"manifest_height_m": 1.88499999046326,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.88499999046326,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1936
+		},
+		{
+			"asset": "longhouse_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.9449999332428,
+			"kind": "building",
+			"manifest_height_m": 1.9449999332428,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.9449999332428,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2152
+		},
+		{
+			"asset": "longhouse_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.00500011444092,
+			"kind": "building",
+			"manifest_height_m": 2.00500011444092,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				2.00500011444092,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2596
+		},
+		{
+			"asset": "longhouse_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.06500005722046,
+			"kind": "building",
+			"manifest_height_m": 2.06500005722046,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				2.06500005722046,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2596
+		},
+		{
+			"asset": "bellcote_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.71499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.71499991416931,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.71499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1156
+		},
+		{
+			"asset": "bell-tower_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.25499987602234,
+			"kind": "building",
+			"manifest_height_m": 2.25499987602234,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.25499987602234,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1500
+		},
+		{
+			"asset": "bell-tower_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.41499996185303,
+			"kind": "building",
+			"manifest_height_m": 2.41499996185303,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.41499996185303,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1500
+		},
+		{
+			"asset": "bell-tower_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.57500004768372,
+			"kind": "building",
+			"manifest_height_m": 2.57500004768372,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.57500004768372,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1584
+		},
+		{
+			"asset": "bell-tower_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.73499989509583,
+			"kind": "building",
+			"manifest_height_m": 2.73499989509583,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.73499989509583,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1584
+		},
+		{
+			"asset": "bell-tower_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.89499998092651,
+			"kind": "building",
+			"manifest_height_m": 2.89499998092651,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.89499998092651,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1584
+		},
+		{
+			"asset": "bell-tower_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 3.0550000667572,
+			"kind": "building",
+			"manifest_height_m": 3.0550000667572,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				3.0550000667572,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1584
+		},
+		{
+			"asset": "blackwater-weir_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.879999995231628,
+			"kind": "building",
+			"manifest_height_m": 0.879999995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.879999995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1672
+		},
+		{
+			"asset": "blackwater-weir_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.879999995231628,
+			"kind": "building",
+			"manifest_height_m": 0.879999995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.879999995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1672
+		},
+		{
+			"asset": "blackwater-weir_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.879999995231628,
+			"kind": "building",
+			"manifest_height_m": 0.879999995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.879999995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1672
+		},
+		{
+			"asset": "blackwater-weir_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.46499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.46499991416931,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.46499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2088
+		},
+		{
+			"asset": "blackwater-weir_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.46499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.46499991416931,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.46499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2088
+		},
+		{
+			"asset": "blackwater-weir_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.46499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.46499991416931,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.46499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2088
+		},
+		{
+			"asset": "deephole_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.18624997138977,
+			"kind": "building",
+			"manifest_height_m": 1.18624997138977,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.18624997138977,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1844
+		},
+		{
+			"asset": "deephole_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.18624997138977,
+			"kind": "building",
+			"manifest_height_m": 1.18624997138977,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.18624997138977,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1860
+		},
+		{
+			"asset": "deephole_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.18624997138977,
+			"kind": "building",
+			"manifest_height_m": 1.18624997138977,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.18624997138977,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1892
+		},
+		{
+			"asset": "deephole_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 1.19749999046326,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2016
+		},
+		{
+			"asset": "deephole_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.22749996185303,
+			"kind": "building",
+			"manifest_height_m": 1.22749996185303,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.22749996185303,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2032
+		},
+		{
+			"asset": "deephole_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.2574999332428,
+			"kind": "building",
+			"manifest_height_m": 1.2574999332428,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.2574999332428,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2048
+		},
+		{
+			"asset": "cairnfield_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.0699999332428,
+			"kind": "building",
+			"manifest_height_m": 1.0699999332428,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.0699999332428,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1296
+		},
+		{
+			"asset": "moon-dial_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.761383056640625,
+			"kind": "building",
+			"manifest_height_m": 0.761383056640625,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.761383056640625,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1084
+		},
+		{
+			"asset": "dawn-gate_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56499993801117,
+			"kind": "building",
+			"manifest_height_m": 1.56499993801117,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.56499993801117,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1624
+		},
+		{
+			"asset": "char_diver",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337098926306,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844113826752,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 0.885939478874207,
+					"max_skinned_vertex_delta_m": 0.137610048055649,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.24118828773499,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 0.885939478874207,
+					"max_skinned_vertex_delta_m": 0.137610048055649,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72487139701843,
+			"kind": "character",
+			"manifest_height_m": 1.72487199306488,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.770714461803436,
+				-0.00000000679040912388018,
+				-0.316296011209488
+			],
+			"size_m": [
+				1.54142785072327,
+				1.72487139701843,
+				0.632584691047668
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1339
+		},
+		{
+			"asset": "char_sapper",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.016633152961731,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570830941200256,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 2.96666669845581,
+					"max_pose_delta": 1.42582899332047,
+					"max_skinned_vertex_delta_m": 0.981456637382507,
+					"sample_times_s": [
+						0.593333339691162,
+						1.18666667938232,
+						1.78000001907349,
+						2.37333335876465,
+						2.93700003147125
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.24118614196777,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 2.96666669845581,
+					"max_pose_delta": 1.42582899332047,
+					"max_skinned_vertex_delta_m": 0.981456637382507,
+					"sample_times_s": [
+						0.593333339691162,
+						1.18666667938232,
+						1.78000001907349,
+						2.37333335876465,
+						2.93700003147125
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72487139701843,
+			"kind": "character",
+			"manifest_height_m": 1.72487199306488,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.772053599357605,
+				-0.000000000234951613720114,
+				-0.331322759389877
+			],
+			"size_m": [
+				1.54410696029663,
+				1.72487139701843,
+				0.662651300430298
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1129
+		},
+		{
+			"asset": "char_smelter",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331082582474,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570830941200256,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 2.0,
+					"max_pose_delta": 0.957697714222284,
+					"max_skinned_vertex_delta_m": 0.457545697689056,
+					"sample_times_s": [
+						0.4,
+						0.8,
+						1.2,
+						1.6,
+						1.98
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.24118614196777,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 2.0,
+					"max_pose_delta": 0.957697714222284,
+					"max_skinned_vertex_delta_m": 0.457545697689056,
+					"sample_times_s": [
+						0.4,
+						0.8,
+						1.2,
+						1.6,
+						1.98
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72487139701843,
+			"kind": "character",
+			"manifest_height_m": 1.72487199306488,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.757270753383636,
+				0.00000000677929534731447,
+				-0.293938875198364
+			],
+			"size_m": [
+				1.51454162597656,
+				1.72487139701843,
+				0.587880432605743
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1157
+		},
+		{
+			"asset": "char_forager",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337303817272,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844113826752,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301364630460739,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.36582899093628,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301364630460739,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.73002004623413,
+			"kind": "character",
+			"manifest_height_m": 1.73002064228058,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.771686911582947,
+				-0.000000021691342055874,
+				-0.316292196512222
+			],
+			"size_m": [
+				1.54337620735168,
+				1.73002004623413,
+				0.632584691047668
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 954
+		},
+		{
+			"asset": "char_miller",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331324726343,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570830941200256,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 0.533333361148834,
+					"max_pose_delta": 1.17906922101974,
+					"max_skinned_vertex_delta_m": 0.541901707649231,
+					"sample_times_s": [
+						0.106666672229767,
+						0.213333344459534,
+						0.320000016689301,
+						0.426666688919067,
+						0.528000027537346
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.26622605323792,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 0.533333361148834,
+					"max_pose_delta": 1.17906922101974,
+					"max_skinned_vertex_delta_m": 0.541901707649231,
+					"sample_times_s": [
+						0.106666672229767,
+						0.213333344459534,
+						0.320000016689301,
+						0.426666688919067,
+						0.528000027537346
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72882747650146,
+			"kind": "character",
+			"manifest_height_m": 1.72882807254791,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.771687388420105,
+				-0.00000000905250274740865,
+				-0.296521872282028
+			],
+			"size_m": [
+				1.54337620735168,
+				1.72882747650146,
+				0.593048095703125
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 965
+		},
+		{
+			"asset": "char_butcher",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337434202433,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844054222107,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 1.42098349332809,
+					"max_skinned_vertex_delta_m": 0.877473950386047,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.26622819900513,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 1.42098349332809,
+					"max_skinned_vertex_delta_m": 0.877473950386047,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72882747650146,
+			"kind": "character",
+			"manifest_height_m": 1.72882807254791,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.738857388496399,
+				-0.0000000016026557858595,
+				-0.296525031328201
+			],
+			"size_m": [
+				1.47771465778351,
+				1.72882747650146,
+				0.593048095703125
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1005
+		},
+		{
+			"asset": "char_haggler",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0173551086336374,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320755243301,
+					"max_skinned_vertex_delta_m": 0.595604181289673,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 18,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210375762391,
+					"max_skinned_vertex_delta_m": 0.695201694965363,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.36455154418945,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 18,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210375762391,
+					"max_skinned_vertex_delta_m": 0.695201694965363,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.80383610725403,
+			"kind": "character",
+			"manifest_height_m": 1.80383598804474,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.780750930309296,
+				-0.0000000468410910059447,
+				-0.339511156082153
+			],
+			"size_m": [
+				1.56150388717651,
+				1.80383610725403,
+				0.679018497467041
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1067
+		},
+		{
+			"asset": "char_heartwarden",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331343352795,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570830941200256,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 1.42098349332809,
+					"max_skinned_vertex_delta_m": 0.986457943916321,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.36582398414612,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 1.42098349332809,
+					"max_skinned_vertex_delta_m": 0.986457943916321,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.73002004623413,
+			"kind": "character",
+			"manifest_height_m": 1.73002064228058,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.775901734828949,
+				-0.000000014240259638143,
+				-0.316292852163315
+			],
+			"size_m": [
+				1.55180323123932,
+				1.73002004623413,
+				0.632584691047668
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 956
+		},
+		{
+			"asset": "char_healer",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 18,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0142540838569403,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.489181488752365,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 16,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.442038089036942,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.02740430831909,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 16,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.442038089036942,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.48254776000977,
+			"kind": "character",
+			"manifest_height_m": 1.48254776000977,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.633021533489227,
+				-0.0000000533502202415548,
+				-0.271048963069916
+			],
+			"size_m": [
+				1.26604270935059,
+				1.48254776000977,
+				0.542096018791199
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1094
+		},
+		{
+			"asset": "char_chorister",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 18,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0142541071400046,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.489181488752365,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 16,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.560320734977722,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.02740406990051,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 16,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.560320734977722,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.48254776000977,
+			"kind": "character",
+			"manifest_height_m": 1.48254776000977,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.659737169742584,
+				-0.000000055472071380791,
+				-0.253251045942307
+			],
+			"size_m": [
+				1.31947493553162,
+				1.48254776000977,
+				0.506498754024506
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1050
+		},
+		{
+			"asset": "char_sawyer",
+			"clips": [
+				{
+					"bone_tracks": 24,
+					"changed_bones": 20,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0222189892083406,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 24
+				},
+				{
+					"bone_tracks": 24,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844113826752,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 24
+				},
+				{
+					"bone_tracks": 24,
+					"changed_bones": 18,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 0.533333361148834,
+					"max_pose_delta": 1.17906922101974,
+					"max_skinned_vertex_delta_m": 0.541893720626831,
+					"sample_times_s": [
+						0.106666672229767,
+						0.213333344459534,
+						0.320000016689301,
+						0.426666688919067,
+						0.528000027537346
+					],
+					"tracks": 24
+				},
+				{
+					"bone_tracks": 24,
+					"changed_bones": 21,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.17035722732544,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 24
+				},
+				{
+					"bone_tracks": 24,
+					"changed_bones": 18,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 0.533333361148834,
+					"max_pose_delta": 1.17906922101974,
+					"max_skinned_vertex_delta_m": 0.541893720626831,
+					"sample_times_s": [
+						0.106666672229767,
+						0.213333344459534,
+						0.320000016689301,
+						0.426666688919067,
+						0.528000027537346
+					],
+					"tracks": 24
+				}
+			],
+			"errors": [],
+			"height_m": 1.72882747650146,
+			"kind": "character",
+			"manifest_height_m": 1.72882807254791,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.775901675224304,
+				-0.00000000733228766591765,
+				-0.325390249490738
+			],
+			"size_m": [
+				1.55180299282074,
+				1.72882747650146,
+				0.650782942771912
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1023
+		},
+		{
+			"asset": "char_woodward",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331566870213,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570831000804901,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 1.42098349332809,
+					"max_skinned_vertex_delta_m": 0.986457288265228,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.36582374572754,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 1.42098349332809,
+					"max_skinned_vertex_delta_m": 0.986457288265228,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.73002004623413,
+			"kind": "character",
+			"manifest_height_m": 1.73002064228058,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.775901675224304,
+				-0.0000000223393108456094,
+				-0.305413663387299
+			],
+			"size_m": [
+				1.55180323123932,
+				1.73002004623413,
+				0.610826015472412
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 964
+		},
+		{
+			"asset": "char_halberdier",
+			"clips": [
+				{
+					"bone_tracks": 27,
+					"changed_bones": 18,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.014879809692502,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320762610841,
+					"max_skinned_vertex_delta_m": 0.510652542114258,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 18,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.29999995231628,
+					"max_pose_delta": 1.23530869653386,
+					"max_skinned_vertex_delta_m": 0.811146020889282,
+					"sample_times_s": [
+						0.259999990463257,
+						0.519999980926514,
+						0.779999971389771,
+						1.03999996185303,
+						1.28699995279312
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878201359627,
+					"max_skinned_vertex_delta_m": 2.20586729049683,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 18,
+					"clip": "attack",
+					"invalid_tracks": [],
+					"length_s": 1.29999995231628,
+					"max_pose_delta": 1.23530869653386,
+					"max_skinned_vertex_delta_m": 0.811146020889282,
+					"sample_times_s": [
+						0.259999990463257,
+						0.519999980926514,
+						0.779999971389771,
+						1.03999996185303,
+						1.28699995279312
+					],
+					"tracks": 27
+				}
+			],
+			"errors": [],
+			"height_m": 1.66332149505615,
+			"kind": "character",
+			"manifest_height_m": 1.66332149505615,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.690536856651306,
+				-0.0000000141046534452016,
+				-0.273205757141113
+			],
+			"size_m": [
+				1.38107395172119,
+				1.66332149505615,
+				0.546418845653534
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1177
+		},
+		{
+			"asset": "char_pikewoman",
+			"clips": [
+				{
+					"bone_tracks": 27,
+					"changed_bones": 18,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.014879590831697,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320762610841,
+					"max_skinned_vertex_delta_m": 0.51064670085907,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 18,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.29999995231628,
+					"max_pose_delta": 1.23530869653386,
+					"max_skinned_vertex_delta_m": 0.743575692176819,
+					"sample_times_s": [
+						0.259999990463257,
+						0.519999980926514,
+						0.779999971389771,
+						1.03999996185303,
+						1.28699995279312
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878201359627,
+					"max_skinned_vertex_delta_m": 2.03230810165405,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 18,
+					"clip": "attack",
+					"invalid_tracks": [],
+					"length_s": 1.29999995231628,
+					"max_pose_delta": 1.23530869653386,
+					"max_skinned_vertex_delta_m": 0.743575692176819,
+					"sample_times_s": [
+						0.259999990463257,
+						0.519999980926514,
+						0.779999971389771,
+						1.03999996185303,
+						1.28699995279312
+					],
+					"tracks": 27
+				}
+			],
+			"errors": [],
+			"height_m": 1.5429961681366,
+			"kind": "character",
+			"manifest_height_m": 1.5429961681366,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.690536320209503,
+				-0.0000000594199391912298,
+				-0.262946546077728
+			],
+			"size_m": [
+				1.38107395172119,
+				1.5429961681366,
+				0.525892734527588
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1055
+		},
+		{
+			"asset": "char_oathsworn",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 18,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0148798208683729,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320762610841,
+					"max_skinned_vertex_delta_m": 0.524869680404663,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.44673359394073,
+					"max_skinned_vertex_delta_m": 0.500146389007568,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878201359627,
+					"max_skinned_vertex_delta_m": 2.20586705207825,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "attack",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.44673359394073,
+					"max_skinned_vertex_delta_m": 0.500146389007568,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.66332149505615,
+			"kind": "character",
+			"manifest_height_m": 1.66332149505615,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.766013622283936,
+				-0.0000000141046649915211,
+				-0.273205757141113
+			],
+			"size_m": [
+				1.53202831745148,
+				1.66332149505615,
+				0.546418845653534
+			],
+			"skeletons": 1,
+			"skinned_meshes": 4,
+			"textures": 1,
+			"triangles": 1287
+		},
+		{
+			"asset": "char_warden",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 18,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0148795414716005,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320762610841,
+					"max_skinned_vertex_delta_m": 0.524871230125427,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.44673359394073,
+					"max_skinned_vertex_delta_m": 0.500144839286804,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878201359627,
+					"max_skinned_vertex_delta_m": 2.20586538314819,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "attack",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.44673359394073,
+					"max_skinned_vertex_delta_m": 0.500144839286804,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.66332149505615,
+			"kind": "character",
+			"manifest_height_m": 1.66332149505615,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.766013562679291,
+				-0.0000000594199320858024,
+				-0.262946546077728
+			],
+			"size_m": [
+				1.53202819824219,
+				1.66332149505615,
+				0.525892734527588
+			],
+			"skeletons": 1,
+			"skinned_meshes": 4,
+			"textures": 1,
+			"triangles": 1223
+		},
+		{
+			"asset": "char_squire",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331306099892,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570830941200256,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.44673373994171,
+					"max_skinned_vertex_delta_m": 0.559095919132233,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.24118590354919,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "attack",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.44673373994171,
+					"max_skinned_vertex_delta_m": 0.559095919132233,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72487139701843,
+			"kind": "character",
+			"manifest_height_m": 1.72487199306488,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.768935799598694,
+				-0.000000030473604084591,
+				-0.293938875198364
+			],
+			"size_m": [
+				1.53787243366241,
+				1.72487139701843,
+				0.587880432605743
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1120
+		},
+		{
+			"asset": "char_weaponsmith",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0157811492681503,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.541590869426727,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 2.13333344459534,
+					"max_pose_delta": 1.90228337049484,
+					"max_skinned_vertex_delta_m": 0.799359261989594,
+					"sample_times_s": [
+						0.426666688919067,
+						0.853333377838135,
+						1.2800000667572,
+						1.70666675567627,
+						2.11200011014938
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.12638425827026,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 2.13333344459534,
+					"max_pose_delta": 1.90228337049484,
+					"max_skinned_vertex_delta_m": 0.799359261989594,
+					"sample_times_s": [
+						0.426666688919067,
+						0.853333377838135,
+						1.2800000667572,
+						1.70666675567627,
+						2.11200011014938
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.63651752471924,
+			"kind": "character",
+			"manifest_height_m": 1.63651728630066,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.73285299539566,
+				-0.0000000226070699937964,
+				-0.278880685567856
+			],
+			"size_m": [
+				1.46570575237274,
+				1.63651752471924,
+				0.557767152786255
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1149
+		},
+		{
+			"asset": "char_armorer",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166336987167597,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570843994617462,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 2.13333344459534,
+					"max_pose_delta": 1.90228337049484,
+					"max_skinned_vertex_delta_m": 0.842515230178833,
+					"sample_times_s": [
+						0.426666688919067,
+						0.853333377838135,
+						1.2800000667572,
+						1.70666675567627,
+						2.11200011014938
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.24118828773499,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 2.13333344459534,
+					"max_pose_delta": 1.90228337049484,
+					"max_skinned_vertex_delta_m": 0.842515230178833,
+					"sample_times_s": [
+						0.426666688919067,
+						0.853333377838135,
+						1.2800000667572,
+						1.70666675567627,
+						2.11200011014938
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72487139701843,
+			"kind": "character",
+			"manifest_height_m": 1.72487199306488,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.76518702507019,
+				-0.00000000812259504101576,
+				-0.293942034244537
+			],
+			"size_m": [
+				1.5303738117218,
+				1.72487139701843,
+				0.587880432605743
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1093
+		},
+		{
+			"asset": "char_toolsmith",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337434202433,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844054222107,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 2.0,
+					"max_pose_delta": 0.957697714222284,
+					"max_skinned_vertex_delta_m": 0.480936348438263,
+					"sample_times_s": [
+						0.4,
+						0.8,
+						1.2,
+						1.6,
+						1.98
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.24118828773499,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 2.0,
+					"max_pose_delta": 0.957697714222284,
+					"max_skinned_vertex_delta_m": 0.480936348438263,
+					"sample_times_s": [
+						0.4,
+						0.8,
+						1.2,
+						1.6,
+						1.98
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72487139701843,
+			"kind": "character",
+			"manifest_height_m": 1.72487199306488,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.765187203884125,
+				0.000000000660395294005411,
+				-0.316292196512222
+			],
+			"size_m": [
+				1.5303738117218,
+				1.72487139701843,
+				0.632584691047668
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1293
+		},
+		{
+			"asset": "char_mason",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337378323078,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844054222107,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 2.13333344459534,
+					"max_pose_delta": 1.90228337049484,
+					"max_skinned_vertex_delta_m": 0.846839070320129,
+					"sample_times_s": [
+						0.426666688919067,
+						0.853333377838135,
+						1.2800000667572,
+						1.70666675567627,
+						2.11200011014938
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.26622867584229,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 14,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 2.13333344459534,
+					"max_pose_delta": 1.90228337049484,
+					"max_skinned_vertex_delta_m": 0.846839070320129,
+					"sample_times_s": [
+						0.426666688919067,
+						0.853333377838135,
+						1.2800000667572,
+						1.70666675567627,
+						2.11200011014938
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72882747650146,
+			"kind": "character",
+			"manifest_height_m": 1.72882807254791,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.743386507034302,
+				-0.0000000016026557858595,
+				-0.296525001525879
+			],
+			"size_m": [
+				1.48677444458008,
+				1.72882747650146,
+				0.59304803609848
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 962
+		},
+		{
+			"asset": "char_apprentice",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337657719851,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844054222107,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301366209983826,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.26622819900513,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301366209983826,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72882747650146,
+			"kind": "character",
+			"manifest_height_m": 1.72882807254791,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.7244553565979,
+				0.00000000011788170439786,
+				-0.325394064188004
+			],
+			"size_m": [
+				1.44890856742859,
+				1.72882747650146,
+				0.650782942771912
+			],
+			"skeletons": 1,
+			"skinned_meshes": 2,
+			"textures": 1,
+			"triangles": 1005
+		},
+		{
+			"asset": "char_scholar",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 18,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0142540838569403,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.489181518554688,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 16,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.560322880744934,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.02740454673767,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 16,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.560322880744934,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.48254787921906,
+			"kind": "character",
+			"manifest_height_m": 1.48254776000977,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.659737050533295,
+				-0.0000000682509266880516,
+				-0.27104514837265
+			],
+			"size_m": [
+				1.31947493553162,
+				1.48254787921906,
+				0.542096018791199
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1106
+		},
+		{
+			"asset": "char_leatherworker",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337769478559,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844054222107,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301366299390793,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.26622819900513,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301366299390793,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.72882747650146,
+			"kind": "character",
+			"manifest_height_m": 1.72882807254791,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.737761616706848,
+				-0.00000000733269978070439,
+				-0.325394064188004
+			],
+			"size_m": [
+				1.47552251815796,
+				1.72882747650146,
+				0.650782942771912
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1037
+		},
+		{
+			"asset": "char_ranger",
+			"clips": [
+				{
+					"bone_tracks": 27,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337322443724,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.624782264232636,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 21,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 2.17835297221551,
+					"max_skinned_vertex_delta_m": 0.919415056705475,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.3658287525177,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 21,
+					"clip": "attack",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 2.17835297221551,
+					"max_skinned_vertex_delta_m": 0.919415056705475,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 27
+				}
+			],
+			"errors": [],
+			"height_m": 1.73002004623413,
+			"kind": "character",
+			"manifest_height_m": 1.73002064228058,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.843097567558289,
+				-0.000000029204446860831,
+				-0.315253138542175
+			],
+			"size_m": [
+				1.68619513511658,
+				1.73002004623413,
+				0.630496621131897
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1250
+		},
+		{
+			"asset": "char_longbowman",
+			"clips": [
+				{
+					"bone_tracks": 27,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331492364407,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.684642553329468,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 21,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 2.17835297221551,
+					"max_skinned_vertex_delta_m": 0.919413566589355,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.3404233455658,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 27
+				},
+				{
+					"bone_tracks": 27,
+					"changed_bones": 21,
+					"clip": "attack",
+					"invalid_tracks": [],
+					"length_s": 1.06666672229767,
+					"max_pose_delta": 2.17835297221551,
+					"max_skinned_vertex_delta_m": 0.919413566589355,
+					"sample_times_s": [
+						0.213333344459534,
+						0.426666688919067,
+						0.640000033378601,
+						0.853333377838135,
+						1.05600005507469
+					],
+					"tracks": 27
+				}
+			],
+			"errors": [],
+			"height_m": 1.87832725048065,
+			"kind": "character",
+			"manifest_height_m": 1.87832796573639,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.876254200935364,
+				-0.00000000739403738236888,
+				-0.324344217777252
+			],
+			"size_m": [
+				1.75250995159149,
+				1.87832725048065,
+				0.648694753646851
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1288
+		},
+		{
+			"asset": "char_scout",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166337210685015,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570844054222107,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.464361220598221,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.34042549133301,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.464361220598221,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.87832725048065,
+			"kind": "character",
+			"manifest_height_m": 1.87832796573639,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.724454998970032,
+				-0.0000000154317483236355,
+				-0.314514875411987
+			],
+			"size_m": [
+				1.44890880584717,
+				1.87832725048065,
+				0.629024207592011
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1073
+		},
+		{
+			"asset": "char_mudlark",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331212967634,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570830941200256,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301363289356232,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.36582374572754,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 17,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.20000004768372,
+					"max_pose_delta": 1.11161097372851,
+					"max_skinned_vertex_delta_m": 0.301363289356232,
+					"sample_times_s": [
+						0.240000009536743,
+						0.480000019073486,
+						0.720000028610229,
+						0.960000038146973,
+						1.18800004720688
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.73002004623413,
+			"kind": "character",
+			"manifest_height_m": 1.73002064228058,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.770713984966278,
+				-0.00000000678967992939761,
+				-0.316292852163315
+			],
+			"size_m": [
+				1.54142761230469,
+				1.73002004623413,
+				0.632584691047668
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1089
+		},
+		{
+			"asset": "char_tidecaller",
+			"clips": [
+				{
+					"bone_tracks": 25,
+					"changed_bones": 21,
+					"clip": "idle",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 0.137937039136887,
+					"max_skinned_vertex_delta_m": 0.0166331436485052,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 19,
+					"clip": "walk",
+					"invalid_tracks": [],
+					"length_s": 0.833333313465118,
+					"max_pose_delta": 1.45320757712206,
+					"max_skinned_vertex_delta_m": 0.570830941200256,
+					"sample_times_s": [
+						0.166666662693024,
+						0.333333325386047,
+						0.499999988079071,
+						0.666666650772095,
+						0.824999980330467
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "work",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.530849695205688,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 22,
+					"clip": "death",
+					"invalid_tracks": [],
+					"length_s": 0.633333325386047,
+					"max_pose_delta": 1.96878196948165,
+					"max_skinned_vertex_delta_m": 2.36582446098328,
+					"sample_times_s": [
+						0.126666665077209,
+						0.253333330154419,
+						0.379999995231628,
+						0.506666660308838,
+						0.626999992132187
+					],
+					"tracks": 25
+				},
+				{
+					"bone_tracks": 25,
+					"changed_bones": 20,
+					"clip": "gather",
+					"invalid_tracks": [],
+					"length_s": 1.26666665077209,
+					"max_pose_delta": 1.19210370863757,
+					"max_skinned_vertex_delta_m": 0.530849695205688,
+					"sample_times_s": [
+						0.253333330154419,
+						0.506666660308838,
+						0.759999990463257,
+						1.01333332061768,
+						1.25399998426437
+					],
+					"tracks": 25
+				}
+			],
+			"errors": [],
+			"height_m": 1.73002004623413,
+			"kind": "character",
+			"manifest_height_m": 1.73002064228058,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.731479585170746,
+				-0.0000000154780863681481,
+				-0.295520663261414
+			],
+			"size_m": [
+				1.46295821666718,
+				1.73002004623413,
+				0.591045320034027
+			],
+			"skeletons": 1,
+			"skinned_meshes": 3,
+			"textures": 1,
+			"triangles": 1022
 		}
 	],
 	"base_tolerance_m": 0.02,
 	"bounds_method": "Static transformed mesh AABBs; character CPU-skinned vertices at imported rest pose, including tools. Heights informational.",
 	"counts": {
-		"assets": 133,
-		"building_types": 23,
-		"buildings": 125,
-		"characters": 8
+		"assets": 310,
+		"building_types": 51,
+		"buildings": 273,
+		"characters": 37
 	},
 	"failures": [],
 	"godot_version": "4.7.2-stable (official)",

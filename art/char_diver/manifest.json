@@ -1,0 +1,40 @@
+{
+  "asset": "char_diver",
+  "file": "char_diver.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | diver Rig",
+    "MMR Character | diver Body",
+    "MMR Character | diver Held net",
+    "MMR Character | diver Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.541428565979004,
+    1.7248719930648804,
+    0.6325874328613281
+  ],
+  "triangles": 1339,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Fishing_Reeling",
+    "death": "Death_A",
+    "gather": "Fishing_Reeling"
+  },
+  "sha256": "6b16563ac746135430af5978a8b9007ebdc7ecd9a5a96813250e258027e5f5e1",
+  "verified": true
+}

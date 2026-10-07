@@ -1,0 +1,40 @@
+{
+  "asset": "char_forager",
+  "file": "char_forager.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | forager Rig",
+    "MMR Character | forager Body",
+    "MMR Character | forager Held sickle",
+    "MMR Character | forager Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5433769226074219,
+    1.7300206422805786,
+    0.6325874328613281
+  ],
+  "triangles": 954,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Working_A",
+    "death": "Death_A",
+    "gather": "Working_A"
+  },
+  "sha256": "863b3b926429d4a9213ff763352f56fb10630c89dd2625f29952ad188b1c4a4f",
+  "verified": true
+}

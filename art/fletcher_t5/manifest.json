@@ -1,0 +1,26 @@
+{
+  "asset": "fletcher_t5",
+  "file": "fletcher_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | fletcher | T05 Architecture",
+    "MMR | fletcher | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.5125000476837158,
+    1.2999999523162842
+  ],
+  "triangles": 2912,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "1bacd83c6bce6b7f6b3a2d46cbac1fefdca6de1e35b83d5bae8f29bd8f964a6b",
+  "verified": true
+}

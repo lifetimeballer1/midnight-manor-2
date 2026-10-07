@@ -1,0 +1,26 @@
+{
+  "asset": "whisper-grove_t3",
+  "file": "whisper-grove_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | whisper-grove | T03 Architecture",
+    "MMR | whisper-grove | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    1.751999855041504,
+    2.3499984741210938
+  ],
+  "triangles": 1300,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "bb4328b2a71cee15a2442fe5c0446278e2437696b8688926524ca9aedb9ad153",
+  "verified": true
+}

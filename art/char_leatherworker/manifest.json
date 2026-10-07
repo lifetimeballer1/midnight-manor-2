@@ -1,0 +1,40 @@
+{
+  "asset": "char_leatherworker",
+  "file": "char_leatherworker.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | leatherworker Rig",
+    "MMR Character | leatherworker Body",
+    "MMR Character | leatherworker Held awl",
+    "MMR Character | leatherworker Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.4755229949951172,
+    1.7288280725479126,
+    0.6507835388183594
+  ],
+  "triangles": 1037,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Working_A",
+    "death": "Death_A",
+    "gather": "Working_A"
+  },
+  "sha256": "cc8760dc77680b825ecc5e167e5fe507743b2f8aa8f222feac7191ea73208ac0",
+  "verified": true
+}

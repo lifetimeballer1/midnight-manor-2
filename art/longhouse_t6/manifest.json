@@ -1,0 +1,26 @@
+{
+  "asset": "longhouse_t6",
+  "file": "longhouse_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | longhouse | T06 Architecture",
+    "MMR | longhouse | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    3.3000030517578125,
+    2.065000057220459,
+    3.3000001907348633
+  ],
+  "triangles": 2596,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "5f453da28adbeb2494ab5d369b81d9374c1d434bc85145df9380eea3c6637293",
+  "verified": true
+}

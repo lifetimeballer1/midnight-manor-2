@@ -414,6 +414,31 @@ func _run() -> void:
 			break
 	check(boxed_escape, "archer opens the gap with sealed tiles crowding the ranking")
 
+	# --- walled siege never freezes: sealed hall retargets to nearest building ---
+	var siege = Sim.new()
+	var siege_hall: Dictionary = building(siege, "hall")
+	var hx: int = int(siege_hall["x"])
+	var hy: int = int(siege_hall["y"])
+	var hs: int = int(siege_hall["size"])
+	for x in range(hx - 1, hx + hs + 1):
+		place(siege, "wall", x, hy - 1)
+		place(siege, "wall", x, hy + hs)
+	for y in range(hy, hy + hs):
+		place(siege, "wall", hx - 1, y)
+		place(siege, "wall", hx + hs, y)
+	siege.raid_active = true
+	raider(siege, 0.5, 0.5, 5000.0)
+	var damaged: bool = false
+	for tick in 1200:
+		siege.tick(0.05)
+		for b: Dictionary in siege.buildings:
+			if float(b["hp"]) < float(b["max_hp"]):
+				damaged = true
+				break
+		if damaged:
+			break
+	check(damaged, "sealed-hall raiders chew through nearby buildings instead of freezing")
+
 	# --- saved unit fields roundtrip through the versioned save ---
 	var saved = Sim.new()
 	saved.units.clear()

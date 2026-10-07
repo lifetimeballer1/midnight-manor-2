@@ -1,0 +1,40 @@
+{
+  "asset": "char_butcher",
+  "file": "char_butcher.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | butcher Rig",
+    "MMR Character | butcher Body",
+    "MMR Character | butcher Held cleaver",
+    "MMR Character | butcher Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.477715015411377,
+    1.7288280725479126,
+    0.593048095703125
+  ],
+  "triangles": 1005,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Chopping",
+    "death": "Death_A",
+    "gather": "Chopping"
+  },
+  "sha256": "822f2cc1a5b97638abc6c06b2952d6fca3173c656d7e2d1e19e2f0488d56badc",
+  "verified": true
+}

@@ -1,5 +1,5 @@
 {
-	"checks": 190,
+	"checks": 191,
 	"failures": [],
 	"passed": true,
 	"scope": "Worker orientation on reserved stands, job facing targets, blocked-workpoint fallback, smart defensive prioritisation, archer kiting, order precedence and save roundtrip."

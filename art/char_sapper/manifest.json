@@ -1,0 +1,40 @@
+{
+  "asset": "char_sapper",
+  "file": "char_sapper.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | sapper Rig",
+    "MMR Character | sapper Body",
+    "MMR Character | sapper Held glasspick",
+    "MMR Character | sapper Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.544107437133789,
+    1.7248719930648804,
+    0.6626510620117188
+  ],
+  "triangles": 1129,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Pickaxing",
+    "death": "Death_A",
+    "gather": "Pickaxing"
+  },
+  "sha256": "8760ab099018bec50fbb2a92d29d79e974c2a6e1ddcf24b4fa436a77e27c8664",
+  "verified": true
+}

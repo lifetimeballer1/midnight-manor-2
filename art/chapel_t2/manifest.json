@@ -1,0 +1,26 @@
+{
+  "asset": "chapel_t2",
+  "file": "chapel_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | chapel | T02 Architecture",
+    "MMR | chapel | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499984741210938,
+    2.4149999618530273,
+    2.3499984741210938
+  ],
+  "triangles": 2260,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "c5c26973efa4c18fa4e88fdebaa62c848a734328970d0005a98a6e7704e2446d",
+  "verified": true
+}

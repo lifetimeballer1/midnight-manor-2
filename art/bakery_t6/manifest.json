@@ -1,0 +1,26 @@
+{
+  "asset": "bakery_t6",
+  "file": "bakery_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | bakery | T06 Architecture",
+    "MMR | bakery | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    2.075000047683716,
+    2.350006103515625
+  ],
+  "triangles": 3220,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "ff9958a134741c6ead695c0df77211a2abe15d2ba81aa9fc6d79a88a04f54409",
+  "verified": true
+}

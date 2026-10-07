@@ -1,0 +1,41 @@
+{
+  "asset": "char_oathsworn",
+  "file": "char_oathsworn.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | oathsworn Rig",
+    "MMR Character | oathsworn Body",
+    "MMR Character | oathsworn Held oathblade",
+    "MMR Character | oathsworn Shield",
+    "MMR Character | oathsworn Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.532029151916504,
+    1.6633214950561523,
+    0.5464210510253906
+  ],
+  "triangles": 1287,
+  "meshes": 4,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "attack"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Melee_1H_Attack_Chop",
+    "death": "Death_A",
+    "attack": "Melee_1H_Attack_Chop"
+  },
+  "sha256": "9b2364addb35a1573fca0fd56a6bedaf84269da31344fb9e21cba3bb8fb97bbd",
+  "verified": true
+}

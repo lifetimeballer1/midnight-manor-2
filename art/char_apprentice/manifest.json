@@ -1,0 +1,39 @@
+{
+  "asset": "char_apprentice",
+  "file": "char_apprentice.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | apprentice Rig",
+    "MMR Character | apprentice Body",
+    "MMR Character | apprentice Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.4489078521728516,
+    1.7288280725479126,
+    0.6507835388183594
+  ],
+  "triangles": 1005,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Working_A",
+    "death": "Death_A",
+    "gather": "Working_A"
+  },
+  "sha256": "a18474f3ae7e4ff430fc6fbbf20eb76e3c867e341d549721e489cc1684ac2519",
+  "verified": true
+}

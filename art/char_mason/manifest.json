@@ -1,0 +1,40 @@
+{
+  "asset": "char_mason",
+  "file": "char_mason.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | mason Rig",
+    "MMR Character | mason Body",
+    "MMR Character | mason Held trowel",
+    "MMR Character | mason Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.4867744445800781,
+    1.7288280725479126,
+    0.593048095703125
+  ],
+  "triangles": 962,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Hammering",
+    "death": "Death_A",
+    "gather": "Hammering"
+  },
+  "sha256": "6689c9683f728034049b03695780a14e055fb46e063d8e2b3727036ebfb934c0",
+  "verified": true
+}

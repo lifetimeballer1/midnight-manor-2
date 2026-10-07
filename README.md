@@ -48,12 +48,20 @@ Research Stoneworking (quarry + miners at village level 2) and Road Masonry (pav
 
 ## Project layout
 
+### Manor Studio
+
+The project now includes a custom **Manor Studio** Godot editor dock for staged
+building/tier balance edits, validated Apply, previous-content backups and
+external-file conflict protection. Reopen the project or enable it in
+**Project Settings > Plugins**. See `addons/manor_studio/README.md` for usage.
+It does not modify the engine or player saves.
+
 ```
 scenes/game.tscn          main scene (Node3D MidnightManor2, procedural village)
 scripts/game/             village_game.gd (UI/world), village_sim.gd (sim),
                           village_ui.gd (dark-medieval theme + thumbnails),
                           village_details.gd (scaffolds, smoke, warnings)
-art/                      133 verified GLBs + art/catalog.json + manifests
+art/                      310 verified GLBs + art/catalog.json + manifests
 data/                     costs, production, caps, stat curves
 docs/                     delivery notes, verification JSON, previews
 tests/                    5 GDScript suites + python tests
@@ -62,7 +70,7 @@ tests/                    5 GDScript suites + python tests
 ## Assets
 
 - Source: user-provided `Game Assets.blend` (never overwritten; exports run in a separate background Blender process).
-- 125 building-tier GLBs (23 types) + 8 rigged characters (builder, warrior, archer, farmer, lumberjack, miner, fisherman, shepherd) with idle/walk/work/death (+attack/gather where applicable).
+- 273 building-tier GLBs (51 types) + 37 rigged characters (the original 8 plus every quest profession: divers, masons, healers, halberdiers…) with idle/walk/work/death (+attack/gather where applicable).
 - Base-centred, metres, +Y up, scale 1, materials/palette embedded. LOD1 bodies, reference layouts and rigs excluded.
 - `art/catalog.json` is authoritative. See `docs/ASSET_LIST.md`.
 
@@ -87,6 +95,36 @@ godot --headless --path . --script res://tests/test_update2_scene.gd -- --no-sav
 ```
 
 Reports: `docs/export_verification.json`, `docs/godot_verification.json`, `docs/village_verification.json`, `docs/game_smoke_verification.json`; captures in `docs/previews/`.
+
+## Cozy Gothic overhaul (in development)
+
+- Restored building details, live Chronicle/Chart/Board status, safe pause transitions,
+  44px minimum controls, and phone layouts checked through native captures.
+- Optional Old Bell mentor, Continue/New Game confirmation, and a separate
+  `.previous` recovery archive that ordinary autosaves do not rotate away.
+- Village needs: every three active minutes each villager eats five Food.
+  Shortages and inadequate housing reduce morale/productivity; restoring supplies
+  and beds recovers the village. Paused/closed time never adds penalties.
+- Frontier (Act IV): choose up to eight defenders, pay 20 Food + 10 Gold, enter a
+  separate lightweight region battle map, rally by tapping ground, and return after
+  victory, defeat or retreat. Home time freezes; active battles save and resume.
+  Each battle's rewards/casualties settle once. Secured regions support repeat patrols.
+- Real delivery and level-25 prestige commands, physical Dawn Gate completion,
+  specialist recruitment, Great Work proxy models, and repeatable contracts.
+  Act VIII now introduces the Bell Tower and Dawn Gate before requiring them.
+- Save payload v4 preserves the original `village-v1.json` path and migrates
+  v1/v2/v3 villages. Advanced resources, needs and expeditions survive JSON saves.
+- Haunted outskirts use inexpensive stone ruins outside the building footprint;
+  home enemies now reuse distinct existing character silhouettes by role.
+
+New regression suites: `test_overhaul_foundation`, `test_village_needs`,
+`test_frontier_battles`, `test_campaign_actions` (same console command format above).
+Optional native QA captures use `--capture-dir=<existing absolute directory>` with
+the foundation/frontier suites and never load the player's village.
+
+This is not release-certified: a complete campaign playthrough using unmodified
+resources, balance/art polish, real Safari/phone performance and browser export
+validation remain required. Fixture tests are not proof of those outcomes.
 
 ## Roadmap
 

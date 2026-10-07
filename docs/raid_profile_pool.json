@@ -1,0 +1,56 @@
+{
+	"allocated_burst_emitters": 12,
+	"combat_seen": true,
+	"fps_cap": 60,
+	"largest_frame": {
+		"draw_calls": 437,
+		"effects": 4,
+		"enemies": 1,
+		"ms": 234.179,
+		"phase": "combat"
+	},
+	"peak_effects": 4,
+	"phases": {
+		"combat": {
+			"frames": 254,
+			"max_ms": 234.179,
+			"median_ms": 33.349,
+			"over_33ms_percent": 50.7874015748031,
+			"p95_ms": 35.01,
+			"p99_ms": 36.178,
+			"peak_draw_calls": 450
+		},
+		"quiet": {
+			"frames": 58,
+			"max_ms": 79.876,
+			"median_ms": 33.29,
+			"over_33ms_percent": 46.551724137931,
+			"p95_ms": 50.056,
+			"p99_ms": 79.876,
+			"peak_draw_calls": 428
+		},
+		"recovery": {
+			"frames": 61,
+			"max_ms": 35.297,
+			"median_ms": 33.36,
+			"over_33ms_percent": 52.4590163934426,
+			"p95_ms": 34.679,
+			"p99_ms": 35.297,
+			"peak_draw_calls": 428
+		},
+		"warning": {
+			"frames": 90,
+			"max_ms": 70.467,
+			"median_ms": 33.274,
+			"over_33ms_percent": 45.5555555555556,
+			"p95_ms": 35.38,
+			"p99_ms": 70.467,
+			"peak_draw_calls": 430
+		}
+	},
+	"raid_finished": true,
+	"renderer": "Windows",
+	"scenario": "fresh village, real first Horn raid, no resource/health grants",
+	"scope": "native desktop fixture, not browser/phone certification",
+	"window": "1280x800"
+}

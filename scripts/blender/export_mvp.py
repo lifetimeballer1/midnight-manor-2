@@ -23,12 +23,44 @@ BUILDINGS = [
     ('barracks', 'barracks'), ('forge', 'forge'), ('market', 'market'),
     ('pasture', 'pasture'), ('pond', 'pond'), ('sawmill', 'sawmill'),
     ('mill', 'mill'), ('scriptorium', 'scriptorium'), ('oathstone', 'oathstone'),
+    ('grove', 'grove'), ('frostgrove', 'frostgrove'),
+    ('whisper-grove', 'whisper-grove'), ('chapel', 'chapel'),
+    ('sunken-chapel', 'sunken-chapel'), ('schoolroom', 'schoolroom'),
+    ('armory', 'armory'), ('workshop', 'workshop'), ('smeltery', 'smeltery'),
+    ('tannery', 'tannery'), ('butchery', 'butchery'), ('bakery', 'bakery'),
+    ('mason_yard', 'mason_yard'), ('emberglass', 'emberglass'),
+    ('fletcher', 'fletcher'), ('scout_post', 'scout_post'),
+    ('watchfire', 'watchfire'), ('ballista', 'ballista'),
+    ('bastion', 'bastion'), ('rampart', 'rampart'), ('longhouse', 'longhouse'),
+    ('bellcote', 'bellcote'), ('bell-tower', 'bell-tower'),
+    ('blackwater-weir', 'blackwater-weir'), ('deephole', 'deephole'),
+    ('cairnfield', 'cairnfield'), ('moon-dial', 'moon-dial'),
+    ('dawn-gate', 'dawn-gate'),
 ]
 WORK = {
     'builder': 'Hammering', 'warrior': 'Melee_1H_Attack_Chop',
     'archer': 'Ranged_Bow_Draw', 'farmer': 'Digging',
     'lumberjack': 'Chopping', 'miner': 'Pickaxing',
     'fisherman': 'Fishing_Reeling', 'shepherd': 'Working_A',
+    'diver': 'Fishing_Reeling', 'sapper': 'Pickaxing', 'smelter': 'Working_B',
+    'forager': 'Working_A', 'miller': 'Sawing', 'butcher': 'Chopping',
+    'haggler': 'Use_Item', 'heartwarden': 'Chopping', 'healer': 'Use_Item',
+    'chorister': 'Use_Item', 'sawyer': 'Sawing', 'woodward': 'Chopping',
+    'halberdier': 'Melee_2H_Attack_Chop', 'pikewoman': 'Melee_2H_Attack_Chop',
+    'oathsworn': 'Melee_1H_Attack_Chop', 'warden': 'Melee_1H_Attack_Chop',
+    'squire': 'Melee_1H_Attack_Chop', 'weaponsmith': 'Hammering',
+    'armorer': 'Hammering', 'toolsmith': 'Working_B', 'mason': 'Hammering',
+    'apprentice': 'Working_A', 'scholar': 'Use_Item',
+    'leatherworker': 'Working_A', 'ranger': 'Ranged_Bow_Draw',
+    'longbowman': 'Ranged_Bow_Draw', 'scout': 'Use_Item',
+    'mudlark': 'Working_A', 'tidecaller': 'Use_Item',
+}
+ATTACK_FROM = {
+    'warrior': 'Melee_1H_Attack_Chop', 'archer': 'Ranged_Bow_Release',
+    'halberdier': 'Melee_2H_Attack_Chop', 'pikewoman': 'Melee_2H_Attack_Chop',
+    'oathsworn': 'Melee_1H_Attack_Chop', 'warden': 'Melee_1H_Attack_Chop',
+    'squire': 'Melee_1H_Attack_Chop', 'ranger': 'Ranged_Bow_Draw',
+    'longbowman': 'Ranged_Bow_Draw',
 }
 
 
@@ -194,8 +226,8 @@ def main():
         rig = bpy.data.objects['MMR Character | ' + role + ' Rig']
         parts = [rig] + [c for c in rig.children_recursive if c.type == 'MESH' and 'LOD1' not in c.name]
         clips = {'idle': 'Idle_A', 'walk': 'Walking_A', 'work': work, 'death': 'Death_A'}
-        if role in ('warrior', 'archer'):
-            clips['attack'] = 'Melee_1H_Attack_Chop' if role == 'warrior' else 'Ranged_Bow_Release'
+        if role in ATTACK_FROM:
+            clips['attack'] = ATTACK_FROM[role]
         else:
             clips['gather'] = work
         entries.append(export('char_' + role, parts, clips))

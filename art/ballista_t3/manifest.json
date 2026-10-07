@@ -1,0 +1,26 @@
+{
+  "asset": "ballista_t3",
+  "file": "ballista_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | ballista | T03 Architecture",
+    "MMR | ballista | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.2999992370605469,
+    2.3974997997283936,
+    1.3000030517578125
+  ],
+  "triangles": 1344,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "8a07818b761177783eb6d077f5721202880cb906858d8393f723703b57f470d3",
+  "verified": true
+}

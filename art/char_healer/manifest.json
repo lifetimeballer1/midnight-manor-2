@@ -1,0 +1,40 @@
+{
+  "asset": "char_healer",
+  "file": "char_healer.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | healer Rig",
+    "MMR Character | healer Body",
+    "MMR Character | healer Held chalice",
+    "MMR Character | healer Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.266042709350586,
+    1.4825477600097656,
+    0.5420951843261719
+  ],
+  "triangles": 1094,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Use_Item",
+    "death": "Death_A",
+    "gather": "Use_Item"
+  },
+  "sha256": "04c16ee889c24f22664be83f817c20c4c1bb2d475cdd7b894ff0f6324cd95476",
+  "verified": true
+}

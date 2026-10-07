@@ -65,6 +65,35 @@ func attach(game, b: Dictionary, view: Dictionary) -> void:
 		for index in 6:
 			var block: MeshInstance3D = box(root_node, Vector3(0.36, 0.25, 0.3), Vector3(-1.1 + (index % 3) * 0.4, 0.125, 0.8 + floori(index / 3.0) * 0.35), Color("909588"))
 			block.rotation.y = index * 0.23
+	if type_name in ["pond", "deephole", "blackwater-weir"]:
+		var rings := Node3D.new()
+		rings.name = "Ripples"
+		root_node.add_child(rings)
+		var radius: float = 0.7 * float(b["size"])
+		for k in 2:
+			var ring := MeshInstance3D.new()
+			var band := TorusMesh.new()
+			band.inner_radius = radius * 0.9
+			band.outer_radius = radius
+			band.rings = 24
+			band.ring_segments = 8
+			ring.mesh = band
+			var ripple := StandardMaterial3D.new()
+			ripple.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			ripple.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			ripple.albedo_color = Color(0.75, 0.86, 0.95, 0.55)
+			ripple.disable_receive_shadows = true
+			ring.material_override = ripple
+			ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			ring.position = Vector3(0, 0.07, 0)
+			rings.add_child(ring)
+			var swell := rings.create_tween().set_loops()
+			if k == 1:
+				swell.tween_interval(1.3)
+			swell.set_parallel(true)
+			swell.tween_property(ring, "scale", Vector3.ONE * 1.5, 2.6).from(Vector3.ONE * 0.6)
+			swell.tween_property(ripple, "albedo_color:a", 0.0, 2.6).from(0.55)
+		view["rings"] = rings
 	var scaffold := Node3D.new()
 	scaffold.name = "Scaffolding"
 	root_node.add_child(scaffold)
@@ -79,7 +108,8 @@ func attach(game, b: Dictionary, view: Dictionary) -> void:
 	view["progress"] = bar
 	view["previous_hp"] = float(b["hp"])
 	view["danger_until"] = 0.0
-	if type_name in ["hall", "cottage", "barracks"] and smoke_count < 8:
+	view["constructing"] = float(b.get("remaining", 0.0)) > 0.0
+	if type_name in ["hall", "cottage", "barracks", "bathhouse", "butchery"] and smoke_count < 8:
 		var smoke := CPUParticles3D.new()
 		smoke.name = "ChimneySmoke"
 		smoke.amount = 9
@@ -128,6 +158,16 @@ func update(game, dt: float) -> void:
 		var view: Dictionary = game.building_views.get(int(b["id"]), {})
 		if view.is_empty(): continue
 		view["scaffold"].visible = b["remaining"] > 0 and b["hp"] > 0
+		if view.has("rings"):
+			(view["rings"] as Node3D).visible = b["hp"] > 0 and b["remaining"] <= 0
+		if view.has("windows"):
+			var lit: bool = b["hp"] > 0 and b["remaining"] <= 0 and game.night
+			for w in (view["windows"] as Array):
+				(w as MeshInstance3D).visible = lit
+		if bool(view.get("constructing", false)) and b["remaining"] <= 0 and b["hp"] > 0:
+			view["constructing"] = false
+			game._poof(Vector2i(int(b["x"]), int(b["y"])), Color(0.95, 0.82, 0.45))
+			game._play_sfx("upgrade")
 		var duration: float = float(game.sim.building_specs[b["type"]]["buildSeconds"])
 		view["progress"].scale.x = maxf(0.03, 1 - float(b["remaining"]) / maxf(0.1, duration))
 		if float(b["hp"]) < float(view["previous_hp"]): view["danger_until"] = game.sim.elapsed + 2

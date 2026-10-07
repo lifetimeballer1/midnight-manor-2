@@ -1,0 +1,26 @@
+{
+  "asset": "frostgrove_t5",
+  "file": "frostgrove_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | frostgrove | T05 Architecture",
+    "MMR | frostgrove | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3788528442382812,
+    1.9423999786376953,
+    2.3499984741210938
+  ],
+  "triangles": 1600,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "1789f0378d3c63c2a945b40fadccfdac01131e200b1a0efae29a6a970eae44d9",
+  "verified": true
+}

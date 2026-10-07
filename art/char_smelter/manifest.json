@@ -1,0 +1,40 @@
+{
+  "asset": "char_smelter",
+  "file": "char_smelter.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | smelter Rig",
+    "MMR Character | smelter Body",
+    "MMR Character | smelter Held tongs",
+    "MMR Character | smelter Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5145423412322998,
+    1.7248719930648804,
+    0.5878829956054688
+  ],
+  "triangles": 1157,
+  "meshes": 3,
+  "materials": 2,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Working_B",
+    "death": "Death_A",
+    "gather": "Working_B"
+  },
+  "sha256": "1f4c82454b368ea404cecebbeaf84228166fa5274f2244d8dddb69e399d579f5",
+  "verified": true
+}

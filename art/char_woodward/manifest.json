@@ -1,0 +1,40 @@
+{
+  "asset": "char_woodward",
+  "file": "char_woodward.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | woodward Rig",
+    "MMR Character | woodward Body",
+    "MMR Character | woodward Held frostaxe",
+    "MMR Character | woodward Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.551803708076477,
+    1.7300206422805786,
+    0.6108283996582031
+  ],
+  "triangles": 964,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Chopping",
+    "death": "Death_A",
+    "gather": "Chopping"
+  },
+  "sha256": "7a930fef601549cf0cd06cafa66cd70fd6a1ecb10489f3e70085aa7147a288f2",
+  "verified": true
+}

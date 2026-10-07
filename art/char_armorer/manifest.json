@@ -1,0 +1,40 @@
+{
+  "asset": "char_armorer",
+  "file": "char_armorer.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | armorer Rig",
+    "MMR Character | armorer Body",
+    "MMR Character | armorer Held armorkit",
+    "MMR Character | armorer Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.530374526977539,
+    1.7248719930648804,
+    0.5878829956054688
+  ],
+  "triangles": 1093,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Hammering",
+    "death": "Death_A",
+    "gather": "Hammering"
+  },
+  "sha256": "f0d70dd661b6a44fbf5d68e61cfd7e8fd52305cb7e749bf47ccf14ff1a07733d",
+  "verified": true
+}

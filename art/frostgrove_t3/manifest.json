@@ -1,0 +1,26 @@
+{
+  "asset": "frostgrove_t3",
+  "file": "frostgrove_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | frostgrove | T03 Architecture",
+    "MMR | frostgrove | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    1.7389999628067017,
+    2.3499984741210938
+  ],
+  "triangles": 1504,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "1cda3121c5fdb0a19187a216acdf3d54c04baf1cce26de051785106544910892",
+  "verified": true
+}

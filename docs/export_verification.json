@@ -1,7 +1,7 @@
 {
   "passed": true,
-  "assets": 133,
-  "bytes": 19371456,
+  "assets": 310,
+  "bytes": 44937656,
   "records": [
     {
       "asset": "manor_hall_t1",
@@ -799,6 +799,1068 @@
       "asset": "char_shepherd",
       "triangles": 1048,
       "bytes": 229768,
+      "passed": true
+    },
+    {
+      "asset": "grove_t1",
+      "triangles": 1856,
+      "bytes": 159504,
+      "passed": true
+    },
+    {
+      "asset": "grove_t2",
+      "triangles": 2080,
+      "bytes": 172880,
+      "passed": true
+    },
+    {
+      "asset": "grove_t3",
+      "triangles": 2080,
+      "bytes": 172880,
+      "passed": true
+    },
+    {
+      "asset": "grove_t4",
+      "triangles": 2176,
+      "bytes": 178800,
+      "passed": true
+    },
+    {
+      "asset": "grove_t5",
+      "triangles": 2176,
+      "bytes": 178836,
+      "passed": true
+    },
+    {
+      "asset": "grove_t6",
+      "triangles": 2176,
+      "bytes": 178824,
+      "passed": true
+    },
+    {
+      "asset": "frostgrove_t1",
+      "triangles": 1280,
+      "bytes": 100768,
+      "passed": true
+    },
+    {
+      "asset": "frostgrove_t2",
+      "triangles": 1504,
+      "bytes": 114148,
+      "passed": true
+    },
+    {
+      "asset": "frostgrove_t3",
+      "triangles": 1504,
+      "bytes": 114148,
+      "passed": true
+    },
+    {
+      "asset": "frostgrove_t4",
+      "triangles": 1600,
+      "bytes": 120072,
+      "passed": true
+    },
+    {
+      "asset": "frostgrove_t5",
+      "triangles": 1600,
+      "bytes": 120104,
+      "passed": true
+    },
+    {
+      "asset": "frostgrove_t6",
+      "triangles": 1600,
+      "bytes": 120096,
+      "passed": true
+    },
+    {
+      "asset": "whisper-grove_t1",
+      "triangles": 1076,
+      "bytes": 69476,
+      "passed": true
+    },
+    {
+      "asset": "whisper-grove_t2",
+      "triangles": 1300,
+      "bytes": 82852,
+      "passed": true
+    },
+    {
+      "asset": "whisper-grove_t3",
+      "triangles": 1300,
+      "bytes": 82852,
+      "passed": true
+    },
+    {
+      "asset": "whisper-grove_t4",
+      "triangles": 1396,
+      "bytes": 88740,
+      "passed": true
+    },
+    {
+      "asset": "whisper-grove_t5",
+      "triangles": 1396,
+      "bytes": 88740,
+      "passed": true
+    },
+    {
+      "asset": "whisper-grove_t6",
+      "triangles": 1396,
+      "bytes": 88740,
+      "passed": true
+    },
+    {
+      "asset": "chapel_t1",
+      "triangles": 2260,
+      "bytes": 145408,
+      "passed": true
+    },
+    {
+      "asset": "chapel_t2",
+      "triangles": 2260,
+      "bytes": 145408,
+      "passed": true
+    },
+    {
+      "asset": "chapel_t3",
+      "triangles": 2400,
+      "bytes": 154440,
+      "passed": true
+    },
+    {
+      "asset": "chapel_t4",
+      "triangles": 2400,
+      "bytes": 154440,
+      "passed": true
+    },
+    {
+      "asset": "chapel_t5",
+      "triangles": 2456,
+      "bytes": 157848,
+      "passed": true
+    },
+    {
+      "asset": "chapel_t6",
+      "triangles": 2456,
+      "bytes": 157848,
+      "passed": true
+    },
+    {
+      "asset": "sunken-chapel_t1",
+      "triangles": 1052,
+      "bytes": 76916,
+      "passed": true
+    },
+    {
+      "asset": "sunken-chapel_t2",
+      "triangles": 1052,
+      "bytes": 76916,
+      "passed": true
+    },
+    {
+      "asset": "sunken-chapel_t3",
+      "triangles": 1440,
+      "bytes": 102412,
+      "passed": true
+    },
+    {
+      "asset": "sunken-chapel_t4",
+      "triangles": 1440,
+      "bytes": 102412,
+      "passed": true
+    },
+    {
+      "asset": "sunken-chapel_t5",
+      "triangles": 1508,
+      "bytes": 106600,
+      "passed": true
+    },
+    {
+      "asset": "sunken-chapel_t6",
+      "triangles": 1508,
+      "bytes": 106600,
+      "passed": true
+    },
+    {
+      "asset": "schoolroom_t1",
+      "triangles": 2116,
+      "bytes": 134340,
+      "passed": true
+    },
+    {
+      "asset": "schoolroom_t2",
+      "triangles": 2116,
+      "bytes": 134340,
+      "passed": true
+    },
+    {
+      "asset": "schoolroom_t3",
+      "triangles": 2132,
+      "bytes": 135460,
+      "passed": true
+    },
+    {
+      "asset": "schoolroom_t4",
+      "triangles": 2836,
+      "bytes": 180280,
+      "passed": true
+    },
+    {
+      "asset": "schoolroom_t5",
+      "triangles": 2836,
+      "bytes": 180280,
+      "passed": true
+    },
+    {
+      "asset": "schoolroom_t6",
+      "triangles": 3088,
+      "bytes": 195484,
+      "passed": true
+    },
+    {
+      "asset": "armory_t1",
+      "triangles": 2024,
+      "bytes": 129420,
+      "passed": true
+    },
+    {
+      "asset": "armory_t2",
+      "triangles": 2024,
+      "bytes": 129420,
+      "passed": true
+    },
+    {
+      "asset": "armory_t3",
+      "triangles": 2428,
+      "bytes": 156036,
+      "passed": true
+    },
+    {
+      "asset": "armory_t4",
+      "triangles": 2632,
+      "bytes": 168696,
+      "passed": true
+    },
+    {
+      "asset": "armory_t5",
+      "triangles": 3336,
+      "bytes": 213524,
+      "passed": true
+    },
+    {
+      "asset": "armory_t6",
+      "triangles": 3404,
+      "bytes": 217708,
+      "passed": true
+    },
+    {
+      "asset": "workshop_t1",
+      "triangles": 2252,
+      "bytes": 144460,
+      "passed": true
+    },
+    {
+      "asset": "workshop_t2",
+      "triangles": 2252,
+      "bytes": 144460,
+      "passed": true
+    },
+    {
+      "asset": "workshop_t3",
+      "triangles": 2268,
+      "bytes": 145580,
+      "passed": true
+    },
+    {
+      "asset": "workshop_t4",
+      "triangles": 2472,
+      "bytes": 158244,
+      "passed": true
+    },
+    {
+      "asset": "workshop_t5",
+      "triangles": 3176,
+      "bytes": 203068,
+      "passed": true
+    },
+    {
+      "asset": "workshop_t6",
+      "triangles": 3244,
+      "bytes": 207252,
+      "passed": true
+    },
+    {
+      "asset": "smeltery_t1",
+      "triangles": 1804,
+      "bytes": 121176,
+      "passed": true
+    },
+    {
+      "asset": "smeltery_t2",
+      "triangles": 1888,
+      "bytes": 126224,
+      "passed": true
+    },
+    {
+      "asset": "smeltery_t3",
+      "triangles": 1988,
+      "bytes": 132392,
+      "passed": true
+    },
+    {
+      "asset": "smeltery_t4",
+      "triangles": 2072,
+      "bytes": 137440,
+      "passed": true
+    },
+    {
+      "asset": "smeltery_t5",
+      "triangles": 2156,
+      "bytes": 142488,
+      "passed": true
+    },
+    {
+      "asset": "smeltery_t6",
+      "triangles": 2296,
+      "bytes": 150912,
+      "passed": true
+    },
+    {
+      "asset": "tannery_t1",
+      "triangles": 1789,
+      "bytes": 114416,
+      "passed": true
+    },
+    {
+      "asset": "tannery_t2",
+      "triangles": 1789,
+      "bytes": 114416,
+      "passed": true
+    },
+    {
+      "asset": "tannery_t3",
+      "triangles": 1805,
+      "bytes": 115536,
+      "passed": true
+    },
+    {
+      "asset": "tannery_t4",
+      "triangles": 2009,
+      "bytes": 128196,
+      "passed": true
+    },
+    {
+      "asset": "tannery_t5",
+      "triangles": 2713,
+      "bytes": 173024,
+      "passed": true
+    },
+    {
+      "asset": "tannery_t6",
+      "triangles": 2781,
+      "bytes": 177208,
+      "passed": true
+    },
+    {
+      "asset": "butchery_t1",
+      "triangles": 1808,
+      "bytes": 115556,
+      "passed": true
+    },
+    {
+      "asset": "butchery_t2",
+      "triangles": 1808,
+      "bytes": 115556,
+      "passed": true
+    },
+    {
+      "asset": "butchery_t3",
+      "triangles": 2188,
+      "bytes": 138636,
+      "passed": true
+    },
+    {
+      "asset": "butchery_t4",
+      "triangles": 2448,
+      "bytes": 154684,
+      "passed": true
+    },
+    {
+      "asset": "butchery_t5",
+      "triangles": 3152,
+      "bytes": 199500,
+      "passed": true
+    },
+    {
+      "asset": "butchery_t6",
+      "triangles": 3276,
+      "bytes": 207060,
+      "passed": true
+    },
+    {
+      "asset": "bakery_t1",
+      "triangles": 2116,
+      "bytes": 142252,
+      "passed": true
+    },
+    {
+      "asset": "bakery_t2",
+      "triangles": 2172,
+      "bytes": 145628,
+      "passed": true
+    },
+    {
+      "asset": "bakery_t3",
+      "triangles": 2188,
+      "bytes": 146748,
+      "passed": true
+    },
+    {
+      "asset": "bakery_t4",
+      "triangles": 2392,
+      "bytes": 159432,
+      "passed": true
+    },
+    {
+      "asset": "bakery_t5",
+      "triangles": 3096,
+      "bytes": 204252,
+      "passed": true
+    },
+    {
+      "asset": "bakery_t6",
+      "triangles": 3220,
+      "bytes": 211812,
+      "passed": true
+    },
+    {
+      "asset": "mason_yard_t1",
+      "triangles": 1444,
+      "bytes": 92628,
+      "passed": true
+    },
+    {
+      "asset": "mason_yard_t2",
+      "triangles": 1444,
+      "bytes": 92628,
+      "passed": true
+    },
+    {
+      "asset": "mason_yard_t3",
+      "triangles": 1772,
+      "bytes": 118660,
+      "passed": true
+    },
+    {
+      "asset": "mason_yard_t4",
+      "triangles": 1772,
+      "bytes": 118660,
+      "passed": true
+    },
+    {
+      "asset": "mason_yard_t5",
+      "triangles": 1772,
+      "bytes": 118660,
+      "passed": true
+    },
+    {
+      "asset": "mason_yard_t6",
+      "triangles": 1772,
+      "bytes": 118660,
+      "passed": true
+    },
+    {
+      "asset": "emberglass_t1",
+      "triangles": 1404,
+      "bytes": 104256,
+      "passed": true
+    },
+    {
+      "asset": "emberglass_t2",
+      "triangles": 1420,
+      "bytes": 105312,
+      "passed": true
+    },
+    {
+      "asset": "emberglass_t3",
+      "triangles": 1436,
+      "bytes": 106368,
+      "passed": true
+    },
+    {
+      "asset": "emberglass_t4",
+      "triangles": 1560,
+      "bytes": 114912,
+      "passed": true
+    },
+    {
+      "asset": "emberglass_t5",
+      "triangles": 1576,
+      "bytes": 115968,
+      "passed": true
+    },
+    {
+      "asset": "emberglass_t6",
+      "triangles": 1592,
+      "bytes": 117024,
+      "passed": true
+    },
+    {
+      "asset": "fletcher_t1",
+      "triangles": 1988,
+      "bytes": 129308,
+      "passed": true
+    },
+    {
+      "asset": "fletcher_t2",
+      "triangles": 1988,
+      "bytes": 129308,
+      "passed": true
+    },
+    {
+      "asset": "fletcher_t3",
+      "triangles": 2004,
+      "bytes": 130428,
+      "passed": true
+    },
+    {
+      "asset": "fletcher_t4",
+      "triangles": 2208,
+      "bytes": 143092,
+      "passed": true
+    },
+    {
+      "asset": "fletcher_t5",
+      "triangles": 2912,
+      "bytes": 187916,
+      "passed": true
+    },
+    {
+      "asset": "fletcher_t6",
+      "triangles": 2980,
+      "bytes": 192100,
+      "passed": true
+    },
+    {
+      "asset": "scout_post_t1",
+      "triangles": 1384,
+      "bytes": 88724,
+      "passed": true
+    },
+    {
+      "asset": "scout_post_t2",
+      "triangles": 1384,
+      "bytes": 88724,
+      "passed": true
+    },
+    {
+      "asset": "scout_post_t3",
+      "triangles": 1400,
+      "bytes": 89844,
+      "passed": true
+    },
+    {
+      "asset": "scout_post_t4",
+      "triangles": 1496,
+      "bytes": 95732,
+      "passed": true
+    },
+    {
+      "asset": "scout_post_t5",
+      "triangles": 1496,
+      "bytes": 95732,
+      "passed": true
+    },
+    {
+      "asset": "scout_post_t6",
+      "triangles": 1496,
+      "bytes": 95732,
+      "passed": true
+    },
+    {
+      "asset": "watchfire_t1",
+      "triangles": 1052,
+      "bytes": 86148,
+      "passed": true
+    },
+    {
+      "asset": "watchfire_t2",
+      "triangles": 1052,
+      "bytes": 86148,
+      "passed": true
+    },
+    {
+      "asset": "watchfire_t3",
+      "triangles": 1220,
+      "bytes": 96280,
+      "passed": true
+    },
+    {
+      "asset": "watchfire_t4",
+      "triangles": 1220,
+      "bytes": 96280,
+      "passed": true
+    },
+    {
+      "asset": "watchfire_t5",
+      "triangles": 1288,
+      "bytes": 100476,
+      "passed": true
+    },
+    {
+      "asset": "watchfire_t6",
+      "triangles": 1288,
+      "bytes": 100480,
+      "passed": true
+    },
+    {
+      "asset": "ballista_t1",
+      "triangles": 1344,
+      "bytes": 84988,
+      "passed": true
+    },
+    {
+      "asset": "ballista_t2",
+      "triangles": 1344,
+      "bytes": 84988,
+      "passed": true
+    },
+    {
+      "asset": "ballista_t3",
+      "triangles": 1344,
+      "bytes": 84988,
+      "passed": true
+    },
+    {
+      "asset": "ballista_t4",
+      "triangles": 1468,
+      "bytes": 92576,
+      "passed": true
+    },
+    {
+      "asset": "ballista_t5",
+      "triangles": 1468,
+      "bytes": 92576,
+      "passed": true
+    },
+    {
+      "asset": "ballista_t6",
+      "triangles": 1468,
+      "bytes": 92576,
+      "passed": true
+    },
+    {
+      "asset": "bastion_t1",
+      "triangles": 1484,
+      "bytes": 94416,
+      "passed": true
+    },
+    {
+      "asset": "bastion_t2",
+      "triangles": 1484,
+      "bytes": 94416,
+      "passed": true
+    },
+    {
+      "asset": "bastion_t3",
+      "triangles": 1484,
+      "bytes": 94416,
+      "passed": true
+    },
+    {
+      "asset": "bastion_t4",
+      "triangles": 1608,
+      "bytes": 102004,
+      "passed": true
+    },
+    {
+      "asset": "bastion_t5",
+      "triangles": 1608,
+      "bytes": 102004,
+      "passed": true
+    },
+    {
+      "asset": "bastion_t6",
+      "triangles": 1608,
+      "bytes": 102004,
+      "passed": true
+    },
+    {
+      "asset": "rampart_t1",
+      "triangles": 824,
+      "bytes": 53624,
+      "passed": true
+    },
+    {
+      "asset": "rampart_t2",
+      "triangles": 824,
+      "bytes": 53636,
+      "passed": true
+    },
+    {
+      "asset": "rampart_t3",
+      "triangles": 1036,
+      "bytes": 67036,
+      "passed": true
+    },
+    {
+      "asset": "rampart_t4",
+      "triangles": 1036,
+      "bytes": 67036,
+      "passed": true
+    },
+    {
+      "asset": "rampart_t5",
+      "triangles": 1036,
+      "bytes": 67036,
+      "passed": true
+    },
+    {
+      "asset": "rampart_t6",
+      "triangles": 1036,
+      "bytes": 67036,
+      "passed": true
+    },
+    {
+      "asset": "longhouse_t1",
+      "triangles": 1668,
+      "bytes": 107480,
+      "passed": true
+    },
+    {
+      "asset": "longhouse_t2",
+      "triangles": 1920,
+      "bytes": 122696,
+      "passed": true
+    },
+    {
+      "asset": "longhouse_t3",
+      "triangles": 1936,
+      "bytes": 123816,
+      "passed": true
+    },
+    {
+      "asset": "longhouse_t4",
+      "triangles": 2152,
+      "bytes": 136632,
+      "passed": true
+    },
+    {
+      "asset": "longhouse_t5",
+      "triangles": 2596,
+      "bytes": 165520,
+      "passed": true
+    },
+    {
+      "asset": "longhouse_t6",
+      "triangles": 2596,
+      "bytes": 165516,
+      "passed": true
+    },
+    {
+      "asset": "bellcote_t1",
+      "triangles": 1156,
+      "bytes": 75060,
+      "passed": true
+    },
+    {
+      "asset": "bell-tower_t1",
+      "triangles": 1500,
+      "bytes": 95844,
+      "passed": true
+    },
+    {
+      "asset": "bell-tower_t2",
+      "triangles": 1500,
+      "bytes": 95844,
+      "passed": true
+    },
+    {
+      "asset": "bell-tower_t3",
+      "triangles": 1584,
+      "bytes": 101148,
+      "passed": true
+    },
+    {
+      "asset": "bell-tower_t4",
+      "triangles": 1584,
+      "bytes": 101148,
+      "passed": true
+    },
+    {
+      "asset": "bell-tower_t5",
+      "triangles": 1584,
+      "bytes": 101148,
+      "passed": true
+    },
+    {
+      "asset": "bell-tower_t6",
+      "triangles": 1584,
+      "bytes": 101148,
+      "passed": true
+    },
+    {
+      "asset": "blackwater-weir_t1",
+      "triangles": 1672,
+      "bytes": 125396,
+      "passed": true
+    },
+    {
+      "asset": "blackwater-weir_t2",
+      "triangles": 1672,
+      "bytes": 125396,
+      "passed": true
+    },
+    {
+      "asset": "blackwater-weir_t3",
+      "triangles": 1672,
+      "bytes": 125396,
+      "passed": true
+    },
+    {
+      "asset": "blackwater-weir_t4",
+      "triangles": 2088,
+      "bytes": 152568,
+      "passed": true
+    },
+    {
+      "asset": "blackwater-weir_t5",
+      "triangles": 2088,
+      "bytes": 152568,
+      "passed": true
+    },
+    {
+      "asset": "blackwater-weir_t6",
+      "triangles": 2088,
+      "bytes": 152568,
+      "passed": true
+    },
+    {
+      "asset": "deephole_t1",
+      "triangles": 1844,
+      "bytes": 132680,
+      "passed": true
+    },
+    {
+      "asset": "deephole_t2",
+      "triangles": 1860,
+      "bytes": 133736,
+      "passed": true
+    },
+    {
+      "asset": "deephole_t3",
+      "triangles": 1892,
+      "bytes": 135912,
+      "passed": true
+    },
+    {
+      "asset": "deephole_t4",
+      "triangles": 2016,
+      "bytes": 144456,
+      "passed": true
+    },
+    {
+      "asset": "deephole_t5",
+      "triangles": 2032,
+      "bytes": 145512,
+      "passed": true
+    },
+    {
+      "asset": "deephole_t6",
+      "triangles": 2048,
+      "bytes": 146568,
+      "passed": true
+    },
+    {
+      "asset": "cairnfield_t1",
+      "triangles": 1296,
+      "bytes": 111588,
+      "passed": true
+    },
+    {
+      "asset": "moon-dial_t1",
+      "triangles": 1084,
+      "bytes": 84776,
+      "passed": true
+    },
+    {
+      "asset": "dawn-gate_t1",
+      "triangles": 1624,
+      "bytes": 106364,
+      "passed": true
+    },
+    {
+      "asset": "char_diver",
+      "triangles": 1339,
+      "bytes": 265888,
+      "passed": true
+    },
+    {
+      "asset": "char_sapper",
+      "triangles": 1129,
+      "bytes": 256608,
+      "passed": true
+    },
+    {
+      "asset": "char_smelter",
+      "triangles": 1157,
+      "bytes": 246872,
+      "passed": true
+    },
+    {
+      "asset": "char_forager",
+      "triangles": 954,
+      "bytes": 222184,
+      "passed": true
+    },
+    {
+      "asset": "char_miller",
+      "triangles": 965,
+      "bytes": 220280,
+      "passed": true
+    },
+    {
+      "asset": "char_butcher",
+      "triangles": 1005,
+      "bytes": 230024,
+      "passed": true
+    },
+    {
+      "asset": "char_haggler",
+      "triangles": 1067,
+      "bytes": 236532,
+      "passed": true
+    },
+    {
+      "asset": "char_heartwarden",
+      "triangles": 956,
+      "bytes": 224172,
+      "passed": true
+    },
+    {
+      "asset": "char_healer",
+      "triangles": 1094,
+      "bytes": 236648,
+      "passed": true
+    },
+    {
+      "asset": "char_chorister",
+      "triangles": 1050,
+      "bytes": 232708,
+      "passed": true
+    },
+    {
+      "asset": "char_sawyer",
+      "triangles": 1023,
+      "bytes": 224856,
+      "passed": true
+    },
+    {
+      "asset": "char_woodward",
+      "triangles": 964,
+      "bytes": 224804,
+      "passed": true
+    },
+    {
+      "asset": "char_halberdier",
+      "triangles": 1177,
+      "bytes": 256852,
+      "passed": true
+    },
+    {
+      "asset": "char_pikewoman",
+      "triangles": 1055,
+      "bytes": 245416,
+      "passed": true
+    },
+    {
+      "asset": "char_oathsworn",
+      "triangles": 1287,
+      "bytes": 262296,
+      "passed": true
+    },
+    {
+      "asset": "char_warden",
+      "triangles": 1223,
+      "bytes": 256328,
+      "passed": true
+    },
+    {
+      "asset": "char_squire",
+      "triangles": 1120,
+      "bytes": 245216,
+      "passed": true
+    },
+    {
+      "asset": "char_weaponsmith",
+      "triangles": 1149,
+      "bytes": 243756,
+      "passed": true
+    },
+    {
+      "asset": "char_armorer",
+      "triangles": 1093,
+      "bytes": 238232,
+      "passed": true
+    },
+    {
+      "asset": "char_toolsmith",
+      "triangles": 1293,
+      "bytes": 259724,
+      "passed": true
+    },
+    {
+      "asset": "char_mason",
+      "triangles": 962,
+      "bytes": 225504,
+      "passed": true
+    },
+    {
+      "asset": "char_apprentice",
+      "triangles": 1005,
+      "bytes": 227096,
+      "passed": true
+    },
+    {
+      "asset": "char_scholar",
+      "triangles": 1106,
+      "bytes": 237964,
+      "passed": true
+    },
+    {
+      "asset": "char_leatherworker",
+      "triangles": 1037,
+      "bytes": 231620,
+      "passed": true
+    },
+    {
+      "asset": "char_ranger",
+      "triangles": 1250,
+      "bytes": 255288,
+      "passed": true
+    },
+    {
+      "asset": "char_longbowman",
+      "triangles": 1288,
+      "bytes": 261068,
+      "passed": true
+    },
+    {
+      "asset": "char_scout",
+      "triangles": 1073,
+      "bytes": 237200,
+      "passed": true
+    },
+    {
+      "asset": "char_mudlark",
+      "triangles": 1089,
+      "bytes": 236068,
+      "passed": true
+    },
+    {
+      "asset": "char_tidecaller",
+      "triangles": 1022,
+      "bytes": 230664,
       "passed": true
     }
   ]

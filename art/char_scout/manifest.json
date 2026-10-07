@@ -1,0 +1,40 @@
+{
+  "asset": "char_scout",
+  "file": "char_scout.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | scout Rig",
+    "MMR Character | scout Body",
+    "MMR Character | scout Held compass",
+    "MMR Character | scout Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.4489092826843262,
+    1.8783279657363892,
+    0.6290245056152344
+  ],
+  "triangles": 1073,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Use_Item",
+    "death": "Death_A",
+    "gather": "Use_Item"
+  },
+  "sha256": "e08439bb0d980579c6eaba6809858cd8383d7bc84bc5da712aa40345207052d6",
+  "verified": true
+}

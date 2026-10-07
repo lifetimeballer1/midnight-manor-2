@@ -1,0 +1,26 @@
+{
+  "asset": "sunken-chapel_t1",
+  "file": "sunken-chapel_t1.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | sunken-chapel | T01 Architecture",
+    "MMR | sunken-chapel | Tier 01 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499984741210938,
+    1.1299999952316284,
+    2.3499984741210938
+  ],
+  "triangles": 1052,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "6da1f3c1fb2fee360090ad43f44b089dabee21c5a035675ed4582178b5a8a2c4",
+  "verified": true
+}

@@ -75,8 +75,8 @@ func _run() -> void:
 		actual_triangles[asset] = record["triangles"]
 		print("ASSET ", asset, " triangles=", record["triangles"], " height_m=", record["size_m"][1], " errors=", errors.size())
 		instance.free()
-	if assets.size() != 133 or building_count != 125 or character_count != 8 or types.size() != 23:
-		_fail("Counts: expected 133 assets / 125 buildings / 8 characters / 23 types; got %d / %d / %d / %d" % [assets.size(), building_count, character_count, types.size()], general_errors)
+	if assets.size() != 310 or building_count != 273 or character_count != 37 or types.size() != 51:
+		_fail("Counts: expected 310 assets / 273 buildings / 37 characters / 51 types; got %d / %d / %d / %d" % [assets.size(), building_count, character_count, types.size()], general_errors)
 	var layout: Dictionary = _check_layout()
 	var supports: Array[Dictionary] = await _check_support()
 	var viewer_checks: Dictionary = await _check_viewer()
@@ -181,7 +181,7 @@ func _check_asset(instance: Node, entry: Dictionary, errors: Array[String]) -> D
 		for node in nodes:
 			if "lod1" in str(node.name).to_lower() and "body" in str(node.name).to_lower():
 				_fail(asset + ": unexpected LOD1 body", errors)
-		var expected: Array[String] = ["idle", "walk", "work", "death", "attack" if asset in ["char_warrior", "char_archer"] else "gather"]
+		var expected: Array[String] = ["idle", "walk", "work", "death", "attack" if asset in ["char_warrior", "char_archer", "char_halberdier", "char_pikewoman", "char_oathsworn", "char_warden", "char_squire", "char_ranger", "char_longbowman"] else "gather"]
 		var declared: Array = entry["clips"].duplicate()
 		declared.sort()
 		var sorted_expected: Array[String] = expected.duplicate()
@@ -439,8 +439,8 @@ func _check_viewer() -> Dictionary:
 		if triangles + 516 >= 30000:
 			_fail("Viewer tier %d: static triangle budget >=30000" % tier_index, errors)
 		tiers.append({"tier": tier_index, "building_triangles": triangles, "static_triangles": triangles + 516, "fallbacks": fallback_names})
-	if viewer.characters.size() != 8:
-		_fail("Viewer: not all eight characters displayed", errors)
+	if viewer.characters.size() != 37:
+		_fail("Viewer: not all 37 characters displayed", errors)
 	for clip_index in range(7):
 		viewer._set_animation(clip_index)
 		for character: Dictionary in viewer.characters:

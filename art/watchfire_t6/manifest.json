@@ -1,0 +1,26 @@
+{
+  "asset": "watchfire_t6",
+  "file": "watchfire_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | watchfire | T06 Architecture",
+    "MMR | watchfire | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.29998779296875,
+    1.9749999046325684,
+    1.2999992370605469
+  ],
+  "triangles": 1288,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "204964fe2ddc73b2502c7a587d91583a559271fe562dd149a335e6c22fd318b9",
+  "verified": true
+}

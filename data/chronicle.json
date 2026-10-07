@@ -465,7 +465,8 @@
       ],
       "unlocks": [
         "aura:recovery-bell",
-        "hymnal"
+        "hymnal",
+        "bathhouse"
       ],
       "behavior": "Healers post a recovery bell, and the wounded mend far faster between horns.",
       "description": "Train the choir and establish a recovery bell."

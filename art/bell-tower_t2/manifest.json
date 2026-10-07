@@ -1,0 +1,26 @@
+{
+  "asset": "bell-tower_t2",
+  "file": "bell-tower_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | bell-tower | T02 Architecture",
+    "MMR | bell-tower | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499984741210938,
+    2.4149999618530273,
+    2.3499984741210938
+  ],
+  "triangles": 1500,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "bad095e02a5f30febaa95a9e83bbe27f30c3267d56adeeccdd0dde22b569ed70",
+  "verified": true
+}

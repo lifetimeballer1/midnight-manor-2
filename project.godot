@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Midnight Manor II"
+config/version="1.0.0"
 run/main_scene="res://scenes/game.tscn"
 config/features=PackedStringArray("4.7")
 
@@ -19,6 +20,9 @@ config/features=PackedStringArray("4.7")
 MCPScreenshot="*res://addons/godot_mcp/mcp_screenshot_service.gd"
 MCPInputService="*res://addons/godot_mcp/mcp_input_service.gd"
 MCPGameInspector="*res://addons/godot_mcp/mcp_game_inspector_service.gd"
+DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
+VFX="*uid://ecyiymmaj3jv"
+EnvVFX="*uid://qomyut16hnoi"
 
 [display]
 
@@ -32,7 +36,7 @@ display/window/handheld/orientation=6
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/funplay_mcp/plugin.cfg", "res://addons/godot_mcp/plugin.cfg")
+enabled=PackedStringArray("res://addons/asset_placer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/funplay_mcp/plugin.cfg", "res://addons/godot_mcp/plugin.cfg", "res://addons/manor_studio/plugin.cfg", "res://addons/vfx_library/plugin.cfg")
 
 [rendering]
 

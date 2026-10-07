@@ -1,0 +1,26 @@
+{
+  "asset": "chapel_t5",
+  "file": "chapel_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | chapel | T05 Architecture",
+    "MMR | chapel | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499984741210938,
+    2.684999942779541,
+    2.3499984741210938
+  ],
+  "triangles": 2456,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "22143191edaa56528274ecf56046511c3d067edb9cda5d5d4ffff0ad1048ed4d",
+  "verified": true
+}

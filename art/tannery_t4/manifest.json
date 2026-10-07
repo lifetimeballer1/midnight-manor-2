@@ -1,0 +1,26 @@
+{
+  "asset": "tannery_t4",
+  "file": "tannery_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | tannery | T04 Architecture",
+    "MMR | tannery | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.4562499523162842,
+    1.2999992370605469
+  ],
+  "triangles": 2009,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "4bf359a63eb4532d4372598768d8d4c4109203d846cc88affbb30b4b80ae23ef",
+  "verified": true
+}

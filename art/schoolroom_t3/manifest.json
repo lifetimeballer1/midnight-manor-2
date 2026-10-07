@@ -1,0 +1,26 @@
+{
+  "asset": "schoolroom_t3",
+  "file": "schoolroom_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | schoolroom | T03 Architecture",
+    "MMR | schoolroom | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499984741210938,
+    1.8700000047683716,
+    2.3499984741210938
+  ],
+  "triangles": 2132,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "2dac71ffc61292a063a3c5acd4a8ca04774d5f42bdd8076273d362a9d48ea555",
+  "verified": true
+}

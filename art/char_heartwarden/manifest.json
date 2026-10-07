@@ -1,0 +1,40 @@
+{
+  "asset": "char_heartwarden",
+  "file": "char_heartwarden.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | heartwarden Rig",
+    "MMR Character | heartwarden Body",
+    "MMR Character | heartwarden Held heartwood-axe",
+    "MMR Character | heartwarden Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.5518035888671875,
+    1.7300206422805786,
+    0.6325874328613281
+  ],
+  "triangles": 956,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Chopping",
+    "death": "Death_A",
+    "gather": "Chopping"
+  },
+  "sha256": "4498f1b30dedb4baf27e7665a410f54428e4e578f294b0c4654432f851cdd00f",
+  "verified": true
+}

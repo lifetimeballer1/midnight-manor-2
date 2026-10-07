@@ -1,0 +1,26 @@
+{
+  "asset": "scout_post_t6",
+  "file": "scout_post_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | scout_post | T06 Architecture",
+    "MMR | scout_post | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.29998779296875,
+    1.6059999465942383,
+    1.2999992370605469
+  ],
+  "triangles": 1496,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "7c03ecf676b416bbd6d8b76d44765e56f14275764a46cbd4cd16174bcbe15e79",
+  "verified": true
+}

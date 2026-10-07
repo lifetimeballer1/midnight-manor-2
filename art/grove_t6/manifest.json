@@ -1,0 +1,26 @@
+{
+  "asset": "grove_t6",
+  "file": "grove_t6.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | grove | T06 Architecture",
+    "MMR | grove | Tier 06 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.4257659912109375,
+    2.044100046157837,
+    2.3499984741210938
+  ],
+  "triangles": 2176,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "75a993b11d01ac57fded4716ef20a4e57c950ed1436dbad80cf6261cf04ce7e6",
+  "verified": true
+}

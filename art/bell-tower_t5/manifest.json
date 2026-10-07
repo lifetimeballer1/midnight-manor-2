@@ -1,0 +1,26 @@
+{
+  "asset": "bell-tower_t5",
+  "file": "bell-tower_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | bell-tower | T05 Architecture",
+    "MMR | bell-tower | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.3499984741210938,
+    2.8949999809265137,
+    2.3499984741210938
+  ],
+  "triangles": 1584,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "2e51f8aafd85b5ff75aa2f4f4c2a4fc56482a9d47e7d08ae2de6d76ad2904b6f",
+  "verified": true
+}

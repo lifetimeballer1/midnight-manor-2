@@ -31,6 +31,8 @@ func bind_chronicle(shared: Chronicle) -> void:
 func _attach() -> void:
 	if config is Dictionary and config.get("research", {}) is Dictionary and chronicle.has_config():
 		(config["research"] as Dictionary)["nodes"] = chronicle.nodes()
+		for technology: Dictionary in chronicle.nodes().values():
+			config["research"]["insight_cap"] = maxf(float(config["research"]["insight_cap"]), float(technology["insight"]))
 
 
 # --- Chronicle passthroughs -------------------------------------------------

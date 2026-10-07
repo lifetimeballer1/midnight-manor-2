@@ -1,0 +1,26 @@
+{
+  "asset": "whisper-grove_t2",
+  "file": "whisper-grove_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | whisper-grove | T02 Architecture",
+    "MMR | whisper-grove | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    1.649399995803833,
+    2.3499984741210938
+  ],
+  "triangles": 1300,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "2ae411db79b9a1b461eda257fd681dfdfaca89ee2cd0cb2136c74593d9cf5429",
+  "verified": true
+}

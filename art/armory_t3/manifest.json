@@ -1,0 +1,26 @@
+{
+  "asset": "armory_t3",
+  "file": "armory_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | armory | T03 Architecture",
+    "MMR | armory | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.3999998569488525,
+    1.2999992370605469
+  ],
+  "triangles": 2428,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "b5d9c74518f6f73d0093b5fe15ad7ac5d6ad08fc3174a6224c60cc7b10fa0c89",
+  "verified": true
+}

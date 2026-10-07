@@ -1,0 +1,26 @@
+{
+  "asset": "emberglass_t4",
+  "file": "emberglass_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | emberglass | T04 Architecture",
+    "MMR | emberglass | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.1974999904632568,
+    1.3000030517578125
+  ],
+  "triangles": 1560,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "c44aeab42c1330b7ef7742bb2bb7f858badf236af22244b44dc31fddf91f5063",
+  "verified": true
+}

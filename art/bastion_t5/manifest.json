@@ -1,0 +1,27 @@
+{
+  "asset": "bastion_t5",
+  "file": "bastion_t5.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | bastion | T05 Architecture",
+    "MMR | bastion | T05 Heavy Buttresses",
+    "MMR | bastion | Tier 05 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    2.797499895095825,
+    1.2999999523162842
+  ],
+  "triangles": 1608,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "a6380aab26244ec48e7abf82e16fc5b747ea6aed16b2b513b248dee078b3da08",
+  "verified": true
+}

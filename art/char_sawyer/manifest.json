@@ -1,0 +1,40 @@
+{
+  "asset": "char_sawyer",
+  "file": "char_sawyer.glb",
+  "kind": "character",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR Character | sawyer Rig",
+    "MMR Character | sawyer Body",
+    "MMR Character | sawyer Held fellingaxe",
+    "MMR Character | sawyer Wrist Connections"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.551803708076477,
+    1.7288280725479126,
+    0.6507835388183594
+  ],
+  "triangles": 1023,
+  "meshes": 3,
+  "materials": 1,
+  "images": 1,
+  "clips": [
+    "idle",
+    "walk",
+    "work",
+    "death",
+    "gather"
+  ],
+  "clip_sources": {
+    "idle": "Idle_A",
+    "walk": "Walking_A",
+    "work": "Sawing",
+    "death": "Death_A",
+    "gather": "Sawing"
+  },
+  "sha256": "55e168f08031d0ebbcbe0d734a6fd7378045470ed2a63dd7d59ee73a8d8e4d8f",
+  "verified": true
+}

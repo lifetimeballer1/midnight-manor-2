@@ -74,7 +74,7 @@ func _run() -> void:
 	check(float(cell(living, Vector2i(2, 2)).get("wear", 0.0)) > 0.999 and bool(cell(living, Vector2i(2, 2)).get("stone", false)), "stone roads do not decay")
 	check(sim.raid_active and sim.enemies.size() == 2, "the elapsed jump really does trigger a scheduled raid")
 	var state: Dictionary = JSON.parse_string(JSON.stringify(sim.export_state()))
-	check(float(state["version"]) == 3.0 and typeof(state["version"]) == TYPE_FLOAT, "JSON hands back the field version as a number")
+	check(float(state["version"]) == 4.0 and typeof(state["version"]) == TYPE_FLOAT, "JSON hands back the needs-aware field version as a number")
 	var restored = Sim.new()
 	var accepted: bool = restored.restore_state(state)
 	check(accepted, "version2 restores living state")

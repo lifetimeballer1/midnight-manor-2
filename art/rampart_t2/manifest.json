@@ -1,0 +1,26 @@
+{
+  "asset": "rampart_t2",
+  "file": "rampart_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | rampart | T02 Architecture",
+    "MMR | rampart | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000001907348633,
+    1.284999966621399,
+    1.3000030517578125
+  ],
+  "triangles": 824,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "926936f332d18d42311ed70e662737fe841b4b2c8ae885b9e91c6a5991e2fe3d",
+  "verified": true
+}

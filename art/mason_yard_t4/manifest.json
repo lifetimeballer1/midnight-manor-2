@@ -1,0 +1,26 @@
+{
+  "asset": "mason_yard_t4",
+  "file": "mason_yard_t4.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | mason_yard | T04 Architecture",
+    "MMR | mason_yard | Tier 04 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    2.350006103515625,
+    1.6449999809265137,
+    2.356182098388672
+  ],
+  "triangles": 1772,
+  "meshes": 2,
+  "materials": 1,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "bff27e1be40f6cfdc5718a53f036b76191613c54fc837f3c8f22c4000ed448b9",
+  "verified": true
+}

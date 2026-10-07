@@ -47,8 +47,8 @@ const SEALED := Color("c9a44c")       # researched / stamped
 
 const CATEGORIES: Array[String] = ["Economy", "Homes", "Defense", "Roads"]
 const CATEGORY_TYPES: Dictionary = {
-	"Economy": ["farm", "lumber", "timber_yard", "mine", "pond", "sawmill", "stone_quarry"],
-	"Homes": ["cottage", "pasture", "storehouse"],
+	"Economy": ["farm", "lumber", "timber_yard", "mine", "pond", "grove", "sawmill", "stone_quarry"],
+	"Homes": ["cottage", "pasture", "storehouse", "bathhouse"],
 	"Defense": ["barracks", "tower", "archer_tower", "trap", "wall", "stonewall", "gate"],
 	"Roads": [],
 }
@@ -137,8 +137,8 @@ func body(text: String, parent: Node, size: int = 14) -> Label:
 func button(text: String, action: Callable, parent: Node, minimum: float = 36.0) -> Button:
 	var made := Button.new()
 	made.text = text
-	made.focus_mode = Control.FOCUS_NONE
-	made.custom_minimum_size.y = minimum
+	made.focus_mode = Control.FOCUS_ALL
+	made.custom_minimum_size.y = maxf(MIN_HIT, minimum)
 	made.pressed.connect(action)
 	parent.add_child(made)
 	return made
@@ -230,9 +230,10 @@ func inset_row(parent: Node) -> PanelContainer:
 func command_button(text: String, action: Callable, parent: Node, minimum: float = 44.0) -> Button:
 	var made := Button.new()
 	made.text = text
-	made.focus_mode = Control.FOCUS_NONE
-	made.custom_minimum_size = Vector2(0, minimum)
-	made.pressed.connect(action)
+	made.focus_mode = Control.FOCUS_ALL
+	made.custom_minimum_size = Vector2(0, maxf(MIN_HIT, minimum))
+	if action.is_valid():
+		made.pressed.connect(action)
 	paint_command(made, "normal")
 	parent.add_child(made)
 	return made

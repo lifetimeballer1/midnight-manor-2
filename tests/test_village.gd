@@ -134,7 +134,12 @@ func _run() -> void:
 	warrior["hp"] = 0
 	sim.units[0]["hp"] = 0
 	sim.tick(0.05)
-	check(not sim.raid_active and sim.enemies.is_empty(), "manor defeat ends raid")
+	check(sim.raid_active and sim.home_raid.stars() == 1, "hall destruction earns one star without ending the raid")
+	for enemy: Dictionary in sim.enemies:
+		enemy["hp"] = 0
+	sim.tick(0.05)
+	check(not sim.raid_active and sim.enemies.is_empty(), "clearing attackers ends the one-star raid")
+	check(sim.home_raid.last["stars"] == 1 and not sim.home_raid.last["defense_won"], "one-star defense is recorded as breached")
 	check(sim.units[0]["hp"] > 0, "fallen defender revives after raid")
 	check(sim.repair(int(hall["id"])) and hall["hp"] > 0, "ruin repaired using real resources")
 	sim.units[0]["carry"] = 7

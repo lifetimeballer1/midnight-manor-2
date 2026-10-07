@@ -1,0 +1,26 @@
+{
+  "asset": "tannery_t2",
+  "file": "tannery_t2.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | tannery | T02 Architecture",
+    "MMR | tannery | Tier 02 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.34375,
+    1.2999992370605469
+  ],
+  "triangles": 1789,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "7b71c4247f0a76f788e57b1676185bf28ea344c85ad6fc7eef914ee39389872e",
+  "verified": true
+}

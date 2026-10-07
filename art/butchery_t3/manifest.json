@@ -1,0 +1,26 @@
+{
+  "asset": "butchery_t3",
+  "file": "butchery_t3.glb",
+  "kind": "building",
+  "source_file": "Game Assets.blend",
+  "source_objects": [
+    "MMR | butchery | T03 Architecture",
+    "MMR | butchery | Tier 03 Ground"
+  ],
+  "pivot": "base_center",
+  "units": "metres",
+  "up_axis": "+Y",
+  "dimensions_m": [
+    1.3000030517578125,
+    1.4824999570846558,
+    1.2999992370605469
+  ],
+  "triangles": 2188,
+  "meshes": 2,
+  "materials": 2,
+  "images": 1,
+  "clips": [],
+  "clip_sources": {},
+  "sha256": "eee866d9559ea16ac9859832b5298c8cb1e6328c94f2ab1d0ad316bec4a7e379",
+  "verified": true
+}

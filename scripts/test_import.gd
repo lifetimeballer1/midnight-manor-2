@@ -214,7 +214,7 @@ func _build_characters() -> void:
 		asset.position = Vector3(-8.75 + index * 2.5, 0, 10)
 		var player: AnimationPlayer = _find_player(asset)
 		var label: Label3D = _label(asset, "", Vector3(0, 2.5, 0), 25)
-		characters.append({"player": player, "label": label, "name": str(entry["asset"]).trim_prefix("char_").capitalize(), "job": jobs[index]})
+		characters.append({"player": player, "label": label, "name": str(entry["asset"]).trim_prefix("char_").capitalize(), "job": jobs[index % jobs.size()]})
 	_set_animation(0)
 
 
