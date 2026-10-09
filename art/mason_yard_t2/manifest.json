@@ -2,25 +2,26 @@
   "asset": "mason_yard_t2",
   "file": "mason_yard_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | mason_yard | T02 Architecture",
+    "MMR | mason_yard | T02 Autumn Dressing",
     "MMR | mason_yard | Tier 02 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.350006103515625,
+    2.3499999046325684,
     1.6449999809265137,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1444,
-  "meshes": 2,
+  "triangles": 1464,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "e8c2b0c092f241f8b9865b4bf29e085b1c9694e603829691b9edd5ca5300366c",
+  "sha256": "addb0ce36a46342fa3f89e6697b52ada472c92334133442aadf0f15c46f176ff",
   "verified": true
 }

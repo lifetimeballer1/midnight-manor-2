@@ -2,25 +2,26 @@
   "asset": "butchery_t5",
   "file": "butchery_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | butchery | T05 Architecture",
+    "MMR | butchery | T05 Autumn Dressing",
     "MMR | butchery | Tier 05 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.5649999380111694,
-    1.2999992370605469
+    1.2999999523162842
   ],
-  "triangles": 3152,
-  "meshes": 2,
+  "triangles": 3157,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "7100f93202d7f6083e9b98746e9d7435ba475d62b4ad3ea79c2a2fa0d8c8c6e7",
+  "sha256": "08849db99a39f0271a6779eae00c8e3134c6891a1c2a5531d8c23e17924a5818",
   "verified": true
 }

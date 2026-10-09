@@ -2,25 +2,26 @@
   "asset": "armory_t5",
   "file": "armory_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | armory | T05 Architecture",
+    "MMR | armory | T05 Autumn Dressing",
     "MMR | armory | Tier 05 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.5125000476837158,
-    1.2999992370605469
+    1.2999999523162842
   ],
-  "triangles": 3336,
-  "meshes": 2,
+  "triangles": 3341,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "c4e4d41fdc110c5c660670ae668eddf011ed72ce5889f35b7569f04d84dc674d",
+  "sha256": "4e3c14fe3e47c4e165b91653e2bf6286077d7a41e71fbddac2dbb028bcaf1f0f",
   "verified": true
 }

@@ -46,10 +46,10 @@ func _ready() -> void:
 	add_child(sun)
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_COLOR
-	environment.background_color = Color("101927")
+	environment.background_color = Color("0a0f18")
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color("9da9c1")
-	environment.ambient_light_energy = 0.55
+	environment.ambient_light_color = Color("5a6478")
+	environment.ambient_light_energy = 0.41
 	camera.environment = environment
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camera.far = 150.0

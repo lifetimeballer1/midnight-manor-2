@@ -2,25 +2,26 @@
   "asset": "butchery_t4",
   "file": "butchery_t4.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | butchery | T04 Architecture",
+    "MMR | butchery | T04 Autumn Dressing",
     "MMR | butchery | Tier 04 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.5649999380111694,
-    1.2999992370605469
+    1.2999999523162842
   ],
-  "triangles": 2448,
-  "meshes": 2,
+  "triangles": 2453,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "794b948ed6daf438a5aefd91e95005e55cd813611a2e6e9022bfa533329358d6",
+  "sha256": "2074e1f94e282b392e7a8e391d3da08d0651958f3d929e8dc0915743caf2d9a3",
   "verified": true
 }

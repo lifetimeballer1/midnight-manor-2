@@ -2,7 +2,7 @@
   "asset": "workshop_t3",
   "file": "workshop_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | workshop | T03 Architecture",
     "MMR | workshop | Tier 03 Ground"
@@ -11,9 +11,9 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.3999998569488525,
-    1.2999992370605469
+    1.2999999523162842
   ],
   "triangles": 2268,
   "meshes": 2,
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "fabc4798daa8f87fbb7f7ac919f52d5073c45f03fb72162e19917feb1df01c3a",
+  "sha256": "4788a0b6bf7493a3e20eababdb897ed6b8805d20d8a786508ad093a6717bb11a",
   "verified": true
 }

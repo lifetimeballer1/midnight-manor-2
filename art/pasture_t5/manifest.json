@@ -2,9 +2,10 @@
   "asset": "pasture_t5",
   "file": "pasture_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | pasture | T05 Architecture",
+    "MMR | pasture | T05 Autumn Dressing",
     "MMR | pasture | Tier 05 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     1.59499990940094,
     2.3499999046325684
   ],
-  "triangles": 2228,
-  "meshes": 2,
+  "triangles": 2289,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "aae62e3012080b327afa1c53ece34bd450474c6b5778e9fca50f4c403d3f8b36",
+  "sha256": "5bc557d4938f4857f4e21493e30dcf1658a822944b038834a2673158431ab77b",
   "verified": true
 }

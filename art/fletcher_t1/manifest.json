@@ -2,7 +2,7 @@
   "asset": "fletcher_t1",
   "file": "fletcher_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | fletcher | T01 Architecture",
     "MMR | fletcher | Tier 01 Ground"
@@ -11,7 +11,7 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.2874999046325684,
     1.2999999523162842
   ],
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "b5ca3a1b2e74ffdb5bdb07be082e61b82a825855697bf293c0e69e3ebb82bb54",
+  "sha256": "060dee828d5dd3c7c4ffd9231198a973902295840214795d5983789718c12015",
   "verified": true
 }

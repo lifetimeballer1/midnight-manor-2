@@ -2,9 +2,11 @@
   "asset": "forge_t5",
   "file": "forge_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | forge | T05 Architecture",
+    "MMR | forge | T05 Autumn Dressing",
+    "MMR | forge | T05 Flame Glow",
     "MMR | forge | Tier 05 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +17,12 @@
     2.615000009536743,
     2.3499999046325684
   ],
-  "triangles": 3744,
-  "meshes": 2,
+  "triangles": 3764,
+  "meshes": 4,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "8399e568c5fa450a330cadfbd294947ce88eb403b18bbd2708f4bf7ddb88b6af",
+  "sha256": "89f34309c8e1c4243993061510fcc80b4c2d752d5a08191dc5ceba24eb5b9468",
   "verified": true
 }

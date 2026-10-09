@@ -2,7 +2,7 @@
   "asset": "blackwater-weir_t5",
   "file": "blackwater-weir_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | blackwater-weir | T05 Architecture",
     "MMR | blackwater-weir | Tier 05 Ground"
@@ -11,9 +11,9 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.4649999141693115,
-    1.3000030517578125
+    1.2999999523162842
   ],
   "triangles": 2088,
   "meshes": 2,
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "ae1aa82058020da4078ff89b0c36b998b87925a052a04176f313dda722e82d73",
+  "sha256": "0cb9849eb79f0d0349f4e82042f80bc78bcfc1e51892fa10ab499055fc299b92",
   "verified": true
 }

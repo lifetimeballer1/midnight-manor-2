@@ -2,25 +2,27 @@
   "asset": "ballista_t5",
   "file": "ballista_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | ballista | T05 Architecture",
+    "MMR | ballista | T05 Autumn Dressing",
+    "MMR | ballista | T05 Banner Flag 1",
     "MMR | ballista | Tier 05 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.2999992370605469,
+    1.2999999523162842,
     2.797499895095825,
-    1.3000030517578125
+    1.2999999523162842
   ],
-  "triangles": 1468,
-  "meshes": 2,
+  "triangles": 1483,
+  "meshes": 4,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "a540287e0e252546918e794819a929cc5c7046d93ee7f02626ce0dc5bfe71b06",
+  "sha256": "8d3851e7dff3fb3ee35657fa7be717921fa68468531fe1c6ff07ab31bb5719ec",
   "verified": true
 }

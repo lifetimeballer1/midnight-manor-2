@@ -9,7 +9,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.98499989509583,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -23,7 +23,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2552
+			"triangles": 2590
 		},
 		{
 			"asset": "manor_hall_t2",
@@ -33,7 +33,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.03999996185303,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -47,7 +47,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3012
+			"triangles": 3050
 		},
 		{
 			"asset": "manor_hall_t3",
@@ -57,7 +57,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.20499992370605,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -71,7 +71,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3984
+			"triangles": 4022
 		},
 		{
 			"asset": "manor_hall_t4",
@@ -81,7 +81,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.56500005722046,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -95,7 +95,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 4948
+			"triangles": 4973
 		},
 		{
 			"asset": "manor_hall_t5",
@@ -105,7 +105,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.96499991416931,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -119,7 +119,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 6040
+			"triangles": 6055
 		},
 		{
 			"asset": "manor_hall_t6",
@@ -129,7 +129,7 @@
 			"kind": "building",
 			"manifest_height_m": 3.14000010490417,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -143,7 +143,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 6172
+			"triangles": 6195
 		},
 		{
 			"asset": "cottage_t1",
@@ -153,7 +153,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.71499991416931,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -167,7 +167,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2088
+			"triangles": 2126
 		},
 		{
 			"asset": "cottage_t2",
@@ -177,7 +177,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.87000000476837,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -191,7 +191,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2668
+			"triangles": 2711
 		},
 		{
 			"asset": "cottage_t3",
@@ -201,7 +201,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.91499996185303,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -215,7 +215,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2920
+			"triangles": 2958
 		},
 		{
 			"asset": "cottage_t4",
@@ -225,7 +225,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.95999991893768,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -239,7 +239,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3652
+			"triangles": 3695
 		},
 		{
 			"asset": "cottage_t5",
@@ -249,7 +249,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.27499985694885,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -263,7 +263,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 4728
+			"triangles": 4766
 		},
 		{
 			"asset": "cottage_t6",
@@ -273,7 +273,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.27499985694885,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -287,7 +287,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 5016
+			"triangles": 5041
 		},
 		{
 			"asset": "farm_t1",
@@ -297,7 +297,7 @@
 			"kind": "building",
 			"manifest_height_m": 0.742000043392181,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -311,7 +311,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1440
+			"triangles": 1496
 		},
 		{
 			"asset": "farm_t2",
@@ -321,7 +321,7 @@
 			"kind": "building",
 			"manifest_height_m": 0.763999998569489,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -335,7 +335,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1660
+			"triangles": 1703
 		},
 		{
 			"asset": "farm_t3",
@@ -345,7 +345,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.34499990940094,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -359,7 +359,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2032
+			"triangles": 2093
 		},
 		{
 			"asset": "farm_t4",
@@ -369,7 +369,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.34499990940094,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -383,7 +383,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2032
+			"triangles": 2070
 		},
 		{
 			"asset": "farm_t5",
@@ -393,7 +393,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.64999997615814,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -407,7 +407,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2104
+			"triangles": 2160
 		},
 		{
 			"asset": "farm_t6",
@@ -417,7 +417,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.64999997615814,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -431,7 +431,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2104
+			"triangles": 2147
 		},
 		{
 			"asset": "lumber_t1",
@@ -441,7 +441,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.22374999523163,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -455,7 +455,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1612
+			"triangles": 1627
 		},
 		{
 			"asset": "lumber_t2",
@@ -465,7 +465,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.24624991416931,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -479,7 +479,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1736
+			"triangles": 1769
 		},
 		{
 			"asset": "lumber_t3",
@@ -489,7 +489,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.26874995231628,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -503,7 +503,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1876
+			"triangles": 1891
 		},
 		{
 			"asset": "lumber_t4",
@@ -513,7 +513,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.29124999046326,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -527,7 +527,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2204
+			"triangles": 2214
 		},
 		{
 			"asset": "lumber_t5",
@@ -537,7 +537,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.31374990940094,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -551,7 +551,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2328
+			"triangles": 2338
 		},
 		{
 			"asset": "lumber_t6",
@@ -561,7 +561,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.33624994754791,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -575,7 +575,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2452
+			"triangles": 2462
 		},
 		{
 			"asset": "timber_yard_t1",
@@ -585,7 +585,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.22374999523163,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -599,7 +599,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1472
+			"triangles": 1500
 		},
 		{
 			"asset": "timber_yard_t2",
@@ -609,7 +609,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.24624991416931,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -623,7 +623,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1568
+			"triangles": 1596
 		},
 		{
 			"asset": "timber_yard_t3",
@@ -633,7 +633,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.26874995231628,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -647,7 +647,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1680
+			"triangles": 1695
 		},
 		{
 			"asset": "timber_yard_t4",
@@ -657,7 +657,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.29124999046326,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -671,7 +671,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1980
+			"triangles": 2008
 		},
 		{
 			"asset": "timber_yard_t5",
@@ -681,7 +681,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.31374990940094,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -695,7 +695,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2076
+			"triangles": 2104
 		},
 		{
 			"asset": "timber_yard_t6",
@@ -705,7 +705,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.33624994754791,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -719,7 +719,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2172
+			"triangles": 2200
 		},
 		{
 			"asset": "mine_t1",
@@ -729,7 +729,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.10749995708466,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -743,7 +743,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1404
+			"triangles": 1409
 		},
 		{
 			"asset": "mine_t2",
@@ -753,7 +753,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.13750004768372,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -767,7 +767,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1420
+			"triangles": 1425
 		},
 		{
 			"asset": "mine_t3",
@@ -801,7 +801,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.19749999046326,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -815,7 +815,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1560
+			"triangles": 1565
 		},
 		{
 			"asset": "mine_t5",
@@ -825,7 +825,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.22749996185303,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -839,7 +839,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1576
+			"triangles": 1581
 		},
 		{
 			"asset": "mine_t6",
@@ -849,7 +849,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.2574999332428,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -863,7 +863,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1592
+			"triangles": 1597
 		},
 		{
 			"asset": "tower_t1",
@@ -873,7 +873,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.42499995231628,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -887,7 +887,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1344
+			"triangles": 1364
 		},
 		{
 			"asset": "tower_t2",
@@ -897,7 +897,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.625,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -911,7 +911,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1344
+			"triangles": 1364
 		},
 		{
 			"asset": "tower_t3",
@@ -921,7 +921,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.82500004768372,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -935,7 +935,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1360
+			"triangles": 1375
 		},
 		{
 			"asset": "tower_t4",
@@ -945,7 +945,7 @@
 			"kind": "building",
 			"manifest_height_m": 3.02499985694885,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -959,7 +959,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1360
+			"triangles": 1375
 		},
 		{
 			"asset": "tower_t5",
@@ -969,7 +969,7 @@
 			"kind": "building",
 			"manifest_height_m": 3.22499990463257,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -983,7 +983,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1360
+			"triangles": 1380
 		},
 		{
 			"asset": "tower_t6",
@@ -993,7 +993,7 @@
 			"kind": "building",
 			"manifest_height_m": 3.42499995231628,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1007,7 +1007,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1360
+			"triangles": 1375
 		},
 		{
 			"asset": "archer_tower_t1",
@@ -1017,7 +1017,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.58500003814697,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1031,7 +1031,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1908
+			"triangles": 1923
 		},
 		{
 			"asset": "archer_tower_t2",
@@ -1041,7 +1041,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.78499984741211,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1055,7 +1055,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1908
+			"triangles": 1923
 		},
 		{
 			"asset": "archer_tower_t3",
@@ -1065,7 +1065,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.98499989509583,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1079,7 +1079,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1992
+			"triangles": 2007
 		},
 		{
 			"asset": "archer_tower_t4",
@@ -1089,7 +1089,7 @@
 			"kind": "building",
 			"manifest_height_m": 3.18499994277954,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1103,7 +1103,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1992
+			"triangles": 2012
 		},
 		{
 			"asset": "archer_tower_t5",
@@ -1113,7 +1113,7 @@
 			"kind": "building",
 			"manifest_height_m": 3.38499999046326,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1127,7 +1127,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2048
+			"triangles": 2063
 		},
 		{
 			"asset": "archer_tower_t6",
@@ -1137,7 +1137,7 @@
 			"kind": "building",
 			"manifest_height_m": 3.58500003814697,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1151,7 +1151,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2048
+			"triangles": 2063
 		},
 		{
 			"asset": "wall_t1",
@@ -1444,7 +1444,9 @@
 		{
 			"asset": "gate_t1",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"gate_t1: base-bearing parts off base/slab: [\"MMR | gate | T01 Architecture_001 min_y=0.476\", \"MMR | gate | Tier 01 Ground_001 min_y=0.426\"]"
+			],
 			"height_m": 1.78899991512299,
 			"kind": "building",
 			"manifest_height_m": 1.78899991512299,
@@ -1468,7 +1470,9 @@
 		{
 			"asset": "gate_t2",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"gate_t2: base-bearing parts off base/slab: [\"MMR | gate | T02 Architecture_001 min_y=0.602\", \"MMR | gate | Tier 02 Ground_001 min_y=0.552\"]"
+			],
 			"height_m": 2.08299994468689,
 			"kind": "building",
 			"manifest_height_m": 2.08299994468689,
@@ -1492,12 +1496,14 @@
 		{
 			"asset": "gate_t3",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"gate_t3: base-bearing parts off base/slab: [\"MMR | gate | T03 Architecture_001 min_y=0.728\", \"MMR | gate | Tier 03 Ground_001 min_y=0.678\"]"
+			],
 			"height_m": 2.52300000190735,
 			"kind": "building",
 			"manifest_height_m": 2.52300000190735,
 			"materials": 2,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1516,12 +1522,14 @@
 		{
 			"asset": "gate_t4",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"gate_t4: base-bearing parts off base/slab: [\"MMR | gate | T04 Architecture_001 min_y=0.854\", \"MMR | gate | Tier 04 Ground_001 min_y=0.804\"]"
+			],
 			"height_m": 2.78900003433228,
 			"kind": "building",
 			"manifest_height_m": 2.78900003433228,
 			"materials": 2,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1540,12 +1548,14 @@
 		{
 			"asset": "gate_t5",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"gate_t5: base-bearing parts off base/slab: [\"MMR | gate | T05 Architecture_001 min_y=0.980\", \"MMR | gate | Tier 05 Ground_001 min_y=0.930\"]"
+			],
 			"height_m": 3.0550000667572,
 			"kind": "building",
 			"manifest_height_m": 3.0550000667572,
 			"materials": 2,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1564,12 +1574,14 @@
 		{
 			"asset": "gate_t6",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"gate_t6: base-bearing parts off base/slab: [\"MMR | gate | T06 Architecture_001 min_y=1.106\", \"MMR | gate | Tier 06 Ground_001 min_y=1.056\"]"
+			],
 			"height_m": 3.32100009918213,
 			"kind": "building",
 			"manifest_height_m": 3.32100009918213,
 			"materials": 2,
-			"meshes": 3,
+			"meshes": 5,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1665,7 +1677,7 @@
 			"kind": "building",
 			"manifest_height_m": 0.634999990463257,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -1689,7 +1701,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.93999993801117,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1703,7 +1715,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1888
+			"triangles": 1903
 		},
 		{
 			"asset": "storehouse_t2",
@@ -1713,7 +1725,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.01500010490417,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1727,7 +1739,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1996
+			"triangles": 2016
 		},
 		{
 			"asset": "storehouse_t3",
@@ -1737,7 +1749,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.08999991416931,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1751,7 +1763,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2108
+			"triangles": 2123
 		},
 		{
 			"asset": "storehouse_t4",
@@ -1761,7 +1773,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.16499996185303,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1775,7 +1787,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2420
+			"triangles": 2435
 		},
 		{
 			"asset": "storehouse_t5",
@@ -1785,7 +1797,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.24000000953674,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1799,7 +1811,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3124
+			"triangles": 3139
 		},
 		{
 			"asset": "storehouse_t6",
@@ -1809,7 +1821,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.31500005722046,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1823,7 +1835,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3192
+			"triangles": 3207
 		},
 		{
 			"asset": "barracks_t1",
@@ -1833,7 +1845,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.9099999666214,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1847,7 +1859,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2200
+			"triangles": 2215
 		},
 		{
 			"asset": "barracks_t2",
@@ -1857,7 +1869,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.97499990463257,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1871,7 +1883,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2268
+			"triangles": 2273
 		},
 		{
 			"asset": "barracks_t3",
@@ -1881,7 +1893,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.03999996185303,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1895,7 +1907,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2652
+			"triangles": 2662
 		},
 		{
 			"asset": "barracks_t4",
@@ -1905,7 +1917,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.10500001907349,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1919,7 +1931,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2912
+			"triangles": 2927
 		},
 		{
 			"asset": "barracks_t5",
@@ -1929,7 +1941,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.84500002861023,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1943,7 +1955,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3200
+			"triangles": 3205
 		},
 		{
 			"asset": "barracks_t6",
@@ -1953,7 +1965,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.84500002861023,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 7,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1967,7 +1979,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3312
+			"triangles": 3332
 		},
 		{
 			"asset": "forge_t1",
@@ -1977,7 +1989,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.06500005722046,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -1991,7 +2003,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2300
+			"triangles": 2325
 		},
 		{
 			"asset": "forge_t2",
@@ -2001,7 +2013,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.11999988555908,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2015,7 +2027,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2532
+			"triangles": 2557
 		},
 		{
 			"asset": "forge_t3",
@@ -2025,7 +2037,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.28499984741211,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2039,7 +2051,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2980
+			"triangles": 3005
 		},
 		{
 			"asset": "forge_t4",
@@ -2049,7 +2061,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.45000004768372,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2063,7 +2075,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3392
+			"triangles": 3407
 		},
 		{
 			"asset": "forge_t5",
@@ -2073,7 +2085,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.61500000953674,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2087,7 +2099,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3744
+			"triangles": 3764
 		},
 		{
 			"asset": "forge_t6",
@@ -2097,7 +2109,7 @@
 			"kind": "building",
 			"manifest_height_m": 2.77999997138977,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2111,7 +2123,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3856
+			"triangles": 3876
 		},
 		{
 			"asset": "market_t1",
@@ -2121,7 +2133,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.36500000953674,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.64999997615814,
 				0.0,
@@ -2135,7 +2147,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1648
+			"triangles": 1704
 		},
 		{
 			"asset": "market_t2",
@@ -2145,7 +2157,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.38499999046326,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.64999997615814,
 				0.0,
@@ -2159,7 +2171,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1648
+			"triangles": 1709
 		},
 		{
 			"asset": "market_t3",
@@ -2169,7 +2181,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.40499997138977,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.64999997615814,
 				0.0,
@@ -2183,7 +2195,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1884
+			"triangles": 1945
 		},
 		{
 			"asset": "market_t4",
@@ -2193,7 +2205,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.42499995231628,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.64999997615814,
 				0.0,
@@ -2207,7 +2219,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1884
+			"triangles": 1940
 		},
 		{
 			"asset": "market_t5",
@@ -2217,7 +2229,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.57499992847443,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.64999997615814,
 				0.0,
@@ -2231,7 +2243,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1952
+			"triangles": 1995
 		},
 		{
 			"asset": "market_t6",
@@ -2241,7 +2253,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.57499992847443,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 4,
 			"min_m": [
 				-1.64999997615814,
 				0.0,
@@ -2255,7 +2267,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1952
+			"triangles": 1995
 		},
 		{
 			"asset": "pasture_t1",
@@ -2265,7 +2277,7 @@
 			"kind": "building",
 			"manifest_height_m": 0.754999995231628,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2279,7 +2291,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1368
+			"triangles": 1406
 		},
 		{
 			"asset": "pasture_t2",
@@ -2289,7 +2301,7 @@
 			"kind": "building",
 			"manifest_height_m": 0.754999995231628,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2303,7 +2315,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1576
+			"triangles": 1632
 		},
 		{
 			"asset": "pasture_t3",
@@ -2313,7 +2325,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.59499990940094,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2327,7 +2339,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2228
+			"triangles": 2289
 		},
 		{
 			"asset": "pasture_t4",
@@ -2337,7 +2349,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.59499990940094,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2351,7 +2363,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2228
+			"triangles": 2271
 		},
 		{
 			"asset": "pasture_t5",
@@ -2361,7 +2373,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.59499990940094,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2375,7 +2387,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2228
+			"triangles": 2289
 		},
 		{
 			"asset": "pasture_t6",
@@ -2385,7 +2397,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.59499990940094,
 			"materials": 1,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2399,7 +2411,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2228
+			"triangles": 2266
 		},
 		{
 			"asset": "pond_t1",
@@ -2548,12 +2560,14 @@
 		{
 			"asset": "sawmill_t1",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"sawmill_t1: base-bearing parts off base/slab: [\"MMR | sawmill | T01 Architecture_001 min_y=0.292\", \"MMR | sawmill | Tier 01 Ground_001 min_y=0.242\"]"
+			],
 			"height_m": 2.03182125091553,
 			"kind": "building",
 			"manifest_height_m": 2.03182125091553,
 			"materials": 1,
-			"meshes": 4,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2567,17 +2581,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2004
+			"triangles": 2029
 		},
 		{
 			"asset": "sawmill_t2",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"sawmill_t2: base-bearing parts off base/slab: [\"MMR | sawmill | T02 Architecture_001 min_y=0.304\", \"MMR | sawmill | Tier 02 Ground_001 min_y=0.254\"]"
+			],
 			"height_m": 2.08881378173828,
 			"kind": "building",
 			"manifest_height_m": 2.08881378173828,
 			"materials": 1,
-			"meshes": 4,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2591,17 +2607,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2240
+			"triangles": 2260
 		},
 		{
 			"asset": "sawmill_t3",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"sawmill_t3: base-bearing parts off base/slab: [\"MMR | sawmill | T03 Architecture_001 min_y=0.316\", \"MMR | sawmill | Tier 03 Ground_001 min_y=0.266\"]"
+			],
 			"height_m": 2.14580655097961,
 			"kind": "building",
 			"manifest_height_m": 2.14580655097961,
 			"materials": 1,
-			"meshes": 4,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2615,17 +2633,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2476
+			"triangles": 2501
 		},
 		{
 			"asset": "sawmill_t4",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"sawmill_t4: base-bearing parts off base/slab: [\"MMR | sawmill | T04 Architecture_001 min_y=0.330\", \"MMR | sawmill | Tier 04 Ground_001 min_y=0.280\"]"
+			],
 			"height_m": 2.20499992370605,
 			"kind": "building",
 			"manifest_height_m": 2.20499992370605,
 			"materials": 1,
-			"meshes": 5,
+			"meshes": 6,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2639,17 +2659,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2852
+			"triangles": 2872
 		},
 		{
 			"asset": "sawmill_t5",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"sawmill_t5: base-bearing parts off base/slab: [\"MMR | sawmill | T05 Architecture_001 min_y=0.340\", \"MMR | sawmill | Tier 05 Ground_001 min_y=0.290\"]"
+			],
 			"height_m": 2.2597918510437,
 			"kind": "building",
 			"manifest_height_m": 2.2597918510437,
 			"materials": 2,
-			"meshes": 5,
+			"meshes": 6,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2663,17 +2685,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3236
+			"triangles": 3256
 		},
 		{
 			"asset": "sawmill_t6",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"sawmill_t6: base-bearing parts off base/slab: [\"MMR | sawmill | T06 Architecture_001 min_y=0.352\", \"MMR | sawmill | Tier 06 Ground_001 min_y=0.302\"]"
+			],
 			"height_m": 2.43678426742554,
 			"kind": "building",
 			"manifest_height_m": 2.43678450584412,
 			"materials": 2,
-			"meshes": 5,
+			"meshes": 6,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2687,17 +2711,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 3500
+			"triangles": 3520
 		},
 		{
 			"asset": "mill_t1",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"mill_t1: base-bearing parts off base/slab: [\"MMR | mill | T01 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 01 Ground_001 min_y=0.815\"]"
+			],
 			"height_m": 3.07034850120544,
 			"kind": "building",
 			"manifest_height_m": 3.07034850120544,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2711,17 +2737,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1712
+			"triangles": 1768
 		},
 		{
 			"asset": "mill_t2",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"mill_t2: base-bearing parts off base/slab: [\"MMR | mill | T02 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 02 Ground_001 min_y=0.815\"]"
+			],
 			"height_m": 3.19034862518311,
 			"kind": "building",
 			"manifest_height_m": 3.19034862518311,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2735,17 +2763,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1820
+			"triangles": 1881
 		},
 		{
 			"asset": "mill_t3",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"mill_t3: base-bearing parts off base/slab: [\"MMR | mill | T03 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 03 Ground_001 min_y=0.815\"]"
+			],
 			"height_m": 3.31034851074219,
 			"kind": "building",
 			"manifest_height_m": 3.31034851074219,
 			"materials": 1,
-			"meshes": 3,
+			"meshes": 4,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2759,17 +2789,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 1932
+			"triangles": 1970
 		},
 		{
 			"asset": "mill_t4",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"mill_t4: base-bearing parts off base/slab: [\"MMR | mill | T04 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 04 Ground_001 min_y=0.815\"]"
+			],
 			"height_m": 3.43034839630127,
 			"kind": "building",
 			"manifest_height_m": 3.43034863471985,
 			"materials": 2,
-			"meshes": 4,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2783,17 +2815,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2484
+			"triangles": 2527
 		},
 		{
 			"asset": "mill_t5",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"mill_t5: base-bearing parts off base/slab: [\"MMR | mill | T05 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 05 Ground_001 min_y=0.815\"]"
+			],
 			"height_m": 3.55034828186035,
 			"kind": "building",
 			"manifest_height_m": 3.55034852027893,
 			"materials": 2,
-			"meshes": 4,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2807,17 +2841,19 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2484
+			"triangles": 2545
 		},
 		{
 			"asset": "mill_t6",
 			"clips": [],
-			"errors": [],
+			"errors": [
+				"mill_t6: base-bearing parts off base/slab: [\"MMR | mill | T06 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 06 Ground_001 min_y=0.815\"]"
+			],
 			"height_m": 3.67034864425659,
 			"kind": "building",
 			"manifest_height_m": 3.67034864425659,
 			"materials": 2,
-			"meshes": 4,
+			"meshes": 5,
 			"min_m": [
 				-1.17499995231628,
 				0.0,
@@ -2831,7 +2867,7 @@
 			"skeletons": 0,
 			"skinned_meshes": 0,
 			"textures": 1,
-			"triangles": 2552
+			"triangles": 2613
 		},
 		{
 			"asset": "scriptorium_t1",
@@ -2841,7 +2877,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.40199995040894,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -2865,7 +2901,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.4539999961853,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -2889,7 +2925,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.50599992275238,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -2913,7 +2949,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.55799996852875,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -2937,7 +2973,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.60999989509583,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -2961,7 +2997,7 @@
 			"kind": "building",
 			"manifest_height_m": 1.66199994087219,
 			"materials": 2,
-			"meshes": 2,
+			"meshes": 3,
 			"min_m": [
 				-0.649999976158142,
 				0.0,
@@ -3000,6 +3036,3560 @@
 			"skinned_meshes": 0,
 			"textures": 1,
 			"triangles": 760
+		},
+		{
+			"asset": "grove_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.53559994697571,
+			"kind": "building",
+			"manifest_height_m": 1.53559994697571,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.53559994697571,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1881
+		},
+		{
+			"asset": "grove_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.63729989528656,
+			"kind": "building",
+			"manifest_height_m": 1.63729989528656,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.63729989528656,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2105
+		},
+		{
+			"asset": "grove_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.7389999628067,
+			"kind": "building",
+			"manifest_height_m": 1.7389999628067,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.7389999628067,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2105
+		},
+		{
+			"asset": "grove_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.84069991111755,
+			"kind": "building",
+			"manifest_height_m": 1.84069991111755,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.84069991111755,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2201
+		},
+		{
+			"asset": "grove_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.9423999786377,
+			"kind": "building",
+			"manifest_height_m": 1.9423999786377,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.18942475318909,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.37884950637817,
+				1.9423999786377,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2196
+		},
+		{
+			"asset": "grove_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.04410004615784,
+			"kind": "building",
+			"manifest_height_m": 2.04410004615784,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.21288204193115,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.4257640838623,
+				2.04410004615784,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2201
+		},
+		{
+			"asset": "frostgrove_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.53559994697571,
+			"kind": "building",
+			"manifest_height_m": 1.53559994697571,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.53559994697571,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1305
+		},
+		{
+			"asset": "frostgrove_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.63729989528656,
+			"kind": "building",
+			"manifest_height_m": 1.63729989528656,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.63729989528656,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1529
+		},
+		{
+			"asset": "frostgrove_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.7389999628067,
+			"kind": "building",
+			"manifest_height_m": 1.7389999628067,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.7389999628067,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1529
+		},
+		{
+			"asset": "frostgrove_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.84069991111755,
+			"kind": "building",
+			"manifest_height_m": 1.84069991111755,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.84069991111755,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1620
+		},
+		{
+			"asset": "frostgrove_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.9423999786377,
+			"kind": "building",
+			"manifest_height_m": 1.9423999786377,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.18942475318909,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.37884950637817,
+				1.9423999786377,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1625
+		},
+		{
+			"asset": "frostgrove_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.04410004615784,
+			"kind": "building",
+			"manifest_height_m": 2.04410004615784,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.21288204193115,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.4257640838623,
+				2.04410004615784,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1620
+		},
+		{
+			"asset": "whisper-grove_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.54680001735687,
+			"kind": "building",
+			"manifest_height_m": 1.54680001735687,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.54680001735687,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1096
+		},
+		{
+			"asset": "whisper-grove_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64939999580383,
+			"kind": "building",
+			"manifest_height_m": 1.64939999580383,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64939999580383,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1320
+		},
+		{
+			"asset": "whisper-grove_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.7519998550415,
+			"kind": "building",
+			"manifest_height_m": 1.7519998550415,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.7519998550415,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1320
+		},
+		{
+			"asset": "whisper-grove_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.85459995269775,
+			"kind": "building",
+			"manifest_height_m": 1.85459995269775,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.85459995269775,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1416
+		},
+		{
+			"asset": "whisper-grove_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.95719993114471,
+			"kind": "building",
+			"manifest_height_m": 1.95719993114471,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.95719993114471,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1421
+		},
+		{
+			"asset": "whisper-grove_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.05979990959167,
+			"kind": "building",
+			"manifest_height_m": 2.05979990959167,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.05979990959167,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1416
+		},
+		{
+			"asset": "chapel_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.32500004768372,
+			"kind": "building",
+			"manifest_height_m": 2.32500004768372,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.32500004768372,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2298
+		},
+		{
+			"asset": "chapel_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.41499996185303,
+			"kind": "building",
+			"manifest_height_m": 2.41499996185303,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.41499996185303,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2285
+		},
+		{
+			"asset": "chapel_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.50499987602234,
+			"kind": "building",
+			"manifest_height_m": 2.50499987602234,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.50499987602234,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2438
+		},
+		{
+			"asset": "chapel_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.59500002861023,
+			"kind": "building",
+			"manifest_height_m": 2.59500002861023,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.59500002861023,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2461
+		},
+		{
+			"asset": "chapel_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.68499994277954,
+			"kind": "building",
+			"manifest_height_m": 2.68499994277954,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.68499994277954,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2494
+		},
+		{
+			"asset": "chapel_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.77499985694885,
+			"kind": "building",
+			"manifest_height_m": 2.77499985694885,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.77499985694885,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2499
+		},
+		{
+			"asset": "sunken-chapel_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.12999999523163,
+			"kind": "building",
+			"manifest_height_m": 1.12999999523163,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.12999999523163,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1077
+		},
+		{
+			"asset": "sunken-chapel_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.12999999523163,
+			"kind": "building",
+			"manifest_height_m": 1.12999999523163,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.12999999523163,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1077
+		},
+		{
+			"asset": "sunken-chapel_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1465
+		},
+		{
+			"asset": "sunken-chapel_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1460
+		},
+		{
+			"asset": "sunken-chapel_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1528
+		},
+		{
+			"asset": "sunken-chapel_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.59499990940094,
+			"kind": "building",
+			"manifest_height_m": 1.59499990940094,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.59499990940094,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1533
+		},
+		{
+			"asset": "schoolroom_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.74000000953674,
+			"kind": "building",
+			"manifest_height_m": 1.74000000953674,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.74000000953674,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2172
+		},
+		{
+			"asset": "schoolroom_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.80499994754791,
+			"kind": "building",
+			"manifest_height_m": 1.80499994754791,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.80499994754791,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2154
+		},
+		{
+			"asset": "schoolroom_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.87000000476837,
+			"kind": "building",
+			"manifest_height_m": 1.87000000476837,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.87000000476837,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2170
+		},
+		{
+			"asset": "schoolroom_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.93499994277954,
+			"kind": "building",
+			"manifest_height_m": 1.93499994277954,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.93499994277954,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2897
+		},
+		{
+			"asset": "schoolroom_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.0,
+			"kind": "building",
+			"manifest_height_m": 2.0,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.0,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2879
+		},
+		{
+			"asset": "schoolroom_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.06500005722046,
+			"kind": "building",
+			"manifest_height_m": 2.06500005722046,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.06500005722046,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3149
+		},
+		{
+			"asset": "armory_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2029
+		},
+		{
+			"asset": "armory_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2029
+		},
+		{
+			"asset": "armory_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2433
+		},
+		{
+			"asset": "armory_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2637
+		},
+		{
+			"asset": "armory_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3341
+		},
+		{
+			"asset": "armory_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3409
+		},
+		{
+			"asset": "workshop_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2252
+		},
+		{
+			"asset": "workshop_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2252
+		},
+		{
+			"asset": "workshop_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2268
+		},
+		{
+			"asset": "workshop_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2472
+		},
+		{
+			"asset": "workshop_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3176
+		},
+		{
+			"asset": "workshop_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3244
+		},
+		{
+			"asset": "smeltery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.16999983787537,
+			"kind": "building",
+			"manifest_height_m": 2.16999983787537,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.16999983787537,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1829
+		},
+		{
+			"asset": "smeltery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.27999997138977,
+			"kind": "building",
+			"manifest_height_m": 2.27999997138977,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.27999997138977,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1913
+		},
+		{
+			"asset": "smeltery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.3899998664856,
+			"kind": "building",
+			"manifest_height_m": 2.3899998664856,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.3899998664856,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2013
+		},
+		{
+			"asset": "smeltery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.5,
+			"kind": "building",
+			"manifest_height_m": 2.5,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.5,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2097
+		},
+		{
+			"asset": "smeltery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.60999989509583,
+			"kind": "building",
+			"manifest_height_m": 2.60999989509583,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.60999989509583,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2181
+		},
+		{
+			"asset": "smeltery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.82999992370605,
+			"kind": "building",
+			"manifest_height_m": 2.82999992370605,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.82999992370605,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2321
+		},
+		{
+			"asset": "tannery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1812
+		},
+		{
+			"asset": "tannery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1799
+		},
+		{
+			"asset": "tannery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1815
+		},
+		{
+			"asset": "tannery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2019
+		},
+		{
+			"asset": "tannery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2723
+		},
+		{
+			"asset": "tannery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2799
+		},
+		{
+			"asset": "butchery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1808
+		},
+		{
+			"asset": "butchery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1826
+		},
+		{
+			"asset": "butchery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.48249995708466,
+			"kind": "building",
+			"manifest_height_m": 1.48249995708466,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.48249995708466,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2188
+		},
+		{
+			"asset": "butchery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56499993801117,
+			"kind": "building",
+			"manifest_height_m": 1.56499993801117,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56499993801117,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2453
+		},
+		{
+			"asset": "butchery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56499993801117,
+			"kind": "building",
+			"manifest_height_m": 1.56499993801117,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56499993801117,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3157
+		},
+		{
+			"asset": "butchery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64750003814697,
+			"kind": "building",
+			"manifest_height_m": 1.64750003814697,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.64750003814697,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3281
+		},
+		{
+			"asset": "bakery_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.83999991416931,
+			"kind": "building",
+			"manifest_height_m": 1.83999991416931,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.83999991416931,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2177
+		},
+		{
+			"asset": "bakery_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.94999992847443,
+			"kind": "building",
+			"manifest_height_m": 1.94999992847443,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.94999992847443,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2215
+		},
+		{
+			"asset": "bakery_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.94999992847443,
+			"kind": "building",
+			"manifest_height_m": 1.94999992847443,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.94999992847443,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2249
+		},
+		{
+			"asset": "bakery_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.94999992847443,
+			"kind": "building",
+			"manifest_height_m": 1.94999992847443,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.94999992847443,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2448
+		},
+		{
+			"asset": "bakery_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.0,
+			"kind": "building",
+			"manifest_height_m": 2.0,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.0,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3157
+		},
+		{
+			"asset": "bakery_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.07500004768372,
+			"kind": "building",
+			"manifest_height_m": 2.07500004768372,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.07500004768372,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 3258
+		},
+		{
+			"asset": "mason_yard_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1469
+		},
+		{
+			"asset": "mason_yard_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1464
+		},
+		{
+			"asset": "mason_yard_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17809128761292
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1797
+		},
+		{
+			"asset": "mason_yard_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17809128761292
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1792
+		},
+		{
+			"asset": "mason_yard_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17809128761292
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1797
+		},
+		{
+			"asset": "mason_yard_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.64499998092651,
+			"kind": "building",
+			"manifest_height_m": 1.64499998092651,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17809128761292
+			],
+			"size_m": [
+				2.34999990463257,
+				1.64499998092651,
+				2.35618233680725
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1797
+		},
+		{
+			"asset": "emberglass_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.10749995708466,
+			"kind": "building",
+			"manifest_height_m": 1.10749995708466,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.10749995708466,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1409
+		},
+		{
+			"asset": "emberglass_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.13750004768372,
+			"kind": "building",
+			"manifest_height_m": 1.13750004768372,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.13750004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1430
+		},
+		{
+			"asset": "emberglass_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.16750001907349,
+			"kind": "building",
+			"manifest_height_m": 1.16750001907349,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.16750001907349,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1441
+		},
+		{
+			"asset": "emberglass_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 1.19749999046326,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1565
+		},
+		{
+			"asset": "emberglass_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.22749996185303,
+			"kind": "building",
+			"manifest_height_m": 1.22749996185303,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.22749996185303,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1576
+		},
+		{
+			"asset": "emberglass_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.2574999332428,
+			"kind": "building",
+			"manifest_height_m": 1.2574999332428,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.2574999332428,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1592
+		},
+		{
+			"asset": "fletcher_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.28749990463257,
+			"kind": "building",
+			"manifest_height_m": 1.28749990463257,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.28749990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1988
+		},
+		{
+			"asset": "fletcher_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.34375,
+			"kind": "building",
+			"manifest_height_m": 1.34375,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.34375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1993
+		},
+		{
+			"asset": "fletcher_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.39999985694885,
+			"kind": "building",
+			"manifest_height_m": 1.39999985694885,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.39999985694885,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2009
+		},
+		{
+			"asset": "fletcher_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.45624995231628,
+			"kind": "building",
+			"manifest_height_m": 1.45624995231628,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.45624995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2208
+		},
+		{
+			"asset": "fletcher_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.51250004768372,
+			"kind": "building",
+			"manifest_height_m": 1.51250004768372,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.51250004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2917
+		},
+		{
+			"asset": "fletcher_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.56875002384186,
+			"kind": "building",
+			"manifest_height_m": 1.56875002384186,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.56875002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2980
+		},
+		{
+			"asset": "scout_post_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.50999999046326,
+			"kind": "building",
+			"manifest_height_m": 1.50999999046326,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.50999999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1384
+		},
+		{
+			"asset": "scout_post_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.50999999046326,
+			"kind": "building",
+			"manifest_height_m": 1.50999999046326,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.50999999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1384
+		},
+		{
+			"asset": "scout_post_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.50999999046326,
+			"kind": "building",
+			"manifest_height_m": 1.50999999046326,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.50999999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1400
+		},
+		{
+			"asset": "scout_post_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.54199993610382,
+			"kind": "building",
+			"manifest_height_m": 1.54199993610382,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.54199993610382,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1496
+		},
+		{
+			"asset": "scout_post_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.57400000095367,
+			"kind": "building",
+			"manifest_height_m": 1.57400000095367,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.57400000095367,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1496
+		},
+		{
+			"asset": "scout_post_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.60599994659424,
+			"kind": "building",
+			"manifest_height_m": 1.60599994659424,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.60599994659424,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1496
+		},
+		{
+			"asset": "watchfire_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.954999983310699,
+			"kind": "building",
+			"manifest_height_m": 0.9549999833107,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.954999983310699,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1062
+		},
+		{
+			"asset": "watchfire_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.995000004768372,
+			"kind": "building",
+			"manifest_height_m": 0.995000004768372,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.995000004768372,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1067
+		},
+		{
+			"asset": "watchfire_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.4375,
+			"kind": "building",
+			"manifest_height_m": 1.4375,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.4375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1235
+		},
+		{
+			"asset": "watchfire_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.4375,
+			"kind": "building",
+			"manifest_height_m": 1.4375,
+			"materials": 2,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.4375,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1235
+		},
+		{
+			"asset": "watchfire_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.97499990463257,
+			"kind": "building",
+			"manifest_height_m": 1.97499990463257,
+			"materials": 2,
+			"meshes": 5,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.97499990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1298
+		},
+		{
+			"asset": "watchfire_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.97499990463257,
+			"kind": "building",
+			"manifest_height_m": 1.97499990463257,
+			"materials": 2,
+			"meshes": 5,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.97499990463257,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1293
+		},
+		{
+			"asset": "ballista_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 1.99749994277954,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1364
+		},
+		{
+			"asset": "ballista_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 2.19749999046326,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1359
+		},
+		{
+			"asset": "ballista_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.39749979972839,
+			"kind": "building",
+			"manifest_height_m": 2.39749979972839,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.39749979972839,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1359
+		},
+		{
+			"asset": "ballista_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.59749984741211,
+			"kind": "building",
+			"manifest_height_m": 2.59749984741211,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.59749984741211,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1488
+		},
+		{
+			"asset": "ballista_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.79749989509583,
+			"kind": "building",
+			"manifest_height_m": 2.79749989509583,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.79749989509583,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1483
+		},
+		{
+			"asset": "ballista_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 2.99749994277954,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1483
+		},
+		{
+			"asset": "bastion_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 1.99749994277954,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1499
+		},
+		{
+			"asset": "bastion_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 2.19749999046326,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1499
+		},
+		{
+			"asset": "bastion_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.39749979972839,
+			"kind": "building",
+			"manifest_height_m": 2.39749979972839,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.39749979972839,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1499
+		},
+		{
+			"asset": "bastion_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.59749984741211,
+			"kind": "building",
+			"manifest_height_m": 2.59749984741211,
+			"materials": 1,
+			"meshes": 5,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.59749984741211,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1623
+		},
+		{
+			"asset": "bastion_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.79749989509583,
+			"kind": "building",
+			"manifest_height_m": 2.79749989509583,
+			"materials": 1,
+			"meshes": 5,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.79749989509583,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1628
+		},
+		{
+			"asset": "bastion_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.99749994277954,
+			"kind": "building",
+			"manifest_height_m": 2.99749994277954,
+			"materials": 1,
+			"meshes": 5,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				2.99749994277954,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1628
+		},
+		{
+			"asset": "rampart_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.17499995231628,
+			"kind": "building",
+			"manifest_height_m": 1.17499995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.17499995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 824
+		},
+		{
+			"asset": "rampart_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.2849999666214,
+			"kind": "building",
+			"manifest_height_m": 1.2849999666214,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.2849999666214,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 824
+		},
+		{
+			"asset": "rampart_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.52999985218048,
+			"kind": "building",
+			"manifest_height_m": 1.52999985218048,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.52999985218048,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "rampart_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.52999985218048,
+			"kind": "building",
+			"manifest_height_m": 1.52999985218048,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.52999985218048,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "rampart_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.61499989032745,
+			"kind": "building",
+			"manifest_height_m": 1.61499989032745,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.61499989032745,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "rampart_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.72500002384186,
+			"kind": "building",
+			"manifest_height_m": 1.72500002384186,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.72500002384186,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1036
+		},
+		{
+			"asset": "longhouse_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.76499998569489,
+			"kind": "building",
+			"manifest_height_m": 1.76499998569489,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.76499998569489,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1706
+		},
+		{
+			"asset": "longhouse_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.87999999523163,
+			"kind": "building",
+			"manifest_height_m": 1.87999999523163,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.87999999523163,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1958
+		},
+		{
+			"asset": "longhouse_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.88499999046326,
+			"kind": "building",
+			"manifest_height_m": 1.88499999046326,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.88499999046326,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1992
+		},
+		{
+			"asset": "longhouse_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.9449999332428,
+			"kind": "building",
+			"manifest_height_m": 1.9449999332428,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.9449999332428,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2198
+		},
+		{
+			"asset": "longhouse_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.00500011444092,
+			"kind": "building",
+			"manifest_height_m": 2.00500011444092,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				2.00500011444092,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2642
+		},
+		{
+			"asset": "longhouse_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.06500005722046,
+			"kind": "building",
+			"manifest_height_m": 2.06500005722046,
+			"materials": 2,
+			"meshes": 3,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				2.06500005722046,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2634
+		},
+		{
+			"asset": "bellcote_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.71499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.71499991416931,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.71499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1171
+		},
+		{
+			"asset": "bell-tower_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.25499987602234,
+			"kind": "building",
+			"manifest_height_m": 2.25499987602234,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.25499987602234,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1520
+		},
+		{
+			"asset": "bell-tower_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.41499996185303,
+			"kind": "building",
+			"manifest_height_m": 2.41499996185303,
+			"materials": 1,
+			"meshes": 4,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.41499996185303,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1525
+		},
+		{
+			"asset": "bell-tower_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.57500004768372,
+			"kind": "building",
+			"manifest_height_m": 2.57500004768372,
+			"materials": 1,
+			"meshes": 5,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.57500004768372,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1609
+		},
+		{
+			"asset": "bell-tower_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.73499989509583,
+			"kind": "building",
+			"manifest_height_m": 2.73499989509583,
+			"materials": 1,
+			"meshes": 5,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.73499989509583,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1609
+		},
+		{
+			"asset": "bell-tower_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 2.89499998092651,
+			"kind": "building",
+			"manifest_height_m": 2.89499998092651,
+			"materials": 1,
+			"meshes": 5,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				2.89499998092651,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1609
+		},
+		{
+			"asset": "bell-tower_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 3.0550000667572,
+			"kind": "building",
+			"manifest_height_m": 3.0550000667572,
+			"materials": 1,
+			"meshes": 5,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				3.0550000667572,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1604
+		},
+		{
+			"asset": "blackwater-weir_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.879999995231628,
+			"kind": "building",
+			"manifest_height_m": 0.879999995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.879999995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1672
+		},
+		{
+			"asset": "blackwater-weir_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.879999995231628,
+			"kind": "building",
+			"manifest_height_m": 0.879999995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.879999995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1672
+		},
+		{
+			"asset": "blackwater-weir_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.879999995231628,
+			"kind": "building",
+			"manifest_height_m": 0.879999995231628,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.879999995231628,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1672
+		},
+		{
+			"asset": "blackwater-weir_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.46499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.46499991416931,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.46499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2088
+		},
+		{
+			"asset": "blackwater-weir_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.46499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.46499991416931,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.46499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2088
+		},
+		{
+			"asset": "blackwater-weir_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.46499991416931,
+			"kind": "building",
+			"manifest_height_m": 1.46499991416931,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.46499991416931,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2088
+		},
+		{
+			"asset": "deephole_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.18624997138977,
+			"kind": "building",
+			"manifest_height_m": 1.18624997138977,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.18624997138977,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1844
+		},
+		{
+			"asset": "deephole_t2",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.18624997138977,
+			"kind": "building",
+			"manifest_height_m": 1.18624997138977,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.18624997138977,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1860
+		},
+		{
+			"asset": "deephole_t3",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.18624997138977,
+			"kind": "building",
+			"manifest_height_m": 1.18624997138977,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.18624997138977,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1892
+		},
+		{
+			"asset": "deephole_t4",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.19749999046326,
+			"kind": "building",
+			"manifest_height_m": 1.19749999046326,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.19749999046326,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2016
+		},
+		{
+			"asset": "deephole_t5",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.22749996185303,
+			"kind": "building",
+			"manifest_height_m": 1.22749996185303,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.22749996185303,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2032
+		},
+		{
+			"asset": "deephole_t6",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.2574999332428,
+			"kind": "building",
+			"manifest_height_m": 1.2574999332428,
+			"materials": 2,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				1.2574999332428,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 2048
+		},
+		{
+			"asset": "cairnfield_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 1.0699999332428,
+			"kind": "building",
+			"manifest_height_m": 1.0699999332428,
+			"materials": 1,
+			"meshes": 3,
+			"min_m": [
+				-1.17499995231628,
+				0.0,
+				-1.17499995231628
+			],
+			"size_m": [
+				2.34999990463257,
+				1.0699999332428,
+				2.34999990463257
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1321
+		},
+		{
+			"asset": "moon-dial_t1",
+			"clips": [],
+			"errors": [],
+			"height_m": 0.761383056640625,
+			"kind": "building",
+			"manifest_height_m": 0.761383056640625,
+			"materials": 1,
+			"meshes": 2,
+			"min_m": [
+				-0.649999976158142,
+				0.0,
+				-0.649999976158142
+			],
+			"size_m": [
+				1.29999995231628,
+				0.761383056640625,
+				1.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1084
+		},
+		{
+			"asset": "dawn-gate_t1",
+			"clips": [],
+			"errors": [
+				"dawn-gate_t1: base-bearing parts off base/slab: [\"MMR | dawn-gate | T01 Architecture_001 min_y=0.476\", \"MMR | dawn-gate | Tier 01 Ground_001 min_y=0.426\"]"
+			],
+			"height_m": 1.9909999370575,
+			"kind": "building",
+			"manifest_height_m": 1.9909999370575,
+			"materials": 2,
+			"meshes": 5,
+			"min_m": [
+				-1.64999997615814,
+				0.0,
+				-1.64999997615814
+			],
+			"size_m": [
+				3.29999995231628,
+				1.9909999370575,
+				3.29999995231628
+			],
+			"skeletons": 0,
+			"skinned_meshes": 0,
+			"textures": 1,
+			"triangles": 1624
 		},
 		{
 			"asset": "char_builder",
@@ -3882,3558 +7472,6 @@
 			"triangles": 1048
 		},
 		{
-			"asset": "grove_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.53559994697571,
-			"kind": "building",
-			"manifest_height_m": 1.53559994697571,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.53559994697571,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1856
-		},
-		{
-			"asset": "grove_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.63729989528656,
-			"kind": "building",
-			"manifest_height_m": 1.63729989528656,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.63729989528656,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2080
-		},
-		{
-			"asset": "grove_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.7389999628067,
-			"kind": "building",
-			"manifest_height_m": 1.7389999628067,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.7389999628067,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2080
-		},
-		{
-			"asset": "grove_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.84069991111755,
-			"kind": "building",
-			"manifest_height_m": 1.84069991111755,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.84069991111755,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2176
-		},
-		{
-			"asset": "grove_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.9423999786377,
-			"kind": "building",
-			"manifest_height_m": 1.9423999786377,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.18941950798035,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.37884950637817,
-				1.9423999786377,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2176
-		},
-		{
-			"asset": "grove_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.04410004615784,
-			"kind": "building",
-			"manifest_height_m": 2.04410004615784,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.21287941932678,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.4257640838623,
-				2.04410004615784,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2176
-		},
-		{
-			"asset": "frostgrove_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.53559994697571,
-			"kind": "building",
-			"manifest_height_m": 1.53559994697571,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.53559994697571,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1280
-		},
-		{
-			"asset": "frostgrove_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.63729989528656,
-			"kind": "building",
-			"manifest_height_m": 1.63729989528656,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.63729989528656,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1504
-		},
-		{
-			"asset": "frostgrove_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.7389999628067,
-			"kind": "building",
-			"manifest_height_m": 1.7389999628067,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.7389999628067,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1504
-		},
-		{
-			"asset": "frostgrove_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.84069991111755,
-			"kind": "building",
-			"manifest_height_m": 1.84069991111755,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.84069991111755,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1600
-		},
-		{
-			"asset": "frostgrove_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.9423999786377,
-			"kind": "building",
-			"manifest_height_m": 1.9423999786377,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.18941950798035,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.37884950637817,
-				1.9423999786377,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1600
-		},
-		{
-			"asset": "frostgrove_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.04410004615784,
-			"kind": "building",
-			"manifest_height_m": 2.04410004615784,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.21287941932678,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.4257640838623,
-				2.04410004615784,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1600
-		},
-		{
-			"asset": "whisper-grove_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.54680001735687,
-			"kind": "building",
-			"manifest_height_m": 1.54680001735687,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.54680001735687,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1076
-		},
-		{
-			"asset": "whisper-grove_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64939999580383,
-			"kind": "building",
-			"manifest_height_m": 1.64939999580383,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.64939999580383,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1300
-		},
-		{
-			"asset": "whisper-grove_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.7519998550415,
-			"kind": "building",
-			"manifest_height_m": 1.7519998550415,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.7519998550415,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1300
-		},
-		{
-			"asset": "whisper-grove_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.85459995269775,
-			"kind": "building",
-			"manifest_height_m": 1.85459995269775,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.85459995269775,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1396
-		},
-		{
-			"asset": "whisper-grove_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.95719993114471,
-			"kind": "building",
-			"manifest_height_m": 1.95719993114471,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.95719993114471,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1396
-		},
-		{
-			"asset": "whisper-grove_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.05979990959167,
-			"kind": "building",
-			"manifest_height_m": 2.05979990959167,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.05979990959167,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1396
-		},
-		{
-			"asset": "chapel_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.32500004768372,
-			"kind": "building",
-			"manifest_height_m": 2.32500004768372,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.32500004768372,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2260
-		},
-		{
-			"asset": "chapel_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.41499996185303,
-			"kind": "building",
-			"manifest_height_m": 2.41499996185303,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.41499996185303,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2260
-		},
-		{
-			"asset": "chapel_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.50499987602234,
-			"kind": "building",
-			"manifest_height_m": 2.50499987602234,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.50499987602234,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2400
-		},
-		{
-			"asset": "chapel_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.59500002861023,
-			"kind": "building",
-			"manifest_height_m": 2.59500002861023,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.59500002861023,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2400
-		},
-		{
-			"asset": "chapel_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.68499994277954,
-			"kind": "building",
-			"manifest_height_m": 2.68499994277954,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.68499994277954,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2456
-		},
-		{
-			"asset": "chapel_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.77499985694885,
-			"kind": "building",
-			"manifest_height_m": 2.77499985694885,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.77499985694885,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2456
-		},
-		{
-			"asset": "sunken-chapel_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.12999999523163,
-			"kind": "building",
-			"manifest_height_m": 1.12999999523163,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.12999999523163,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1052
-		},
-		{
-			"asset": "sunken-chapel_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.12999999523163,
-			"kind": "building",
-			"manifest_height_m": 1.12999999523163,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.12999999523163,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1052
-		},
-		{
-			"asset": "sunken-chapel_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.59499990940094,
-			"kind": "building",
-			"manifest_height_m": 1.59499990940094,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.59499990940094,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1440
-		},
-		{
-			"asset": "sunken-chapel_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.59499990940094,
-			"kind": "building",
-			"manifest_height_m": 1.59499990940094,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.59499990940094,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1440
-		},
-		{
-			"asset": "sunken-chapel_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.59499990940094,
-			"kind": "building",
-			"manifest_height_m": 1.59499990940094,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.59499990940094,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1508
-		},
-		{
-			"asset": "sunken-chapel_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.59499990940094,
-			"kind": "building",
-			"manifest_height_m": 1.59499990940094,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.59499990940094,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1508
-		},
-		{
-			"asset": "schoolroom_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.74000000953674,
-			"kind": "building",
-			"manifest_height_m": 1.74000000953674,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.74000000953674,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2116
-		},
-		{
-			"asset": "schoolroom_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.80499994754791,
-			"kind": "building",
-			"manifest_height_m": 1.80499994754791,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.80499994754791,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2116
-		},
-		{
-			"asset": "schoolroom_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.87000000476837,
-			"kind": "building",
-			"manifest_height_m": 1.87000000476837,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.87000000476837,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2132
-		},
-		{
-			"asset": "schoolroom_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.93499994277954,
-			"kind": "building",
-			"manifest_height_m": 1.93499994277954,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.93499994277954,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2836
-		},
-		{
-			"asset": "schoolroom_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.0,
-			"kind": "building",
-			"manifest_height_m": 2.0,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.0,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2836
-		},
-		{
-			"asset": "schoolroom_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.06500005722046,
-			"kind": "building",
-			"manifest_height_m": 2.06500005722046,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.06500005722046,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3088
-		},
-		{
-			"asset": "armory_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.28749990463257,
-			"kind": "building",
-			"manifest_height_m": 1.28749990463257,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.28749990463257,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2024
-		},
-		{
-			"asset": "armory_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.34375,
-			"kind": "building",
-			"manifest_height_m": 1.34375,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.34375,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2024
-		},
-		{
-			"asset": "armory_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.39999985694885,
-			"kind": "building",
-			"manifest_height_m": 1.39999985694885,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.39999985694885,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2428
-		},
-		{
-			"asset": "armory_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.45624995231628,
-			"kind": "building",
-			"manifest_height_m": 1.45624995231628,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.45624995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2632
-		},
-		{
-			"asset": "armory_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.51250004768372,
-			"kind": "building",
-			"manifest_height_m": 1.51250004768372,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.51250004768372,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3336
-		},
-		{
-			"asset": "armory_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.56875002384186,
-			"kind": "building",
-			"manifest_height_m": 1.56875002384186,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.56875002384186,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3404
-		},
-		{
-			"asset": "workshop_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.28749990463257,
-			"kind": "building",
-			"manifest_height_m": 1.28749990463257,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.28749990463257,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2252
-		},
-		{
-			"asset": "workshop_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.34375,
-			"kind": "building",
-			"manifest_height_m": 1.34375,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.34375,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2252
-		},
-		{
-			"asset": "workshop_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.39999985694885,
-			"kind": "building",
-			"manifest_height_m": 1.39999985694885,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.39999985694885,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2268
-		},
-		{
-			"asset": "workshop_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.45624995231628,
-			"kind": "building",
-			"manifest_height_m": 1.45624995231628,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.45624995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2472
-		},
-		{
-			"asset": "workshop_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.51250004768372,
-			"kind": "building",
-			"manifest_height_m": 1.51250004768372,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.51250004768372,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3176
-		},
-		{
-			"asset": "workshop_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.56875002384186,
-			"kind": "building",
-			"manifest_height_m": 1.56875002384186,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.56875002384186,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3244
-		},
-		{
-			"asset": "smeltery_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.16999983787537,
-			"kind": "building",
-			"manifest_height_m": 2.16999983787537,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.16999983787537,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1804
-		},
-		{
-			"asset": "smeltery_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.27999997138977,
-			"kind": "building",
-			"manifest_height_m": 2.27999997138977,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.27999997138977,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1888
-		},
-		{
-			"asset": "smeltery_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.3899998664856,
-			"kind": "building",
-			"manifest_height_m": 2.3899998664856,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.3899998664856,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1988
-		},
-		{
-			"asset": "smeltery_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.5,
-			"kind": "building",
-			"manifest_height_m": 2.5,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.5,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2072
-		},
-		{
-			"asset": "smeltery_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.60999989509583,
-			"kind": "building",
-			"manifest_height_m": 2.60999989509583,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.60999989509583,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2156
-		},
-		{
-			"asset": "smeltery_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.82999992370605,
-			"kind": "building",
-			"manifest_height_m": 2.82999992370605,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.82999992370605,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2296
-		},
-		{
-			"asset": "tannery_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.28749990463257,
-			"kind": "building",
-			"manifest_height_m": 1.28749990463257,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.28749990463257,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1789
-		},
-		{
-			"asset": "tannery_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.34375,
-			"kind": "building",
-			"manifest_height_m": 1.34375,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.34375,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1789
-		},
-		{
-			"asset": "tannery_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.39999985694885,
-			"kind": "building",
-			"manifest_height_m": 1.39999985694885,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.39999985694885,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1805
-		},
-		{
-			"asset": "tannery_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.45624995231628,
-			"kind": "building",
-			"manifest_height_m": 1.45624995231628,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.45624995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2009
-		},
-		{
-			"asset": "tannery_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.51250004768372,
-			"kind": "building",
-			"manifest_height_m": 1.51250004768372,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.51250004768372,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2713
-		},
-		{
-			"asset": "tannery_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.56875002384186,
-			"kind": "building",
-			"manifest_height_m": 1.56875002384186,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.56875002384186,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2781
-		},
-		{
-			"asset": "butchery_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.28749990463257,
-			"kind": "building",
-			"manifest_height_m": 1.28749990463257,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.28749990463257,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1808
-		},
-		{
-			"asset": "butchery_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.34375,
-			"kind": "building",
-			"manifest_height_m": 1.34375,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.34375,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1808
-		},
-		{
-			"asset": "butchery_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.48249995708466,
-			"kind": "building",
-			"manifest_height_m": 1.48249995708466,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.48249995708466,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2188
-		},
-		{
-			"asset": "butchery_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.56499993801117,
-			"kind": "building",
-			"manifest_height_m": 1.56499993801117,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.56499993801117,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2448
-		},
-		{
-			"asset": "butchery_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.56499993801117,
-			"kind": "building",
-			"manifest_height_m": 1.56499993801117,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.56499993801117,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3152
-		},
-		{
-			"asset": "butchery_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64750003814697,
-			"kind": "building",
-			"manifest_height_m": 1.64750003814697,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.64750003814697,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3276
-		},
-		{
-			"asset": "bakery_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.83999991416931,
-			"kind": "building",
-			"manifest_height_m": 1.83999991416931,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.83999991416931,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2116
-		},
-		{
-			"asset": "bakery_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.94999992847443,
-			"kind": "building",
-			"manifest_height_m": 1.94999992847443,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.94999992847443,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2172
-		},
-		{
-			"asset": "bakery_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.94999992847443,
-			"kind": "building",
-			"manifest_height_m": 1.94999992847443,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.94999992847443,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2188
-		},
-		{
-			"asset": "bakery_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.94999992847443,
-			"kind": "building",
-			"manifest_height_m": 1.94999992847443,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.94999992847443,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2392
-		},
-		{
-			"asset": "bakery_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.0,
-			"kind": "building",
-			"manifest_height_m": 2.0,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.0,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3096
-		},
-		{
-			"asset": "bakery_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.07500004768372,
-			"kind": "building",
-			"manifest_height_m": 2.07500004768372,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.07500004768372,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 3220
-		},
-		{
-			"asset": "mason_yard_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64499998092651,
-			"kind": "building",
-			"manifest_height_m": 1.64499998092651,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.64499998092651,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1444
-		},
-		{
-			"asset": "mason_yard_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64499998092651,
-			"kind": "building",
-			"manifest_height_m": 1.64499998092651,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.64499998092651,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1444
-		},
-		{
-			"asset": "mason_yard_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64499998092651,
-			"kind": "building",
-			"manifest_height_m": 1.64499998092651,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17808985710144
-			],
-			"size_m": [
-				2.34999990463257,
-				1.64499998092651,
-				2.35618233680725
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1772
-		},
-		{
-			"asset": "mason_yard_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64499998092651,
-			"kind": "building",
-			"manifest_height_m": 1.64499998092651,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17808985710144
-			],
-			"size_m": [
-				2.34999990463257,
-				1.64499998092651,
-				2.35618233680725
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1772
-		},
-		{
-			"asset": "mason_yard_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64499998092651,
-			"kind": "building",
-			"manifest_height_m": 1.64499998092651,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17808985710144
-			],
-			"size_m": [
-				2.34999990463257,
-				1.64499998092651,
-				2.35618233680725
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1772
-		},
-		{
-			"asset": "mason_yard_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.64499998092651,
-			"kind": "building",
-			"manifest_height_m": 1.64499998092651,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17808985710144
-			],
-			"size_m": [
-				2.34999990463257,
-				1.64499998092651,
-				2.35618233680725
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1772
-		},
-		{
-			"asset": "emberglass_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.10749995708466,
-			"kind": "building",
-			"manifest_height_m": 1.10749995708466,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.10749995708466,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1404
-		},
-		{
-			"asset": "emberglass_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.13750004768372,
-			"kind": "building",
-			"manifest_height_m": 1.13750004768372,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.13750004768372,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1420
-		},
-		{
-			"asset": "emberglass_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.16750001907349,
-			"kind": "building",
-			"manifest_height_m": 1.16750001907349,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.16750001907349,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1436
-		},
-		{
-			"asset": "emberglass_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.19749999046326,
-			"kind": "building",
-			"manifest_height_m": 1.19749999046326,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.19749999046326,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1560
-		},
-		{
-			"asset": "emberglass_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.22749996185303,
-			"kind": "building",
-			"manifest_height_m": 1.22749996185303,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.22749996185303,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1576
-		},
-		{
-			"asset": "emberglass_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.2574999332428,
-			"kind": "building",
-			"manifest_height_m": 1.2574999332428,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.2574999332428,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1592
-		},
-		{
-			"asset": "fletcher_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.28749990463257,
-			"kind": "building",
-			"manifest_height_m": 1.28749990463257,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.28749990463257,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1988
-		},
-		{
-			"asset": "fletcher_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.34375,
-			"kind": "building",
-			"manifest_height_m": 1.34375,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.34375,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1988
-		},
-		{
-			"asset": "fletcher_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.39999985694885,
-			"kind": "building",
-			"manifest_height_m": 1.39999985694885,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.39999985694885,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2004
-		},
-		{
-			"asset": "fletcher_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.45624995231628,
-			"kind": "building",
-			"manifest_height_m": 1.45624995231628,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.45624995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2208
-		},
-		{
-			"asset": "fletcher_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.51250004768372,
-			"kind": "building",
-			"manifest_height_m": 1.51250004768372,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.51250004768372,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2912
-		},
-		{
-			"asset": "fletcher_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.56875002384186,
-			"kind": "building",
-			"manifest_height_m": 1.56875002384186,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.56875002384186,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2980
-		},
-		{
-			"asset": "scout_post_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.50999999046326,
-			"kind": "building",
-			"manifest_height_m": 1.50999999046326,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.50999999046326,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1384
-		},
-		{
-			"asset": "scout_post_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.50999999046326,
-			"kind": "building",
-			"manifest_height_m": 1.50999999046326,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.50999999046326,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1384
-		},
-		{
-			"asset": "scout_post_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.50999999046326,
-			"kind": "building",
-			"manifest_height_m": 1.50999999046326,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.50999999046326,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1400
-		},
-		{
-			"asset": "scout_post_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.54199993610382,
-			"kind": "building",
-			"manifest_height_m": 1.54199993610382,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.54199993610382,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1496
-		},
-		{
-			"asset": "scout_post_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.57400000095367,
-			"kind": "building",
-			"manifest_height_m": 1.57400000095367,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.57400000095367,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1496
-		},
-		{
-			"asset": "scout_post_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.60599994659424,
-			"kind": "building",
-			"manifest_height_m": 1.60599994659424,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.60599994659424,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1496
-		},
-		{
-			"asset": "watchfire_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 0.954999983310699,
-			"kind": "building",
-			"manifest_height_m": 0.9549999833107,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				0.954999983310699,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1052
-		},
-		{
-			"asset": "watchfire_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 0.995000004768372,
-			"kind": "building",
-			"manifest_height_m": 0.995000004768372,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				0.995000004768372,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1052
-		},
-		{
-			"asset": "watchfire_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.4375,
-			"kind": "building",
-			"manifest_height_m": 1.4375,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.4375,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1220
-		},
-		{
-			"asset": "watchfire_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.4375,
-			"kind": "building",
-			"manifest_height_m": 1.4375,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.4375,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1220
-		},
-		{
-			"asset": "watchfire_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.97499990463257,
-			"kind": "building",
-			"manifest_height_m": 1.97499990463257,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.97499990463257,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1288
-		},
-		{
-			"asset": "watchfire_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.97499990463257,
-			"kind": "building",
-			"manifest_height_m": 1.97499990463257,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.97499990463257,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1288
-		},
-		{
-			"asset": "ballista_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.99749994277954,
-			"kind": "building",
-			"manifest_height_m": 1.99749994277954,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.99749994277954,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1344
-		},
-		{
-			"asset": "ballista_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.19749999046326,
-			"kind": "building",
-			"manifest_height_m": 2.19749999046326,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.19749999046326,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1344
-		},
-		{
-			"asset": "ballista_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.39749979972839,
-			"kind": "building",
-			"manifest_height_m": 2.39749979972839,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.39749979972839,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1344
-		},
-		{
-			"asset": "ballista_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.59749984741211,
-			"kind": "building",
-			"manifest_height_m": 2.59749984741211,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.59749984741211,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1468
-		},
-		{
-			"asset": "ballista_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.79749989509583,
-			"kind": "building",
-			"manifest_height_m": 2.79749989509583,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.79749989509583,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1468
-		},
-		{
-			"asset": "ballista_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.99749994277954,
-			"kind": "building",
-			"manifest_height_m": 2.99749994277954,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.99749994277954,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1468
-		},
-		{
-			"asset": "bastion_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.99749994277954,
-			"kind": "building",
-			"manifest_height_m": 1.99749994277954,
-			"materials": 1,
-			"meshes": 3,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.99749994277954,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1484
-		},
-		{
-			"asset": "bastion_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.19749999046326,
-			"kind": "building",
-			"manifest_height_m": 2.19749999046326,
-			"materials": 1,
-			"meshes": 3,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.19749999046326,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1484
-		},
-		{
-			"asset": "bastion_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.39749979972839,
-			"kind": "building",
-			"manifest_height_m": 2.39749979972839,
-			"materials": 1,
-			"meshes": 3,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.39749979972839,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1484
-		},
-		{
-			"asset": "bastion_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.59749984741211,
-			"kind": "building",
-			"manifest_height_m": 2.59749984741211,
-			"materials": 1,
-			"meshes": 3,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.59749984741211,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1608
-		},
-		{
-			"asset": "bastion_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.79749989509583,
-			"kind": "building",
-			"manifest_height_m": 2.79749989509583,
-			"materials": 1,
-			"meshes": 3,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.79749989509583,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1608
-		},
-		{
-			"asset": "bastion_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.99749994277954,
-			"kind": "building",
-			"manifest_height_m": 2.99749994277954,
-			"materials": 1,
-			"meshes": 3,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				2.99749994277954,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1608
-		},
-		{
-			"asset": "rampart_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.17499995231628,
-			"kind": "building",
-			"manifest_height_m": 1.17499995231628,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.17499995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 824
-		},
-		{
-			"asset": "rampart_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.2849999666214,
-			"kind": "building",
-			"manifest_height_m": 1.2849999666214,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.2849999666214,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 824
-		},
-		{
-			"asset": "rampart_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.52999985218048,
-			"kind": "building",
-			"manifest_height_m": 1.52999985218048,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.52999985218048,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1036
-		},
-		{
-			"asset": "rampart_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.52999985218048,
-			"kind": "building",
-			"manifest_height_m": 1.52999985218048,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.52999985218048,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1036
-		},
-		{
-			"asset": "rampart_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.61499989032745,
-			"kind": "building",
-			"manifest_height_m": 1.61499989032745,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.61499989032745,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1036
-		},
-		{
-			"asset": "rampart_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.72500002384186,
-			"kind": "building",
-			"manifest_height_m": 1.72500002384186,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.72500002384186,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1036
-		},
-		{
-			"asset": "longhouse_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.76499998569489,
-			"kind": "building",
-			"manifest_height_m": 1.76499998569489,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.64999997615814,
-				0.0,
-				-1.64999997615814
-			],
-			"size_m": [
-				3.29999995231628,
-				1.76499998569489,
-				3.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1668
-		},
-		{
-			"asset": "longhouse_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.87999999523163,
-			"kind": "building",
-			"manifest_height_m": 1.87999999523163,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.64999997615814,
-				0.0,
-				-1.64999997615814
-			],
-			"size_m": [
-				3.29999995231628,
-				1.87999999523163,
-				3.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1920
-		},
-		{
-			"asset": "longhouse_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.88499999046326,
-			"kind": "building",
-			"manifest_height_m": 1.88499999046326,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.64999997615814,
-				0.0,
-				-1.64999997615814
-			],
-			"size_m": [
-				3.29999995231628,
-				1.88499999046326,
-				3.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1936
-		},
-		{
-			"asset": "longhouse_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.9449999332428,
-			"kind": "building",
-			"manifest_height_m": 1.9449999332428,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.64999997615814,
-				0.0,
-				-1.64999997615814
-			],
-			"size_m": [
-				3.29999995231628,
-				1.9449999332428,
-				3.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2152
-		},
-		{
-			"asset": "longhouse_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.00500011444092,
-			"kind": "building",
-			"manifest_height_m": 2.00500011444092,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.64999997615814,
-				0.0,
-				-1.64999997615814
-			],
-			"size_m": [
-				3.29999995231628,
-				2.00500011444092,
-				3.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2596
-		},
-		{
-			"asset": "longhouse_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.06500005722046,
-			"kind": "building",
-			"manifest_height_m": 2.06500005722046,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-1.64999997615814,
-				0.0,
-				-1.64999997615814
-			],
-			"size_m": [
-				3.29999995231628,
-				2.06500005722046,
-				3.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2596
-		},
-		{
-			"asset": "bellcote_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.71499991416931,
-			"kind": "building",
-			"manifest_height_m": 1.71499991416931,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.71499991416931,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1156
-		},
-		{
-			"asset": "bell-tower_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.25499987602234,
-			"kind": "building",
-			"manifest_height_m": 2.25499987602234,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.25499987602234,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1500
-		},
-		{
-			"asset": "bell-tower_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.41499996185303,
-			"kind": "building",
-			"manifest_height_m": 2.41499996185303,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.41499996185303,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1500
-		},
-		{
-			"asset": "bell-tower_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.57500004768372,
-			"kind": "building",
-			"manifest_height_m": 2.57500004768372,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.57500004768372,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1584
-		},
-		{
-			"asset": "bell-tower_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.73499989509583,
-			"kind": "building",
-			"manifest_height_m": 2.73499989509583,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.73499989509583,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1584
-		},
-		{
-			"asset": "bell-tower_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 2.89499998092651,
-			"kind": "building",
-			"manifest_height_m": 2.89499998092651,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				2.89499998092651,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1584
-		},
-		{
-			"asset": "bell-tower_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 3.0550000667572,
-			"kind": "building",
-			"manifest_height_m": 3.0550000667572,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				3.0550000667572,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1584
-		},
-		{
-			"asset": "blackwater-weir_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 0.879999995231628,
-			"kind": "building",
-			"manifest_height_m": 0.879999995231628,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				0.879999995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1672
-		},
-		{
-			"asset": "blackwater-weir_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 0.879999995231628,
-			"kind": "building",
-			"manifest_height_m": 0.879999995231628,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				0.879999995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1672
-		},
-		{
-			"asset": "blackwater-weir_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 0.879999995231628,
-			"kind": "building",
-			"manifest_height_m": 0.879999995231628,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				0.879999995231628,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1672
-		},
-		{
-			"asset": "blackwater-weir_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.46499991416931,
-			"kind": "building",
-			"manifest_height_m": 1.46499991416931,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.46499991416931,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2088
-		},
-		{
-			"asset": "blackwater-weir_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.46499991416931,
-			"kind": "building",
-			"manifest_height_m": 1.46499991416931,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.46499991416931,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2088
-		},
-		{
-			"asset": "blackwater-weir_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.46499991416931,
-			"kind": "building",
-			"manifest_height_m": 1.46499991416931,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.46499991416931,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2088
-		},
-		{
-			"asset": "deephole_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.18624997138977,
-			"kind": "building",
-			"manifest_height_m": 1.18624997138977,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.18624997138977,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1844
-		},
-		{
-			"asset": "deephole_t2",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.18624997138977,
-			"kind": "building",
-			"manifest_height_m": 1.18624997138977,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.18624997138977,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1860
-		},
-		{
-			"asset": "deephole_t3",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.18624997138977,
-			"kind": "building",
-			"manifest_height_m": 1.18624997138977,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.18624997138977,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1892
-		},
-		{
-			"asset": "deephole_t4",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.19749999046326,
-			"kind": "building",
-			"manifest_height_m": 1.19749999046326,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.19749999046326,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2016
-		},
-		{
-			"asset": "deephole_t5",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.22749996185303,
-			"kind": "building",
-			"manifest_height_m": 1.22749996185303,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.22749996185303,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2032
-		},
-		{
-			"asset": "deephole_t6",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.2574999332428,
-			"kind": "building",
-			"manifest_height_m": 1.2574999332428,
-			"materials": 2,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				1.2574999332428,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 2048
-		},
-		{
-			"asset": "cairnfield_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.0699999332428,
-			"kind": "building",
-			"manifest_height_m": 1.0699999332428,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-1.17499995231628,
-				0.0,
-				-1.17499995231628
-			],
-			"size_m": [
-				2.34999990463257,
-				1.0699999332428,
-				2.34999990463257
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1296
-		},
-		{
-			"asset": "moon-dial_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 0.761383056640625,
-			"kind": "building",
-			"manifest_height_m": 0.761383056640625,
-			"materials": 1,
-			"meshes": 2,
-			"min_m": [
-				-0.649999976158142,
-				0.0,
-				-0.649999976158142
-			],
-			"size_m": [
-				1.29999995231628,
-				0.761383056640625,
-				1.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1084
-		},
-		{
-			"asset": "dawn-gate_t1",
-			"clips": [],
-			"errors": [],
-			"height_m": 1.56499993801117,
-			"kind": "building",
-			"manifest_height_m": 1.56499993801117,
-			"materials": 2,
-			"meshes": 3,
-			"min_m": [
-				-1.64999997615814,
-				0.0,
-				-1.64999997615814
-			],
-			"size_m": [
-				3.29999995231628,
-				1.56499993801117,
-				3.29999995231628
-			],
-			"skeletons": 0,
-			"skinned_meshes": 0,
-			"textures": 1,
-			"triangles": 1624
-		},
-		{
 			"asset": "char_diver",
 			"clips": [
 				{
@@ -8103,7 +8141,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.833333313465118,
 					"max_pose_delta": 0.137937039136887,
-					"max_skinned_vertex_delta_m": 0.0173551086336374,
+					"max_skinned_vertex_delta_m": 0.0173550676554441,
 					"sample_times_s": [
 						0.166666662693024,
 						0.333333325386047,
@@ -8137,7 +8175,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210375762391,
-					"max_skinned_vertex_delta_m": 0.695201694965363,
+					"max_skinned_vertex_delta_m": 0.477266669273376,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -8154,7 +8192,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.633333325386047,
 					"max_pose_delta": 1.96878196948165,
-					"max_skinned_vertex_delta_m": 2.36455154418945,
+					"max_skinned_vertex_delta_m": 2.36455178260803,
 					"sample_times_s": [
 						0.126666665077209,
 						0.253333330154419,
@@ -8171,7 +8209,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210375762391,
-					"max_skinned_vertex_delta_m": 0.695201694965363,
+					"max_skinned_vertex_delta_m": 0.477266669273376,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -8189,17 +8227,17 @@
 			"materials": 1,
 			"meshes": 3,
 			"min_m": [
-				-0.780750930309296,
-				-0.0000000468410910059447,
-				-0.339511156082153
+				-0.755885660648346,
+				-0.0000000362552583510478,
+				-0.471110582351685
 			],
 			"size_m": [
-				1.56150388717651,
+				1.51177263259888,
 				1.80383610725403,
-				0.679018497467041
+				0.942226469516754
 			],
 			"skeletons": 1,
-			"skinned_meshes": 3,
+			"skinned_meshes": 2,
 			"textures": 1,
 			"triangles": 1067
 		},
@@ -8323,7 +8361,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.833333313465118,
 					"max_pose_delta": 0.137937039136887,
-					"max_skinned_vertex_delta_m": 0.0142540838569403,
+					"max_skinned_vertex_delta_m": 0.0142540959641337,
 					"sample_times_s": [
 						0.166666662693024,
 						0.333333325386047,
@@ -8340,7 +8378,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.833333313465118,
 					"max_pose_delta": 1.45320757712206,
-					"max_skinned_vertex_delta_m": 0.489181488752365,
+					"max_skinned_vertex_delta_m": 0.489181458950043,
 					"sample_times_s": [
 						0.166666662693024,
 						0.333333325386047,
@@ -8357,7 +8395,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210370863757,
-					"max_skinned_vertex_delta_m": 0.442038089036942,
+					"max_skinned_vertex_delta_m": 0.391988426446915,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -8391,7 +8429,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210370863757,
-					"max_skinned_vertex_delta_m": 0.442038089036942,
+					"max_skinned_vertex_delta_m": 0.391988426446915,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -8409,17 +8447,17 @@
 			"materials": 1,
 			"meshes": 3,
 			"min_m": [
-				-0.633021533489227,
-				-0.0000000533502202415548,
-				-0.271048963069916
+				-0.620824754238129,
+				-0.0000000534821076314529,
+				-0.334655195474625
 			],
 			"size_m": [
-				1.26604270935059,
+				1.24164843559265,
 				1.48254776000977,
-				0.542096018791199
+				0.669313669204712
 			],
 			"skeletons": 1,
-			"skinned_meshes": 3,
+			"skinned_meshes": 2,
 			"textures": 1,
 			"triangles": 1094
 		},
@@ -8433,7 +8471,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.833333313465118,
 					"max_pose_delta": 0.137937039136887,
-					"max_skinned_vertex_delta_m": 0.0142541071400046,
+					"max_skinned_vertex_delta_m": 0.0142541201785207,
 					"sample_times_s": [
 						0.166666662693024,
 						0.333333325386047,
@@ -8450,7 +8488,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.833333313465118,
 					"max_pose_delta": 1.45320757712206,
-					"max_skinned_vertex_delta_m": 0.489181488752365,
+					"max_skinned_vertex_delta_m": 0.489181518554688,
 					"sample_times_s": [
 						0.166666662693024,
 						0.333333325386047,
@@ -8467,7 +8505,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210370863757,
-					"max_skinned_vertex_delta_m": 0.560320734977722,
+					"max_skinned_vertex_delta_m": 0.39198625087738,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -8484,7 +8522,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.633333325386047,
 					"max_pose_delta": 1.96878196948165,
-					"max_skinned_vertex_delta_m": 2.02740406990051,
+					"max_skinned_vertex_delta_m": 2.02740383148193,
 					"sample_times_s": [
 						0.126666665077209,
 						0.253333330154419,
@@ -8501,7 +8539,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210370863757,
-					"max_skinned_vertex_delta_m": 0.560320734977722,
+					"max_skinned_vertex_delta_m": 0.39198625087738,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -8519,17 +8557,17 @@
 			"materials": 1,
 			"meshes": 3,
 			"min_m": [
-				-0.659737169742584,
-				-0.000000055472071380791,
-				-0.253251045942307
+				-0.620823442935944,
+				-0.0000000491192508889071,
+				-0.324959725141525
 			],
 			"size_m": [
-				1.31947493553162,
+				1.24164843559265,
 				1.48254776000977,
-				0.506498754024506
+				0.649917483329773
 			],
 			"skeletons": 1,
-			"skinned_meshes": 3,
+			"skinned_meshes": 2,
 			"textures": 1,
 			"triangles": 1050
 		},
@@ -9863,7 +9901,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.833333313465118,
 					"max_pose_delta": 0.137937039136887,
-					"max_skinned_vertex_delta_m": 0.0142540838569403,
+					"max_skinned_vertex_delta_m": 0.0142540829256177,
 					"sample_times_s": [
 						0.166666662693024,
 						0.333333325386047,
@@ -9897,7 +9935,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210370863757,
-					"max_skinned_vertex_delta_m": 0.560322880744934,
+					"max_skinned_vertex_delta_m": 0.39198836684227,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -9914,7 +9952,7 @@
 					"invalid_tracks": [],
 					"length_s": 0.633333325386047,
 					"max_pose_delta": 1.96878196948165,
-					"max_skinned_vertex_delta_m": 2.02740454673767,
+					"max_skinned_vertex_delta_m": 2.02740430831909,
 					"sample_times_s": [
 						0.126666665077209,
 						0.253333330154419,
@@ -9931,7 +9969,7 @@
 					"invalid_tracks": [],
 					"length_s": 1.26666665077209,
 					"max_pose_delta": 1.19210370863757,
-					"max_skinned_vertex_delta_m": 0.560322880744934,
+					"max_skinned_vertex_delta_m": 0.39198836684227,
 					"sample_times_s": [
 						0.253333330154419,
 						0.506666660308838,
@@ -9943,23 +9981,23 @@
 				}
 			],
 			"errors": [],
-			"height_m": 1.48254787921906,
+			"height_m": 1.48254776000977,
 			"kind": "character",
 			"manifest_height_m": 1.48254776000977,
 			"materials": 1,
 			"meshes": 3,
 			"min_m": [
-				-0.659737050533295,
-				-0.0000000682509266880516,
-				-0.27104514837265
+				-0.62082427740097,
+				-0.0000000578417704844014,
+				-0.295864284038544
 			],
 			"size_m": [
-				1.31947493553162,
-				1.48254787921906,
-				0.542096018791199
+				1.24164843559265,
+				1.48254776000977,
+				0.591733574867249
 			],
 			"skeletons": 1,
-			"skinned_meshes": 3,
+			"skinned_meshes": 2,
 			"textures": 1,
 			"triangles": 1106
 		},
@@ -10632,46 +10670,66 @@
 		"buildings": 273,
 		"characters": 37
 	},
-	"failures": [],
+	"failures": [
+		"gate_t1: base-bearing parts off base/slab: [\"MMR | gate | T01 Architecture_001 min_y=0.476\", \"MMR | gate | Tier 01 Ground_001 min_y=0.426\"]",
+		"gate_t2: base-bearing parts off base/slab: [\"MMR | gate | T02 Architecture_001 min_y=0.602\", \"MMR | gate | Tier 02 Ground_001 min_y=0.552\"]",
+		"gate_t3: base-bearing parts off base/slab: [\"MMR | gate | T03 Architecture_001 min_y=0.728\", \"MMR | gate | Tier 03 Ground_001 min_y=0.678\"]",
+		"gate_t4: base-bearing parts off base/slab: [\"MMR | gate | T04 Architecture_001 min_y=0.854\", \"MMR | gate | Tier 04 Ground_001 min_y=0.804\"]",
+		"gate_t5: base-bearing parts off base/slab: [\"MMR | gate | T05 Architecture_001 min_y=0.980\", \"MMR | gate | Tier 05 Ground_001 min_y=0.930\"]",
+		"gate_t6: base-bearing parts off base/slab: [\"MMR | gate | T06 Architecture_001 min_y=1.106\", \"MMR | gate | Tier 06 Ground_001 min_y=1.056\"]",
+		"sawmill_t1: base-bearing parts off base/slab: [\"MMR | sawmill | T01 Architecture_001 min_y=0.292\", \"MMR | sawmill | Tier 01 Ground_001 min_y=0.242\"]",
+		"sawmill_t2: base-bearing parts off base/slab: [\"MMR | sawmill | T02 Architecture_001 min_y=0.304\", \"MMR | sawmill | Tier 02 Ground_001 min_y=0.254\"]",
+		"sawmill_t3: base-bearing parts off base/slab: [\"MMR | sawmill | T03 Architecture_001 min_y=0.316\", \"MMR | sawmill | Tier 03 Ground_001 min_y=0.266\"]",
+		"sawmill_t4: base-bearing parts off base/slab: [\"MMR | sawmill | T04 Architecture_001 min_y=0.330\", \"MMR | sawmill | Tier 04 Ground_001 min_y=0.280\"]",
+		"sawmill_t5: base-bearing parts off base/slab: [\"MMR | sawmill | T05 Architecture_001 min_y=0.340\", \"MMR | sawmill | Tier 05 Ground_001 min_y=0.290\"]",
+		"sawmill_t6: base-bearing parts off base/slab: [\"MMR | sawmill | T06 Architecture_001 min_y=0.352\", \"MMR | sawmill | Tier 06 Ground_001 min_y=0.302\"]",
+		"mill_t1: base-bearing parts off base/slab: [\"MMR | mill | T01 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 01 Ground_001 min_y=0.815\"]",
+		"mill_t2: base-bearing parts off base/slab: [\"MMR | mill | T02 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 02 Ground_001 min_y=0.815\"]",
+		"mill_t3: base-bearing parts off base/slab: [\"MMR | mill | T03 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 03 Ground_001 min_y=0.815\"]",
+		"mill_t4: base-bearing parts off base/slab: [\"MMR | mill | T04 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 04 Ground_001 min_y=0.815\"]",
+		"mill_t5: base-bearing parts off base/slab: [\"MMR | mill | T05 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 05 Ground_001 min_y=0.815\"]",
+		"mill_t6: base-bearing parts off base/slab: [\"MMR | mill | T06 Architecture_001 min_y=0.865\", \"MMR | mill | Tier 06 Ground_001 min_y=0.815\"]",
+		"dawn-gate_t1: base-bearing parts off base/slab: [\"MMR | dawn-gate | T01 Architecture_001 min_y=0.476\", \"MMR | dawn-gate | Tier 01 Ground_001 min_y=0.426\"]"
+	],
 	"godot_version": "4.7.2-stable (official)",
 	"motion_epsilon": 0.00001,
-	"passed": true,
+	"passed": false,
 	"sample_display": {
 		"board_triangles": 516,
-		"building_triangles": 18620,
+		"building_triangles": 18899,
 		"limit_exclusive": 30000,
 		"parts": [
 			{
 				"asset": "manor_hall_t1",
-				"triangles": 2552
+				"triangles": 2590
 			},
 			{
 				"asset": "barracks_t1",
-				"triangles": 2200
+				"triangles": 2215
 			},
 			{
 				"asset": "archer_tower_t1",
-				"triangles": 1908
+				"triangles": 1923
 			},
 			{
 				"asset": "mill_t1",
-				"triangles": 1712
+				"triangles": 1768
 			},
 			{
 				"asset": "farm_t1",
-				"triangles": 1440
+				"triangles": 1496
 			},
 			{
 				"asset": "market_t1",
-				"triangles": 1648
+				"triangles": 1704
 			},
 			{
 				"asset": "mine_t1",
-				"triangles": 1404
+				"triangles": 1409
 			},
 			{
 				"asset": "cottage_t1",
-				"triangles": 2088
+				"triangles": 2126
 			},
 			{
 				"asset": "gate_t1",
@@ -10690,7 +10748,7 @@
 				"triangles": 760
 			}
 		],
-		"static_triangles": 19136,
+		"static_triangles": 19415,
 		"tier": 1
 	},
 	"scope": "Asset import QA only; PC checks do not establish mobile/web performance.",
@@ -10743,52 +10801,52 @@
 		"passed": true,
 		"tiers": [
 			{
-				"building_triangles": 18620,
+				"building_triangles": 18899,
 				"fallbacks": [],
-				"static_triangles": 19136,
+				"static_triangles": 19415,
 				"tier": 1
 			},
 			{
-				"building_triangles": 20072,
+				"building_triangles": 20343,
 				"fallbacks": [
 					"oathstone_t1"
 				],
-				"static_triangles": 20588,
+				"static_triangles": 20859,
 				"tier": 2
 			},
 			{
-				"building_triangles": 22896,
+				"building_triangles": 23157,
 				"fallbacks": [
 					"oathstone_t1"
 				],
-				"static_triangles": 23412,
+				"static_triangles": 23673,
 				"tier": 3
 			},
 			{
-				"building_triangles": 25528,
+				"building_triangles": 25773,
 				"fallbacks": [
 					"trap_t1",
 					"oathstone_t1"
 				],
-				"static_triangles": 26044,
+				"static_triangles": 26289,
 				"tier": 4
 			},
 			{
-				"building_triangles": 28336,
+				"building_triangles": 28574,
 				"fallbacks": [
 					"trap_t1",
 					"oathstone_t1"
 				],
-				"static_triangles": 28852,
+				"static_triangles": 29090,
 				"tier": 5
 			},
 			{
-				"building_triangles": 28952,
+				"building_triangles": 29187,
 				"fallbacks": [
 					"trap_t1",
 					"oathstone_t1"
 				],
-				"static_triangles": 29468,
+				"static_triangles": 29703,
 				"tier": 6
 			}
 		]

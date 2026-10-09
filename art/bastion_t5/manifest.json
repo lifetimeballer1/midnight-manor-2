@@ -2,9 +2,11 @@
   "asset": "bastion_t5",
   "file": "bastion_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | bastion | T05 Architecture",
+    "MMR | bastion | T05 Autumn Dressing",
+    "MMR | bastion | T05 Banner Flag 1",
     "MMR | bastion | T05 Heavy Buttresses",
     "MMR | bastion | Tier 05 Ground"
   ],
@@ -12,16 +14,16 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     2.797499895095825,
     1.2999999523162842
   ],
-  "triangles": 1608,
-  "meshes": 3,
+  "triangles": 1628,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "a6380aab26244ec48e7abf82e16fc5b747ea6aed16b2b513b248dee078b3da08",
+  "sha256": "9531ae8b03e285161ad5696d1419dc76da5f796090d8a49d0e68b21bffa1fac0",
   "verified": true
 }

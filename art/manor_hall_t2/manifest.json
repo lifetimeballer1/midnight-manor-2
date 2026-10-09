@@ -2,9 +2,10 @@
   "asset": "manor_hall_t2",
   "file": "manor_hall_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | hall | T02 Architecture",
+    "MMR | hall | T02 Autumn Dressing",
     "MMR | hall | Tier 02 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     2.0399999618530273,
     2.3499999046325684
   ],
-  "triangles": 3012,
-  "meshes": 2,
+  "triangles": 3050,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "0c55fc6dfe1bf687a42ac9d7836a36ab18461f41a6920589f23abb1d278698a3",
+  "sha256": "77de9a68d58a6de55bee3897fc457319c9329c0a72834b5855593ba05463e8d5",
   "verified": true
 }

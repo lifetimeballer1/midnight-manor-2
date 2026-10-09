@@ -2,9 +2,10 @@
   "asset": "fire_trap_t1",
   "file": "fire_trap_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | fire-trap | T01 Architecture",
+    "MMR | fire-trap | T01 Flame Glow",
     "MMR | fire-trap | Tier 01 Ground"
   ],
   "pivot": "base_center",
@@ -16,11 +17,11 @@
     1.2999999523162842
   ],
   "triangles": 820,
-  "meshes": 2,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "882cf335c3ff27814679b39a367e7ec07ed3c72255509988f40d3954c2c4ff2a",
+  "sha256": "4e6247cdc40013b71dd8441ea11df42d090b14f0cc1351a3ca112b6752fa4ef8",
   "verified": true
 }

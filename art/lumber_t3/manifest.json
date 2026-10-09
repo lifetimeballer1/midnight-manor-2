@@ -2,9 +2,10 @@
   "asset": "lumber_t3",
   "file": "lumber_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | lumber | T03 Architecture",
+    "MMR | lumber | T03 Autumn Dressing",
     "MMR | lumber | Tier 03 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     1.2687499523162842,
     1.2999999523162842
   ],
-  "triangles": 1876,
-  "meshes": 2,
+  "triangles": 1891,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "101c0ada3878c49577d2cc3b9069fc81fcf099a57bd47b6adbd1f4fb8d86a459",
+  "sha256": "17653e7b4108c8794b045f4fe29b0f92dfb84150758e5008e5353a6d686cf8c5",
   "verified": true
 }

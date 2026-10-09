@@ -3,22 +3,23 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://duwfvaapir04c"
-path="res://.godot/imported/smeltery_t4_MMR Shared Color Palette 64.png-e36f27153e2ce952c26aceb1d92d7a41.ctex"
+path.s3tc="res://.godot/imported/smeltery_t4_MMR Shared Color Palette 64.png-e36f27153e2ce952c26aceb1d92d7a41.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
-"md5": "9028ec0f43df3f097a253a63a8729f01"
+"md5": "e638ca1053d3be35f0b700dcb6ac65e2"
 }
 
 [deps]
 
 source_file="res://art/smeltery_t4/smeltery_t4_MMR Shared Color Palette 64.png"
-dest_files=["res://.godot/imported/smeltery_t4_MMR Shared Color Palette 64.png-e36f27153e2ce952c26aceb1d92d7a41.ctex"]
+dest_files=["res://.godot/imported/smeltery_t4_MMR Shared Color Palette 64.png-e36f27153e2ce952c26aceb1d92d7a41.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

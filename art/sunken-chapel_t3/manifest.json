@@ -2,25 +2,26 @@
   "asset": "sunken-chapel_t3",
   "file": "sunken-chapel_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | sunken-chapel | T03 Architecture",
+    "MMR | sunken-chapel | T03 Autumn Dressing",
     "MMR | sunken-chapel | Tier 03 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.3499984741210938,
+    2.3499999046325684,
     1.59499990940094,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1440,
-  "meshes": 2,
+  "triangles": 1465,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "bc856df8ab054b7536c0cc52978db68213bc37b4ea12a4399f5c658394266018",
+  "sha256": "378d50f00c0a1b595b55e2d7065415d412d88f62d9ab26ab1c3567fb7c431a9f",
   "verified": true
 }

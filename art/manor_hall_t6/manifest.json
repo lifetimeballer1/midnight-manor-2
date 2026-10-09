@@ -2,9 +2,12 @@
   "asset": "manor_hall_t6",
   "file": "manor_hall_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | hall | T06 Architecture",
+    "MMR | hall | T06 Autumn Dressing",
+    "MMR | hall | T06 Banner Flag 1",
+    "MMR | hall | T06 Banner Flag 2",
     "MMR | hall | Tier 06 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +18,12 @@
     3.140000104904175,
     2.3499999046325684
   ],
-  "triangles": 6172,
-  "meshes": 2,
+  "triangles": 6195,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "dcbbb10f3931e71bfb0eae1976c34bafd8cce01519377dce661e342897b8cec9",
+  "sha256": "d815bcf201ebbe100b0b331ab9a56302f993eee9be14a2fee7b80edfd03da036",
   "verified": true
 }

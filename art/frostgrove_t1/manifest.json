@@ -2,25 +2,26 @@
   "asset": "frostgrove_t1",
   "file": "frostgrove_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | frostgrove | T01 Architecture",
+    "MMR | frostgrove | T01 Autumn Dressing",
     "MMR | frostgrove | Tier 01 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.350006103515625,
+    2.3499999046325684,
     1.535599946975708,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1280,
-  "meshes": 2,
+  "triangles": 1305,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "12650c881e4b432844770bfc5b51ce49690fd1d8dbfb612f2e7878d1e75e92c1",
+  "sha256": "1b73fdcc622ce2fa75cb73b4a3f079319074062f7bc22d43b06de6f2cb783862",
   "verified": true
 }

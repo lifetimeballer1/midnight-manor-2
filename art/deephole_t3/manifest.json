@@ -2,7 +2,7 @@
   "asset": "deephole_t3",
   "file": "deephole_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | deephole | T03 Architecture",
     "MMR | deephole | Tier 03 Ground"
@@ -11,9 +11,9 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.1862499713897705,
-    1.3000030517578125
+    1.2999999523162842
   ],
   "triangles": 1892,
   "meshes": 2,
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "36c2489ec9214a4cd08434c17b06f4602c73e68db516fed6a431f72a441e24e1",
+  "sha256": "4e7c1a5975c33087673eda5c4fedb7950edb31ba8772bf18c0df96f1048cba3d",
   "verified": true
 }

@@ -2,9 +2,10 @@
   "asset": "farm_t1",
   "file": "farm_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | farm | T01 Architecture",
+    "MMR | farm | T01 Autumn Dressing",
     "MMR | farm | Tier 01 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     0.7420000433921814,
     2.3499999046325684
   ],
-  "triangles": 1440,
-  "meshes": 2,
+  "triangles": 1496,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "372ba12775b6cf1543c135375a42e56168557363fd2224c09de8453666daba42",
+  "sha256": "7fa5ef831c55190d65f0d0d65d6056f2a41b2cf300201ab0a4146709676000f5",
   "verified": true
 }

@@ -2,9 +2,10 @@
   "asset": "tower_t1",
   "file": "tower_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | tower | T01 Architecture",
+    "MMR | tower | T01 Autumn Dressing",
     "MMR | tower | T01 Roof Supports",
     "MMR | tower | Tier 01 Ground"
   ],
@@ -16,12 +17,12 @@
     2.424999952316284,
     1.2999999523162842
   ],
-  "triangles": 1344,
-  "meshes": 3,
+  "triangles": 1364,
+  "meshes": 4,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "597d202ef10842d983a46685d83b7881c988ae9378128514454920c571d34f49",
+  "sha256": "4fd83ad64335e45bcea9b93f18f2c1be49a66962a75d00f4197c292b158132b9",
   "verified": true
 }

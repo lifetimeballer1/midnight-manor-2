@@ -2,7 +2,7 @@
   "asset": "char_farmer",
   "file": "char_farmer.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | farmer Rig",
     "MMR Character | farmer Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Digging"
   },
-  "sha256": "957873a6a2895eeaf7fcfb4ad5fffed906006261283656bcf8fe16652b42d793",
+  "sha256": "65fa5616a68f18cba4bc9b1e629f041fed7c73e01c970d1ddc97ac2bbcdd4634",
   "verified": true
 }

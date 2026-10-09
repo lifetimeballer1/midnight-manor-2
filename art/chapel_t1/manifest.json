@@ -2,25 +2,26 @@
   "asset": "chapel_t1",
   "file": "chapel_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | chapel | T01 Architecture",
+    "MMR | chapel | T01 Autumn Dressing",
     "MMR | chapel | Tier 01 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.3499984741210938,
+    2.3499999046325684,
     2.325000047683716,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 2260,
-  "meshes": 2,
+  "triangles": 2298,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "c27603fa590a26bef50c8dc7b48bbf1997be9c749f3da2c9a567cf909957cbce",
+  "sha256": "198a21200bc96f7d2b5cbe03000f8075428e37e0ce4dd8228d27bf8ff0cd14d0",
   "verified": true
 }

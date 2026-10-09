@@ -2,9 +2,10 @@
   "asset": "farm_t3",
   "file": "farm_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | farm | T03 Architecture",
+    "MMR | farm | T03 Autumn Dressing",
     "MMR | farm | T03 Shelter Supports",
     "MMR | farm | Tier 03 Ground"
   ],
@@ -16,12 +17,12 @@
     1.34499990940094,
     2.3499999046325684
   ],
-  "triangles": 2032,
-  "meshes": 3,
+  "triangles": 2093,
+  "meshes": 4,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "fc00ac7fe09b6eae4505718b2b29073e51081c83798916e151519e2ab21c3523",
+  "sha256": "0460a3a566387f520ffbc6444d61d272bda68602d3af49d5d66304139d9890b4",
   "verified": true
 }

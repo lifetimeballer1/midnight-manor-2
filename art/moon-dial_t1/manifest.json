@@ -2,7 +2,7 @@
   "asset": "moon-dial_t1",
   "file": "moon-dial_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | moon-dial | T01 Architecture",
     "MMR | moon-dial | Tier 01 Ground"
@@ -11,9 +11,9 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     0.761383056640625,
-    1.3000030517578125
+    1.2999999523162842
   ],
   "triangles": 1084,
   "meshes": 2,
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "0a4b4416b74250ecc2e946db4e37ee4e03a7aad983cbe9e9f84f7a22e0659e91",
+  "sha256": "4997c47e920e602f79ae992b754dcac1299d5036757d5a5271e88f1a6d7f508b",
   "verified": true
 }

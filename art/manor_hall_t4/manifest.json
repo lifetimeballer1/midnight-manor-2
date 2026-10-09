@@ -2,9 +2,11 @@
   "asset": "manor_hall_t4",
   "file": "manor_hall_t4.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | hall | T04 Architecture",
+    "MMR | hall | T04 Autumn Dressing",
+    "MMR | hall | T04 Banner Flag 1",
     "MMR | hall | Tier 04 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +17,12 @@
     2.565000057220459,
     2.3499999046325684
   ],
-  "triangles": 4948,
-  "meshes": 2,
+  "triangles": 4973,
+  "meshes": 4,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "fda0935a867b956c12dfc0d672003fb4039e1b57a5c862d8470703f24ed36f7f",
+  "sha256": "2d085e6959a3a0e302c1b30e300ba51558012ea2ff78ca0c9b869787bc21f6e9",
   "verified": true
 }

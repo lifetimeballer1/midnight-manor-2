@@ -2,9 +2,10 @@
   "asset": "scriptorium_t6",
   "file": "scriptorium_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | scriptorium | T06 Architecture",
+    "MMR | scriptorium | T06 Banner Flag 1",
     "MMR | scriptorium | Tier 06 Ground"
   ],
   "pivot": "base_center",
@@ -16,11 +17,11 @@
     1.2999999523162842
   ],
   "triangles": 3072,
-  "meshes": 2,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "e462bd9b09d0f9743990ad1881889917dc22237c7d8dd4d8245464457ca35001",
+  "sha256": "c0d48fe535ca6a89048d7dd504f9aca888e69fb80f2ea7da084e7a3efd5106eb",
   "verified": true
 }

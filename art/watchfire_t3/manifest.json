@@ -2,25 +2,27 @@
   "asset": "watchfire_t3",
   "file": "watchfire_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | watchfire | T03 Architecture",
+    "MMR | watchfire | T03 Autumn Dressing",
+    "MMR | watchfire | T03 Flame Glow",
     "MMR | watchfire | Tier 03 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.4375,
-    1.2999992370605469
+    1.2999999523162842
   ],
-  "triangles": 1220,
-  "meshes": 2,
+  "triangles": 1235,
+  "meshes": 4,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "b6bb56b5bfce588c8ec55eb812366b5c1427601206699313bc3d999de48d765f",
+  "sha256": "f132434af1724df9b8c27f703e72bb1880c821ea21e9b5f089ae0dcaac94a836",
   "verified": true
 }

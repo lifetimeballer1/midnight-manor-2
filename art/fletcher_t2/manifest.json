@@ -2,25 +2,26 @@
   "asset": "fletcher_t2",
   "file": "fletcher_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | fletcher | T02 Architecture",
+    "MMR | fletcher | T02 Autumn Dressing",
     "MMR | fletcher | Tier 02 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.34375,
     1.2999999523162842
   ],
-  "triangles": 1988,
-  "meshes": 2,
+  "triangles": 1993,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "b3f6c7ab4b56eea0c9c0d0ec9edcf85fe3cc59faf6d7aac46f80a0eba7e1ea72",
+  "sha256": "1d2536ed58e45818c9f0f0e76aee7d99ad56b358b8f1909ea7384716f36e8f3b",
   "verified": true
 }

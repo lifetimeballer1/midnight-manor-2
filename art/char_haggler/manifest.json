@@ -2,7 +2,7 @@
   "asset": "char_haggler",
   "file": "char_haggler.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | haggler Rig",
     "MMR Character | haggler Body",
@@ -13,9 +13,9 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.5615034103393555,
+    1.5117721557617188,
     1.8038359880447388,
-    0.6790199279785156
+    0.9422264099121094
   ],
   "triangles": 1067,
   "meshes": 3,
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Use_Item"
   },
-  "sha256": "be1a773d52e6083ac39cf369961e858f63ab047456f36fc3308632658ecd6b1e",
+  "sha256": "d8c2a312c1354471cead13b5907a412fd92be7a7e7d75e86e44794b7ffbd9045",
   "verified": true
 }

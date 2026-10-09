@@ -3,22 +3,23 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ek2s4k0jvcls"
-path="res://.godot/imported/grove_t4_MMR Shared Color Palette 64.png-a164a328ead610ac2b23e2a7eb3cfbaa.ctex"
+path.s3tc="res://.godot/imported/grove_t4_MMR Shared Color Palette 64.png-a164a328ead610ac2b23e2a7eb3cfbaa.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
-"md5": "9028ec0f43df3f097a253a63a8729f01"
+"md5": "e638ca1053d3be35f0b700dcb6ac65e2"
 }
 
 [deps]
 
 source_file="res://art/grove_t4/grove_t4_MMR Shared Color Palette 64.png"
-dest_files=["res://.godot/imported/grove_t4_MMR Shared Color Palette 64.png-a164a328ead610ac2b23e2a7eb3cfbaa.ctex"]
+dest_files=["res://.godot/imported/grove_t4_MMR Shared Color Palette 64.png-a164a328ead610ac2b23e2a7eb3cfbaa.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

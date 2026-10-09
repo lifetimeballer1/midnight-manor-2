@@ -2,7 +2,7 @@
   "asset": "char_heartwarden",
   "file": "char_heartwarden.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | heartwarden Rig",
     "MMR Character | heartwarden Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Chopping"
   },
-  "sha256": "4498f1b30dedb4baf27e7665a410f54428e4e578f294b0c4654432f851cdd00f",
+  "sha256": "b4b2bbc6d8d4955c69c7c496a9757c0e590487d595945f9f732bec67d9795b7f",
   "verified": true
 }

@@ -2,7 +2,7 @@
   "asset": "mine_t3",
   "file": "mine_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | mine | T03 Architecture",
     "MMR | mine | Tier 03 Ground"
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "c8904e761f016ebc013faa4c8a1c95afeb272068147fc28c390d44e926e60bd7",
+  "sha256": "f9d338d97801e112cd07a5e9004b9d400e3ee6d8ea684c6d888305e9fe124b0b",
   "verified": true
 }

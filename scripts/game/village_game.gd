@@ -5,6 +5,8 @@ const UI = preload("res://scripts/game/village_ui.gd")
 const Details = preload("res://scripts/game/village_details.gd")
 const ManorScore = preload("res://scripts/game/manor_music.gd")
 const BurstPool = preload("res://scripts/game/combat_burst_pool.gd")
+const Atmosphere = preload("res://scripts/game/village_atmosphere.gd")
+const Expansion = preload("res://scripts/game/village_expansion.gd")
 var burst_pool = BurstPool.new()
 var music = ManorScore.new()
 var details = Details.new()
@@ -13,8 +15,18 @@ const GOLD := Color("d4b275")
 const PAPER := Color("f2e7cc")
 const TILE: float = 2.0
 const MAP_ORIGIN := Vector3(-20, 0, -16)
+# Camera pan limits, widened so all four expansion plots can be viewed.
+const PAN_LIMIT := Vector2(40.0, 36.0)
+# Zoom-out limit: wide enough to see the whole potential 80x72 world at once.
+const ZOOM_MAX: float = 90.0
+# ground_parts indices of the base lip and skirt on each edge (order set in _ground()).
+# A claimed plot covers its edge, so these are hidden while it is claimed.
+const EXPANSION_EDGE_PARTS := {"west": [2, 6], "east": [3, 7], "north": [4, 8], "south": [5, 9]}
 const ROAD_LIMIT: int = 320
 const EFFECT_LIMIT: int = 24
+const POP_MERGE_WINDOW: float = 0.4    # same-resource collect pops this close merge into one
+const POP_STAGGER_PX: float = 18.0     # simultaneous collect pops step up by this many screen pixels
+const POP_CAP: int = 6                 # live collect pops; the oldest is dropped first
 const MODEL_LIMIT: int = 160
 # Cousin models: the two types without exports reuse the closest delivered
 # Mixar look. Every other type now resolves to its own exported tiers.
@@ -26,6 +38,8 @@ const RESOURCE_GLYPHS: Dictionary = {"wood": "W", "food": "F", "gold": "G", "lum
 var sim = Sim.new()
 var camera := Camera3D.new()
 var environment := Environment.new()
+var sky := Sky.new()
+var sky_material := ProceduralSkyMaterial.new()
 var sun := DirectionalLight3D.new()
 var fill := DirectionalLight3D.new()
 var fireflies: CPUParticles3D
@@ -44,6 +58,11 @@ var building_layer := Node3D.new()
 var actor_layer := Node3D.new()
 var ghost_layer := Node3D.new()
 var selection_marker := MeshInstance3D.new()
+var wall_row_marker := MultiMeshInstance3D.new()
+var wall_row_preview: Dictionary = {}
+var wall_row_details: Label
+var wall_row_confirm_button: Button
+var wall_row_cancel_button: Button
 var models: Dictionary = {}
 var tint_cache: Dictionary = {}
 var player_paths: Dictionary = {}
@@ -147,6 +166,8 @@ var cycle_offset: float = 0.0
 var alarm_pulse := ColorRect.new()
 var sun_elev: float = -58.0
 var ao_cache: Dictionary = {}
+var carry_materials: Dictionary = {}
+var carry_sack_mesh: SphereMesh = null
 var ui: VillageUI
 var left_dock := PanelContainer.new()
 var left_content := VBoxContainer.new()
@@ -184,6 +205,8 @@ var welcome_help: Label
 var combat_banner := Label.new()
 var toast := PanelContainer.new()
 var toast_label := Label.new()
+var repair_hint := PanelContainer.new()
+var repair_hint_label := Label.new()
 var more_sheet := PanelContainer.new()
 var road_layer := Node3D.new()
 var road_dirt := MeshInstance3D.new()
@@ -192,6 +215,7 @@ var road_revision: int = -2
 var road_cells: int = 0
 var ground_parts: Array[MeshInstance3D] = []
 var effect_nodes: Array[Node] = []
+var collect_pops: Array[Dictionary] = []   # live collect pops: {resource, amount, label, tween, born}
 var effect_tweens: Array[Tween] = []
 var capture_catalog: bool = false
 var capture_showcase: bool = false
@@ -229,6 +253,7 @@ var expedition_launch: Button
 var expedition_feedback: Label
 var contract_views: Dictionary = {}
 var shown_board_seed: int = -1
+var expansion := Expansion.new()
 
 
 func _ready() -> void:
@@ -263,6 +288,7 @@ func _ready() -> void:
 	add_child(music)
 	music.set_enabled(false)
 	_ground()
+	expansion.setup(self, MAP_ORIGIN, TILE, (ground_parts[0].material_override as StandardMaterial3D).albedo_texture)
 	_haunted_outskirts()
 	_setup_roads()
 	_lighting()
@@ -274,6 +300,7 @@ func _ready() -> void:
 	_camera_update()
 	_setup_marker()
 	_build_grid()
+	_sync_expansion(false)
 	_setup_audio()
 	_ui()
 	_rebuild_buildings()
@@ -367,14 +394,20 @@ func _toggle_shadows() -> void:
 
 
 func _build_grid() -> void:
-	# 20x16 tile grid overlay, toggleable from Settings. One line mesh.
+	# 20x16 tile grid overlay plus claimed expansion plots, toggleable from Settings. One line mesh.
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_LINES)
-	var col := Color(0.91, 0.86, 0.75, 0.22)
+	var col := Color(0.91, 0.86, 0.75, 0.09)
 	for gx in 21:
 		_add_grid_line(st, Vector2(gx, 0), Vector2(gx, 16), col)
 	for gz in 17:
 		_add_grid_line(st, Vector2(0, gz), Vector2(20, gz), col)
+	for id: String in sim.expansions:
+		var rect: Rect2i = Sim.EXPANSION_PLOTS[id]["rect"]
+		for gx in range(rect.position.x, rect.end.x + 1):
+			_add_grid_line(st, Vector2(gx, rect.position.y), Vector2(gx, rect.end.y), col)
+		for gz in range(rect.position.y, rect.end.y + 1):
+			_add_grid_line(st, Vector2(rect.position.x, gz), Vector2(rect.end.x, gz), col)
 	grid_layer.mesh = st.commit()
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -385,7 +418,8 @@ func _build_grid() -> void:
 	grid_layer.material_override = material
 	grid_layer.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	grid_layer.visible = show_grid
-	add_child(grid_layer)
+	if grid_layer.get_parent() == null:
+		add_child(grid_layer)
 
 
 func _add_grid_line(st: SurfaceTool, a: Vector2, b: Vector2, col: Color) -> void:
@@ -425,7 +459,7 @@ func _haunted_outskirts() -> void:
 	var outskirts := Node3D.new()
 	outskirts.name = "HauntedOutskirts"
 	add_child(outskirts)
-	for location: Vector3 in [Vector3(-27, 0, -23), Vector3(29, 0, 19), Vector3(-30, 0, 18)]:
+	for location: Vector3 in [Vector3(-52, 0, -30), Vector3(52, 0, 30), Vector3(-52, 0, 26)]:
 		var ruin := Node3D.new()
 		ruin.position = location
 		ruin.rotation.y = location.x * 0.025
@@ -443,12 +477,37 @@ func _haunted_outskirts() -> void:
 func _ground() -> void:
 	ground_parts.clear()
 	ground_parts.append(_box(Vector3(40, 0.32, 32), Vector3(0, -0.16, 0), Color("4d6038")))
-	var grass := Image.create(64, 64, false, Image.FORMAT_RGB8)
-	for y in 64:
-		for x in 64:
-			var value: float = 0.94 + sin(x * 0.32) * cos(y * 0.24) * 0.10 + sin((x + y) * 1.8) * 0.018
+	# 128px seamless FastNoiseLite grass (2 octaves) remapped to 0.88-1.06, plus a ~3% tone step per 20x16 tile.
+	var grass_noise := FastNoiseLite.new()
+	grass_noise.noise_type = FastNoiseLite.TYPE_PERLIN
+	grass_noise.frequency = 0.07
+	grass_noise.fractal_type = FastNoiseLite.FRACTAL_FBM
+	grass_noise.fractal_octaves = 2
+	grass_noise.seed = 3
+	var grass_source := grass_noise.get_seamless_image(128, 128)
+	var noise_min := INF
+	var noise_max := -INF
+	for y in 128:
+		for x in 128:
+			var sample: float = grass_source.get_pixel(x, y).r
+			noise_min = minf(noise_min, sample)
+			noise_max = maxf(noise_max, sample)
+	var noise_span: float = maxf(noise_max - noise_min, 0.0001)
+	var grass := Image.create(128, 128, false, Image.FORMAT_RGB8)
+	for y in 128:
+		for x in 128:
+			var sample: float = (grass_source.get_pixel(x, y).r - noise_min) / noise_span
+			var tile_tone: float = 1.015 if (int(x * 20.0 / 128.0) + int(y * 16.0 / 128.0)) % 2 == 0 else 0.985
+			var value: float = clampf(lerpf(0.88, 1.06, sample) * tile_tone, 0.0, 1.0)
 			grass.set_pixel(x, y, Color(value, value, value))
 	ground_parts[0].material_override.albedo_texture = ImageTexture.create_from_image(grass)
+	# Soil band under the slab and a thin lighter lip on the top edge, so the map reads as a diorama chunk.
+	ground_parts.append(_box(Vector3(40, 0.5, 32), Vector3(0, -0.55, 0), Color("4a3a2a")))
+	var lip_color := Color("6f8553")
+	for x in [-20.1, 20.1]:
+		ground_parts.append(_box(Vector3(0.5, 0.05, 32.0), Vector3(x, 0.025, 0), lip_color))
+	for z in [-16.1, 16.1]:
+		ground_parts.append(_box(Vector3(40.0, 0.05, 0.5), Vector3(0, 0.025, z), lip_color))
 	for x in [-20.2, 20.2]:
 		ground_parts.append(_box(Vector3(0.4, 0.7, 32.8), Vector3(x, -0.35, 0), Color("243529")))
 	for z in [-16.2, 16.2]:
@@ -464,17 +523,24 @@ func _ground() -> void:
 		ground_parts.append(_box(Vector3(0.3, 0.12, 0.3), Vector3(x, 0.06, z), Color("65745a")))
 	var patch_rng := RandomNumberGenerator.new()
 	patch_rng.seed = 19
-	for index in 22:
-		var shade: float = patch_rng.randf_range(-0.07, 0.07)
+	var green_tones: Array[Color] = [Color(0.30, 0.38, 0.22), Color(0.25, 0.35, 0.21), Color(0.36, 0.44, 0.26)]
+	var dry_tones: Array[Color] = [Color(0.47, 0.42, 0.26), Color(0.42, 0.38, 0.24)]
+	var patch_fade := UI.soft_disc_texture()
+	for index in 34:
+		var shade: float = patch_rng.randf_range(-0.05, 0.05)
+		var is_dry: bool = patch_rng.randf() < 0.2
+		var palette: Array[Color] = dry_tones if is_dry else green_tones
+		var tone: Color = palette[patch_rng.randi() % palette.size()]
 		var disc := MeshInstance3D.new()
-		var disc_mesh := CylinderMesh.new()
-		disc_mesh.top_radius = 1.0
-		disc_mesh.bottom_radius = 1.0
-		disc_mesh.height = 0.012
-		disc_mesh.radial_segments = 24
+		var disc_mesh := PlaneMesh.new()
+		disc_mesh.size = Vector2(2.0, 2.0)
 		disc.mesh = disc_mesh
+		disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		# Soft radial fade instead of a hard cylinder edge, so patches blend into the grass.
 		var disc_material := StandardMaterial3D.new()
-		disc_material.albedo_color = Color(0.30 + shade, 0.38 + shade, 0.22 + shade * 0.6)
+		disc_material.albedo_color = Color(tone.r + shade, tone.g + shade, tone.b + shade * 0.6, 0.8)
+		disc_material.albedo_texture = patch_fade
+		disc_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		disc_material.roughness = 0.95
 		disc.material_override = disc_material
 		disc.position = Vector3(patch_rng.randf_range(-16.5, 16.5), 0.004 + index * 0.0004, patch_rng.randf_range(-13.0, 13.0))
@@ -482,7 +548,48 @@ func _ground() -> void:
 		disc.rotation.y = patch_rng.randf_range(0.0, TAU)
 		add_child(disc)
 		ground_parts.append(disc)
+	# ~40 small grass tufts as one MultiMesh (per-instance color), same placement rule as the pebbles.
+	var tuft_rng := RandomNumberGenerator.new()
+	tuft_rng.seed = 29
+	var tuft_xforms: Array[Transform3D] = []
+	var tuft_colors: Array[Color] = []
+	while tuft_xforms.size() < 40:
+		var x: float = tuft_rng.randf_range(-19, 19)
+		var z: float = tuft_rng.randf_range(-15, 15)
+		if absf(x) < 14 and absf(z) < 11:
+			continue
+		var tuft_basis := Basis(Vector3.UP, tuft_rng.randf_range(0.0, TAU)).scaled(Vector3.ONE * tuft_rng.randf_range(0.7, 1.4))
+		tuft_xforms.append(Transform3D(tuft_basis, Vector3(x, 0.1, z)))
+		tuft_colors.append(Color("5f7448").darkened(tuft_rng.randf_range(0.0, 0.2)))
+	var tuft_mesh := CylinderMesh.new()
+	tuft_mesh.top_radius = 0.0
+	tuft_mesh.bottom_radius = 0.12
+	tuft_mesh.height = 0.22
+	tuft_mesh.radial_segments = 4
+	var tuft_material := StandardMaterial3D.new()
+	tuft_material.roughness = 0.95
+	tuft_material.vertex_color_use_as_albedo = true
+	# Not appended to ground_parts: that array is typed Array[MeshInstance3D].
+	_add_multimesh(tuft_mesh, tuft_material, tuft_xforms, tuft_colors, self, false)
 	_scenery()
+
+
+func _add_multimesh(mesh: Mesh, material: Material, transforms: Array, colors: Array, parent: Node, casts_shadow: bool) -> MultiMeshInstance3D:
+	var multimesh := MultiMesh.new()
+	multimesh.transform_format = MultiMesh.TRANSFORM_3D
+	multimesh.use_colors = not colors.is_empty()
+	multimesh.mesh = mesh
+	multimesh.instance_count = transforms.size()
+	for index in transforms.size():
+		multimesh.set_instance_transform(index, transforms[index])
+		if multimesh.use_colors:
+			multimesh.set_instance_color(index, colors[index])
+	var node := MultiMeshInstance3D.new()
+	node.multimesh = multimesh
+	node.material_override = material
+	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if casts_shadow else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(node)
+	return node
 
 
 func _scenery() -> void:
@@ -492,41 +599,92 @@ func _scenery() -> void:
 	_box(Vector3(76, 0.5, 64), Vector3(0, -0.80, 0), Color("34452a"), scenery)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 41
+	var pine_tones: Array[Color] = [Color("2b4a2e"), Color("264128"), Color("35532f")]
+	var round_tones: Array[Color] = [Color("2f4f2c"), Color("3d5e33"), Color("283f27")]
+	var shrub_tones: Array[Color] = [Color("3a5630"), Color("4a6236"), Color("33502c")]
+	var rock_tones: Array[Color] = [Color("5e5d55"), Color("6f6a5e"), Color("54534d")]
+	var trunk_xforms: Array[Transform3D] = []
+	var pine_xforms: Array[Transform3D] = []
+	var pine_colors: Array[Color] = []
+	var round_xforms: Array[Transform3D] = []
+	var round_colors: Array[Color] = []
+	var shrub_xforms: Array[Transform3D] = []
+	var shrub_colors: Array[Color] = []
+	var rock_xforms: Array[Transform3D] = []
+	var rock_colors: Array[Color] = []
+	# About 60% of trees land in a ring just outside the exclusion zone, so the map edge reads denser.
+	while pine_xforms.size() + round_xforms.size() < 140:
+		var near_edge: bool = rng.randf() < 0.6
+		var x: float = rng.randf_range(-46.0, 46.0) if near_edge else rng.randf_range(-50.0, 50.0)
+		var z: float = rng.randf_range(-42.0, 42.0) if near_edge else rng.randf_range(-46.0, 46.0)
+		if absf(x) < 41.5 and absf(z) < 37.5:
+			continue
+		var tree_scale: float = rng.randf_range(0.8, 1.5)
+		var tree_basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).scaled(Vector3.ONE * tree_scale)
+		var tree_xform := Transform3D(tree_basis, Vector3(x, -0.55, z))
+		trunk_xforms.append(tree_xform * Transform3D(Basis(), Vector3(0, 0.45, 0)))
+		if rng.randf() < 0.5:
+			pine_xforms.append(tree_xform)
+			pine_colors.append(pine_tones[rng.randi() % pine_tones.size()].darkened(rng.randf_range(0.0, 0.12)))
+		else:
+			round_xforms.append(tree_xform * Transform3D(Basis(), Vector3(0, 1.55, 0)))
+			round_colors.append(round_tones[rng.randi() % round_tones.size()].darkened(rng.randf_range(0.0, 0.12)))
+	while shrub_xforms.size() < 38:
+		var x: float = rng.randf_range(-50.0, 50.0)
+		var z: float = rng.randf_range(-46.0, 46.0)
+		if absf(x) < 41.5 and absf(z) < 37.5:
+			continue
+		var shrub_basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).scaled(Vector3.ONE * rng.randf_range(0.7, 1.3))
+		shrub_xforms.append(Transform3D(shrub_basis, Vector3(x, -0.34, z)))
+		shrub_colors.append(shrub_tones[rng.randi() % shrub_tones.size()].darkened(rng.randf_range(0.0, 0.12)))
+	while rock_xforms.size() < 32:
+		var x: float = rng.randf_range(-50.0, 50.0)
+		var z: float = rng.randf_range(-46.0, 46.0)
+		if absf(x) < 41.5 and absf(z) < 37.5:
+			continue
+		var rock_basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).scaled(Vector3(rng.randf_range(0.7, 1.4), rng.randf_range(0.6, 1.0), rng.randf_range(0.7, 1.4)))
+		rock_xforms.append(Transform3D(rock_basis, Vector3(x, -0.52, z)))
+		rock_colors.append(rock_tones[rng.randi() % rock_tones.size()].darkened(rng.randf_range(0.0, 0.12)))
+	# One MultiMeshInstance3D per mesh type. Foliage/rock colors come from instance colors.
+	var tint_material := StandardMaterial3D.new()
+	tint_material.roughness = 0.9
+	tint_material.vertex_color_use_as_albedo = true
 	var trunk_material := StandardMaterial3D.new()
 	trunk_material.albedo_color = Color("4a3524")
 	trunk_material.roughness = 0.95
-	var crowns: Array[StandardMaterial3D] = []
-	for tone: String in ["2b4a2e", "264128", "35532f"]:
-		var crown_material := StandardMaterial3D.new()
-		crown_material.albedo_color = Color(tone)
-		crown_material.roughness = 0.9
-		crowns.append(crown_material)
 	var trunk_mesh := BoxMesh.new()
 	trunk_mesh.size = Vector3(0.28, 0.9, 0.28)
-	for index in 70:
-		var x: float = rng.randf_range(-33.0, 33.0)
-		var z: float = rng.randf_range(-27.0, 27.0)
-		if absf(x) < 23.5 and absf(z) < 19.5:
-			continue
-		var tree := Node3D.new()
-		tree.position = Vector3(x, -0.5, z)
-		tree.scale = Vector3.ONE * rng.randf_range(0.8, 1.5)
-		scenery.add_child(tree)
-		var trunk := MeshInstance3D.new()
-		trunk.mesh = trunk_mesh
-		trunk.material_override = trunk_material
-		trunk.position.y = 0.45
-		tree.add_child(trunk)
-		var crown_mesh := CylinderMesh.new()
-		crown_mesh.top_radius = 0.0
-		crown_mesh.bottom_radius = 0.95
-		crown_mesh.height = 2.0
-		crown_mesh.radial_segments = 7
-		var crown := MeshInstance3D.new()
-		crown.mesh = crown_mesh
-		crown.material_override = crowns[index % crowns.size()]
-		crown.position.y = 1.7
-		tree.add_child(crown)
+	_add_multimesh(trunk_mesh, trunk_material, trunk_xforms, [], scenery, true)
+	# Tall pine: three stacked cones merged into one mesh.
+	var pine_st := SurfaceTool.new()
+	pine_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for tier in 3:
+		var cone := CylinderMesh.new()
+		cone.top_radius = 0.0
+		cone.bottom_radius = 0.9 - tier * 0.24
+		cone.height = 1.0 - tier * 0.1
+		cone.radial_segments = 6
+		pine_st.append_from(cone, 0, Transform3D(Basis(), Vector3(0, 0.9 + tier * 0.5, 0)))
+	_add_multimesh(pine_st.commit(), tint_material, pine_xforms, pine_colors, scenery, true)
+	# Round bushy tree: low-poly squashed sphere crown.
+	var round_mesh := SphereMesh.new()
+	round_mesh.radius = 0.85
+	round_mesh.height = 1.6
+	round_mesh.radial_segments = 7
+	round_mesh.rings = 4
+	_add_multimesh(round_mesh, tint_material, round_xforms, round_colors, scenery, true)
+	var shrub_mesh := SphereMesh.new()
+	shrub_mesh.radius = 0.42
+	shrub_mesh.height = 0.5
+	shrub_mesh.radial_segments = 6
+	shrub_mesh.rings = 3
+	_add_multimesh(shrub_mesh, tint_material, shrub_xforms, shrub_colors, scenery, false)
+	var rock_mesh := SphereMesh.new()
+	rock_mesh.radius = 0.28
+	rock_mesh.height = 0.22
+	rock_mesh.radial_segments = 5
+	rock_mesh.rings = 3
+	_add_multimesh(rock_mesh, tint_material, rock_xforms, rock_colors, scenery, false)
 	var glow_ramp := Gradient.new()
 	glow_ramp.offsets = PackedFloat32Array([0.0, 0.25, 0.75, 1.0])
 	glow_ramp.colors = PackedColorArray([Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)])
@@ -592,7 +750,7 @@ func _scenery() -> void:
 	mist_material.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	mist_material.vertex_color_use_as_albedo = true
 	mist_material.albedo_texture = mist_texture
-	mist_material.albedo_color = Color(0.62, 0.7, 0.85, 0.35)
+	mist_material.albedo_color = Color(0.62, 0.7, 0.85, 0.8)
 	mist_material.disable_receive_shadows = true
 	var mist_quad := QuadMesh.new()
 	mist_quad.size = Vector2(8, 8)
@@ -854,7 +1012,9 @@ func _update_roads() -> void:
 func _lighting() -> void:
 	var world := WorldEnvironment.new()
 	world.environment = environment
-	environment.background_mode = Environment.BG_COLOR
+	environment.background_mode = Environment.BG_SKY
+	environment.sky = sky
+	sky.sky_material = sky_material
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	environment.adjustment_enabled = true
@@ -864,9 +1024,10 @@ func _lighting() -> void:
 	sun.rotation_degrees = Vector3(-58, -35, 0)
 	sun.shadow_enabled = shadows_on
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
-	sun.directional_shadow_max_distance = 48
+	sun.directional_shadow_max_distance = _shadow_distance()
 	sun.shadow_bias = 0.03
-	sun.shadow_blur = 2.0
+	# No shadow_blur: the Compatibility renderer pays full price for it and the
+	# bias-plus-opacity pair already reads soft at this tile scale.
 	sun.shadow_opacity = 0.92
 	add_child(sun)
 	fill.rotation_degrees = Vector3(-14, 95, 0)
@@ -874,34 +1035,44 @@ func _lighting() -> void:
 	fill.light_energy = 0.28
 	fill.shadow_enabled = false
 	add_child(fill)
+	Atmosphere.apply(self, environment)
 	_apply_lighting()
 
 
-# Ceiling: fixed 8-minute loop, night-heavy for the Manor mood. Dawn and
-# dusk are ~30s smooth blends, not cuts.
+# Ceiling: fixed 8-minute loop, night-heavy for the Manor mood. Dawn (~36s)
+# and dusk (~24s) are smooth blends, not cuts; the day plateau is ~80s.
 func _day_blend() -> float:
 	var pos: float = fmod(sim.elapsed + cycle_offset, DAY_LENGTH) / DAY_LENGTH
-	if pos < 0.55 or pos >= 0.975:
+	if pos < 0.55 or pos >= 0.8417:
 		return 0.0
 	if pos < 0.625:
 		return smoothstep(0.55, 0.625, pos)
-	if pos < 0.925:
+	if pos < 0.7917:
 		return 1.0
-	return 1.0 - smoothstep(0.925, 0.975, pos)
+	return 1.0 - smoothstep(0.7917, 0.8417, pos)
 
 
 func _apply_lighting() -> void:
 	var b: float = clampf(day_blend, 0.0, 1.0)
 	environment.background_color = Color("0c172b").lerp(Color("6fa8d8"), b)
-	environment.ambient_light_color = Color("a8a9c2").lerp(Color("f2ecd8"), b)
-	environment.ambient_light_energy = lerpf(0.4, 0.68, b)
+	environment.ambient_light_color = Color("a8a9c2").lerp(Color("c9c4b4"), b)
+	environment.ambient_light_energy = lerpf(0.4, 0.45, b)
 	environment.fog_enabled = true
 	environment.fog_light_color = Color("232948").lerp(Color("b8d2e8"), b)
-	environment.fog_density = lerpf(0.0045, 0.0016, b)
+	environment.fog_density = lerpf(0.0045, 0.0026, b)
 	environment.fog_sky_affect = lerpf(0.0, 1.0, b)
-	sun.light_color = Color("ffb377").lerp(Color("ffedd0"), b)
-	sun.light_energy = lerpf(0.62, 1.18, b)
-	sun_elev = lerpf(-58.0, -48.0, b) + sin(b * PI) * 20.0
+	# The sky gradient follows the cycle: deep blue night zenith with a lit
+	# horizon band, opening to pale blue day.
+	sky_material.sky_top_color = Color("0a1122").lerp(Color("3a5570"), b)
+	sky_material.sky_horizon_color = Color("1d2a4a").lerp(Color("cfe4f2"), b)
+	sky_material.ground_bottom_color = Color("070b14").lerp(Color("5a6350"), b)
+	sky_material.ground_horizon_color = Color("111a2e").lerp(Color("93a284"), b)
+	sun.light_color = Color("ffb377").lerp(Color("e4e4dc"), b)
+	sun.light_energy = lerpf(0.62, 0.80, b)
+	# Sun altitude stays high through night and day but dips through the middle
+	# of each dawn/dusk ramp (b ~ 0.35) for the low dramatic side light.
+	var dip: float = maxf(0.0, 1.0 - pow(absf(b - 0.35) / 0.3, 2.0))
+	sun_elev = -90.0 + 34.0 - 22.0 * dip
 	fill.light_energy = lerpf(0.28, 0.36, b)
 	if rain_level > 0.0:
 		environment.ambient_light_energy *= 1.0 - 0.28 * rain_level
@@ -943,6 +1114,7 @@ func _tune_for_device() -> void:
 			emitter.amount = mini(emitter.amount, int(entry[1]))
 	if is_instance_valid(mist):
 		mist_base = mist.amount
+	low_power = true
 
 
 func _update_weather(delta: float) -> void:
@@ -973,10 +1145,12 @@ func _rain_changed() -> void:
 		mist.amount = mist_base + int(14.0 * rain_level)
 	if not ground_parts.is_empty() and is_instance_valid(ground_parts[0]):
 		(ground_parts[0].material_override as StandardMaterial3D).albedo_color = Color("4d6038").darkened(0.38 * rain_level)
+		expansion.tint_ground(Color("4d6038").darkened(0.38 * rain_level))
 	for ripple in rain_rings:
 		if is_instance_valid(ripple):
 			ripple.visible = rain_level > 0.35
-	road_revision = sim.living.revision - 1
+	# Wet roads are a shader uniform (village_roads.gd); forcing a road_revision
+	# regression here rebuilt both road meshes every frame of the rain ramp.
 	_apply_lighting()
 
 
@@ -989,10 +1163,17 @@ func _flicker_lamps() -> void:
 		var lamp: OmniLight3D = building_views[id].get("lamp")
 		if is_instance_valid(lamp) and lamp.visible:
 			var phase: float = float(id) * 1.7
-			lamp.light_energy = 1.45 * alarm * (0.92 + 0.05 * sin(t * tempo + phase) + 0.03 * sin(t * 13.1 + phase * 2.3))
-			var flicker_glow: MeshInstance3D = building_views[id].get("glow")
-			if is_instance_valid(flicker_glow) and flicker_glow.visible:
-				flicker_glow.scale = Vector3.ONE * (1.0 + 0.06 * sin(t * 6.3 + phase))
+			if lamp.has_meta("forge"):
+				# Forge fire: quicker, deeper licks and a bigger glow swell than the steady lamps.
+				lamp.light_energy = 1.25 * alarm * (0.8 + 0.17 * sin(t * 17.0 + phase) + 0.07 * sin(t * 29.7 + phase * 2.3))
+				var forge_glow: MeshInstance3D = building_views[id].get("glow")
+				if is_instance_valid(forge_glow) and forge_glow.visible:
+					forge_glow.scale = Vector3.ONE * (1.0 + 0.14 * sin(t * 17.0 + phase))
+			else:
+				lamp.light_energy = 1.0 * alarm * (0.92 + 0.05 * sin(t * tempo + phase) + 0.03 * sin(t * 13.1 + phase * 2.3))
+				var flicker_glow: MeshInstance3D = building_views[id].get("glow")
+				if is_instance_valid(flicker_glow) and flicker_glow.visible:
+					flicker_glow.scale = Vector3.ONE * (1.0 + 0.06 * sin(t * 6.3 + phase))
 
 
 func _update_light_pool() -> void:
@@ -1019,16 +1200,40 @@ func _update_light_pool() -> void:
 			pool_glow.visible = on
 
 
+# Screen area the region banners may use: the viewport inside its margin, stopping above the bottom bar.
+func _banner_clip() -> Rect2:
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	var safe: float = 16.0 if _is_small() else UI.SAFE_MARGIN
+	var bar_top: float = vp.y - maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y) - safe - 10.0
+	return Rect2(safe, safe, vp.x - safe * 2.0, bar_top - safe)
+
+
 func _camera_update() -> void:
 	var size: Vector2 = get_viewport().get_visible_rect().size
 	var ratio: float = size.x / maxf(size.y, 1)
 	camera.size = zoom * maxf(1, 0.95 / ratio)
 	camera.position = target + Vector3(sin(yaw) * cos(tilt), sin(tilt), cos(yaw) * cos(tilt)) * 60
 	camera.look_at(target)
+	expansion.place_banners(camera, _banner_clip())
 	# Bunny-judged yaw-follow: shadows fall away from viewer, offset 35deg right.
 	# Elevation arcs with the cycle: high moon, low dramatic dawn/dusk sun.
-	sun.rotation_degrees = Vector3(sun_elev, rad_to_deg(yaw) - 35.0, 0.0)
+	var sun_yaw_deg: float = rad_to_deg(yaw) - 35.0
+	sun.rotation_degrees = Vector3(sun_elev, sun_yaw_deg, 0.0)
+	sun.directional_shadow_max_distance = _shadow_distance()
 	fill.rotation_degrees = Vector3(-14.0, rad_to_deg(yaw) + 95.0, 0.0)
+	# The moon rides opposite the sun's yaw so sky disc and key light agree.
+	if is_instance_valid(moon):
+		var moon_yaw: float = deg_to_rad(sun_yaw_deg + 180.0)
+		var moon_alt: float = deg_to_rad(38.0)
+		moon.position = target + Vector3(sin(moon_yaw) * cos(moon_alt), sin(moon_alt), cos(moon_yaw) * cos(moon_alt)) * 58.0
+		if moon.has_meta("halo") and is_instance_valid(moon.get_meta("halo")):
+			(moon.get_meta("halo") as MeshInstance3D).position = moon.position
+
+
+# Shadows render near the camera; zooming out must widen the frustum or the
+# far side of the village loses them.
+func _shadow_distance() -> float:
+	return clampf(zoom + 60.0, 60.0, 120.0)
 
 
 func _road_quad(tool: SurfaceTool, centre: Vector3, colour: Color) -> void:
@@ -1140,6 +1345,11 @@ func _rebuild_buildings() -> void:
 		var dims: Array = catalog[key]["dimensions_m"] if catalog.has(key) else [2.0, 2.0, 2.0]
 		var factor: float = minf(1.6, (float(b["size"]) * TILE - 0.15) / maxf(float(dims[0]), float(dims[2])))
 		model.scale = Vector3.ONE * factor
+		# Seeded lean (+/-2.5 deg) so neighbouring props don't read as clones.
+		if str(b["type"]) not in ["wall", "stonewall", "gate"]:
+			var lean_rng := RandomNumberGenerator.new()
+			lean_rng.seed = hash(str(b["id"]))
+			model.rotation.z = deg_to_rad(lean_rng.randf_range(-2.5, 2.5))
 		var label := Label3D.new()
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.font_size = 30
@@ -1150,11 +1360,16 @@ func _rebuild_buildings() -> void:
 		root_node.add_child(label)
 		var lamp: OmniLight3D
 		var glow: MeshInstance3D
-		if b["type"] in ["hall", "cottage", "barracks", "tower", "archer_tower", "gate", "storehouse", "bathhouse"]:
+		if b["type"] in ["hall", "cottage", "barracks", "tower", "archer_tower", "gate", "storehouse", "bathhouse", "forge"]:
 			lamp = OmniLight3D.new()
 			lamp.position = Vector3(0, 1.1, float(b["size"]) * 0.65)
 			lamp.light_color = Color("ffc474")
-			lamp.light_energy = 1.15
+			var forge_lamp: bool = b["type"] == "forge"
+			if forge_lamp:
+				# Forge fire: redder and hotter than the lamps; _flicker_lamps reads this tag.
+				lamp.light_color = Color(1.0, 0.5, 0.2)
+				lamp.set_meta("forge", true)
+			lamp.light_energy = 0.8
 			lamp.omni_range = 3.6
 			lamp.visible = night
 			root_node.add_child(lamp)
@@ -1164,7 +1379,7 @@ func _rebuild_buildings() -> void:
 			glow_material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 			glow_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 			glow_material.albedo_texture = UI.soft_disc_texture()
-			glow_material.albedo_color = Color(1.0, 0.72, 0.38, 0.5)
+			glow_material.albedo_color = Color(1.0, 0.5, 0.2, 0.6) if forge_lamp else Color(1.0, 0.72, 0.38, 0.5)
 			glow_material.disable_receive_shadows = true
 			var glow_quad := QuadMesh.new()
 			glow_quad.size = Vector2(1.7, 1.7)
@@ -1186,7 +1401,7 @@ func _rebuild_buildings() -> void:
 				pane_material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 				pane_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 				pane_material.albedo_texture = UI.soft_disc_texture()
-				pane_material.albedo_color = Color(1.0, 0.76, 0.42, 0.85)
+				pane_material.albedo_color = Color(1.0, 0.6, 0.26, 0.7)
 				pane_material.disable_receive_shadows = true
 				var pane_quad := QuadMesh.new()
 				pane_quad.size = Vector2(0.34, 0.34)
@@ -1296,6 +1511,50 @@ func _actor_should_render(at: Vector3) -> bool:
 	return get_viewport().get_visible_rect().grow(_physical_to_canvas(96.0)).has_point(point)
 
 
+# A small sack on a worker's back while they carry something. The prop is made once per
+# actor on first use and cached on the model; its colour follows the carried resource.
+func _update_carry_sack(model: Node3D, u: Dictionary) -> void:
+	var carrying: bool = float(u.get("carry", 0.0)) >= 1.0
+	if not carrying and not model.has_meta("carry_sack"):
+		return
+	var sack: MeshInstance3D
+	if model.has_meta("carry_sack"):
+		sack = model.get_meta("carry_sack")
+	else:
+		if carry_sack_mesh == null:
+			carry_sack_mesh = SphereMesh.new()
+			carry_sack_mesh.radius = 0.5
+			carry_sack_mesh.height = 1.0
+			carry_sack_mesh.radial_segments = 8
+			carry_sack_mesh.rings = 4
+		sack = MeshInstance3D.new()
+		sack.mesh = carry_sack_mesh
+		sack.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		sack.position = Vector3(0.12, 1.22, -0.26)
+		sack.scale = Vector3(0.2, 0.17, 0.15)
+		model.add_child(sack)
+		model.set_meta("carry_sack", sack)
+	sack.visible = carrying
+	if carrying:
+		sack.material_override = _carry_material(str(u.get("carry_resource", "")))
+
+
+func _carry_material(resource: String) -> StandardMaterial3D:
+	var key: String = resource if resource in ["wood", "stone", "food", "gold"] else ""
+	if not carry_materials.has(key):
+		var tint := Color(0.82, 0.7, 0.5)
+		match key:
+			"wood": tint = Color(0.42, 0.26, 0.12)
+			"stone": tint = Color(0.52, 0.53, 0.56)
+			"food": tint = Color(0.66, 0.8, 0.24)
+			"gold": tint = Color(0.98, 0.78, 0.2)
+		var material := StandardMaterial3D.new()
+		material.albedo_color = tint
+		material.roughness = 0.95
+		carry_materials[key] = material
+	return carry_materials[key]
+
+
 func _update_actors(delta: float) -> void:
 	var present: Dictionary = {}
 	for enemy_group in [false, true]:
@@ -1319,21 +1578,25 @@ func _update_actors(delta: float) -> void:
 			var requested: String = str(u.get("phase", "idle"))
 			if u["hp"] <= 0:
 				requested = "death"
-			if requested in ["gather", "repair"]:
+			if requested == "repair":
 				requested = "work"
 			var player: AnimationPlayer = record["player"]
+			if requested == "gather" and (player == null or not player.has_animation("gather")):
+				requested = "work"
 			if player != null and not player.has_animation(requested):
 				requested = "idle"
 			var onscreen: bool = _actor_should_render(destination)
 			model.visible = onscreen
 			model.position = destination
+			if not enemy_group:
+				_update_carry_sack(model, u)
 			if not onscreen:
 				if player != null:
 					player.speed_scale = 0.0
 				continue
 			# Aim at the job or the struck enemy; walk facing follows real travel only.
 			var facing: Vector3 = Vector3.ZERO
-			if requested in ["work", "attack"]:
+			if requested in ["work", "attack", "gather"]:
 				facing = world_position(sim.facing_target(u)) - model.position
 			elif travel.length_squared() > 0.00001:
 				facing = travel
@@ -1408,6 +1671,13 @@ func _setup_marker() -> void:
 	selection_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(selection_marker)
 	selection_marker.visible = false
+	wall_row_marker.multimesh = MultiMesh.new()
+	wall_row_marker.multimesh.transform_format = MultiMesh.TRANSFORM_3D
+	wall_row_marker.multimesh.mesh = selection_marker.mesh
+	wall_row_marker.material_override = material
+	wall_row_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(wall_row_marker)
+	wall_row_marker.visible = false
 
 
 func tier_roof_color(family_hue: float, family_sat: float, tier: int) -> Color:
@@ -1424,6 +1694,7 @@ func tier_trim_color(family_hue: float, family_sat: float, tier: int) -> Color:
 
 
 func _update_marker() -> void:
+	wall_row_marker.visible = panel == "wall_row_upgrade" and not wall_row_preview.is_empty()
 	var b: Dictionary = sim.get_building(selected_building)
 	var u: Dictionary = sim.get_unit(selected_unit)
 	selection_marker.visible = not b.is_empty() or not u.is_empty()
@@ -1573,6 +1844,7 @@ func _ui() -> void:
 	root_control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	canvas.add_child(root_control)
 	root_control.theme = ui.theme()
+	expansion.attach_banners(root_control, ui)
 	for label in [hud, raid_hud, quest_label, research_label]:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root_control.add_child(left_dock)
@@ -1621,7 +1893,7 @@ func _ui() -> void:
 	stack.add_theme_constant_override("separation", 4)
 	resource_stack.add_child(stack)
 	for resource: String in ["wood", "food", "gold", "lumber", "stone"]:
-		var row := ui.resource_row(stack, "", RESOURCE_GLYPHS.get(resource, "*"))
+		var row := ui.resource_row(stack, "", RESOURCE_GLYPHS.get(resource, "*"), resource)
 		resource_rows[resource] = row["value"]
 		resource_bars[resource] = row["bar"]
 	root_control.add_child(bottom)
@@ -1660,7 +1932,7 @@ func _ui() -> void:
 	toast.add_child(toast_label)
 	notice_wrap.add_child(toast)
 	root_control.add_child(banner_panel)
-	banner_panel.add_theme_stylebox_override("panel", ui.panel_box(true))
+	banner_panel.add_theme_stylebox_override("panel", ui.panel_box())
 	banner_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner_panel.add_child(banner_row)
@@ -1670,7 +1942,7 @@ func _ui() -> void:
 	banner_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	banner_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	banner_label.add_theme_font_size_override("font_size", 13)
-	banner_label.add_theme_color_override("font_color", UI.PARCHMENT_INK)
+	banner_label.add_theme_color_override("font_color", UI.PAPER)
 	banner_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner_row.add_child(banner_label)
 	banner_panel.modulate = Color(1, 1, 1, 0)
@@ -1692,8 +1964,9 @@ func _ui() -> void:
 	spacer_left.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	spacer_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nav.add_child(spacer_left)
-	more_button = ui.command_button("···", _toggle_more, nav, 56.0)
+	more_button = ui.command_button("More", _toggle_more, nav, 56.0)
 	_paint_ring(more_button, UI.SLATE, 56.0)
+	more_button.add_theme_font_size_override("font_size", 13)
 	more_button.tooltip_text = "More actions"
 	collect_all_button = ui.command_button("Collect", _collect_all, nav, 56.0)
 	_paint_ring(collect_all_button, UI.SLATE, 56.0)
@@ -1702,7 +1975,10 @@ func _ui() -> void:
 	repair_all_button = ui.command_button("Repair", _repair_all, nav, 56.0)
 	_paint_ring(repair_all_button, UI.SLATE, 56.0)
 	repair_all_button.add_theme_font_size_override("font_size", 13)
+	repair_all_button.add_theme_color_override("font_disabled_color", Color(UI.PAPER, 0.4))
 	repair_all_button.tooltip_text = "Repair every damaged structure"
+	repair_all_button.mouse_entered.connect(_show_repair_hint)
+	repair_all_button.mouse_exited.connect(_hide_repair_hint)
 	var spacer_right := Control.new()
 	spacer_right.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	spacer_right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1711,6 +1987,15 @@ func _ui() -> void:
 	_paint_ring(nav_shop, UI.GOLD, 84.0)
 	nav_shop.tooltip_text = "Raise new structures"
 	_build_more_sheet(root_control)
+	repair_hint.add_theme_stylebox_override("panel", ui.panel_box())
+	repair_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	repair_hint.hide()
+	repair_hint_label.text = "Nothing to repair"
+	repair_hint_label.add_theme_font_size_override("font_size", 12)
+	repair_hint_label.add_theme_color_override("font_color", UI.PAPER)
+	repair_hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	repair_hint.add_child(repair_hint_label)
+	root_control.add_child(repair_hint)
 	root_control.add_child(sidebar)
 	alarm_pulse.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	alarm_pulse.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -1736,7 +2021,10 @@ func _ui() -> void:
 	var cancel_button := ui.command_button("Cancel", _cancel_placement, actions, 44.0)
 	cancel_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	placement_box.hide()
+	var welcome_veil := ui.menu_backdrop(root_control)
 	root_control.add_child(welcome)
+	welcome.visibility_changed.connect(func() -> void: welcome_veil.visible = welcome.visible)
+	welcome_veil.visible = welcome.visible
 	message.hide()
 	root_control.add_child(message)
 	root_control.add_child(reset_dialog)
@@ -1750,7 +2038,7 @@ func _ui() -> void:
 	intro.add_theme_constant_override("separation", 8)
 	welcome.add_child(intro)
 	ui.heading("THE MANOR STANDS", intro)
-	ui.rule(intro)
+	ui.title_rule(intro)
 	ui.body("Build your village beneath the moon.\nGather, grow, and hold the walls.", intro)
 	ui.body("Drag to pan. Pinch or scroll to zoom.\nTap a building for its actions. Confirm previews to build.", intro)
 	welcome_help = ui.body("", intro)
@@ -1794,6 +2082,62 @@ func _research_surface_ready() -> bool:
 
 
 func _objective_summary(compact: bool = false) -> String:
+	var core: String = _quest_summary(compact)
+	var goal: String = _expansion_goal_text()
+	if goal.is_empty():
+		return core
+	return "%s  /  %s" % [core, goal] if compact else "%s\n%s" % [core, goal]
+
+
+# The next expansion goal: a ready plot first, then the plot whose Frontier region is furthest along.
+func _expansion_goal_text() -> String:
+	var best_id: String = ""
+	var best_score: int = -1
+	for id: String in Sim.EXPANSION_PLOTS:
+		if id in sim.expansions:
+			continue
+		var region: String = str(Sim.EXPANSION_PLOTS[id]["region"])
+		var score: int = sim.chronicle.region_index(region)
+		if sim.expansion_reason(id).is_empty():
+			score = 1000
+		if score > best_score:
+			best_score = score
+			best_id = id
+	if best_id.is_empty():
+		return ""
+	var plot: Dictionary = Sim.EXPANSION_PLOTS[best_id]
+	var label: String = str(plot["label"])
+	var reason: String = sim.expansion_reason(best_id)
+	if reason.is_empty():
+		return "%s ready - tap to claim" % label
+	var region: String = str(plot["region"])
+	if sim.chronicle.region_state(region) in ["secured", "developed"]:
+		return "Expand: %s - %s" % [label, reason]
+	var region_name: String = str(sim.chronicle.region_data(region).get("name", region))
+	return "Expand: %s - secure %s" % [label, region_name]
+
+
+# Expansion sync: slabs for claimed plots, ghosts for the rest, base edges hidden where a plot now covers them.
+# animate true means the newest claim is playing its growth effect.
+func _sync_expansion(animate: bool) -> void:
+	var newest: String = str(sim.expansions.back()) if animate and not sim.expansions.is_empty() else ""
+	expansion.sync(sim, Sim.EXPANSION_PLOTS, newest, battery_saver, low_power, Callable(self, "_impact_burst"))
+	for id: String in EXPANSION_EDGE_PARTS:
+		var claimed: bool = id in sim.expansions
+		for index: int in EXPANSION_EDGE_PARTS[id]:
+			if index < ground_parts.size() and is_instance_valid(ground_parts[index]):
+				ground_parts[index].visible = not claimed
+	_build_grid()
+
+
+func _claim_plot(id: String) -> void:
+	if sim.expand(id):
+		_sync_expansion(true)
+		_play_sfx("confirm")
+	_refresh_hud()
+
+
+func _quest_summary(compact: bool = false) -> String:
 	var quest: Dictionary = sim.quest_current()
 	if quest.is_empty():
 		return "Chronicle complete"
@@ -1906,8 +2250,8 @@ func _layout_ui() -> void:
 		sidebar.position = Vector2(safe, size.y - bar_h - safe - 8.0 - sheet_h)
 		sidebar.size = Vector2(size.x - safe * 2.0, sheet_h)
 	else:
-		sidebar.position = Vector2(safe, maxf(left_dock.get_combined_minimum_size().y, resource_stack.get_combined_minimum_size().y) + 30)
-		sidebar.size = Vector2(size.x - 32 if narrow else 310.0, maxf(130, size.y - sidebar.position.y - bottom.size.y - 28))
+		_fit_sidebar()
+		_fit_sidebar.call_deferred()
 	more_sheet.position = sidebar.position
 	more_sheet.size = sidebar.size
 	# Compact resource pills on phones: values only, bars stay on desktop.
@@ -1929,6 +2273,23 @@ func _layout_ui() -> void:
 	_camera_update()
 
 
+# The sidebar (raid report, menus) starts under the real bottom of the left HUD and stops above the bottom
+# bar. Run now and once more deferred, because containers only settle their final heights after a sort.
+func _fit_sidebar() -> void:
+	if _is_small():
+		return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	var safe: float = UI.SAFE_MARGIN
+	var bar_top: float = vp.y - maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y) - safe
+	var left_bottom: float = left_dock.position.y + maxf(left_dock.size.y, left_dock.get_combined_minimum_size().y)
+	var stack_bottom: float = resource_stack.position.y + maxf(resource_stack.size.y, resource_stack.get_combined_minimum_size().y)
+	var top: float = maxf(left_bottom, stack_bottom) + 16.0
+	sidebar.position = Vector2(safe, top)
+	sidebar.size = Vector2(vp.x - 32.0 if _is_narrow() else 310.0, maxf(130.0, bar_top - 12.0 - top))
+	more_sheet.position = sidebar.position
+	more_sheet.size = sidebar.size
+
+
 func _clear_sidebar() -> void:
 	hire_buttons.clear()
 	build_cards.clear()
@@ -1946,6 +2307,7 @@ func _clear_sidebar() -> void:
 
 func _open_panel(which: String) -> void:
 	if panel == "pause" and which != "pause": paused = false
+	if which != "wall_row_upgrade": wall_row_preview.clear()
 	panel = which
 	more_sheet.hide()
 	_paint_more()
@@ -1984,6 +2346,13 @@ func _open_panel(which: String) -> void:
 			_build_doctrines()
 		"building":
 			_build_inspector()
+		"wall_row_upgrade":
+			ui.heading("UPGRADE WALL ROW", side_content)
+			ui.rule(side_content)
+			wall_row_details = ui.body("%d matching walls / Level %d to %d\nTotal / %s\n\nOnly connected walls of the same type and level are included. Every highlighted wall upgrades together, or none do." % [wall_row_preview["ids"].size(), wall_row_preview["tier"], int(wall_row_preview["tier"]) + 1, _cost_text(wall_row_preview["cost"])], side_content)
+			ui.body("Village paused while you decide.", side_content, 12)
+			wall_row_confirm_button = ui.gold_button("Confirm Row Upgrade", _confirm_wall_row_upgrade, side_content, 44.0)
+			wall_row_cancel_button = ui.command_button("Cancel", _open_panel.bind("building"), side_content, 44.0)
 		"research":
 			_open_panel("tech")
 		"workers":
@@ -2010,6 +2379,7 @@ func _open_panel(which: String) -> void:
 		"raid_report":
 			_build_raid_report()
 	_layout_ui()
+	_update_marker()
 
 
 func _raid_stars(score: int) -> String:
@@ -2681,6 +3051,8 @@ func _refresh_actions() -> void:
 		row_upgrade_button.disabled = row_ids.size() <= 1 or not row_reason.is_empty()
 		row_upgrade_button.text = "Upgrade Row ×%d" % row_ids.size() if row_ids.size() > 1 else "Upgrade Row"
 		row_upgrade_button.tooltip_text = row_reason if not row_reason.is_empty() else "Upgrade this connected wall row together"
+		if row_ids.size() > 1 and row_reason.is_empty():
+			row_upgrade_button.tooltip_text += " / " + _cost_text(_cost_times(sim.building_cost(str(b["type"]), int(b["tier"]) + 1), row_ids.size()))
 	repair_button.visible = not b.is_empty()
 	repair_button.disabled = b.is_empty() or float(b["hp"]) >= float(b["max_hp"]) or float(b["remaining"]) > 0
 	repair_button.tooltip_text = "Repair spends 15 HP per Wood" if not b.is_empty() else "Select a building"
@@ -2695,6 +3067,8 @@ func _close_panel() -> void:
 	if panel == "pause":
 		paused = false
 	panel = ""
+	wall_row_preview.clear()
+	_update_marker()
 	sidebar.hide()
 
 
@@ -2876,6 +3250,7 @@ func _confirm_new_game() -> void:
 	effect_nodes.clear()
 	burst_pool.reset()
 	sim = fresh
+	_sync_expansion(false)
 	selected_building = -1
 	selected_unit = -1
 	view_revision = -1
@@ -3144,8 +3519,39 @@ func _upgrade_selected() -> void:
 
 
 func _upgrade_wall_row() -> void:
-	if sim.upgrade_wall_row(selected_building):
+	var reason: String = sim.upgrade_wall_row_reason(selected_building)
+	if not reason.is_empty():
+		sim.notice = reason
+		_play_sfx("deny")
+		_refresh_hud()
+		return
+	var b: Dictionary = sim.get_building(selected_building)
+	var ids: Array[int] = sim.wall_row(selected_building)
+	wall_row_preview = {"id": selected_building, "ids": ids, "tier": int(b["tier"]), "cost": _cost_times(sim.building_cost(str(b["type"]), int(b["tier"]) + 1), ids.size())}
+	wall_row_marker.multimesh.instance_count = ids.size()
+	for index: int in ids.size():
+		wall_row_marker.multimesh.set_instance_transform(index, Transform3D(Basis.IDENTITY, world_position(sim.center(sim.get_building(ids[index])), 0.035)))
+	_open_panel("wall_row_upgrade")
+	wall_row_cancel_button.grab_focus()
+
+
+func _confirm_wall_row_upgrade() -> void:
+	if panel != "wall_row_upgrade" or wall_row_preview.is_empty():
+		return
+	var id: int = int(wall_row_preview["id"])
+	var ids: Array[int] = sim.wall_row(id)
+	var b: Dictionary = sim.get_building(id)
+	# Never substitute a shorter row or a different price for the shown preview.
+	var unchanged: bool = ids == wall_row_preview["ids"] and int(b.get("tier", -1)) == int(wall_row_preview["tier"])
+	if unchanged:
+		unchanged = _cost_times(sim.building_cost(str(b["type"]), int(b["tier"]) + 1), ids.size()) == wall_row_preview["cost"]
+	if unchanged and sim.upgrade_wall_row(id):
+		_play_sfx("upgrade")
 		_rebuild_buildings()
+	else:
+		if not unchanged: sim.notice = "Wall row changed. Preview the row again before upgrading."
+		_play_sfx("deny")
+	_open_panel("building")
 	_refresh_hud()
 
 
@@ -3326,6 +3732,7 @@ func _orbit_right() -> void:
 
 func _refresh_hud() -> void:
 	_pump_banner()
+	expansion.refresh(sim, Sim.EXPANSION_PLOTS)
 	if build_cards.has("stone_quarry") and is_instance_valid(build_cards["stone_quarry"]):
 		build_cards["stone_quarry"].disabled = "stoneworking" not in sim.living.discoveries
 	if build_cards.has("bathhouse") and is_instance_valid(build_cards["bathhouse"]):
@@ -3368,7 +3775,10 @@ func _refresh_hud() -> void:
 	var repairable: bool = repair_wood > 0 and float(sim.resources.get("wood", 0.0)) > 0.0
 	if repair_all_button != null and is_instance_valid(repair_all_button):
 		repair_all_button.disabled = not repairable
-		repair_all_button.tooltip_text = "Repair every damaged structure (%d wood)" % repair_wood if repairable else "Nothing to repair"
+		repair_all_button.tooltip_text = "Repair every damaged structure (%d wood)" % repair_wood if repairable else ""
+		repair_all_button.modulate = Color.WHITE if repairable else Color(1, 1, 1, 0.5)
+		if repairable:
+			_hide_repair_hint()
 		if repairable != repair_glow:
 			repair_glow = repairable
 			_paint_ring(repair_all_button, UI.READY if repairable else UI.SLATE, 56.0)
@@ -3407,6 +3817,8 @@ func _refresh_hud() -> void:
 	if alarm and not alarm_latched and started and sound:
 		_play_sfx("horn")
 	if alarm and not alarm_latched and started:
+		if has_method("_swing_bell"):
+			call("_swing_bell")
 		alarm_pulse.color = Color(0.55, 0.06, 0.09, 0.34) if sim.raid_active else Color(0.6, 0.38, 0.1, 0.3)
 		var pulse := create_tween()
 		pulse.tween_property(alarm_pulse, "color:a", 0.0, 1.8)
@@ -3426,7 +3838,7 @@ func _refresh_hud() -> void:
 	else:
 		research_label.text = "Insight %d / %d" % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"])]
 	message.text = ("PAUSED / " if sim.paused else "") + sim.notice
-	toast_label.text = "◆ " + ("PAUSED / " if sim.paused else "") + sim.notice
+	toast_label.text = "• " + ("PAUSED / " if sim.paused else "") + sim.notice
 	toast_label.tooltip_text = sim.notice
 	repair_all_button.visible = repairable or sim.chronicle.act >= 3
 	_refresh_progressive_ui()
@@ -3573,6 +3985,28 @@ func _initials_for(character: String) -> String:
 	return letters.to_upper() if not letters.is_empty() else "M"
 
 
+func _exit_tree() -> void:
+	# Base of the layer chain, so there is no parent _exit_tree to call.
+	# Release generated audio: stop every player and drop the streams they hold,
+	# plus the caches that keep rendered sample data alive.
+	var players: Array = [sfx, wind]
+	players.append_array(sfx_pool)
+	for player: AudioStreamPlayer in players:
+		if is_instance_valid(player):
+			player.stop()
+			player.stream = null
+	sfx_cache.clear()
+	if is_instance_valid(music):
+		music.stop()
+		for player: AudioStreamPlayer in music.players:
+			if is_instance_valid(player):
+				player.stop()
+				player.stream = null
+		music.cache.clear()
+		music.pending.clear()
+		music.prewarm.clear()
+
+
 func _setup_audio() -> void:
 	# Root fix: sfx lived outside the tree, so every effect errored silently.
 	var bus: int = AudioServer.bus_count
@@ -3690,6 +4124,51 @@ func _poof(tile: Vector2i, color: Color) -> void:
 	tween.chain().tween_callback(puff.queue_free)
 
 
+# Collect pops. A same-resource pop within POP_MERGE_WINDOW joins the one on screen ("+20 Gold") instead of
+# piling a second label on top. Simultaneous pops step up by POP_STAGGER_PX so they never share a spot.
+# At most POP_CAP are live; the oldest is dropped first. Pops are plain Label3D nodes tracked in collect_pops.
+func _spawn_collect_pop(event: Dictionary) -> void:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var resource: String = str(event["resource"])
+	var amount: int = int(event["amount"])
+	for index in range(collect_pops.size() - 1, -1, -1):
+		if not is_instance_valid(collect_pops[index]["label"]):
+			collect_pops.remove_at(index)
+	var stack: int = 0
+	for pop: Dictionary in collect_pops:
+		if now - float(pop["born"]) > POP_MERGE_WINDOW:
+			continue
+		if str(pop["resource"]) == resource:
+			pop["amount"] = int(pop["amount"]) + amount
+			(pop["label"] as Label3D).text = "+%d %s" % [int(pop["amount"]), resource.capitalize()]
+			return
+		stack += 1
+	while collect_pops.size() >= POP_CAP:
+		var oldest: Dictionary = collect_pops.pop_front()
+		var old_tween: Tween = oldest["tween"]
+		if old_tween.is_valid():
+			old_tween.kill()
+		var old_label: Label3D = oldest["label"]
+		effect_nodes.erase(old_label)
+		old_label.queue_free()
+	# One screen-pixel step in world units: the camera size is the view height in world units.
+	var step: float = POP_STAGGER_PX * maxf(camera.size, 0.01) / maxf(get_viewport().get_visible_rect().size.y, 1.0)
+	var label := Label3D.new()
+	label.text = "+%d %s" % [amount, resource.capitalize()]
+	label.modulate = GOLD
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.font_size = 42
+	label.pixel_size = 0.014
+	label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 3.5 + float(stack) * step)
+	add_child(label)
+	effect_nodes.append(label)
+	var tween: Tween = _effect_tween()
+	tween.tween_property(label, "position:y", label.position.y + 2, 1.5)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, 1.5)
+	tween.tween_callback(label.queue_free)
+	collect_pops.append({"resource": resource, "amount": amount, "label": label, "tween": tween, "born": now})
+
+
 func _consume_events() -> void:
 	for index in range(effect_tweens.size() - 1, -1, -1):
 		if not effect_tweens[index].is_valid(): effect_tweens.remove_at(index)
@@ -3701,19 +4180,7 @@ func _consume_events() -> void:
 		if effect_nodes.size() + burst_pool.active_count() >= EFFECT_LIMIT:
 			break
 		if event.get("kind") == "collect":
-			var label := Label3D.new()
-			label.text = "+%d %s" % [event["amount"], str(event["resource"]).capitalize()]
-			label.modulate = GOLD
-			label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-			label.font_size = 42
-			label.pixel_size = 0.014
-			label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 3.5)
-			add_child(label)
-			effect_nodes.append(label)
-			var tween: Tween = _effect_tween()
-			tween.tween_property(label, "position:y", label.position.y + 2, 1.5)
-			tween.parallel().tween_property(label, "modulate:a", 0.0, 1.5)
-			tween.tween_callback(label.queue_free)
+			_spawn_collect_pop(event)
 			if sound:
 				_play_sfx("collect")
 		elif event.get("kind") == "shot":
@@ -3795,6 +4262,23 @@ func _pause_effects(value: bool) -> void:
 		elif not tween.is_running(): tween.play()
 
 
+# A disabled Repair explains itself in a hint above the bottom bar, not in a native tooltip that lands on the button.
+func _show_repair_hint() -> void:
+	if repair_all_button == null or not repair_all_button.disabled:
+		return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	var safe: float = 16.0 if _is_small() else UI.SAFE_MARGIN
+	var bar_top: float = vp.y - maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y) - safe
+	var hint_size: Vector2 = repair_hint.get_combined_minimum_size()
+	repair_hint.size = hint_size
+	repair_hint.position = Vector2((vp.x - hint_size.x) * 0.5, bar_top - hint_size.y - 8.0)
+	repair_hint.show()
+
+
+func _hide_repair_hint() -> void:
+	repair_hint.hide()
+
+
 func _show_combat_banner(text: String, positive: bool) -> void:
 	combat_banner.text = text
 	combat_banner.add_theme_color_override("font_color", UI.READY if positive else UI.BLOOD)
@@ -3812,7 +4296,7 @@ func _process(delta: float) -> void:
 		sim.paused = true
 		return
 	_update_weather(delta)
-	sim.paused = not started or paused or (not focused and capture_path.is_empty())
+	sim.paused = not started or paused or panel == "wall_row_upgrade" or (not focused and capture_path.is_empty())
 	_pause_effects(sim.paused)
 	# The sky runs itself: an 8-minute cycle (long night, short day) with
 	# dawn/dusk blends. No in-game control changes it any more.
@@ -3833,7 +4317,7 @@ func _process(delta: float) -> void:
 		save_accumulator += delta
 		if save_accumulator >= 5 and not no_save and not save_blocked:
 			if not sim.save_game(save_path):
-				sim.notice = "Autosave failed. Open Pause / Save to retry."
+				sim.notice = "Autosave failed (%s). Open Pause / Save to retry." % (sim.last_save_error if sim.last_save_error != "" else "unknown error")
 			save_accumulator = 0
 	else:
 		tick_accumulator = 0
@@ -3951,7 +4435,12 @@ func _map_click(screen: Vector2) -> void:
 		if nearest >= 0:
 			_select_unit(nearest)
 			return
-	if tile.x < 0 or tile.x >= 20 or tile.y < 0 or tile.y >= 16:
+		# A locked expansion plot (ghost land) claims on tap. Buildings never sit on it.
+		var plot_id: String = expansion.plot_at(point, Sim.EXPANSION_PLOTS, sim.expansions)
+		if not plot_id.is_empty():
+			_claim_plot(plot_id)
+			return
+	if not sim.in_world(tile):
 		return
 	if _placement_active():
 		preview_tile = tile
@@ -4070,15 +4559,15 @@ func _pinch_update() -> void:
 	var a: Vector2 = pts[0]
 	var b: Vector2 = pts[1]
 	var cur_dist: float = maxf(a.distance_to(b), 1.0)
-	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, 55)
+	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, ZOOM_MAX)
 	var cur_angle: float = atan2(b.y - a.y, b.x - a.x)
 	yaw = pinch_yaw - wrapf(cur_angle - pinch_angle, -PI, PI)
 	var mid: Vector2 = (a + b) * 0.5
 	if pinch_has_mid:
 		var movement: Vector2 = pick_ground(pinch_mid) - pick_ground(mid)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
-		target.x = clampf(target.x, -20, 20)
-		target.z = clampf(target.z, -16, 16)
+		target.x = clampf(target.x, -PAN_LIMIT.x, PAN_LIMIT.x)
+		target.z = clampf(target.z, -PAN_LIMIT.y, PAN_LIMIT.y)
 	pinch_mid = mid
 	pinch_has_mid = true
 	_camera_update()
@@ -4112,8 +4601,8 @@ func _drag_map(pointer: Vector2) -> void:
 		left_dragged = true
 		var movement: Vector2 = pick_ground(last_pointer) - pick_ground(pointer)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
-		target.x = clampf(target.x, -20, 20)
-		target.z = clampf(target.z, -16, 16)
+		target.x = clampf(target.x, -PAN_LIMIT.x, PAN_LIMIT.x)
+		target.z = clampf(target.z, -PAN_LIMIT.y, PAN_LIMIT.y)
 		_camera_update()
 	last_pointer = pointer
 
@@ -4139,7 +4628,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			panning = event.pressed
 		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			zoom = clampf(zoom * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 12, 55)
+			zoom = clampf(zoom * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 12, ZOOM_MAX)
 			_camera_update()
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			left_pressed = true
@@ -4161,7 +4650,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		target += Vector3(event.delta.x, 0, event.delta.y) * 0.03
 		_camera_update()
 	if event is InputEventMagnifyGesture:
-		zoom = clampf(zoom / event.factor, 12, 55)
+		zoom = clampf(zoom / event.factor, 12, ZOOM_MAX)
 		_camera_update()
 
 

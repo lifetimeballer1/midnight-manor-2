@@ -2,7 +2,7 @@
   "asset": "char_armorer",
   "file": "char_armorer.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | armorer Rig",
     "MMR Character | armorer Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Hammering"
   },
-  "sha256": "f0d70dd661b6a44fbf5d68e61cfd7e8fd52305cb7e749bf47ccf14ff1a07733d",
+  "sha256": "eb6e40a22db321ac82eb7be342299f8c14c4215d05e6b4317f9d9cdfb6f2652d",
   "verified": true
 }

@@ -2,7 +2,7 @@
   "asset": "char_smelter",
   "file": "char_smelter.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | smelter Rig",
     "MMR Character | smelter Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Working_B"
   },
-  "sha256": "1f4c82454b368ea404cecebbeaf84228166fa5274f2244d8dddb69e399d579f5",
+  "sha256": "6fa761c2cde7805e15d48e3e4d020f9513c337de1f1c7e64c1f965f1d0eea945",
   "verified": true
 }

@@ -2,7 +2,7 @@
   "asset": "char_scout",
   "file": "char_scout.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | scout Rig",
     "MMR Character | scout Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Use_Item"
   },
-  "sha256": "e08439bb0d980579c6eaba6809858cd8383d7bc84bc5da712aa40345207052d6",
+  "sha256": "b59dd5cf2f732fc0ffd7e3271db5d6eb1ffd2bdf0bb2c294d8cecc19b7c0e7e0",
   "verified": true
 }

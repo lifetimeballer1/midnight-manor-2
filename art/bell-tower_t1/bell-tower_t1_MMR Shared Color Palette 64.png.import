@@ -2,23 +2,21 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bm4owxjbiycvq"
-path="res://.godot/imported/bell-tower_t1_MMR Shared Color Palette 64.png-478dee96bccb028001728b7f756f87eb.ctex"
+uid="uid://k1m2hxyp0enc"
+path.s3tc="res://.godot/imported/bell-tower_t1_MMR Shared Color Palette 64.png-478dee96bccb028001728b7f756f87eb.s3tc.ctex"
 metadata={
-"vram_texture": false
-}
-generator_parameters={
-"md5": "9028ec0f43df3f097a253a63a8729f01"
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/bell-tower_t1/bell-tower_t1_MMR Shared Color Palette 64.png"
-dest_files=["res://.godot/imported/bell-tower_t1_MMR Shared Color Palette 64.png-478dee96bccb028001728b7f756f87eb.ctex"]
+dest_files=["res://.godot/imported/bell-tower_t1_MMR Shared Color Palette 64.png-478dee96bccb028001728b7f756f87eb.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +38,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

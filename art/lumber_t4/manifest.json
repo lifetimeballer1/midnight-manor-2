@@ -2,9 +2,10 @@
   "asset": "lumber_t4",
   "file": "lumber_t4.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | lumber | T04 Architecture",
+    "MMR | lumber | T04 Autumn Dressing",
     "MMR | lumber | Tier 04 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     1.2912499904632568,
     1.2999999523162842
   ],
-  "triangles": 2204,
-  "meshes": 2,
+  "triangles": 2214,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "91cf5471e7c32c20d222c95d0b08bf3de64bd293c03d58a5092b0b48b2075b19",
+  "sha256": "9f5db5854c17b6ef315b9afbd86eb48e277cc9095292e88ca6b6be8d9992f8cc",
   "verified": true
 }

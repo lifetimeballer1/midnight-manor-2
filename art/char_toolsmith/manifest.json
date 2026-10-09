@@ -2,7 +2,7 @@
   "asset": "char_toolsmith",
   "file": "char_toolsmith.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | toolsmith Rig",
     "MMR Character | toolsmith Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Working_B"
   },
-  "sha256": "b6424f65e2f81ab91135fb279100378cf5d4e9cd2d1de2830f404e2a8dbbeda6",
+  "sha256": "315904f08acd7ba99dd1b8aa3c0dbaa773acdb416ae9599c2e1055cc6bfdade4",
   "verified": true
 }

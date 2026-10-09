@@ -2,7 +2,7 @@
   "asset": "char_leatherworker",
   "file": "char_leatherworker.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | leatherworker Rig",
     "MMR Character | leatherworker Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Working_A"
   },
-  "sha256": "cc8760dc77680b825ecc5e167e5fe507743b2f8aa8f222feac7191ea73208ac0",
+  "sha256": "c5faa039138cae03fd2746e8c09b5479ee4efc5df496767950774cda0d5ac9bd",
   "verified": true
 }

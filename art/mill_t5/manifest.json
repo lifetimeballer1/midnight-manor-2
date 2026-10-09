@@ -2,9 +2,10 @@
   "asset": "mill_t5",
   "file": "mill_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | mill | T05 Architecture",
+    "MMR | mill | T05 Autumn Dressing",
     "MMR | mill | T05 Water Wheel",
     "MMR | mill | T05 Wind Rotor",
     "MMR | mill | Tier 05 Ground"
@@ -17,12 +18,12 @@
     3.5503485202789307,
     2.3499999046325684
   ],
-  "triangles": 2484,
-  "meshes": 4,
+  "triangles": 2545,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "98424b9c8fd86dc120c2b54d697683e77617d2b7226f380cede6f4d528dd3c6e",
+  "sha256": "d8770856644c2edd93d9973e909d884c2fecd064d505945669c6a622ef622106",
   "verified": true
 }

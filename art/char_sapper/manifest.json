@@ -2,7 +2,7 @@
   "asset": "char_sapper",
   "file": "char_sapper.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | sapper Rig",
     "MMR Character | sapper Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Pickaxing"
   },
-  "sha256": "8760ab099018bec50fbb2a92d29d79e974c2a6e1ddcf24b4fa436a77e27c8664",
+  "sha256": "92605bb6e59ae334d111b178e929d9b342b0e8029350478c4c9ed473b4100898",
   "verified": true
 }

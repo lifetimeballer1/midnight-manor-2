@@ -2,7 +2,7 @@
   "asset": "char_mudlark",
   "file": "char_mudlark.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | mudlark Rig",
     "MMR Character | mudlark Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Working_A"
   },
-  "sha256": "4299d3d2478e59533ad97d93cf60a97b57c359a296ac6d1a37c71cfbd562a630",
+  "sha256": "6a392af50e1707d2472d159c9239b2283ef7eedd411b5b147add4fccad800eab",
   "verified": true
 }

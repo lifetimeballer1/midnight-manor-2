@@ -2,7 +2,7 @@
   "asset": "char_mason",
   "file": "char_mason.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | mason Rig",
     "MMR Character | mason Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Hammering"
   },
-  "sha256": "6689c9683f728034049b03695780a14e055fb46e063d8e2b3727036ebfb934c0",
+  "sha256": "d0b488e7401e1e59e92513e1f798ad5ef6a0b2d54aad49b4883528dbf78dcc08",
   "verified": true
 }

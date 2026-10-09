@@ -2,7 +2,7 @@
   "asset": "stonewall_t6",
   "file": "stonewall_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | stonewall | T06 Architecture",
     "MMR | stonewall | Tier 06 Ground"
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "fcefed8a0427af925a913d6d840f8f75c810f8b96e7b92cb5e2f7e63e92e5eb8",
+  "sha256": "97d921ecdfa7b5b25f356937984f1185bd9ba80317d671b3d0353ec2783302e1",
   "verified": true
 }

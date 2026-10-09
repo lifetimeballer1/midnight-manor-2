@@ -53,6 +53,14 @@ const CATEGORY_TYPES: Dictionary = {
 	"Roads": [],
 }
 
+const RESOURCE_TINTS: Dictionary = {
+	"wood": Color("9a6a3a"),
+	"food": Color("6f9150"),
+	"gold": BRASS,
+	"lumber": Color("b89a68"),
+	"stone": Color("8a93a0"),
+}
+
 signal thumbnail_ready(asset_key: String)
 
 var cache: Dictionary = {}
@@ -64,17 +72,38 @@ var rendered: int = 0
 var placeholders: int = 0
 
 
-func style(fill: Color = NAVY, border: Color = EDGE) -> StyleBoxFlat:
+func style(fill: Color = NAVY, border: Color = BRASS_SOFT) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color(fill, 0.97)
 	box.border_color = border
 	box.set_border_width_all(2)
 	box.border_width_bottom = 4
-	box.shadow_size = 4
-	box.shadow_color = Color(0, 0, 0, 0.35)
+	box.shadow_size = 6
+	box.shadow_color = Color(0, 0, 0, 0.45)
+	box.shadow_offset = Vector2(0, 2)
 	box.set_content_margin_all(10)
-	box.set_corner_radius_all(4)
+	box.set_corner_radius_all(10)
 	return box
+
+
+# SEPARATOR RULE: a 2px struck line; the border gives the rule its minimum height.
+func rule_box(color: Color) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = color
+	box.border_color = color
+	box.set_border_width_all(1)
+	box.set_content_margin_all(0)
+	return box
+
+
+# FOCUS RING: a brass outline only, so keyboard focus never hides the button face.
+func focus_ring() -> StyleBoxFlat:
+	var ring := StyleBoxFlat.new()
+	ring.draw_center = false
+	ring.border_color = BRASS
+	ring.set_border_width_all(2)
+	ring.set_corner_radius_all(4)
+	return ring
 
 
 func theme() -> Theme:
@@ -83,26 +112,27 @@ func theme() -> Theme:
 	built.set_color("font_color", "Label", PAPER)
 	built.set_color("font_color", "Button", PAPER)
 	built.set_color("font_hover_color", "Button", GOLD)
+	built.set_color("font_pressed_color", "Button", BRASS)
 	built.set_color("font_disabled_color", "Button", Color("6d6a5f"))
 	built.set_stylebox("panel", "PanelContainer", style(NAVY))
 	built.set_stylebox("panel", "Panel", style(NAVY))
 	built.set_color("font_color", "ProgressBar", GOLD)
-	for part in ["background", "fill"]:
-		var gauge: StyleBoxFlat = style(INK if part == "background" else GOLD, SLATE)
-		gauge.set_content_margin_all(0)
-		gauge.set_border_width_all(1)
-		gauge.shadow_size = 0
-		built.set_stylebox(part, "ProgressBar", gauge)
-	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var fill: Color = NAVY
-		if state == "hover":
-			fill = SLATE
-		elif state == "pressed":
-			fill = INK
-		elif state == "disabled":
-			fill = Color("1d1812")
-		built.set_stylebox(state, "Button", style(fill, EDGE if state != "disabled" else Color("55493a")))
-	built.set_stylebox("separator", "HSeparator", style(Color("4a3f2e"), Color("4a3f2e")))
+	# Inset track: a dark recess with an iron rim, so the empty part still reads as a slot.
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(INK, 0.92)
+	track.border_color = IRON_EDGE
+	track.set_border_width_all(1)
+	track.set_corner_radius_all(3)
+	track.set_content_margin_all(0)
+	built.set_stylebox("background", "ProgressBar", track)
+	built.set_stylebox("fill", "ProgressBar", gauge_fill(BRASS))
+	# Buttons: resting, lifted rim on hover, sunk face on press, dimmed when disabled.
+	built.set_stylebox("normal", "Button", command_box(NAVY, BRASS_SOFT))
+	built.set_stylebox("hover", "Button", command_box(SLATE, BRASS))
+	built.set_stylebox("pressed", "Button", command_box(INK, BRASS_SOFT, 1, true))
+	built.set_stylebox("disabled", "Button", command_box(Color("1d1812"), Color("55493a"), 2))
+	built.set_stylebox("focus", "Button", focus_ring())
+	built.set_stylebox("separator", "HSeparator", rule_box(Color("4a3f2e")))
 	return built
 
 
@@ -118,8 +148,10 @@ func heading(text: String, parent: Node) -> Label:
 	var made := Label.new()
 	made.text = text
 	made.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	made.add_theme_font_size_override("font_size", 18)
+	made.add_theme_font_size_override("font_size", 21)
 	made.add_theme_color_override("font_color", GOLD)
+	made.add_theme_color_override("font_outline_color", INK)
+	made.add_theme_constant_override("outline_size", 1)
 	parent.add_child(made)
 	return made
 
@@ -144,15 +176,48 @@ func button(text: String, action: Callable, parent: Node, minimum: float = 44.0)
 	return made
 
 
-func bar(value: float, maximum: float, parent: Node) -> ProgressBar:
+# GAUGE: brass by default. A resource passes its own tint and capacity=true, and the
+# fill turns READY amber when value reaches maximum. Repaints on every value change.
+func bar(value: float, maximum: float, parent: Node, tint: Color = BRASS, capacity: bool = false) -> ProgressBar:
 	var made := ProgressBar.new()
 	made.min_value = 0.0
 	made.max_value = maxf(1.0, maximum)
 	made.value = clampf(value, 0.0, maxf(1.0, maximum))
 	made.show_percentage = false
 	made.custom_minimum_size.y = 7
+	made.set_meta("gauge_tint", tint)
+	made.set_meta("gauge_capacity", capacity)
+	made.value_changed.connect(func(_amount: float) -> void: paint_bar(made))
+	made.changed.connect(func() -> void: paint_bar(made))
+	paint_bar(made)
 	parent.add_child(made)
 	return made
+
+
+# Repaints a gauge's fill from its current state. Lit fills get a 3px minimum sliver
+# so any value above zero stays visible on a bar that is nearly empty.
+func paint_bar(made: ProgressBar) -> void:
+	var tint: Color = made.get_meta("gauge_tint", BRASS)
+	var at_capacity: bool = bool(made.get_meta("gauge_capacity", false)) and made.value >= made.max_value
+	var lit: bool = made.value > made.min_value
+	var fill: StyleBoxFlat = gauge_fill(READY if at_capacity else tint, lit)
+	if not lit:
+		fill.bg_color = Color(0, 0, 0, 0)
+		fill.border_width_top = 0
+	made.add_theme_stylebox_override("fill", fill)
+
+
+# GAUGE FILL: flat tint with a 1px lighter top edge (StyleBoxFlat cannot vary colour per side).
+func gauge_fill(tint: Color, sliver: bool = false) -> StyleBoxFlat:
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = tint
+	fill.border_color = tint.lightened(0.35)
+	fill.border_width_top = 1
+	fill.set_corner_radius_all(2)
+	fill.set_content_margin_all(0)
+	if sliver:
+		fill.expand_margin_left = 3.0
+	return fill
 
 
 # --- Manor component kit ----------------------------------------------------
@@ -174,20 +239,21 @@ func panel_box(parchment: bool = false) -> StyleBoxFlat:
 		box.border_color = Color(BRASS_SOFT)
 		box.set_border_width_all(2)
 		box.border_width_top = 4
-		box.shadow_size = 3
-		box.shadow_color = Color(0, 0, 0, 0.3)
+		box.shadow_size = 6
+		box.shadow_color = Color(0, 0, 0, 0.45)
+		box.shadow_offset = Vector2(0, 2)
 		box.set_content_margin_all(10)
-		box.set_corner_radius_all(2)
+		box.set_corner_radius_all(10)
 		return box
 	box.bg_color = Color(WALNUT, 0.96)
-	box.border_color = IRON_EDGE
+	box.border_color = BRASS_SOFT
 	box.set_border_width_all(2)
 	box.border_width_bottom = 5
-	box.shadow_size = 5
-	box.shadow_color = Color(0, 0, 0, 0.4)
+	box.shadow_size = 6
+	box.shadow_color = Color(0, 0, 0, 0.45)
 	box.shadow_offset = Vector2(0, 2)
-	box.set_content_margin_all(10)
-	box.set_corner_radius_all(3)
+	box.set_content_margin_all(12)
+	box.set_corner_radius_all(10)
 	return box
 
 
@@ -250,17 +316,33 @@ func paint_command(node: Button, state: String = "normal") -> void:
 		"ready": fill = Color(READY, 0.32); rim = READY
 		"danger": fill = Color(DANGER, 0.85); rim = Color(DANGER.lightened(0.25))
 		"done": fill = Color(SEALED, 0.28); rim = SEALED
+	if state == "disabled":
+		node.add_theme_stylebox_override("disabled", command_box(fill, rim, 2))
+		return
+	# Live states get all three faces, so hover and press always read differently.
+	node.add_theme_stylebox_override("normal", command_box(fill, rim))
+	node.add_theme_stylebox_override("hover", command_box(fill.lightened(0.14), rim.lightened(0.2)))
+	node.add_theme_stylebox_override("pressed", command_box(fill.darkened(0.25), rim, 1, true))
+
+
+# BUTTON FACE: one physical command-button state. A pressed face sinks 1px by moving
+# its padding from the bottom to the top, so the label travels with the button.
+func command_box(fill: Color, rim: Color, lip: int = 4, sink: bool = false) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = fill
 	box.border_color = rim
 	box.set_border_width_all(2)
-	box.border_width_bottom = 4 if state != "pressed" else 1
-	box.set_corner_radius_all(3)
-	box.shadow_size = 2
+	box.border_width_bottom = lip
+	box.set_corner_radius_all(4)
+	box.shadow_size = 3
 	box.shadow_color = Color(0, 0, 0, 0.35)
 	box.shadow_offset = Vector2(0, 1)
 	box.set_content_margin_all(6)
-	node.add_theme_stylebox_override(state if state in ["normal", "hover", "pressed", "disabled"] else "normal", box)
+	if sink:
+		box.shadow_size = 0
+		box.content_margin_top = 8
+		box.content_margin_bottom = 4
+	return box
 
 
 # GOLD ACTION BUTTON: the selected or primary action.
@@ -269,6 +351,31 @@ func gold_button(text: String, action: Callable, parent: Node, minimum: float = 
 	paint_command(made, "gold")
 	made.add_theme_color_override("font_color", Color("f6ecd2"))
 	made.add_theme_color_override("font_hover_color", Color("fff6e2"))
+	made.add_theme_color_override("font_pressed_color", Color("fff6e2"))
+	made.add_theme_color_override("font_outline_color", INK)
+	made.add_theme_constant_override("outline_size", 1)
+	made.add_theme_font_size_override("font_size", 17)
+	return made
+
+
+# MENU BACKDROP: a dim veil for a modal menu. Add it before the menu panel so the
+# panel draws on top; STOP blocks clicks from reaching the village underneath.
+func menu_backdrop(parent: Node) -> ColorRect:
+	var veil := ColorRect.new()
+	veil.color = Color(0, 0, 0, 0.45)
+	veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	veil.mouse_filter = Control.MOUSE_FILTER_STOP
+	parent.add_child(veil)
+	return veil
+
+
+# TITLE RULE: a thin brass line under a menu or panel title.
+func title_rule(parent: Node) -> HSeparator:
+	var made := HSeparator.new()
+	made.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	made.custom_minimum_size.y = 2
+	made.add_theme_stylebox_override("separator", rule_box(BRASS_SOFT))
+	parent.add_child(made)
 	return made
 
 
@@ -360,13 +467,14 @@ func mission_banner(character: String, message: String, parent: Node) -> PanelCo
 	return made
 
 
-# RESOURCE ROW: icon glyph, amount, and a recessed capacity gauge.
-func resource_row(parent: Node, label: String, glyph: String) -> Dictionary:
+# RESOURCE ROW: icon glyph, amount, and a recessed capacity gauge tinted by resource key
+# ("wood", "food", "gold", "lumber", "stone"). The gauge turns READY amber at capacity.
+func resource_row(parent: Node, label: String, glyph: String, key: String = "") -> Dictionary:
 	var row := VBoxContainer.new()
-	row.add_theme_constant_override("separation", 1)
+	row.add_theme_constant_override("separation", 3)
 	parent.add_child(row)
 	var line := HBoxContainer.new()
-	line.add_theme_constant_override("separation", 4)
+	line.add_theme_constant_override("separation", 6)
 	row.add_child(line)
 	var icon := Label.new()
 	icon.text = glyph
@@ -376,10 +484,11 @@ func resource_row(parent: Node, label: String, glyph: String) -> Dictionary:
 	line.add_child(icon)
 	var value := Label.new()
 	value.text = label
-	value.add_theme_font_size_override("font_size", 14)
+	value.add_theme_font_size_override("font_size", 15)
 	value.add_theme_color_override("font_color", PAPER)
 	line.add_child(value)
-	return {"row": row, "value": value, "bar": bar(0, 1, row)}
+	var tint: Color = RESOURCE_TINTS.get(key, BRASS)
+	return {"row": row, "value": value, "bar": bar(0, 1, row, tint, true)}
 
 
 # PARAGRAPH on parchment, for story and mission text.
@@ -488,11 +597,13 @@ func _render(asset_key: String, factory: Callable) -> void:
 	key_light.rotation_degrees = Vector3(-52, 34, 0)
 	key_light.light_energy = 1.35
 	key_light.light_color = Color("fff0d2")
+	key_light.shadow_enabled = false
 	viewport.add_child(key_light)
 	var fill_light := DirectionalLight3D.new()
 	fill_light.rotation_degrees = Vector3(-18, -140, 0)
 	fill_light.light_energy = 0.45
 	fill_light.light_color = Color("9fb4e0")
+	fill_light.shadow_enabled = false
 	viewport.add_child(fill_light)
 	var rim_light := DirectionalLight3D.new()
 	rim_light.rotation_degrees = Vector3(-20, 115, 0)

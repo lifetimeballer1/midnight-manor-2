@@ -2,25 +2,27 @@
   "asset": "butchery_t6",
   "file": "butchery_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | butchery | T06 Architecture",
+    "MMR | butchery | T06 Autumn Dressing",
+    "MMR | butchery | T06 Banner Flag 1",
     "MMR | butchery | Tier 06 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.6475000381469727,
-    1.2999992370605469
+    1.2999999523162842
   ],
-  "triangles": 3276,
-  "meshes": 2,
+  "triangles": 3281,
+  "meshes": 4,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "d764352b168a48c5fb064c0cfb631db67048091e400816e68e484728ca3bd525",
+  "sha256": "8d0b7c7573b5a22bfc92cc11f51e12495d15d017092f12b805c76c26fe3d7454",
   "verified": true
 }

@@ -2,7 +2,7 @@
   "asset": "wall_t1",
   "file": "wall_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | wall | T01 Architecture",
     "MMR | wall | Tier 01 Ground"
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "a79768d0a6fe1a5075b0f1770bbdedc7ae5f6fe5e66739bdff59c59c2762fc09",
+  "sha256": "61f4dd31cf9ec3246e698cda32c602f8c30c91881aef785aef18911b7a4a45ca",
   "verified": true
 }

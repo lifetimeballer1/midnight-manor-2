@@ -2,7 +2,7 @@
   "asset": "pond_t5",
   "file": "pond_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | pond | T05 Architecture",
     "MMR | pond | Tier 05 Ground"
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "5242cc83e2887765bee111e1998d79612b15d1ce6cba9b55b8bb4dc14a66f8a6",
+  "sha256": "96f86674d82da54f35a4a8ff9c31093701b27917788cad9597e00588fb4774f3",
   "verified": true
 }

@@ -2,7 +2,7 @@
   "asset": "char_oathsworn",
   "file": "char_oathsworn.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | oathsworn Rig",
     "MMR Character | oathsworn Body",
@@ -36,6 +36,6 @@
     "death": "Death_A",
     "attack": "Melee_1H_Attack_Chop"
   },
-  "sha256": "9b2364addb35a1573fca0fd56a6bedaf84269da31344fb9e21cba3bb8fb97bbd",
+  "sha256": "6867d0b718ba6dbf8d1c20039ef45a48e0ea8dff86fe6952618f67ea1fb0dd03",
   "verified": true
 }

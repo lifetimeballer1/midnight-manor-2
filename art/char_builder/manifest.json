@@ -2,7 +2,7 @@
   "asset": "char_builder",
   "file": "char_builder.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | builder Rig",
     "MMR Character | builder Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Hammering"
   },
-  "sha256": "17f48bd23bcfeb5c0d60ebcb5c19d6f8addcfe9f60ee7da68ff29ef8206a8b14",
+  "sha256": "e6d49bb40e0d957e123d269efddb66dec861e00454e90bbdea1ac70534e26a26",
   "verified": true
 }

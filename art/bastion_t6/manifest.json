@@ -2,9 +2,11 @@
   "asset": "bastion_t6",
   "file": "bastion_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | bastion | T06 Architecture",
+    "MMR | bastion | T06 Autumn Dressing",
+    "MMR | bastion | T06 Banner Flag 1",
     "MMR | bastion | T06 Heavy Buttresses",
     "MMR | bastion | Tier 06 Ground"
   ],
@@ -12,16 +14,16 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     2.997499942779541,
     1.2999999523162842
   ],
-  "triangles": 1608,
-  "meshes": 3,
+  "triangles": 1628,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "dd59160f360042b53ae3639ad5a2e42bd090c9e3401192ccf8e5e0aea385f33d",
+  "sha256": "659b011fa0ea641fbddb6ecf1afdd7ef179d8304fd4f9fc4d448eedae7e329ad",
   "verified": true
 }

@@ -2,9 +2,11 @@
   "asset": "gate_t4",
   "file": "gate_t4.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | gate | T04 Architecture",
+    "MMR | gate | T04 Banner Flag 1",
+    "MMR | gate | T04 Banner Flag 2",
     "MMR | gate | T04 Lift Gate",
     "MMR | gate | Tier 04 Ground"
   ],
@@ -17,11 +19,11 @@
     1.2999999523162842
   ],
   "triangles": 1656,
-  "meshes": 3,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "5d3c853cc306117d4d6d1f1f4798bcfefadc6261437a95c3d4ddd4a7cfbdcf80",
+  "sha256": "6339a7d0d045ce22dc0d09c39c5cc86d84e3b2482fd147783f0d8be2ba3fbf0f",
   "verified": true
 }

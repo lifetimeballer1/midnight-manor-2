@@ -2,9 +2,10 @@
   "asset": "timber_yard_t1",
   "file": "timber_yard_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | timber_yard | T01 Architecture",
+    "MMR | timber_yard | T01 Autumn Dressing",
     "MMR | timber_yard | Tier 01 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     1.2237499952316284,
     1.2999999523162842
   ],
-  "triangles": 1472,
-  "meshes": 2,
+  "triangles": 1500,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "b3396ba29079313482abe606589fc70b34e9c772405d8933e33e5a42557e364e",
+  "sha256": "bd9a0a7e85919a9ecd71fb56bd053cf114578c6ebb28bd84599378fe35257b06",
   "verified": true
 }

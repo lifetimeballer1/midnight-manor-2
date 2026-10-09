@@ -1,0 +1,6 @@
+{
+  "chance": 0.25,
+  "lifetime_seconds": 90,
+  "insight_reward": 3,
+  "tap_radius_px": 22
+}

@@ -2,25 +2,26 @@
   "asset": "workshop_t6",
   "file": "workshop_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | workshop | T06 Architecture",
+    "MMR | workshop | T06 Banner Flag 1",
     "MMR | workshop | Tier 06 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.568750023841858,
-    1.2999992370605469
+    1.2999999523162842
   ],
   "triangles": 3244,
-  "meshes": 2,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "d2b06b060a2e570971e45957d8a427b295e8d411ec4844a146de115734fb20d9",
+  "sha256": "22f9c1d4e8ebe653647dd726fd1e7ad14cfd36522ffd079f8c46772a551fc1c5",
   "verified": true
 }

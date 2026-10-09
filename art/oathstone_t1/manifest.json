@@ -2,7 +2,7 @@
   "asset": "oathstone_t1",
   "file": "oathstone_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | oathstone | T01 Architecture",
     "MMR | oathstone | Tier 01 Ground"
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "ca4bb5699015c3f763b44fc4e289622c5e915fb6d4ebff19f680e930ca6ea695",
+  "sha256": "3aed8bd2d2f865ca1687d561bd685dfcebf92eeeedb6bfbe1b2d688c97077194",
   "verified": true
 }

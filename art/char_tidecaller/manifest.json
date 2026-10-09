@@ -2,7 +2,7 @@
   "asset": "char_tidecaller",
   "file": "char_tidecaller.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | tidecaller Rig",
     "MMR Character | tidecaller Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Use_Item"
   },
-  "sha256": "6dc26ff63a3c1e7fad832b6e0a49cff0be6ffce39ecbe443056bc636e51d53e8",
+  "sha256": "40badd53fbf501e342cb92c0668790abcfd20d6020437ba56941380faadf1431",
   "verified": true
 }

@@ -2,25 +2,26 @@
   "asset": "grove_t1",
   "file": "grove_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | grove | T01 Architecture",
+    "MMR | grove | T01 Autumn Dressing",
     "MMR | grove | Tier 01 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.350006103515625,
+    2.3499999046325684,
     1.535599946975708,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1856,
-  "meshes": 2,
+  "triangles": 1881,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "effd11f0d656e808cd1604b128d1c0f008c225d4d29bde4e99a09d8d5cc73d30",
+  "sha256": "bea75947d38d8b8cdcb35569650c6b1c62de6b3d3b89e1bb1f1506f3a991840e",
   "verified": true
 }

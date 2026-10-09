@@ -2,9 +2,10 @@
   "asset": "mill_t1",
   "file": "mill_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | mill | T01 Architecture",
+    "MMR | mill | T01 Autumn Dressing",
     "MMR | mill | T01 Wind Rotor",
     "MMR | mill | Tier 01 Ground"
   ],
@@ -16,12 +17,12 @@
     3.0703485012054443,
     2.3499999046325684
   ],
-  "triangles": 1712,
-  "meshes": 3,
+  "triangles": 1768,
+  "meshes": 4,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "924cc67a39fd204a1ca4628e7173233be4880f807efe233b7d2c0a8d299c1621",
+  "sha256": "2446a8088593c9d76aa84852c56aa2289905b9ab9206202dbb264fa8cfc34cc3",
   "verified": true
 }

@@ -2,7 +2,7 @@
   "asset": "char_warrior",
   "file": "char_warrior.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | warrior Rig",
     "MMR Character | warrior Body",
@@ -36,6 +36,6 @@
     "death": "Death_A",
     "attack": "Melee_1H_Attack_Chop"
   },
-  "sha256": "37c8d091bcfb1818baa4ae2b46537253a0c4589c4d3af60fb86c5aab8334881c",
+  "sha256": "a9175172e87e417f866db9495bb5cffc88d23f18e4c40aa028232fe167483539",
   "verified": true
 }

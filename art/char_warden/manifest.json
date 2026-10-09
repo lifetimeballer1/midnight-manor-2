@@ -2,7 +2,7 @@
   "asset": "char_warden",
   "file": "char_warden.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | warden Rig",
     "MMR Character | warden Body",
@@ -36,6 +36,6 @@
     "death": "Death_A",
     "attack": "Melee_1H_Attack_Chop"
   },
-  "sha256": "36c46777dcc11e9433933137b8af2b82082ff437453a301659688b150de8fabe",
+  "sha256": "851277c26c0ef3f0fbfd0e530326df2c1896444ac134944f816c1f2eba03c1b8",
   "verified": true
 }

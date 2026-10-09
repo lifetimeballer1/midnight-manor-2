@@ -2,9 +2,10 @@
   "asset": "bastion_t3",
   "file": "bastion_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | bastion | T03 Architecture",
+    "MMR | bastion | T03 Autumn Dressing",
     "MMR | bastion | T03 Heavy Buttresses",
     "MMR | bastion | Tier 03 Ground"
   ],
@@ -12,16 +13,16 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     2.3974997997283936,
     1.2999999523162842
   ],
-  "triangles": 1484,
-  "meshes": 3,
+  "triangles": 1499,
+  "meshes": 4,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "91858e4ae2b12890e96632519e62f8877f6c1bc261da1305902477ed85ff01a8",
+  "sha256": "97fbdf6e3f8807e620de994b0b68e1cf709773b549ad1c541af0fba03d0eac0a",
   "verified": true
 }

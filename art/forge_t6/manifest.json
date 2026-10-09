@@ -2,9 +2,12 @@
   "asset": "forge_t6",
   "file": "forge_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | forge | T06 Architecture",
+    "MMR | forge | T06 Autumn Dressing",
+    "MMR | forge | T06 Banner Flag 1",
+    "MMR | forge | T06 Flame Glow",
     "MMR | forge | Tier 06 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +18,12 @@
     2.7799999713897705,
     2.3499999046325684
   ],
-  "triangles": 3856,
-  "meshes": 2,
+  "triangles": 3876,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "b20202147f4f63108634e6a8cd576f542cbb3fb859e4d0051593e39a6a33e43a",
+  "sha256": "a4751a4cb323a4cef02c90cee76c717ad3a7da0a43dd2af1813fac853b948c10",
   "verified": true
 }

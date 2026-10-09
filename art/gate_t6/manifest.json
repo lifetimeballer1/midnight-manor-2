@@ -2,9 +2,11 @@
   "asset": "gate_t6",
   "file": "gate_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | gate | T06 Architecture",
+    "MMR | gate | T06 Banner Flag 1",
+    "MMR | gate | T06 Banner Flag 2",
     "MMR | gate | T06 Lift Gate",
     "MMR | gate | Tier 06 Ground"
   ],
@@ -17,11 +19,11 @@
     1.2999999523162842
   ],
   "triangles": 1656,
-  "meshes": 3,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "b01f15897d3f52ce070e4260d019b357798e267e4bf312c58d67f1446564fd99",
+  "sha256": "93c751e2f69d9fdc835d6fa8a1d6a00ff4f6be3f7e013587de53e536dbb455cc",
   "verified": true
 }

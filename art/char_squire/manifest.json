@@ -2,7 +2,7 @@
   "asset": "char_squire",
   "file": "char_squire.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | squire Rig",
     "MMR Character | squire Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "attack": "Melee_1H_Attack_Chop"
   },
-  "sha256": "ad631218320f4a5edba87bc9ce6b9a1d3ef333efb02337e44fa09eb359f3e159",
+  "sha256": "56795692b1358cd9f99061c0364d1fce49d3b29ed3e9771b5b9b82825ce0c54d",
   "verified": true
 }

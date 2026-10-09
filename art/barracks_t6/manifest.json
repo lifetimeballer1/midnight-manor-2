@@ -2,9 +2,14 @@
   "asset": "barracks_t6",
   "file": "barracks_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | barracks | T06 Architecture",
+    "MMR | barracks | T06 Autumn Dressing",
+    "MMR | barracks | T06 Banner Flag 1",
+    "MMR | barracks | T06 Banner Flag 2",
+    "MMR | barracks | T06 Banner Flag 3",
+    "MMR | barracks | T06 Banner Flag 4",
     "MMR | barracks | Tier 06 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +20,12 @@
     2.8450000286102295,
     2.3499999046325684
   ],
-  "triangles": 3312,
-  "meshes": 2,
+  "triangles": 3332,
+  "meshes": 7,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "c9fdfa32598f18cf7a559b011705719134951fa6166a410a1e9b685aed81ccac",
+  "sha256": "d70996c22f1754946368efac8582a1a01a79ab5d088ab5ade6a0a5cc4f2b6819",
   "verified": true
 }

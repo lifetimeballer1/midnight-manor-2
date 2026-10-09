@@ -2,9 +2,11 @@
   "asset": "storehouse_t6",
   "file": "storehouse_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | storehouse | T06 Architecture",
+    "MMR | storehouse | T06 Autumn Dressing",
+    "MMR | storehouse | T06 Banner Flag 1",
     "MMR | storehouse | Tier 06 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +17,12 @@
     2.315000057220459,
     2.3499999046325684
   ],
-  "triangles": 3192,
-  "meshes": 2,
+  "triangles": 3207,
+  "meshes": 4,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "37dd189c42df6394a79f1c1081df16ebf64bf871f2b2cb8007c1bd06a2ff9244",
+  "sha256": "acb27a5a67f60fb3a4b91f0060c3ddb0df1b47ecd06a5c54d5152d70758e5f96",
   "verified": true
 }

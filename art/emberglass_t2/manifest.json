@@ -2,25 +2,26 @@
   "asset": "emberglass_t2",
   "file": "emberglass_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | emberglass | T02 Architecture",
+    "MMR | emberglass | T02 Autumn Dressing",
     "MMR | emberglass | Tier 02 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.1375000476837158,
-    1.3000030517578125
+    1.2999999523162842
   ],
-  "triangles": 1420,
-  "meshes": 2,
+  "triangles": 1430,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "a2752db997dca429894b3ee7d27e9fe5dab0c7389219cf57a0dda7d6a541d655",
+  "sha256": "8bedc13921c33cbde68d04fc00a3b5e4af219f99a22eacf6237ac5153ed92261",
   "verified": true
 }

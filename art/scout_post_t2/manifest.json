@@ -2,7 +2,7 @@
   "asset": "scout_post_t2",
   "file": "scout_post_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | scout_post | T02 Architecture",
     "MMR | scout_post | Tier 02 Ground"
@@ -11,9 +11,9 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.5099999904632568,
-    1.2999992370605469
+    1.2999999523162842
   ],
   "triangles": 1384,
   "meshes": 2,
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "ae8c85210cfff969a6eb282f3feb48cd3c85ea951eb221bb738995b4820b7139",
+  "sha256": "f44d2ef238db83f6c372704efe240264ebba879ad69ca6467bcf56f1db881b8a",
   "verified": true
 }

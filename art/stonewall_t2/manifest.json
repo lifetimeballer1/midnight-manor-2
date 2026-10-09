@@ -2,7 +2,7 @@
   "asset": "stonewall_t2",
   "file": "stonewall_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | stonewall | T02 Architecture",
     "MMR | stonewall | Tier 02 Ground"
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "277754bb0bc9b7947fe1179f29a87591ca9a53edd6a67a404e7535eff37836f8",
+  "sha256": "ae4518846925cd6e1eb56f04c3b83094017e9db25027f7398384a3efea3e776c",
   "verified": true
 }

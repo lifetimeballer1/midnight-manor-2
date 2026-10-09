@@ -2,25 +2,26 @@
   "asset": "schoolroom_t5",
   "file": "schoolroom_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | schoolroom | T05 Architecture",
+    "MMR | schoolroom | T05 Autumn Dressing",
     "MMR | schoolroom | Tier 05 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.3499984741210938,
+    2.3499999046325684,
     2.0,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 2836,
-  "meshes": 2,
+  "triangles": 2879,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "74a9721c4069e02b4952a819db574d8cda273b6460afb1dd42dccf01ed47669d",
+  "sha256": "9850420cfe0522f6d3841e683727c7e8a07274f6903e9c591b30a2111b09e448",
   "verified": true
 }

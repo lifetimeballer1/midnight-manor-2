@@ -2,25 +2,26 @@
   "asset": "longhouse_t2",
   "file": "longhouse_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | longhouse | T02 Architecture",
+    "MMR | longhouse | T02 Autumn Dressing",
     "MMR | longhouse | Tier 02 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    3.3000030517578125,
+    3.299999952316284,
     1.8799999952316284,
-    3.3000001907348633
+    3.299999952316284
   ],
-  "triangles": 1920,
-  "meshes": 2,
+  "triangles": 1958,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "c2235db2fd4de70b1d814f14538b38649b51b44c0be549f5006835b7f35fa818",
+  "sha256": "49f8c4dee42eee8da2514cbb4b693cb669d997dcc56f769a6dedc9e3dd6af7f5",
   "verified": true
 }

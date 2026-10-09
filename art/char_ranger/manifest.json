@@ -2,7 +2,7 @@
   "asset": "char_ranger",
   "file": "char_ranger.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | ranger Rig",
     "MMR Character | ranger Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "attack": "Ranged_Bow_Draw"
   },
-  "sha256": "548d06badbe72a88fb62196d9baee2b06f9a6338e7530cd2e05ab7297c156eb5",
+  "sha256": "901b7ca7fd1c94793c2e5513d5ebdcf85440942d8dcf990cca4d24138d664037",
   "verified": true
 }

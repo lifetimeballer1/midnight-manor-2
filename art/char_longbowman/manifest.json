@@ -2,7 +2,7 @@
   "asset": "char_longbowman",
   "file": "char_longbowman.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | longbowman Rig",
     "MMR Character | longbowman Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "attack": "Ranged_Bow_Draw"
   },
-  "sha256": "2dafe9ee5754462c73aff1aac701fa5152da961d036a755c7032566a9d2bf267",
+  "sha256": "6f21a5485b2424f642218294137de98b79f9b5bbb128acbd9fc56cd8c39b5796",
   "verified": true
 }

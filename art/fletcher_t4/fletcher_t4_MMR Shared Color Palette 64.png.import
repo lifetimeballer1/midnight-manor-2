@@ -2,23 +2,21 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdey6a5y63ob8"
-path="res://.godot/imported/fletcher_t4_MMR Shared Color Palette 64.png-1c9bff4089021d4d816c37f2a2219441.ctex"
+uid="uid://jnfemwct2qrl"
+path.s3tc="res://.godot/imported/fletcher_t4_MMR Shared Color Palette 64.png-1c9bff4089021d4d816c37f2a2219441.s3tc.ctex"
 metadata={
-"vram_texture": false
-}
-generator_parameters={
-"md5": "9028ec0f43df3f097a253a63a8729f01"
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/fletcher_t4/fletcher_t4_MMR Shared Color Palette 64.png"
-dest_files=["res://.godot/imported/fletcher_t4_MMR Shared Color Palette 64.png-1c9bff4089021d4d816c37f2a2219441.ctex"]
+dest_files=["res://.godot/imported/fletcher_t4_MMR Shared Color Palette 64.png-1c9bff4089021d4d816c37f2a2219441.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +38,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

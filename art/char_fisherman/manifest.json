@@ -2,7 +2,7 @@
   "asset": "char_fisherman",
   "file": "char_fisherman.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | fisherman Rig",
     "MMR Character | fisherman Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Fishing_Reeling"
   },
-  "sha256": "619f0d3d98611cbfde495a8eea1ce6752aac9a825bc61f7ba600c582075ebd6f",
+  "sha256": "58e91e5530aa163beef2731a6a8dac828057caa5dcea0138003a88213519c820",
   "verified": true
 }

@@ -2,25 +2,26 @@
   "asset": "cairnfield_t1",
   "file": "cairnfield_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | cairnfield | T01 Architecture",
+    "MMR | cairnfield | T01 Autumn Dressing",
     "MMR | cairnfield | Tier 01 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.350006103515625,
+    2.3499999046325684,
     1.0699999332427979,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1296,
-  "meshes": 2,
+  "triangles": 1321,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "e83bd0ba9a8bd786cb3a98ded14951944dce9816855f441f44b10041673808a6",
+  "sha256": "792a010c180a74c6034a7b2a6eea7c4a930fc15a06484dbd9345388b85704f94",
   "verified": true
 }

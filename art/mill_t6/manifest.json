@@ -2,9 +2,10 @@
   "asset": "mill_t6",
   "file": "mill_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | mill | T06 Architecture",
+    "MMR | mill | T06 Autumn Dressing",
     "MMR | mill | T06 Water Wheel",
     "MMR | mill | T06 Wind Rotor",
     "MMR | mill | Tier 06 Ground"
@@ -17,12 +18,12 @@
     3.670348644256592,
     2.3499999046325684
   ],
-  "triangles": 2552,
-  "meshes": 4,
+  "triangles": 2613,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "54c7873589ac81a1543bab3fd35bd1a6b2fb19d9a40447f3803aa57567f114a3",
+  "sha256": "c8daf009e4e00e7cbc271144d68368219081d61a94b2938b36e108e553e3e9de",
   "verified": true
 }

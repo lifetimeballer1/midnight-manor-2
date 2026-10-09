@@ -2,25 +2,27 @@
   "asset": "smeltery_t1",
   "file": "smeltery_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | smeltery | T01 Architecture",
+    "MMR | smeltery | T01 Autumn Dressing",
+    "MMR | smeltery | T01 Flame Glow",
     "MMR | smeltery | Tier 01 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.350006103515625,
+    2.3499999046325684,
     2.169999837875366,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1804,
-  "meshes": 2,
+  "triangles": 1829,
+  "meshes": 4,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "7494a0c8dddeb290475c06080eadc853af30a93c4cade10e605d14379607efb2",
+  "sha256": "6efc7336c9a32befb4688ac29db618981611ce2554a8d29822034bd954109427",
   "verified": true
 }

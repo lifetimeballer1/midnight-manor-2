@@ -2,7 +2,7 @@
   "asset": "char_halberdier",
   "file": "char_halberdier.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | halberdier Rig",
     "MMR Character | halberdier Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "attack": "Melee_2H_Attack_Chop"
   },
-  "sha256": "4cb23792aad02f3f5c7b13fda21512dbdd899214b512af0a53d75fe65d1ad255",
+  "sha256": "2ea41567562b9a5cf52f853c2ae955b28bf8a274a2d168d1d47fdff336a50cda",
   "verified": true
 }

@@ -2,9 +2,10 @@
   "asset": "scriptorium_t4",
   "file": "scriptorium_t4.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | scriptorium | T04 Architecture",
+    "MMR | scriptorium | T04 Banner Flag 1",
     "MMR | scriptorium | Tier 04 Ground"
   ],
   "pivot": "base_center",
@@ -16,11 +17,11 @@
     1.2999999523162842
   ],
   "triangles": 2820,
-  "meshes": 2,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "bc8d1a15de4cc0a9e7a005eacb0fdc13848ea211155bdc9b01c11ca71d6d7b2f",
+  "sha256": "1cbe1eccb988af6a4e9247157c222100239277ea38c24e5f424c4b372922564a",
   "verified": true
 }

@@ -2,9 +2,10 @@
   "asset": "mine_t2",
   "file": "mine_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | mine | T02 Architecture",
+    "MMR | mine | T02 Autumn Dressing",
     "MMR | mine | Tier 02 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     1.1375000476837158,
     1.2999999523162842
   ],
-  "triangles": 1420,
-  "meshes": 2,
+  "triangles": 1425,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "d2486226131ba986412015c8b674e9fd2a5818b9d5ee403452766756b3e1bca6",
+  "sha256": "92af82571a21c48973631181cc1ef36e06aaa2ba296eed870cdc4ce7dcbabe06",
   "verified": true
 }

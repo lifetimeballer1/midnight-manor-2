@@ -2,25 +2,26 @@
   "asset": "whisper-grove_t5",
   "file": "whisper-grove_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | whisper-grove | T05 Architecture",
+    "MMR | whisper-grove | T05 Autumn Dressing",
     "MMR | whisper-grove | Tier 05 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.350006103515625,
+    2.3499999046325684,
     1.9571999311447144,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1396,
-  "meshes": 2,
+  "triangles": 1421,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "057c9609871e6f6157baedb9187804fed4506395182b1dc8f507866f08544a1b",
+  "sha256": "807a40e9a94e492f8439a46eb2c8344e90e7bd9906e2c9d94fd487fae1e9d40a",
   "verified": true
 }

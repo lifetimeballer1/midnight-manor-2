@@ -1,7 +1,7 @@
 extends RefCounted
 
 const RESOURCES: Array[String] = ["wood", "food", "gold"]
-const EXCLUDED: Array[String] = ["wall", "stonewall", "gate", "trap", "fire_trap"]
+const EXCLUDED: Array[String] = ["wall", "stonewall", "gate", "trap", "fire_trap", "fire-trap"]
 const LOOT_FRACTION: float = 0.2
 const MAX_SECONDS: float = 300.0
 var active: Dictionary = {}

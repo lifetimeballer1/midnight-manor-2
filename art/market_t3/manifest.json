@@ -2,9 +2,10 @@
   "asset": "market_t3",
   "file": "market_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | market | T03 Architecture",
+    "MMR | market | T03 Autumn Dressing",
     "MMR | market | Tier 03 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     1.4049999713897705,
     3.299999952316284
   ],
-  "triangles": 1884,
-  "meshes": 2,
+  "triangles": 1945,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "aa229600e5575a6b316fcdfa5c5e439eb34c300626d171608399e5a3017d5723",
+  "sha256": "26b09a9a4ee8883b56a0f854fa4a3b3517a1d5d85e68a7b8e85a17258b097a9e",
   "verified": true
 }

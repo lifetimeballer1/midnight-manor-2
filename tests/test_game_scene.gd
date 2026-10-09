@@ -104,6 +104,8 @@ func _run() -> void:
 	file.store_string(JSON.stringify(result, "\t"))
 	file.close()
 	game.free()
-	await process_frame
+	# Audio playbacks are released by the mixer a few frames after their players are freed.
+	for i in 30:
+		await process_frame
 	print("GAME_SMOKE ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)

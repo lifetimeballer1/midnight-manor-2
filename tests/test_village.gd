@@ -280,6 +280,15 @@ func _run() -> void:
 		if int(wall["tier"]) == 2 and float(wall["remaining"]) > 0.0:
 			tier_two += 1
 	check(tier_two == 4, "row upgrade advances every connected segment together")
+	var weir_sim = Sim.new()
+	weir_sim.xp = 10000
+	weir_sim.chronicle.grant("blackwater-weir", "test")
+	check(weir_sim.build_reason("blackwater-weir", 1, 1) == "Needs Stillwater Pond (level 2) first.", "build prerequisites name a missing required building")
+	var weir_pond: Dictionary = weir_sim._new_building("pond", 1, 5, false)
+	weir_sim.buildings.append(weir_pond)
+	check(weir_sim.build_reason("blackwater-weir", 1, 1) == "Needs Stillwater Pond (level 2) first.", "a tier 1 pond does not satisfy a level 2 requirement")
+	weir_pond["tier"] = 2
+	check(not weir_sim.build_reason("blackwater-weir", 1, 1).begins_with("Needs"), "a completed tier 2 pond clears the prerequisite")
 
 	var report := {"passed": failures.is_empty(), "checks": checks, "failures": failures,
 		"scope": "Core-loop simulation, commands, pathfinding, raid outcomes, original11quests and versioned save checks."}

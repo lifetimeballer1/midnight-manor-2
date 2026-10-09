@@ -2,7 +2,7 @@
   "asset": "gate_t2",
   "file": "gate_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | gate | T02 Architecture",
     "MMR | gate | T02 Lift Gate",
@@ -22,6 +22,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "2734e4031be069e25ae3c8ede90a2531a9a71f3f81a4128b3c3f1f2e9d803d0e",
+  "sha256": "83dd8a4e83f3476b625fe21c4a697c15e06df56dd127832f98547df12d33f770",
   "verified": true
 }

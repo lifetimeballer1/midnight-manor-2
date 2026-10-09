@@ -2,9 +2,10 @@
   "asset": "ballista_t1",
   "file": "ballista_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | ballista | T01 Architecture",
+    "MMR | ballista | T01 Autumn Dressing",
     "MMR | ballista | Tier 01 Ground"
   ],
   "pivot": "base_center",
@@ -13,14 +14,14 @@
   "dimensions_m": [
     1.2999999523162842,
     1.997499942779541,
-    1.3000030517578125
+    1.2999999523162842
   ],
-  "triangles": 1344,
-  "meshes": 2,
+  "triangles": 1364,
+  "meshes": 3,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "8e50837768990d8a25f52660799d9db017ea92bb5eb9b274d7d83e8e641e6bf7",
+  "sha256": "343af7d30371285e196840acbd28ce54f60028b75458169222f2a8ecc6d9678a",
   "verified": true
 }

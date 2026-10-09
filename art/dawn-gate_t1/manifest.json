@@ -2,9 +2,11 @@
   "asset": "dawn-gate_t1",
   "file": "dawn-gate_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | dawn-gate | T01 Architecture",
+    "MMR | dawn-gate | T01 Banner Flag 1",
+    "MMR | dawn-gate | T01 Banner Flag 2",
     "MMR | dawn-gate | T01 Lift Gate",
     "MMR | dawn-gate | Tier 01 Ground"
   ],
@@ -12,16 +14,16 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    3.3000030517578125,
-    1.5649999380111694,
+    3.299999952316284,
+    1.9909999370574951,
     3.299999952316284
   ],
   "triangles": 1624,
-  "meshes": 3,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "c603464fe94439d93a9849b123e74298c5bb81aa0c648f80a5ff215456793854",
+  "sha256": "e2a534cbd241444c7319e689567b79c28531a14cb66eb596508608d87bb5f28e",
   "verified": true
 }

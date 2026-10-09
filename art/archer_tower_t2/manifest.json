@@ -2,9 +2,10 @@
   "asset": "archer_tower_t2",
   "file": "archer_tower_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | archer_tower | T02 Architecture",
+    "MMR | archer_tower | T02 Autumn Dressing",
     "MMR | archer_tower | T02 Roof Supports",
     "MMR | archer_tower | Tier 02 Ground"
   ],
@@ -16,12 +17,12 @@
     2.7849998474121094,
     1.2999999523162842
   ],
-  "triangles": 1908,
-  "meshes": 3,
+  "triangles": 1923,
+  "meshes": 4,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "aa9f3a39daba61d65db5ed19a13a8574db212b1fafe9ba6e28ef8f20e40a73bb",
+  "sha256": "1654fae10410ab6041dc2851596e2e55475c83b17ed476b442017eb35de4de15",
   "verified": true
 }

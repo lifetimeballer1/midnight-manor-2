@@ -2,9 +2,11 @@
   "asset": "archer_tower_t6",
   "file": "archer_tower_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | archer_tower | T06 Architecture",
+    "MMR | archer_tower | T06 Autumn Dressing",
+    "MMR | archer_tower | T06 Banner Flag 1",
     "MMR | archer_tower | T06 Roof Supports",
     "MMR | archer_tower | Tier 06 Ground"
   ],
@@ -16,12 +18,12 @@
     3.5850000381469727,
     1.2999999523162842
   ],
-  "triangles": 2048,
-  "meshes": 3,
+  "triangles": 2063,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "627e426d5a1c072a8935b4ebe5bbd14304458254ffdc432f7e37df562dbae178",
+  "sha256": "10d8c29070a8989a3de84423207a1fe38245042d45e970c06daa6fe53ce3d178",
   "verified": true
 }

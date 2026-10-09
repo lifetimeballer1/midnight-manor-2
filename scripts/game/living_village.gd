@@ -12,6 +12,8 @@ var remaining: float = 0
 var revision: int = 0
 var navigation_revision: int = 0
 var decay_clock: float = 0
+# The sim answers whether a tile is in the village (base or a claimed plot).
+var tile_in_world: Callable = func(t: Vector2i) -> bool: return t.x >= 0 and t.x < 20 and t.y >= 0 and t.y < 16
 
 
 # The unified Chronicle tech tree is the single research authority. Trail and
@@ -75,7 +77,7 @@ func walked(from: Vector2, to: Vector2, now: float) -> void:
 	for index in samples:
 		var point: Vector2 = from.lerp(to, (index + 0.5) / samples)
 		var tile := Vector2i(floori(point.x), floori(point.y))
-		if tile.x < 0 or tile.x >= 20 or tile.y < 0 or tile.y >= 16:
+		if not tile_in_world.call(tile):
 			continue
 		var id: String = key(tile)
 		var cell: Dictionary = cells.get(id, {"wear": 0.0, "last": now, "stone": false})
@@ -180,7 +182,7 @@ func _complete_research(sim) -> void:
 
 func pave_reason(sim, tile: Vector2i) -> String:
 	if "road_masonry" not in discoveries: return "Research Road Masonry first."
-	if tile.x < 0 or tile.x >= 20 or tile.y < 0 or tile.y >= 16: return "Outside the village."
+	if not tile_in_world.call(tile): return "Outside the village."
 	var cell: Dictionary = cells.get(key(tile), {})
 	if cell.get("stone", false): return "Already paved."
 	if float(cell.get("wear", 0)) < 0.999: return "This trail needs more traffic before paving."
@@ -228,7 +230,7 @@ func valid(data: Variant) -> bool:
 		var parts: PackedStringArray = id.split(",")
 		if parts.size() != 2 or not parts[0].is_valid_int() or not parts[1].is_valid_int(): return false
 		var tile := Vector2i(int(parts[0]), int(parts[1]))
-		if key(tile) != id or tile.x < 0 or tile.x >= 20 or tile.y < 0 or tile.y >= 16: return false
+		if key(tile) != id or not tile_in_world.call(tile): return false
 		var cell: Variant = data["cells"][id]
 		if not cell is Dictionary or not cell.get("stone") is bool: return false
 		for field in ["wear", "last"]:

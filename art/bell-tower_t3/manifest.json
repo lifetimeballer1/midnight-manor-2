@@ -2,25 +2,28 @@
   "asset": "bell-tower_t3",
   "file": "bell-tower_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | bell-tower | T03 Architecture",
+    "MMR | bell-tower | T03 Autumn Dressing",
+    "MMR | bell-tower | T03 Banner Flag 1",
+    "MMR | bell-tower | T03 Bell",
     "MMR | bell-tower | Tier 03 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.3499984741210938,
+    2.3499999046325684,
     2.575000047683716,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1584,
-  "meshes": 2,
+  "triangles": 1609,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "b78c442814242b88a884990c643a88b1ab794b2966be6ca196ed2cae3379576f",
+  "sha256": "6f00e46c7a08adeb2f3a44bfbb384d8654ec805aa81f76eb406040d3f3ad2a71",
   "verified": true
 }

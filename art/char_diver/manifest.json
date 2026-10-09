@@ -2,7 +2,7 @@
   "asset": "char_diver",
   "file": "char_diver.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | diver Rig",
     "MMR Character | diver Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Fishing_Reeling"
   },
-  "sha256": "6b16563ac746135430af5978a8b9007ebdc7ecd9a5a96813250e258027e5f5e1",
+  "sha256": "cca36486dbc5a3e719c8df618ed929a29b3daf0d10ab43a9f5d6a153c9b628d6",
   "verified": true
 }

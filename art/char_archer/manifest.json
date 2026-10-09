@@ -2,7 +2,7 @@
   "asset": "char_archer",
   "file": "char_archer.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | archer Rig",
     "MMR Character | archer Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "attack": "Ranged_Bow_Release"
   },
-  "sha256": "d6c069ecc5f55f41693b1cd92372ec1f9a4aa09c07f19606db472697d9ce415e",
+  "sha256": "8a711b4e2cf0ac9454123fa6b30be1c9ffd31b635eb75fcf54050c26dbce4848",
   "verified": true
 }

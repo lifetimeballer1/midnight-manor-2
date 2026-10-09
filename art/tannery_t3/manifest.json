@@ -2,25 +2,26 @@
   "asset": "tannery_t3",
   "file": "tannery_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | tannery | T03 Architecture",
+    "MMR | tannery | T03 Autumn Dressing",
     "MMR | tannery | Tier 03 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.3000030517578125,
+    1.2999999523162842,
     1.3999998569488525,
-    1.2999992370605469
+    1.2999999523162842
   ],
-  "triangles": 1805,
-  "meshes": 2,
+  "triangles": 1815,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "632e29ce3b88b935f710b01892ebb6d4d45f33982f8c8391b385118ce66e82cb",
+  "sha256": "e60fac0efa376319acbdda4e4ad5f28edc914fa6d7d53c1fcc6fb1792ecfdaa0",
   "verified": true
 }

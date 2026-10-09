@@ -2,9 +2,12 @@
   "asset": "barracks_t2",
   "file": "barracks_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | barracks | T02 Architecture",
+    "MMR | barracks | T02 Autumn Dressing",
+    "MMR | barracks | T02 Banner Flag 1",
+    "MMR | barracks | T02 Banner Flag 2",
     "MMR | barracks | Tier 02 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +18,12 @@
     1.9749999046325684,
     2.3499999046325684
   ],
-  "triangles": 2268,
-  "meshes": 2,
+  "triangles": 2273,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "0f857f3511e9aca02b97d1489cd39f4dca44997e1a3082a0a6c6602692b4644c",
+  "sha256": "2fbe4665441402744bbb57d98efd93fad0eb8cc9bbd23f2440cec8f3e90325f5",
   "verified": true
 }

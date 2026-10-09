@@ -2,9 +2,10 @@
   "asset": "storehouse_t5",
   "file": "storehouse_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | storehouse | T05 Architecture",
+    "MMR | storehouse | T05 Autumn Dressing",
     "MMR | storehouse | Tier 05 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     2.240000009536743,
     2.3499999046325684
   ],
-  "triangles": 3124,
-  "meshes": 2,
+  "triangles": 3139,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "45c1250db6c030309887742dc878662c46d552236c85702ea5c77e196d20b653",
+  "sha256": "5067eca2c5a0f078ca11c2b16b1432802c36ac9afb5426d9a41148e9ca39f3b9",
   "verified": true
 }

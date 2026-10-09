@@ -3,22 +3,23 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cg4pdunb4l8fm"
-path="res://.godot/imported/sunken-chapel_t4_MMR Shared Color Palette 64.png-6c93c159f34ad7bb023d7e91d0f5b55f.ctex"
+path.s3tc="res://.godot/imported/sunken-chapel_t4_MMR Shared Color Palette 64.png-6c93c159f34ad7bb023d7e91d0f5b55f.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
-"md5": "9028ec0f43df3f097a253a63a8729f01"
+"md5": "e638ca1053d3be35f0b700dcb6ac65e2"
 }
 
 [deps]
 
 source_file="res://art/sunken-chapel_t4/sunken-chapel_t4_MMR Shared Color Palette 64.png"
-dest_files=["res://.godot/imported/sunken-chapel_t4_MMR Shared Color Palette 64.png-6c93c159f34ad7bb023d7e91d0f5b55f.ctex"]
+dest_files=["res://.godot/imported/sunken-chapel_t4_MMR Shared Color Palette 64.png-6c93c159f34ad7bb023d7e91d0f5b55f.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

@@ -2,7 +2,7 @@
   "asset": "trap_t2",
   "file": "trap_t2.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | trap | T02 Architecture",
     "MMR | trap | Tier 02 Ground"
@@ -21,6 +21,6 @@
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "6eb55cff07aca400cb93f5a15034ab8021c1c15122f3f5e86e74f5439076c4c5",
+  "sha256": "d7311d4fbbe33a66dc42bf29402cb76239b75eec32b8705fa193134bde479b13",
   "verified": true
 }

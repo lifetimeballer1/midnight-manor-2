@@ -31,11 +31,21 @@ func _initialize() -> void:
 	check(sim._cached_edge_goal(worker, hall).x >= 0.0, "open gate permits the worker's cached hall approach")
 	var revision: int = sim.revision
 	sim.enemies.append({"id": 901, "type": "raider", "x": 8.7, "y": 7.5, "hp": 100.0})
+	var gate: Dictionary = {}
+	for b in sim.buildings:
+		if b["type"] == "gate": gate = b
 	sim._gate_tick()
 	check(sim.revision == revision, "gate animation does not rebuild all village models")
-	check(sim._cached_edge_goal(worker, hall).x < 0.0, "closing a gate invalidates the old reachable edge goal")
+	check(bool(gate.get("gate_open", true)), "raiders at the gate do not shut it for friendlies")
+	check(sim._cached_edge_goal(worker, hall).x >= 0.0, "friendly sally path stays open while raiders stand at the gate")
+	check(sim._blocked(Vector2i(8, 7), true), "raiders still find an open gate solid")
+	check(not sim._blocked(Vector2i(8, 7), false), "friendlies pass an open gate")
 	sim.enemies.clear()
+	gate["gate_open"] = false
+	sim._invalidate()
+	check(sim._cached_edge_goal(worker, hall).x < 0.0, "a shut gate blocks the friendly approach")
 	sim._gate_tick()
+	check(bool(gate.get("gate_open", true)), "gate tick reopens a shut gate")
 	check(sim._cached_edge_goal(worker, hall).x >= 0.0, "reopening a gate invalidates a cached unreachable goal")
 	print("RAID_NAVIGATION_CACHE ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)

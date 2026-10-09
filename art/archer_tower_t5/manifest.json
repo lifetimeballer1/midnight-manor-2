@@ -2,9 +2,11 @@
   "asset": "archer_tower_t5",
   "file": "archer_tower_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | archer_tower | T05 Architecture",
+    "MMR | archer_tower | T05 Autumn Dressing",
+    "MMR | archer_tower | T05 Banner Flag 1",
     "MMR | archer_tower | T05 Roof Supports",
     "MMR | archer_tower | Tier 05 Ground"
   ],
@@ -16,12 +18,12 @@
     3.384999990463257,
     1.2999999523162842
   ],
-  "triangles": 2048,
-  "meshes": 3,
+  "triangles": 2063,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "f198838ca8306e9b52d15759e1b3768cfadc84d6c016dfc79f76c21f008f55ad",
+  "sha256": "4c2c5ce3b858a35fe65a9e45750d69c0347fcc37350bfc7cf70699b3cac2a381",
   "verified": true
 }

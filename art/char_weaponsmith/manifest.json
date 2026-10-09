@@ -2,7 +2,7 @@
   "asset": "char_weaponsmith",
   "file": "char_weaponsmith.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | weaponsmith Rig",
     "MMR Character | weaponsmith Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Hammering"
   },
-  "sha256": "236b6b9360b004d89d87ef080b91b2ecb8f717bb95bbf3bd97dd9331840cad31",
+  "sha256": "a3cb6c5b07b0e104540292d1cb2fa89d80555d77d7d0f19f9ab34c46df380ddc",
   "verified": true
 }

@@ -2,25 +2,27 @@
   "asset": "bakery_t6",
   "file": "bakery_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | bakery | T06 Architecture",
+    "MMR | bakery | T06 Autumn Dressing",
+    "MMR | bakery | T06 Banner Flag 1",
     "MMR | bakery | Tier 06 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.350006103515625,
+    2.3499999046325684,
     2.075000047683716,
-    2.350006103515625
+    2.3499999046325684
   ],
-  "triangles": 3220,
-  "meshes": 2,
+  "triangles": 3258,
+  "meshes": 4,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "ff9958a134741c6ead695c0df77211a2abe15d2ba81aa9fc6d79a88a04f54409",
+  "sha256": "964ea03f015f5211880042ab55e54e391f5e279e893b89b12aba936588378a5f",
   "verified": true
 }

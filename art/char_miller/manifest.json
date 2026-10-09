@@ -2,7 +2,7 @@
   "asset": "char_miller",
   "file": "char_miller.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | miller Rig",
     "MMR Character | miller Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Sawing"
   },
-  "sha256": "df9c3eb99b1fdb97146371ac1569338ba77cb30c7a6e8c1fbebb473c1828ebe6",
+  "sha256": "6f9d6b3d433c73c8fdcce7422fc4f943d85b43e432b631ac29a7e2aeeeda2f64",
   "verified": true
 }

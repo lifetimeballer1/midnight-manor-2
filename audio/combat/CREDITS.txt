@@ -1,0 +1,12 @@
+Combat sound credits
+====================
+
+Kenney - "Impact Sounds" and "RPG Audio" (CC0, https://kenney.nl)
+  Licence notices: LICENSE-Kenney-impact-sounds.txt, LICENSE-Kenney-rpg-audio.txt
+
+bow_shoot.ogg - "Bow & Arrow Shot" by ripple182 (made for the FLARE project)
+  https://opengameart.org/content/bow-arrow-shot
+  Licence: CC-BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)
+  A mix of sounds by qubodup (Swish - bamboo stick weapon whooshes, Arrow hit twang).
+  Under share-alike, any edited or derived version of this sound must be shared under the
+  same licence. The rest of the game is unaffected.

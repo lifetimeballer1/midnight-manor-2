@@ -168,6 +168,20 @@ func _check_asset(instance: Node, entry: Dictionary, errors: Array[String]) -> D
 			for clip in player.get_animation_list():
 				if clip != "RESET":
 					_fail(asset + ": static building has unexpected clip " + clip, errors)
+		# Base-bearing parts (architecture/ground) must sit on the base (y=0) or the
+		# 0.05 ground slab top. The aggregate min Y alone hid the gate's 0.476 float,
+		# because its lift still reaches y=0.
+		var offenders: Array[String] = []
+		for node in nodes:
+			if not node is MeshInstance3D: continue
+			var part: MeshInstance3D = node
+			var part_name: String = str(part.name).to_lower()
+			if part.mesh == null or "lift" in part_name or not ("architecture" in part_name or "ground" in part_name): continue
+			var part_min: float = (part.global_transform * part.mesh.get_aabb()).position.y
+			if part_min < bounds.position.y - BASE_TOLERANCE_M or part_min > bounds.position.y + 0.05 + BASE_TOLERANCE_M:
+				offenders.append("%s min_y=%.3f" % [part.name, part_min])
+		if not offenders.is_empty():
+			_fail(asset + ": base-bearing parts off base/slab: " + str(offenders), errors)
 		if asset.begins_with("gate_"):
 			var lift_found: bool = false
 			for node in nodes:

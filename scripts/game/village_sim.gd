@@ -8,6 +8,7 @@ const Living = preload("res://scripts/game/living_village.gd")
 const Needs = preload("res://scripts/game/village_needs.gd")
 const Frontier = preload("res://scripts/game/frontier_combat.gd")
 const HomeRaid = preload("res://scripts/game/home_raid.gd")
+const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
@@ -17,6 +18,15 @@ var navigation_revision: int = 0
 const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
 const DIRECTIONS: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+# The starting 20x16 village. Claimed expansion plots extend it (see in_world).
+const BASE_RECT: Rect2i = Rect2i(0, 0, 20, 16)
+# Expansion plots ring the base. "region" is the Frontier region that must be secured before claiming.
+const EXPANSION_PLOTS: Dictionary = {
+	"north": {"label": "North Reach", "rect": Rect2i(-10, -10, 40, 10), "region": "starwatch-ridge"},
+	"east": {"label": "East Reach", "rect": Rect2i(20, 0, 10, 16), "region": "whisperwood"},
+	"south": {"label": "South Reach", "rect": Rect2i(-10, 16, 40, 10), "region": "southreach"},
+	"west": {"label": "West Reach", "rect": Rect2i(-10, 0, 10, 16), "region": "blackwater-mouth"},
+}
 
 var building_specs: Dictionary = {}
 var troop_specs: Dictionary = {}
@@ -34,6 +44,8 @@ var elapsed: float = 0
 var xp: int = 0
 var wave: int = 0
 var next_raid_at: float = 300
+# Moon phase 0..7, advanced once per finished raid (optional in saves; defaults to 0).
+var moon_phase: int = 0
 var raid_active: bool = false
 var raid_warning: bool = false
 var paused: bool = false
@@ -47,6 +59,8 @@ var threat_ranks: Dictionary = {}
 var threat_stamp: int = -1
 var tick_count: int = 0
 var notice: String = "The Manner stands."
+var last_save_error: String = ""
+var _save_refused: bool = false
 var quest_progress: Dictionary = {}
 var optional_won: Dictionary = {}
 var raid_stats: Dictionary = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0, "defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0, "expeditions": 0, "delivered": {}}
@@ -59,6 +73,8 @@ var route_cache: Dictionary = {}
 var job_timer: float = 0
 var workplace_specs: Dictionary = {}
 var stand_cache: Dictionary = {}
+# Claimed expansion plot ids, in claim order.
+var expansions: Array[String] = []
 
 const KITE_TRIGGER: float = 1.5
 const KITE_RELEASE_RATIO: float = 0.7
@@ -73,6 +89,7 @@ func _init() -> void:
 	troop_specs = _json("troops")
 	world_specs = _json("world")
 	living.bind_chronicle(chronicle)
+	living.tile_in_world = Callable(self, "in_world")
 	world_specs["startingResources"]["stone"] = 0
 	world_specs["storageBase"]["stone"] = living.config["stone"]["base_storage"]
 	building_specs["hall"]["storage"]["stone"] = living.config["stone"]["hall_storage"]
@@ -284,7 +301,7 @@ func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> Str
 		if not gate.is_empty():
 			return gate
 	var size: int = int(spec["size"])
-	if x < 0 or y < 0 or x + size > 20 or y + size > 16:
+	if not _footprint_in_world(x, y, size, expansions):
 		return "Outside the village."
 	var bounds := Rect2i(x, y, size, size)
 	for b in buildings:
@@ -294,6 +311,18 @@ func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> Str
 		return "" if not raid_active and not raid_warning else "No relocation during raids."
 	if village_level() < int(spec.get("minLevel", 1)):
 		return "Requires village level %d." % int(spec["minLevel"])
+	# requiresBuilding (object) or requiresBuildings (array) of {type, level}.
+	# Build-time only: moving an existing building returned earlier.
+	var prereqs: Variant = spec.get("requiresBuildings", spec.get("requiresBuilding", []))
+	if prereqs is Dictionary:
+		prereqs = [prereqs]
+	for req: Variant in prereqs:
+		var need_type: String = str(req.get("type", ""))
+		var need_level: int = int(req.get("level", 1))
+		if need_type.is_empty() or _has_completed_building(need_type, need_level):
+			continue
+		var need_name: String = str(building_specs.get(need_type, {}).get("name", need_type))
+		return "Needs %s first." % need_name if need_level <= 1 else "Needs %s (level %d) first." % [need_name, need_level]
 	var limit: Variant = spec.get("maxCount", spec.get("maxPerVillage", 999))
 	if limit is Array:
 		limit = limit[mini(village_level() - 1, limit.size() - 1)]
@@ -304,6 +333,16 @@ func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> Str
 	if count >= int(limit):
 		return "Building limit reached."
 	return "" if _affordable(building_cost(type_name)) else "Not enough resources."
+
+
+func _has_completed_building(type_name: String, min_tier: int) -> bool:
+	# Tiers are one record per building (b["tier"]), so a t1..t6 variant of a
+	# family counts when its tier reaches the requirement. Under construction
+	# means remaining > 0; destroyed means hp <= 0.
+	for b in buildings:
+		if b["type"] == type_name and float(b["hp"]) > 0.0 and float(b["remaining"]) <= 0.0 and int(b["tier"]) >= min_tier:
+			return true
+	return false
 
 
 func build(type_name: String, x: int, y: int) -> bool:
@@ -384,7 +423,7 @@ func build_row(type_name: String, tiles: Array[Vector2i]) -> bool:
 
 func _wall_match(x: int, y: int, type_name: String, tier: int) -> int:
 	for b: Dictionary in buildings:
-		if int(b["x"]) == x and int(b["y"]) == y and str(b["type"]) == type_name and int(b["tier"]) == tier and float(b["hp"]) > 0:
+		if int(b["x"]) == x and int(b["y"]) == y and str(b["type"]) == type_name and int(b["tier"]) == tier:
 			return int(b["id"])
 	return -1
 
@@ -401,7 +440,7 @@ func wall_row(id: int) -> Array[int]:
 	var vertical: Array[int] = [id]
 	for direction in [-1, 1]:
 		var cursor: int = x + direction
-		while cursor >= 0 and cursor < 20:
+		while in_world(Vector2i(cursor, y)):
 			var found: int = _wall_match(cursor, y, type_name, tier)
 			if found < 0:
 				break
@@ -410,7 +449,7 @@ func wall_row(id: int) -> Array[int]:
 			cursor += direction
 	for direction in [-1, 1]:
 		var cursor: int = y + direction
-		while cursor >= 0 and cursor < 16:
+		while in_world(Vector2i(x, cursor)):
 			var found: int = _wall_match(x, cursor, type_name, tier)
 			if found < 0:
 				break
@@ -705,7 +744,7 @@ func _auto_assign() -> void:
 
 func order_unit(id: int, x: float, y: float, hold_position: bool = false) -> bool:
 	var u: Dictionary = get_unit(id)
-	if u.is_empty() or not is_finite(x) or not is_finite(y) or x < 0 or x >= 20 or y < 0 or y >= 16:
+	if u.is_empty() or not is_finite(x) or not is_finite(y) or not in_world(Vector2i(floori(x), floori(y))):
 		return false
 	var goal := Vector2i(floori(x), floori(y))
 	if not hold_position and _blocked(goal, false):
@@ -797,7 +836,106 @@ func develop_region(region: String) -> bool:
 
 
 func _inside(tile: Vector2i) -> bool:
-	return tile.x >= 0 and tile.x < 20 and tile.y >= 0 and tile.y < 16
+	return in_world(tile)
+
+
+# True when the tile belongs to the base village or to a claimed expansion plot.
+func in_world(tile: Vector2i) -> bool:
+	return _tile_in_world(tile, expansions)
+
+
+func world_bounds() -> Rect2i:
+	var bounds: Rect2i = BASE_RECT
+	for id: String in expansions:
+		var rect: Rect2i = EXPANSION_PLOTS[id]["rect"]
+		bounds = bounds.merge(rect)
+	return bounds
+
+
+func expansion_cost(id: String) -> Dictionary:
+	var claimed: int = expansions.size()
+	return {"wood": 250 + 150 * claimed, "stone": 100 + 60 * claimed}
+
+
+func expansion_reason(id: String) -> String:
+	if not EXPANSION_PLOTS.has(id):
+		return "Unknown reach."
+	if id in expansions:
+		return "Already claimed."
+	if raid_active or raid_warning:
+		return "No claiming during a raid."
+	# Same act gate as the Frontier button in village_game.gd.
+	if chronicle.act < 4:
+		return "The Frontier is not open yet."
+	var region: String = str(EXPANSION_PLOTS[id]["region"])
+	if chronicle.region_state(region) not in ["secured", "developed"]:
+		return "Secure %s first." % str(chronicle.region_data(region).get("name", region))
+	var cost: Dictionary = expansion_cost(id)
+	if not _affordable(cost):
+		var parts: PackedStringArray = []
+		for resource: String in cost:
+			parts.append("%d %s" % [int(cost[resource]), resource.capitalize()])
+		return "Needs %s." % ", ".join(parts)
+	return ""
+
+
+func expand(id: String) -> bool:
+	notice = expansion_reason(id)
+	if not notice.is_empty():
+		return false
+	_spend(expansion_cost(id))
+	expansions.append(id)
+	notice = "%s claimed. The ground grows." % str(EXPANSION_PLOTS[id]["label"])
+	_invalidate()
+	return true
+
+
+func _tile_in_world(tile: Vector2i, ids: Array) -> bool:
+	if BASE_RECT.has_point(tile):
+		return true
+	for id: Variant in ids:
+		if EXPANSION_PLOTS.has(id):
+			var rect: Rect2i = EXPANSION_PLOTS[id]["rect"]
+			if rect.has_point(tile):
+				return true
+	return false
+
+
+func _footprint_in_world(x: int, y: int, size: int, ids: Array) -> bool:
+	for dx in size:
+		for dy in size:
+			if not _tile_in_world(Vector2i(x + dx, y + dy), ids):
+				return false
+	return true
+
+
+func _real(value: Variant) -> bool:
+	return (value is int or value is float) and is_finite(float(value))
+
+
+func _real_integer(value: Variant) -> bool:
+	return _real(value) and float(value) == floorf(float(value))
+
+
+func _valid_expansions(value: Variant) -> bool:
+	if not value is Array:
+		return false
+	var seen: Dictionary = {}
+	for id: Variant in value:
+		if not id is String or not EXPANSION_PLOTS.has(id) or seen.has(id):
+			return false
+		seen[id] = true
+	return true
+
+
+# living.valid checks cells through the live sim, so a save's cells are checked
+# against that save's own claimed plots, not whatever this village has claimed.
+func _living_valid(data: Variant, claimed: Array) -> bool:
+	var running: Array[String] = expansions.duplicate()
+	expansions.assign(claimed)
+	var ok: bool = living.valid(data)
+	expansions.assign(running)
+	return ok
 
 
 func _blocked(tile: Vector2i, enemy: bool) -> bool:
@@ -1101,7 +1239,7 @@ func _path_reachable(u: Dictionary, target: Vector2, enemy: bool) -> bool:
 
 
 func _walk(u: Dictionary, target: Vector2, dt: float, enemy: bool = false) -> bool:
-	if target.x < 0:
+	if not in_world(Vector2i(floori(target.x), floori(target.y))):
 		return false
 	var id: int = int(u["id"])
 	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
@@ -1201,14 +1339,13 @@ func tick(dt: float) -> void:
 
 
 func _gate_tick() -> void:
+	# Gates never auto-shut for raiders, so friendly fighters can sally through
+	# during a raid. Raiders still treat a gate as solid: _blocked() ignores
+	# gate_open whenever enemy is true, so they have to breach it.
 	for b in buildings:
 		if b["type"] != "gate": continue
-		var open: bool = true
-		for enemy in enemies:
-			if enemy["hp"] > 0 and center(b).distance_to(position_of(enemy)) < 1.8:
-				open = false
-		if bool(b.get("gate_open", true)) != open:
-			b["gate_open"] = open
+		if not bool(b.get("gate_open", true)):
+			b["gate_open"] = true
 			_invalidate()
 
 
@@ -1585,14 +1722,16 @@ func _spawn_raid() -> void:
 	var faction: Dictionary = _active_faction()
 	var roles: Array = faction.get("roles", ["raider"])
 	var count: int = mini(int(world_specs["homeRaids"].get("maxCount", 8)), wave + 1)
+	count = maxi(1, roundi(float(count) * MoonRules.enemy_multiplier(moon_phase)))
 	var base: float = 70.0 + mini(wave, 30) * 10.0
+	var bounds: Rect2i = world_bounds()
 	for index in count:
 		var side: int = index % 4 if count >= 4 else (wave - 1) % 4
-		var point := Vector2(0.5, 3.5 + index * 1.1)
+		var point := Vector2(bounds.position.x + 0.5, 3.5 + index * 1.1)
 		match side:
-			1: point = Vector2(19.5, 4.5 + index)
-			2: point = Vector2(5.5 + index, 0.5)
-			3: point = Vector2(6.5 + index, 15.5)
+			1: point = Vector2(bounds.end.x - 0.5, 4.5 + index)
+			2: point = Vector2(5.5 + index, bounds.position.y + 0.5)
+			3: point = Vector2(6.5 + index, bounds.end.y - 0.5)
 		# Hostiles stay "raider" in the save schema; the role drives their stats.
 		var role: String = str(roles[index % roles.size()])
 		var stats: Dictionary = _role_stats(role)
@@ -1777,11 +1916,12 @@ func _finish_raid(victory: bool) -> void:
 			notice = "The Manor stands / masons put the damage back."
 		else:
 			notice = "The Manor stands / salvage and recovery."
-		_reward({"gold": 20 + wave * 10})
+		_reward({"gold": (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase)})
 	else:
 		notice = "Defense breached / attackers earned %d stars. Repair and rise again." % home_raid.last["stars"]
 	raid_stats["seconds_held"] = maxf(held, 0.0)
 	events.append({"kind": "raid_result", "victory": victory})
+	moon_phase = MoonRules.next_phase(moon_phase)
 
 
 func _reward(rewards: Dictionary) -> void:
@@ -2007,7 +2147,7 @@ func export_state() -> Dictionary:
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
 		"optional_won": optional_won.duplicate(), "raid_stats": raid_stats.duplicate(true),
 		"elapsed": elapsed, "xp": xp, "wave": wave, "next_raid_at": next_raid_at,
-		"raid_active": raid_active, "raid_warning": raid_warning, "next_id": next_id, "birth_timer": birth_timer}
+		"raid_active": raid_active, "raid_warning": raid_warning, "next_id": next_id, "birth_timer": birth_timer, "moon_phase": moon_phase, "expansions": expansions.duplicate()}
 
 
 func _migrate(state: Dictionary) -> Dictionary:
@@ -2080,6 +2220,7 @@ func restore_state(state: Dictionary) -> bool:
 	var data: Dictionary = _migrate(state)
 	if not _validate_state(data):
 		return false
+	expansions.assign(data.get("expansions", []))
 	buildings.assign(data["buildings"].duplicate(true))
 	units.assign(data["units"].duplicate(true))
 	enemies.assign(data["enemies"].duplicate(true))
@@ -2098,6 +2239,7 @@ func restore_state(state: Dictionary) -> bool:
 	xp = int(data["xp"])
 	wave = int(data["wave"])
 	next_raid_at = float(data["next_raid_at"])
+	moon_phase = MoonRules.clamp_phase(data.get("moon_phase", 0))
 	raid_active = data["raid_active"]
 	raid_warning = data["raid_warning"]
 	next_id = int(data["next_id"])
@@ -2121,9 +2263,13 @@ func _validate_state(state: Dictionary) -> bool:
 	# JSON hands back every number as a float, so the version is checked as a finite integer and cast once.
 	if not _integer(state.get("version")) or int(state["version"]) not in [1, 2, 3, 4]:
 		return false
+	# Expansions are validated first: buildings and units may sit on the plots they claim.
+	if state.has("expansions") and not _valid_expansions(state["expansions"]): return false
+	var claimed: Array = state.get("expansions", [])
+	if state.has("moon_phase") and not _integer(state["moon_phase"]): return false
 	if int(state["version"]) >= 4 and not needs.valid(state.get("needs"), float(world_specs["townMeal"]["secondsPerDay"])):
 		return false
-	if (int(state["version"]) >= 2 or state.has("living")) and not living.valid(state.get("living")):
+	if (int(state["version"]) >= 2 or state.has("living")) and not _living_valid(state.get("living"), claimed):
 		return false
 	if int(state["version"]) >= 3 and not chronicle.valid(state.get("chronicle")):
 		return false
@@ -2146,7 +2292,7 @@ func _validate_state(state: Dictionary) -> bool:
 	if not state.get("raid_active") is bool or not state.get("raid_warning") is bool:
 		return false
 	if int(state.get("version", 1)) >= 4 and state.has("home_raid") and not home_raid.valid(state["home_raid"], state): return false
-	if state["units"].size() > 200 or state["buildings"].size() > 320 or state["enemies"].size() > 8:
+	if state["units"].size() > 200 or state["buildings"].size() > 320 or state["enemies"].size() > _max_raiders():
 		return false
 	if (state["raid_active"] and state["raid_warning"]) or (not state["raid_active"] and not state["enemies"].is_empty()):
 		return false
@@ -2156,14 +2302,14 @@ func _validate_state(state: Dictionary) -> bool:
 	for b in state["buildings"]:
 		if not b is Dictionary or not building_specs.has(str(b.get("type", ""))):
 			return false
-		for key in ["id", "x", "y", "size", "tier", "hp", "max_hp", "remaining", "reserve", "cooldown"]:
+		for key in ["id", "size", "tier", "hp", "max_hp", "remaining", "reserve", "cooldown"]:
 			if not _number(b.get(key)):
 				return false
 		var spec: Dictionary = building_specs[b["type"]]
-		for key in ["id", "x", "y", "size", "tier"]:
+		for key in ["id", "size", "tier"]:
 			if not _integer(b[key]):
 				return false
-		if int(b["size"]) != int(spec["size"]) or int(b["tier"]) < 1 or int(b["tier"]) > spec["tiers"].size() or float(b["x"]) + float(b["size"]) > 20 or float(b["y"]) + float(b["size"]) > 16:
+		if not _real_integer(b.get("x")) or not _real_integer(b.get("y")) or int(b["size"]) != int(spec["size"]) or int(b["tier"]) < 1 or int(b["tier"]) > spec["tiers"].size() or not _footprint_in_world(int(b["x"]), int(b["y"]), int(b["size"]), claimed):
 			return false
 		if ids.has(int(b["id"])) or int(b["id"]) >= int(state["next_id"]) or b["hp"] > b["max_hp"]:
 			return false
@@ -2183,10 +2329,10 @@ func _validate_state(state: Dictionary) -> bool:
 			if hostile and u.has("raids_resources") and not u["raids_resources"] is bool: return false
 			if (hostile and u.get("type") != "raider") or (not hostile and not troop_specs.has(str(u.get("type", "")))):
 				return false
-			for key in ["id", "x", "y", "hp", "max_hp", "cooldown"]:
+			for key in ["id", "hp", "max_hp", "cooldown"]:
 				if not _number(u.get(key)):
 					return false
-			if float(u["x"]) >= 20 or float(u["y"]) >= 16 or ids.has(int(u["id"])) or int(u["id"]) >= int(state["next_id"]) or u["hp"] > u["max_hp"] or not u.get("phase") is String:
+			if not _real(u.get("x")) or not _real(u.get("y")) or not _tile_in_world(Vector2i(floori(float(u["x"])), floori(float(u["y"]))), claimed) or ids.has(int(u["id"])) or int(u["id"]) >= int(state["next_id"]) or u["hp"] > u["max_hp"] or not u.get("phase") is String:
 				return false
 			ids[int(u["id"])] = true
 			if not hostile:
@@ -2206,7 +2352,7 @@ func _validate_state(state: Dictionary) -> bool:
 					if str(building_specs[post["type"]].get("workplace", "")) != str(u["type"]) \
 							and not (GUARD_POSTS.has(str(post["type"])) and str(troop_specs[str(u["type"])]["role"]) == "combat"):
 						return false
-				if not u["order"].is_empty() and (u["order"].size() != 2 or not _number(u["order"][0]) or not _number(u["order"][1]) or u["order"][0] >= 20 or u["order"][1] >= 16):
+				if not u["order"].is_empty() and (u["order"].size() != 2 or not _real(u["order"][0]) or not _real(u["order"][1]) or not _tile_in_world(Vector2i(floori(float(u["order"][0])), floori(float(u["order"][1]))), claimed)):
 					return false
 				for key in ["fx", "fy", "rx", "ry", "think", "sx", "sy"]:
 					var extra: Variant = u.get(key, -1.0)
@@ -2260,34 +2406,80 @@ func _validate_state(state: Dictionary) -> bool:
 	return true
 
 
+func _max_raiders() -> int:
+	# The spawner caps a raid at maxCount and then scales it by the moon (a blood moon is 1.25x),
+	# so the validator must allow the largest raid the spawner can actually produce.
+	var base: int = int(world_specs["homeRaids"].get("maxCount", 8))
+	return roundi(float(base) * maxf(1.0, float(MoonRules.config()["blood_moon_enemy_multiplier"])))
+
+
 func save_game(path: String = "user://village-v1.json") -> bool:
-	if FileAccess.file_exists(path):
-		var existing: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-		if not existing is Dictionary or not _validate_state(existing):
-			notice = "Save failed / existing save unreadable; original and backup retained."
-			return false
-	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
-	if file == null:
-		notice = "Save failed / could not open storage."
+	# One retry after a short pause: antivirus or the search indexer can hold a file for a moment.
+	# A refused save (the state failed its own check) is a logic problem, so it is not retried.
+	_save_refused = false
+	if _save_once(path):
+		return true
+	if _save_refused:
 		return false
+	OS.delay_msec(250)
+	return _save_once(path)
+
+
+func _save_fail(message: String, code: int = OK) -> bool:
+	last_save_error = "" if code == OK else "%s (code %d)" % [error_string(code), code]
+	notice = "Save failed / " + message + ("" if last_save_error.is_empty() else " " + last_save_error)
+	return false
+
+
+func _save_once(path: String) -> bool:
+	var tmp_path: String = path + ".tmp"
+	var bak_path: String = path + ".bak"
+	var primary_exists: bool = FileAccess.file_exists(path)
+	if primary_exists:
+		var source := FileAccess.open(path, FileAccess.READ)
+		if source == null:
+			return _save_fail("existing save could not be opened; original and backup retained.", FileAccess.get_open_error())
+		var existing: Variant = JSON.parse_string(source.get_as_text())
+		source.close()
+		if not (existing is Dictionary and _validate_state(existing)):
+			# Never overwrite a save we cannot read: the file and the good backup stay put.
+			_save_refused = true
+			return _save_fail("existing save unreadable; original and backup retained.")
+	# Write beside the old save, then read the copy back and check it the same way a load does.
+	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
+	if file == null:
+		return _save_fail("could not open storage.", FileAccess.get_open_error())
 	file.store_string(JSON.stringify(export_state()))
 	file.flush()
 	var write_error: Error = file.get_error()
 	file.close()
 	if write_error != OK:
-		notice = "Save failed / could not write storage."
-		return false
-	if FileAccess.file_exists(path):
-		if FileAccess.file_exists(path + ".bak"):
-			DirAccess.remove_absolute(path + ".bak")
-		if DirAccess.rename_absolute(path, path + ".bak") != OK:
-			notice = "Save failed / previous save retained."
-			return false
-	if DirAccess.rename_absolute(path + ".tmp", path) != OK:
-		if FileAccess.file_exists(path + ".bak"):
-			DirAccess.rename_absolute(path + ".bak", path)
-		notice = "Save failed / previous save retained."
-		return false
+		DirAccess.remove_absolute(tmp_path)
+		return _save_fail("could not write storage.", write_error)
+	var written_file := FileAccess.open(tmp_path, FileAccess.READ)
+	if written_file == null:
+		return _save_fail("could not verify the written copy.", FileAccess.get_open_error())
+	var written: Variant = JSON.parse_string(written_file.get_as_text())
+	written_file.close()
+	if not written is Dictionary or not _validate_state(written):
+		DirAccess.remove_absolute(tmp_path)
+		_save_refused = true
+		return _save_fail("the village state did not pass its own check; original and backup retained.")
+	if primary_exists:
+		if FileAccess.file_exists(bak_path):
+			var clear_error: Error = DirAccess.remove_absolute(bak_path)
+			if clear_error != OK:
+				DirAccess.remove_absolute(tmp_path)
+				return _save_fail("could not replace the old backup; previous save retained.", clear_error)
+		var rotate_error: Error = DirAccess.rename_absolute(path, bak_path)
+		if rotate_error != OK:
+			DirAccess.remove_absolute(tmp_path)
+			return _save_fail("previous save retained.", rotate_error)
+	var commit_error: Error = DirAccess.rename_absolute(tmp_path, path)
+	if commit_error != OK:
+		if primary_exists and not FileAccess.file_exists(path) and FileAccess.file_exists(bak_path):
+			DirAccess.rename_absolute(bak_path, path)
+		return _save_fail("previous save retained.", commit_error)
 	return true
 
 

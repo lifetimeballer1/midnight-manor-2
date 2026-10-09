@@ -2,7 +2,7 @@
   "asset": "char_sawyer",
   "file": "char_sawyer.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | sawyer Rig",
     "MMR Character | sawyer Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Sawing"
   },
-  "sha256": "55e168f08031d0ebbcbe0d734a6fd7378045470ed2a63dd7d59ee73a8d8e4d8f",
+  "sha256": "3f54fafb1a6a16d5892656ac56fe3da164486ac47782c915ab872f50f6e7e0ce",
   "verified": true
 }

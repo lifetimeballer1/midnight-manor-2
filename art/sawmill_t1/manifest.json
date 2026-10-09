@@ -2,9 +2,10 @@
   "asset": "sawmill_t1",
   "file": "sawmill_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | sawmill | T01 Architecture",
+    "MMR | sawmill | T01 Autumn Dressing",
     "MMR | sawmill | T01 Header Frame",
     "MMR | sawmill | T01 Saw Blade",
     "MMR | sawmill | Tier 01 Ground"
@@ -17,12 +18,12 @@
     2.0318212509155273,
     2.3499999046325684
   ],
-  "triangles": 2004,
-  "meshes": 4,
+  "triangles": 2029,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "d39ba5d86dd59c1dcc022b1ba9f1056bff3c6df664bed31889691c8ebb139096",
+  "sha256": "fd5b20739cfed65c9f84e8ea87808a7056a3c178b56ca24f51ac4158609bd350",
   "verified": true
 }

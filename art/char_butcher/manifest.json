@@ -2,7 +2,7 @@
   "asset": "char_butcher",
   "file": "char_butcher.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | butcher Rig",
     "MMR Character | butcher Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Chopping"
   },
-  "sha256": "822f2cc1a5b97638abc6c06b2952d6fca3173c656d7e2d1e19e2f0488d56badc",
+  "sha256": "7253ba6262722f47de215f784e31cc4e8f7c18150317cb03e802f5c924721a8f",
   "verified": true
 }

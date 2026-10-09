@@ -2,7 +2,7 @@
   "asset": "char_pikewoman",
   "file": "char_pikewoman.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | pikewoman Rig",
     "MMR Character | pikewoman Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "attack": "Melee_2H_Attack_Chop"
   },
-  "sha256": "8dbbd02e85a6754ec58660104b2e77a2fee9fe3e4861fc86df2a620987dc5a94",
+  "sha256": "f6a3f50d8ef9477a25d83e91e92ef1e6cfb0bf596d4947c932bf02391b6da592",
   "verified": true
 }

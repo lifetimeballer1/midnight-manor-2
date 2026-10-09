@@ -2,7 +2,7 @@
   "asset": "char_miner",
   "file": "char_miner.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | miner Rig",
     "MMR Character | miner Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Pickaxing"
   },
-  "sha256": "77d3d5b0711f15c95ef9258f5e730b55684152570f985820bd7ca7fc9a1b15c3",
+  "sha256": "722e09cc45d1935405aa5a25c62a6127599cf867a5a51a0c551234ca4a00cfe3",
   "verified": true
 }

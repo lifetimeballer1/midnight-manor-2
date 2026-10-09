@@ -2,7 +2,7 @@
   "asset": "char_forager",
   "file": "char_forager.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | forager Rig",
     "MMR Character | forager Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Working_A"
   },
-  "sha256": "863b3b926429d4a9213ff763352f56fb10630c89dd2625f29952ad188b1c4a4f",
+  "sha256": "972764eac5985203ccbf9911817d9dc3f1e5b6815e9e4f2656538c7eaf091f8d",
   "verified": true
 }

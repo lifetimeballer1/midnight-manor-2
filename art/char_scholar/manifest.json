@@ -2,7 +2,7 @@
   "asset": "char_scholar",
   "file": "char_scholar.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | scholar Rig",
     "MMR Character | scholar Body",
@@ -13,9 +13,9 @@
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    1.319474697113037,
+    1.2416481971740723,
     1.4825477600097656,
-    0.5420951843261719
+    0.59173583984375
   ],
   "triangles": 1106,
   "meshes": 3,
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Use_Item"
   },
-  "sha256": "4202bad0e83bd2f15ad19b98200079a04b2681caf340a3abff9683ef886c545c",
+  "sha256": "93540eb578ec20cd46ef0fd077c7f961960c38ac578ab56429cb2a272edaa5f7",
   "verified": true
 }

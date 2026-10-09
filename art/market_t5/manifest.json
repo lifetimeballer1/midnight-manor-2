@@ -2,9 +2,11 @@
   "asset": "market_t5",
   "file": "market_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | market | T05 Architecture",
+    "MMR | market | T05 Autumn Dressing",
+    "MMR | market | T05 Banner Flag 1",
     "MMR | market | Tier 05 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +17,12 @@
     1.5749999284744263,
     3.299999952316284
   ],
-  "triangles": 1952,
-  "meshes": 2,
+  "triangles": 1995,
+  "meshes": 4,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "bc407c01c11df342673e4762838c907527ebe416f9be6924ded4a89e81a8fe87",
+  "sha256": "47d79e5c5f89ff9d56aa90d944fd30d8c0672a001e9f271d1a45c855563f87a4",
   "verified": true
 }

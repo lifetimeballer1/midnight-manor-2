@@ -2,9 +2,10 @@
   "asset": "sawmill_t6",
   "file": "sawmill_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | sawmill | T06 Architecture",
+    "MMR | sawmill | T06 Autumn Dressing",
     "MMR | sawmill | T06 Drive Wheel",
     "MMR | sawmill | T06 Header Frame",
     "MMR | sawmill | T06 Saw Blade",
@@ -18,12 +19,12 @@
     2.436784505844116,
     2.3499999046325684
   ],
-  "triangles": 3500,
-  "meshes": 5,
+  "triangles": 3520,
+  "meshes": 6,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "c9cb8777f85283f558cc964fc2657c4b4c23fef0b913b53b9bf0bc387500367f",
+  "sha256": "563302915a7608b6f70a0d43917f88b84bbc1a556abd07b40a711870ea249f92",
   "verified": true
 }

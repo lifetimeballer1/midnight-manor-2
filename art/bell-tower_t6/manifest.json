@@ -2,25 +2,28 @@
   "asset": "bell-tower_t6",
   "file": "bell-tower_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | bell-tower | T06 Architecture",
+    "MMR | bell-tower | T06 Autumn Dressing",
+    "MMR | bell-tower | T06 Banner Flag 1",
+    "MMR | bell-tower | T06 Bell",
     "MMR | bell-tower | Tier 06 Ground"
   ],
   "pivot": "base_center",
   "units": "metres",
   "up_axis": "+Y",
   "dimensions_m": [
-    2.3499984741210938,
+    2.3499999046325684,
     3.055000066757202,
-    2.3499984741210938
+    2.3499999046325684
   ],
-  "triangles": 1584,
-  "meshes": 2,
+  "triangles": 1604,
+  "meshes": 5,
   "materials": 1,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "54024ef5504e4d55bede84a90456803aaebf73476149676b929727eb89cd2268",
+  "sha256": "16db8a466374e1337e1feb62e59111251bba8031d5130af9c8c557da8dd03548",
   "verified": true
 }

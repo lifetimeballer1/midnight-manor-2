@@ -2,7 +2,7 @@
   "asset": "char_apprentice",
   "file": "char_apprentice.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | apprentice Rig",
     "MMR Character | apprentice Body",
@@ -34,6 +34,6 @@
     "death": "Death_A",
     "gather": "Working_A"
   },
-  "sha256": "a18474f3ae7e4ff430fc6fbbf20eb76e3c867e341d549721e489cc1684ac2519",
+  "sha256": "cf1f8fdc77ccd40c8684c9053b059de3305cda227a72167bae135ad53daeb453",
   "verified": true
 }

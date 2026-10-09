@@ -2,9 +2,11 @@
   "asset": "gate_t3",
   "file": "gate_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | gate | T03 Architecture",
+    "MMR | gate | T03 Banner Flag 1",
+    "MMR | gate | T03 Banner Flag 2",
     "MMR | gate | T03 Lift Gate",
     "MMR | gate | Tier 03 Ground"
   ],
@@ -17,11 +19,11 @@
     1.2999999523162842
   ],
   "triangles": 1656,
-  "meshes": 3,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "37976a498f16a3625b9e7887cc734df399a1fe77659c7fc50f14271b14a5258f",
+  "sha256": "cda1f6a19631a963c7d8ebf8ef7f495e1ae89399c8c1c70a1ba973d2058943be",
   "verified": true
 }

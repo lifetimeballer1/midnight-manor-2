@@ -3,22 +3,23 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://wwclhoii2djx"
-path="res://.godot/imported/chapel_t3_MMR Shared Color Palette 64.png-8032dc15176a415912ab49eef8cc9939.ctex"
+path.s3tc="res://.godot/imported/chapel_t3_MMR Shared Color Palette 64.png-8032dc15176a415912ab49eef8cc9939.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
-"md5": "9028ec0f43df3f097a253a63a8729f01"
+"md5": "e638ca1053d3be35f0b700dcb6ac65e2"
 }
 
 [deps]
 
 source_file="res://art/chapel_t3/chapel_t3_MMR Shared Color Palette 64.png"
-dest_files=["res://.godot/imported/chapel_t3_MMR Shared Color Palette 64.png-8032dc15176a415912ab49eef8cc9939.ctex"]
+dest_files=["res://.godot/imported/chapel_t3_MMR Shared Color Palette 64.png-8032dc15176a415912ab49eef8cc9939.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

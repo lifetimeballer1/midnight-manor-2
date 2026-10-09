@@ -24,6 +24,7 @@ The web build is exported **single-threaded** on purpose: threaded Godot builds 
 
 - **Build:** pick a structure card → click/slide the ghost preview → **Confirm Build**. Cancelling never spends resources. Walls/gates stay in placement mode for repeated segments.
 - **Select:** click a building to Collect / Upgrade / Move / Repair, or assign a matching worker. Move is blocked during warnings/raids.
+- **Wall rows:** select a wall, open **More**, then **Upgrade Row**. Only the longest straight, connected row of the same wall type and level is included (horizontal wins ties). Review the highlighted walls and total cost, then confirm or cancel. The village pauses during confirmation; a blocked upgrade spends nothing. Repair ruined segments and finish construction before upgrading the row.
 - **People:** hire eight professions, select villagers to assign workplaces, train units. Cottages add beds; warm beds + food grow the population.
 - **Defense:** Horn (bottom bar) starts a real wave after a warning. Warriors/archers, towers and traps defend; walls block routes. Click a selected fighter's destination to issue orders. Fallen defenders revive; ruins can be repaired.
 - **Village Path:** eleven early quests with original objectives/rewards (one-time rewards).
@@ -119,6 +120,9 @@ Reports: `docs/export_verification.json`, `docs/godot_verification.json`, `docs/
 
 New regression suites: `test_overhaul_foundation`, `test_village_needs`,
 `test_frontier_battles`, `test_campaign_actions` (same console command format above).
+`test_wall_rows` covers same-level row boundaries, all-or-nothing costs, confirmation
+and cancellation. Its optional native `--capture-dir=<existing absolute directory>`
+captures portrait and desktop confirmation panels using an isolated, no-save fixture.
 Optional native QA captures use `--capture-dir=<existing absolute directory>` with
 the foundation/frontier suites and never load the player's village.
 

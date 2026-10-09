@@ -2,9 +2,10 @@
   "asset": "cottage_t6",
   "file": "cottage_t6.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | cottage | T06 Architecture",
+    "MMR | cottage | T06 Autumn Dressing",
     "MMR | cottage | Tier 06 Ground"
   ],
   "pivot": "base_center",
@@ -15,12 +16,12 @@
     2.2749998569488525,
     2.3499999046325684
   ],
-  "triangles": 5016,
-  "meshes": 2,
+  "triangles": 5041,
+  "meshes": 3,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "6358b79139d1adcd36363e9c24453f6e38b315375baf5577d58e528df6d29307",
+  "sha256": "784c59a45a4a5373259888aa3484e3672891b21a39e2db3c8c8a841761b25328",
   "verified": true
 }

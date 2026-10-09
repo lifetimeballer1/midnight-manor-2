@@ -2,7 +2,7 @@
   "asset": "char_shepherd",
   "file": "char_shepherd.glb",
   "kind": "character",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR Character | shepherd Rig",
     "MMR Character | shepherd Body",
@@ -35,6 +35,6 @@
     "death": "Death_A",
     "gather": "Working_A"
   },
-  "sha256": "8d17e37e46b8958ea9ceff98c00af7973db463933be895162cda026c214179ba",
+  "sha256": "397013e1e3080584d5bce0f3a784aa606e7a69a1a50ac7a586e2ae75527d4693",
   "verified": true
 }

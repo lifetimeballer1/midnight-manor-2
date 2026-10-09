@@ -2,9 +2,11 @@
   "asset": "gate_t5",
   "file": "gate_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets.blend",
+  "source_file": "Game Assets Autumn.blend",
   "source_objects": [
     "MMR | gate | T05 Architecture",
+    "MMR | gate | T05 Banner Flag 1",
+    "MMR | gate | T05 Banner Flag 2",
     "MMR | gate | T05 Lift Gate",
     "MMR | gate | Tier 05 Ground"
   ],
@@ -17,11 +19,11 @@
     1.2999999523162842
   ],
   "triangles": 1656,
-  "meshes": 3,
+  "meshes": 5,
   "materials": 2,
   "images": 1,
   "clips": [],
   "clip_sources": {},
-  "sha256": "5ac4a6c431ead9878c748d6b7d832e457b10181778b2bdc40ecc1faade5446c4",
+  "sha256": "450e8bada67e64f350889b46811fc6eb4604c31638f0a16e95845ef17b935145",
   "verified": true
 }
