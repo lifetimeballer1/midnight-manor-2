@@ -2,7 +2,7 @@
   "asset": "char_leatherworker",
   "file": "char_leatherworker.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | leatherworker Rig",
     "MMR Character | leatherworker Body",

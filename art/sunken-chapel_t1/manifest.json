@@ -2,7 +2,7 @@
   "asset": "sunken-chapel_t1",
   "file": "sunken-chapel_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR | sunken-chapel | T01 Architecture",
     "MMR | sunken-chapel | T01 Autumn Dressing",

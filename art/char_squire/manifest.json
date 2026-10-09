@@ -2,7 +2,7 @@
   "asset": "char_squire",
   "file": "char_squire.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | squire Rig",
     "MMR Character | squire Body",

@@ -2,7 +2,7 @@
   "asset": "butchery_t1",
   "file": "butchery_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR | butchery | T01 Architecture",
     "MMR | butchery | Tier 01 Ground"

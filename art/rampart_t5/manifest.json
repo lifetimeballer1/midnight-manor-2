@@ -2,7 +2,7 @@
   "asset": "rampart_t5",
   "file": "rampart_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR | rampart | T05 Architecture",
     "MMR | rampart | Tier 05 Ground"

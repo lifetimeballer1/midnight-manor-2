@@ -2,7 +2,7 @@
   "asset": "char_longbowman",
   "file": "char_longbowman.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | longbowman Rig",
     "MMR Character | longbowman Body",

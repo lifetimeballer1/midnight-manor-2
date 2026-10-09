@@ -2,7 +2,7 @@
   "asset": "char_halberdier",
   "file": "char_halberdier.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | halberdier Rig",
     "MMR Character | halberdier Body",

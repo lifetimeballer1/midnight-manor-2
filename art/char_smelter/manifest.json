@@ -2,7 +2,7 @@
   "asset": "char_smelter",
   "file": "char_smelter.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | smelter Rig",
     "MMR Character | smelter Body",

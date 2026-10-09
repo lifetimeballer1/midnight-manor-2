@@ -2,7 +2,7 @@
   "asset": "char_healer",
   "file": "char_healer.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | healer Rig",
     "MMR Character | healer Body",

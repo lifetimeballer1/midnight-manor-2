@@ -2,7 +2,7 @@
   "asset": "char_woodward",
   "file": "char_woodward.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | woodward Rig",
     "MMR Character | woodward Body",

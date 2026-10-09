@@ -2,7 +2,7 @@
   "asset": "char_archer",
   "file": "char_archer.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | archer Rig",
     "MMR Character | archer Body",

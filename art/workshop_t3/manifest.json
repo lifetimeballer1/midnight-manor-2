@@ -2,7 +2,7 @@
   "asset": "workshop_t3",
   "file": "workshop_t3.glb",
   "kind": "building",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR | workshop | T03 Architecture",
     "MMR | workshop | Tier 03 Ground"

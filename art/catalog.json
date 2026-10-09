@@ -10,7 +10,7 @@
       "asset": "manor_hall_t1",
       "file": "manor_hall_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | hall | T01 Architecture",
         "MMR | hall | T01 Autumn Dressing",
@@ -37,7 +37,7 @@
       "asset": "manor_hall_t2",
       "file": "manor_hall_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | hall | T02 Architecture",
         "MMR | hall | T02 Autumn Dressing",
@@ -64,7 +64,7 @@
       "asset": "manor_hall_t3",
       "file": "manor_hall_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | hall | T03 Architecture",
         "MMR | hall | T03 Autumn Dressing",
@@ -91,7 +91,7 @@
       "asset": "manor_hall_t4",
       "file": "manor_hall_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | hall | T04 Architecture",
         "MMR | hall | T04 Autumn Dressing",
@@ -119,7 +119,7 @@
       "asset": "manor_hall_t5",
       "file": "manor_hall_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | hall | T05 Architecture",
         "MMR | hall | T05 Autumn Dressing",
@@ -147,7 +147,7 @@
       "asset": "manor_hall_t6",
       "file": "manor_hall_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | hall | T06 Architecture",
         "MMR | hall | T06 Autumn Dressing",
@@ -176,7 +176,7 @@
       "asset": "cottage_t1",
       "file": "cottage_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | cottage | T01 Architecture",
         "MMR | cottage | T01 Autumn Dressing",
@@ -203,7 +203,7 @@
       "asset": "cottage_t2",
       "file": "cottage_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | cottage | T02 Architecture",
         "MMR | cottage | T02 Autumn Dressing",
@@ -230,7 +230,7 @@
       "asset": "cottage_t3",
       "file": "cottage_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | cottage | T03 Architecture",
         "MMR | cottage | T03 Autumn Dressing",
@@ -257,7 +257,7 @@
       "asset": "cottage_t4",
       "file": "cottage_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | cottage | T04 Architecture",
         "MMR | cottage | T04 Autumn Dressing",
@@ -284,7 +284,7 @@
       "asset": "cottage_t5",
       "file": "cottage_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | cottage | T05 Architecture",
         "MMR | cottage | T05 Autumn Dressing",
@@ -311,7 +311,7 @@
       "asset": "cottage_t6",
       "file": "cottage_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | cottage | T06 Architecture",
         "MMR | cottage | T06 Autumn Dressing",
@@ -338,7 +338,7 @@
       "asset": "farm_t1",
       "file": "farm_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | farm | T01 Architecture",
         "MMR | farm | T01 Autumn Dressing",
@@ -365,7 +365,7 @@
       "asset": "farm_t2",
       "file": "farm_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | farm | T02 Architecture",
         "MMR | farm | T02 Autumn Dressing",
@@ -392,7 +392,7 @@
       "asset": "farm_t3",
       "file": "farm_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | farm | T03 Architecture",
         "MMR | farm | T03 Autumn Dressing",
@@ -420,7 +420,7 @@
       "asset": "farm_t4",
       "file": "farm_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | farm | T04 Architecture",
         "MMR | farm | T04 Autumn Dressing",
@@ -448,7 +448,7 @@
       "asset": "farm_t5",
       "file": "farm_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | farm | T05 Architecture",
         "MMR | farm | T05 Autumn Dressing",
@@ -476,7 +476,7 @@
       "asset": "farm_t6",
       "file": "farm_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | farm | T06 Architecture",
         "MMR | farm | T06 Autumn Dressing",
@@ -504,7 +504,7 @@
       "asset": "lumber_t1",
       "file": "lumber_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | lumber | T01 Architecture",
         "MMR | lumber | T01 Autumn Dressing",
@@ -531,7 +531,7 @@
       "asset": "lumber_t2",
       "file": "lumber_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | lumber | T02 Architecture",
         "MMR | lumber | T02 Autumn Dressing",
@@ -558,7 +558,7 @@
       "asset": "lumber_t3",
       "file": "lumber_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | lumber | T03 Architecture",
         "MMR | lumber | T03 Autumn Dressing",
@@ -585,7 +585,7 @@
       "asset": "lumber_t4",
       "file": "lumber_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | lumber | T04 Architecture",
         "MMR | lumber | T04 Autumn Dressing",
@@ -612,7 +612,7 @@
       "asset": "lumber_t5",
       "file": "lumber_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | lumber | T05 Architecture",
         "MMR | lumber | T05 Autumn Dressing",
@@ -639,7 +639,7 @@
       "asset": "lumber_t6",
       "file": "lumber_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | lumber | T06 Architecture",
         "MMR | lumber | T06 Autumn Dressing",
@@ -666,7 +666,7 @@
       "asset": "timber_yard_t1",
       "file": "timber_yard_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | timber_yard | T01 Architecture",
         "MMR | timber_yard | T01 Autumn Dressing",
@@ -693,7 +693,7 @@
       "asset": "timber_yard_t2",
       "file": "timber_yard_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | timber_yard | T02 Architecture",
         "MMR | timber_yard | T02 Autumn Dressing",
@@ -720,7 +720,7 @@
       "asset": "timber_yard_t3",
       "file": "timber_yard_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | timber_yard | T03 Architecture",
         "MMR | timber_yard | T03 Autumn Dressing",
@@ -747,7 +747,7 @@
       "asset": "timber_yard_t4",
       "file": "timber_yard_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | timber_yard | T04 Architecture",
         "MMR | timber_yard | T04 Autumn Dressing",
@@ -774,7 +774,7 @@
       "asset": "timber_yard_t5",
       "file": "timber_yard_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | timber_yard | T05 Architecture",
         "MMR | timber_yard | T05 Autumn Dressing",
@@ -801,7 +801,7 @@
       "asset": "timber_yard_t6",
       "file": "timber_yard_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | timber_yard | T06 Architecture",
         "MMR | timber_yard | T06 Autumn Dressing",
@@ -828,7 +828,7 @@
       "asset": "mine_t1",
       "file": "mine_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mine | T01 Architecture",
         "MMR | mine | T01 Autumn Dressing",
@@ -855,7 +855,7 @@
       "asset": "mine_t2",
       "file": "mine_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mine | T02 Architecture",
         "MMR | mine | T02 Autumn Dressing",
@@ -882,7 +882,7 @@
       "asset": "mine_t3",
       "file": "mine_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mine | T03 Architecture",
         "MMR | mine | Tier 03 Ground"
@@ -908,7 +908,7 @@
       "asset": "mine_t4",
       "file": "mine_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mine | T04 Architecture",
         "MMR | mine | T04 Autumn Dressing",
@@ -935,7 +935,7 @@
       "asset": "mine_t5",
       "file": "mine_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mine | T05 Architecture",
         "MMR | mine | T05 Autumn Dressing",
@@ -962,7 +962,7 @@
       "asset": "mine_t6",
       "file": "mine_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mine | T06 Architecture",
         "MMR | mine | T06 Autumn Dressing",
@@ -989,7 +989,7 @@
       "asset": "tower_t1",
       "file": "tower_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tower | T01 Architecture",
         "MMR | tower | T01 Autumn Dressing",
@@ -1017,7 +1017,7 @@
       "asset": "tower_t2",
       "file": "tower_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tower | T02 Architecture",
         "MMR | tower | T02 Autumn Dressing",
@@ -1045,7 +1045,7 @@
       "asset": "tower_t3",
       "file": "tower_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tower | T03 Architecture",
         "MMR | tower | T03 Autumn Dressing",
@@ -1073,7 +1073,7 @@
       "asset": "tower_t4",
       "file": "tower_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tower | T04 Architecture",
         "MMR | tower | T04 Autumn Dressing",
@@ -1101,7 +1101,7 @@
       "asset": "tower_t5",
       "file": "tower_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tower | T05 Architecture",
         "MMR | tower | T05 Autumn Dressing",
@@ -1129,7 +1129,7 @@
       "asset": "tower_t6",
       "file": "tower_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tower | T06 Architecture",
         "MMR | tower | T06 Autumn Dressing",
@@ -1157,7 +1157,7 @@
       "asset": "archer_tower_t1",
       "file": "archer_tower_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | archer_tower | T01 Architecture",
         "MMR | archer_tower | T01 Autumn Dressing",
@@ -1185,7 +1185,7 @@
       "asset": "archer_tower_t2",
       "file": "archer_tower_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | archer_tower | T02 Architecture",
         "MMR | archer_tower | T02 Autumn Dressing",
@@ -1213,7 +1213,7 @@
       "asset": "archer_tower_t3",
       "file": "archer_tower_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | archer_tower | T03 Architecture",
         "MMR | archer_tower | T03 Autumn Dressing",
@@ -1242,7 +1242,7 @@
       "asset": "archer_tower_t4",
       "file": "archer_tower_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | archer_tower | T04 Architecture",
         "MMR | archer_tower | T04 Autumn Dressing",
@@ -1271,7 +1271,7 @@
       "asset": "archer_tower_t5",
       "file": "archer_tower_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | archer_tower | T05 Architecture",
         "MMR | archer_tower | T05 Autumn Dressing",
@@ -1300,7 +1300,7 @@
       "asset": "archer_tower_t6",
       "file": "archer_tower_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | archer_tower | T06 Architecture",
         "MMR | archer_tower | T06 Autumn Dressing",
@@ -1329,7 +1329,7 @@
       "asset": "wall_t1",
       "file": "wall_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | wall | T01 Architecture",
         "MMR | wall | Tier 01 Ground"
@@ -1355,7 +1355,7 @@
       "asset": "wall_t2",
       "file": "wall_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | wall | T02 Architecture",
         "MMR | wall | Tier 02 Ground"
@@ -1381,7 +1381,7 @@
       "asset": "wall_t3",
       "file": "wall_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | wall | T03 Architecture",
         "MMR | wall | Tier 03 Ground"
@@ -1407,7 +1407,7 @@
       "asset": "wall_t4",
       "file": "wall_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | wall | T04 Architecture",
         "MMR | wall | Tier 04 Ground"
@@ -1433,7 +1433,7 @@
       "asset": "wall_t5",
       "file": "wall_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | wall | T05 Architecture",
         "MMR | wall | Tier 05 Ground"
@@ -1459,7 +1459,7 @@
       "asset": "wall_t6",
       "file": "wall_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | wall | T06 Architecture",
         "MMR | wall | Tier 06 Ground"
@@ -1485,7 +1485,7 @@
       "asset": "stonewall_t1",
       "file": "stonewall_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | stonewall | T01 Architecture",
         "MMR | stonewall | Tier 01 Ground"
@@ -1511,7 +1511,7 @@
       "asset": "stonewall_t2",
       "file": "stonewall_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | stonewall | T02 Architecture",
         "MMR | stonewall | Tier 02 Ground"
@@ -1537,7 +1537,7 @@
       "asset": "stonewall_t3",
       "file": "stonewall_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | stonewall | T03 Architecture",
         "MMR | stonewall | Tier 03 Ground"
@@ -1563,7 +1563,7 @@
       "asset": "stonewall_t4",
       "file": "stonewall_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | stonewall | T04 Architecture",
         "MMR | stonewall | Tier 04 Ground"
@@ -1589,7 +1589,7 @@
       "asset": "stonewall_t5",
       "file": "stonewall_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | stonewall | T05 Architecture",
         "MMR | stonewall | Tier 05 Ground"
@@ -1615,7 +1615,7 @@
       "asset": "stonewall_t6",
       "file": "stonewall_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | stonewall | T06 Architecture",
         "MMR | stonewall | Tier 06 Ground"
@@ -1641,7 +1641,7 @@
       "asset": "gate_t1",
       "file": "gate_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | gate | T01 Architecture",
         "MMR | gate | T01 Lift Gate",
@@ -1668,7 +1668,7 @@
       "asset": "gate_t2",
       "file": "gate_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | gate | T02 Architecture",
         "MMR | gate | T02 Lift Gate",
@@ -1695,7 +1695,7 @@
       "asset": "gate_t3",
       "file": "gate_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | gate | T03 Architecture",
         "MMR | gate | T03 Banner Flag 1",
@@ -1724,7 +1724,7 @@
       "asset": "gate_t4",
       "file": "gate_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | gate | T04 Architecture",
         "MMR | gate | T04 Banner Flag 1",
@@ -1753,7 +1753,7 @@
       "asset": "gate_t5",
       "file": "gate_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | gate | T05 Architecture",
         "MMR | gate | T05 Banner Flag 1",
@@ -1782,7 +1782,7 @@
       "asset": "gate_t6",
       "file": "gate_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | gate | T06 Architecture",
         "MMR | gate | T06 Banner Flag 1",
@@ -1811,7 +1811,7 @@
       "asset": "trap_t1",
       "file": "trap_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | trap | T01 Architecture",
         "MMR | trap | Tier 01 Ground"
@@ -1837,7 +1837,7 @@
       "asset": "trap_t2",
       "file": "trap_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | trap | T02 Architecture",
         "MMR | trap | Tier 02 Ground"
@@ -1863,7 +1863,7 @@
       "asset": "trap_t3",
       "file": "trap_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | trap | T03 Architecture",
         "MMR | trap | Tier 03 Ground"
@@ -1889,7 +1889,7 @@
       "asset": "fire_trap_t1",
       "file": "fire_trap_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | fire-trap | T01 Architecture",
         "MMR | fire-trap | T01 Flame Glow",
@@ -1916,7 +1916,7 @@
       "asset": "storehouse_t1",
       "file": "storehouse_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | storehouse | T01 Architecture",
         "MMR | storehouse | T01 Autumn Dressing",
@@ -1943,7 +1943,7 @@
       "asset": "storehouse_t2",
       "file": "storehouse_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | storehouse | T02 Architecture",
         "MMR | storehouse | T02 Autumn Dressing",
@@ -1970,7 +1970,7 @@
       "asset": "storehouse_t3",
       "file": "storehouse_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | storehouse | T03 Architecture",
         "MMR | storehouse | T03 Autumn Dressing",
@@ -1997,7 +1997,7 @@
       "asset": "storehouse_t4",
       "file": "storehouse_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | storehouse | T04 Architecture",
         "MMR | storehouse | T04 Autumn Dressing",
@@ -2024,7 +2024,7 @@
       "asset": "storehouse_t5",
       "file": "storehouse_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | storehouse | T05 Architecture",
         "MMR | storehouse | T05 Autumn Dressing",
@@ -2051,7 +2051,7 @@
       "asset": "storehouse_t6",
       "file": "storehouse_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | storehouse | T06 Architecture",
         "MMR | storehouse | T06 Autumn Dressing",
@@ -2079,7 +2079,7 @@
       "asset": "barracks_t1",
       "file": "barracks_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | barracks | T01 Architecture",
         "MMR | barracks | T01 Autumn Dressing",
@@ -2108,7 +2108,7 @@
       "asset": "barracks_t2",
       "file": "barracks_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | barracks | T02 Architecture",
         "MMR | barracks | T02 Autumn Dressing",
@@ -2137,7 +2137,7 @@
       "asset": "barracks_t3",
       "file": "barracks_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | barracks | T03 Architecture",
         "MMR | barracks | T03 Autumn Dressing",
@@ -2166,7 +2166,7 @@
       "asset": "barracks_t4",
       "file": "barracks_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | barracks | T04 Architecture",
         "MMR | barracks | T04 Autumn Dressing",
@@ -2195,7 +2195,7 @@
       "asset": "barracks_t5",
       "file": "barracks_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | barracks | T05 Architecture",
         "MMR | barracks | T05 Autumn Dressing",
@@ -2224,7 +2224,7 @@
       "asset": "barracks_t6",
       "file": "barracks_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | barracks | T06 Architecture",
         "MMR | barracks | T06 Autumn Dressing",
@@ -2255,7 +2255,7 @@
       "asset": "forge_t1",
       "file": "forge_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | forge | T01 Architecture",
         "MMR | forge | T01 Autumn Dressing",
@@ -2283,7 +2283,7 @@
       "asset": "forge_t2",
       "file": "forge_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | forge | T02 Architecture",
         "MMR | forge | T02 Autumn Dressing",
@@ -2311,7 +2311,7 @@
       "asset": "forge_t3",
       "file": "forge_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | forge | T03 Architecture",
         "MMR | forge | T03 Autumn Dressing",
@@ -2339,7 +2339,7 @@
       "asset": "forge_t4",
       "file": "forge_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | forge | T04 Architecture",
         "MMR | forge | T04 Autumn Dressing",
@@ -2367,7 +2367,7 @@
       "asset": "forge_t5",
       "file": "forge_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | forge | T05 Architecture",
         "MMR | forge | T05 Autumn Dressing",
@@ -2395,7 +2395,7 @@
       "asset": "forge_t6",
       "file": "forge_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | forge | T06 Architecture",
         "MMR | forge | T06 Autumn Dressing",
@@ -2424,7 +2424,7 @@
       "asset": "market_t1",
       "file": "market_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | market | T01 Architecture",
         "MMR | market | T01 Autumn Dressing",
@@ -2451,7 +2451,7 @@
       "asset": "market_t2",
       "file": "market_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | market | T02 Architecture",
         "MMR | market | T02 Autumn Dressing",
@@ -2478,7 +2478,7 @@
       "asset": "market_t3",
       "file": "market_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | market | T03 Architecture",
         "MMR | market | T03 Autumn Dressing",
@@ -2505,7 +2505,7 @@
       "asset": "market_t4",
       "file": "market_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | market | T04 Architecture",
         "MMR | market | T04 Autumn Dressing",
@@ -2532,7 +2532,7 @@
       "asset": "market_t5",
       "file": "market_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | market | T05 Architecture",
         "MMR | market | T05 Autumn Dressing",
@@ -2560,7 +2560,7 @@
       "asset": "market_t6",
       "file": "market_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | market | T06 Architecture",
         "MMR | market | T06 Autumn Dressing",
@@ -2588,7 +2588,7 @@
       "asset": "pasture_t1",
       "file": "pasture_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pasture | T01 Architecture",
         "MMR | pasture | T01 Autumn Dressing",
@@ -2615,7 +2615,7 @@
       "asset": "pasture_t2",
       "file": "pasture_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pasture | T02 Architecture",
         "MMR | pasture | T02 Autumn Dressing",
@@ -2642,7 +2642,7 @@
       "asset": "pasture_t3",
       "file": "pasture_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pasture | T03 Architecture",
         "MMR | pasture | T03 Autumn Dressing",
@@ -2669,7 +2669,7 @@
       "asset": "pasture_t4",
       "file": "pasture_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pasture | T04 Architecture",
         "MMR | pasture | T04 Autumn Dressing",
@@ -2696,7 +2696,7 @@
       "asset": "pasture_t5",
       "file": "pasture_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pasture | T05 Architecture",
         "MMR | pasture | T05 Autumn Dressing",
@@ -2723,7 +2723,7 @@
       "asset": "pasture_t6",
       "file": "pasture_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pasture | T06 Architecture",
         "MMR | pasture | T06 Autumn Dressing",
@@ -2750,7 +2750,7 @@
       "asset": "pond_t1",
       "file": "pond_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pond | T01 Architecture",
         "MMR | pond | Tier 01 Ground"
@@ -2776,7 +2776,7 @@
       "asset": "pond_t2",
       "file": "pond_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pond | T02 Architecture",
         "MMR | pond | Tier 02 Ground"
@@ -2802,7 +2802,7 @@
       "asset": "pond_t3",
       "file": "pond_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pond | T03 Architecture",
         "MMR | pond | Tier 03 Ground"
@@ -2828,7 +2828,7 @@
       "asset": "pond_t4",
       "file": "pond_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pond | T04 Architecture",
         "MMR | pond | Tier 04 Ground"
@@ -2854,7 +2854,7 @@
       "asset": "pond_t5",
       "file": "pond_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pond | T05 Architecture",
         "MMR | pond | Tier 05 Ground"
@@ -2880,7 +2880,7 @@
       "asset": "pond_t6",
       "file": "pond_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | pond | T06 Architecture",
         "MMR | pond | Tier 06 Ground"
@@ -2906,7 +2906,7 @@
       "asset": "sawmill_t1",
       "file": "sawmill_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sawmill | T01 Architecture",
         "MMR | sawmill | T01 Autumn Dressing",
@@ -2935,7 +2935,7 @@
       "asset": "sawmill_t2",
       "file": "sawmill_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sawmill | T02 Architecture",
         "MMR | sawmill | T02 Autumn Dressing",
@@ -2964,7 +2964,7 @@
       "asset": "sawmill_t3",
       "file": "sawmill_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sawmill | T03 Architecture",
         "MMR | sawmill | T03 Autumn Dressing",
@@ -2993,7 +2993,7 @@
       "asset": "sawmill_t4",
       "file": "sawmill_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sawmill | T04 Architecture",
         "MMR | sawmill | T04 Autumn Dressing",
@@ -3023,7 +3023,7 @@
       "asset": "sawmill_t5",
       "file": "sawmill_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sawmill | T05 Architecture",
         "MMR | sawmill | T05 Autumn Dressing",
@@ -3053,7 +3053,7 @@
       "asset": "sawmill_t6",
       "file": "sawmill_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sawmill | T06 Architecture",
         "MMR | sawmill | T06 Autumn Dressing",
@@ -3083,7 +3083,7 @@
       "asset": "mill_t1",
       "file": "mill_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mill | T01 Architecture",
         "MMR | mill | T01 Autumn Dressing",
@@ -3111,7 +3111,7 @@
       "asset": "mill_t2",
       "file": "mill_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mill | T02 Architecture",
         "MMR | mill | T02 Autumn Dressing",
@@ -3139,7 +3139,7 @@
       "asset": "mill_t3",
       "file": "mill_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mill | T03 Architecture",
         "MMR | mill | T03 Autumn Dressing",
@@ -3167,7 +3167,7 @@
       "asset": "mill_t4",
       "file": "mill_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mill | T04 Architecture",
         "MMR | mill | T04 Autumn Dressing",
@@ -3196,7 +3196,7 @@
       "asset": "mill_t5",
       "file": "mill_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mill | T05 Architecture",
         "MMR | mill | T05 Autumn Dressing",
@@ -3225,7 +3225,7 @@
       "asset": "mill_t6",
       "file": "mill_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mill | T06 Architecture",
         "MMR | mill | T06 Autumn Dressing",
@@ -3254,7 +3254,7 @@
       "asset": "scriptorium_t1",
       "file": "scriptorium_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scriptorium | T01 Architecture",
         "MMR | scriptorium | T01 Banner Flag 1",
@@ -3281,7 +3281,7 @@
       "asset": "scriptorium_t2",
       "file": "scriptorium_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scriptorium | T02 Architecture",
         "MMR | scriptorium | T02 Banner Flag 1",
@@ -3308,7 +3308,7 @@
       "asset": "scriptorium_t3",
       "file": "scriptorium_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scriptorium | T03 Architecture",
         "MMR | scriptorium | T03 Banner Flag 1",
@@ -3335,7 +3335,7 @@
       "asset": "scriptorium_t4",
       "file": "scriptorium_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scriptorium | T04 Architecture",
         "MMR | scriptorium | T04 Banner Flag 1",
@@ -3362,7 +3362,7 @@
       "asset": "scriptorium_t5",
       "file": "scriptorium_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scriptorium | T05 Architecture",
         "MMR | scriptorium | T05 Banner Flag 1",
@@ -3389,7 +3389,7 @@
       "asset": "scriptorium_t6",
       "file": "scriptorium_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scriptorium | T06 Architecture",
         "MMR | scriptorium | T06 Banner Flag 1",
@@ -3416,7 +3416,7 @@
       "asset": "oathstone_t1",
       "file": "oathstone_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | oathstone | T01 Architecture",
         "MMR | oathstone | Tier 01 Ground"
@@ -3442,7 +3442,7 @@
       "asset": "grove_t1",
       "file": "grove_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | grove | T01 Architecture",
         "MMR | grove | T01 Autumn Dressing",
@@ -3469,7 +3469,7 @@
       "asset": "grove_t2",
       "file": "grove_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | grove | T02 Architecture",
         "MMR | grove | T02 Autumn Dressing",
@@ -3496,7 +3496,7 @@
       "asset": "grove_t3",
       "file": "grove_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | grove | T03 Architecture",
         "MMR | grove | T03 Autumn Dressing",
@@ -3523,7 +3523,7 @@
       "asset": "grove_t4",
       "file": "grove_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | grove | T04 Architecture",
         "MMR | grove | T04 Autumn Dressing",
@@ -3550,7 +3550,7 @@
       "asset": "grove_t5",
       "file": "grove_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | grove | T05 Architecture",
         "MMR | grove | T05 Autumn Dressing",
@@ -3577,7 +3577,7 @@
       "asset": "grove_t6",
       "file": "grove_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | grove | T06 Architecture",
         "MMR | grove | T06 Autumn Dressing",
@@ -3604,7 +3604,7 @@
       "asset": "frostgrove_t1",
       "file": "frostgrove_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | frostgrove | T01 Architecture",
         "MMR | frostgrove | T01 Autumn Dressing",
@@ -3631,7 +3631,7 @@
       "asset": "frostgrove_t2",
       "file": "frostgrove_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | frostgrove | T02 Architecture",
         "MMR | frostgrove | T02 Autumn Dressing",
@@ -3658,7 +3658,7 @@
       "asset": "frostgrove_t3",
       "file": "frostgrove_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | frostgrove | T03 Architecture",
         "MMR | frostgrove | T03 Autumn Dressing",
@@ -3685,7 +3685,7 @@
       "asset": "frostgrove_t4",
       "file": "frostgrove_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | frostgrove | T04 Architecture",
         "MMR | frostgrove | T04 Autumn Dressing",
@@ -3712,7 +3712,7 @@
       "asset": "frostgrove_t5",
       "file": "frostgrove_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | frostgrove | T05 Architecture",
         "MMR | frostgrove | T05 Autumn Dressing",
@@ -3739,7 +3739,7 @@
       "asset": "frostgrove_t6",
       "file": "frostgrove_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | frostgrove | T06 Architecture",
         "MMR | frostgrove | T06 Autumn Dressing",
@@ -3766,7 +3766,7 @@
       "asset": "whisper-grove_t1",
       "file": "whisper-grove_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | whisper-grove | T01 Architecture",
         "MMR | whisper-grove | T01 Autumn Dressing",
@@ -3793,7 +3793,7 @@
       "asset": "whisper-grove_t2",
       "file": "whisper-grove_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | whisper-grove | T02 Architecture",
         "MMR | whisper-grove | T02 Autumn Dressing",
@@ -3820,7 +3820,7 @@
       "asset": "whisper-grove_t3",
       "file": "whisper-grove_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | whisper-grove | T03 Architecture",
         "MMR | whisper-grove | T03 Autumn Dressing",
@@ -3847,7 +3847,7 @@
       "asset": "whisper-grove_t4",
       "file": "whisper-grove_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | whisper-grove | T04 Architecture",
         "MMR | whisper-grove | T04 Autumn Dressing",
@@ -3874,7 +3874,7 @@
       "asset": "whisper-grove_t5",
       "file": "whisper-grove_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | whisper-grove | T05 Architecture",
         "MMR | whisper-grove | T05 Autumn Dressing",
@@ -3901,7 +3901,7 @@
       "asset": "whisper-grove_t6",
       "file": "whisper-grove_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | whisper-grove | T06 Architecture",
         "MMR | whisper-grove | T06 Autumn Dressing",
@@ -3928,7 +3928,7 @@
       "asset": "chapel_t1",
       "file": "chapel_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | chapel | T01 Architecture",
         "MMR | chapel | T01 Autumn Dressing",
@@ -3955,7 +3955,7 @@
       "asset": "chapel_t2",
       "file": "chapel_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | chapel | T02 Architecture",
         "MMR | chapel | T02 Autumn Dressing",
@@ -3982,7 +3982,7 @@
       "asset": "chapel_t3",
       "file": "chapel_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | chapel | T03 Architecture",
         "MMR | chapel | T03 Autumn Dressing",
@@ -4009,7 +4009,7 @@
       "asset": "chapel_t4",
       "file": "chapel_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | chapel | T04 Architecture",
         "MMR | chapel | T04 Autumn Dressing",
@@ -4036,7 +4036,7 @@
       "asset": "chapel_t5",
       "file": "chapel_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | chapel | T05 Architecture",
         "MMR | chapel | T05 Autumn Dressing",
@@ -4063,7 +4063,7 @@
       "asset": "chapel_t6",
       "file": "chapel_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | chapel | T06 Architecture",
         "MMR | chapel | T06 Autumn Dressing",
@@ -4090,7 +4090,7 @@
       "asset": "sunken-chapel_t1",
       "file": "sunken-chapel_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sunken-chapel | T01 Architecture",
         "MMR | sunken-chapel | T01 Autumn Dressing",
@@ -4117,7 +4117,7 @@
       "asset": "sunken-chapel_t2",
       "file": "sunken-chapel_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sunken-chapel | T02 Architecture",
         "MMR | sunken-chapel | T02 Autumn Dressing",
@@ -4144,7 +4144,7 @@
       "asset": "sunken-chapel_t3",
       "file": "sunken-chapel_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sunken-chapel | T03 Architecture",
         "MMR | sunken-chapel | T03 Autumn Dressing",
@@ -4171,7 +4171,7 @@
       "asset": "sunken-chapel_t4",
       "file": "sunken-chapel_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sunken-chapel | T04 Architecture",
         "MMR | sunken-chapel | T04 Autumn Dressing",
@@ -4198,7 +4198,7 @@
       "asset": "sunken-chapel_t5",
       "file": "sunken-chapel_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sunken-chapel | T05 Architecture",
         "MMR | sunken-chapel | T05 Autumn Dressing",
@@ -4226,7 +4226,7 @@
       "asset": "sunken-chapel_t6",
       "file": "sunken-chapel_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | sunken-chapel | T06 Architecture",
         "MMR | sunken-chapel | T06 Autumn Dressing",
@@ -4254,7 +4254,7 @@
       "asset": "schoolroom_t1",
       "file": "schoolroom_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | schoolroom | T01 Architecture",
         "MMR | schoolroom | T01 Autumn Dressing",
@@ -4281,7 +4281,7 @@
       "asset": "schoolroom_t2",
       "file": "schoolroom_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | schoolroom | T02 Architecture",
         "MMR | schoolroom | T02 Autumn Dressing",
@@ -4308,7 +4308,7 @@
       "asset": "schoolroom_t3",
       "file": "schoolroom_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | schoolroom | T03 Architecture",
         "MMR | schoolroom | T03 Autumn Dressing",
@@ -4335,7 +4335,7 @@
       "asset": "schoolroom_t4",
       "file": "schoolroom_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | schoolroom | T04 Architecture",
         "MMR | schoolroom | T04 Autumn Dressing",
@@ -4362,7 +4362,7 @@
       "asset": "schoolroom_t5",
       "file": "schoolroom_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | schoolroom | T05 Architecture",
         "MMR | schoolroom | T05 Autumn Dressing",
@@ -4389,7 +4389,7 @@
       "asset": "schoolroom_t6",
       "file": "schoolroom_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | schoolroom | T06 Architecture",
         "MMR | schoolroom | T06 Autumn Dressing",
@@ -4416,7 +4416,7 @@
       "asset": "armory_t1",
       "file": "armory_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | armory | T01 Architecture",
         "MMR | armory | T01 Autumn Dressing",
@@ -4443,7 +4443,7 @@
       "asset": "armory_t2",
       "file": "armory_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | armory | T02 Architecture",
         "MMR | armory | T02 Autumn Dressing",
@@ -4470,7 +4470,7 @@
       "asset": "armory_t3",
       "file": "armory_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | armory | T03 Architecture",
         "MMR | armory | T03 Autumn Dressing",
@@ -4497,7 +4497,7 @@
       "asset": "armory_t4",
       "file": "armory_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | armory | T04 Architecture",
         "MMR | armory | T04 Autumn Dressing",
@@ -4524,7 +4524,7 @@
       "asset": "armory_t5",
       "file": "armory_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | armory | T05 Architecture",
         "MMR | armory | T05 Autumn Dressing",
@@ -4551,7 +4551,7 @@
       "asset": "armory_t6",
       "file": "armory_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | armory | T06 Architecture",
         "MMR | armory | T06 Autumn Dressing",
@@ -4579,7 +4579,7 @@
       "asset": "workshop_t1",
       "file": "workshop_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | workshop | T01 Architecture",
         "MMR | workshop | Tier 01 Ground"
@@ -4605,7 +4605,7 @@
       "asset": "workshop_t2",
       "file": "workshop_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | workshop | T02 Architecture",
         "MMR | workshop | Tier 02 Ground"
@@ -4631,7 +4631,7 @@
       "asset": "workshop_t3",
       "file": "workshop_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | workshop | T03 Architecture",
         "MMR | workshop | Tier 03 Ground"
@@ -4657,7 +4657,7 @@
       "asset": "workshop_t4",
       "file": "workshop_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | workshop | T04 Architecture",
         "MMR | workshop | Tier 04 Ground"
@@ -4683,7 +4683,7 @@
       "asset": "workshop_t5",
       "file": "workshop_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | workshop | T05 Architecture",
         "MMR | workshop | Tier 05 Ground"
@@ -4709,7 +4709,7 @@
       "asset": "workshop_t6",
       "file": "workshop_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | workshop | T06 Architecture",
         "MMR | workshop | T06 Banner Flag 1",
@@ -4736,7 +4736,7 @@
       "asset": "smeltery_t1",
       "file": "smeltery_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | smeltery | T01 Architecture",
         "MMR | smeltery | T01 Autumn Dressing",
@@ -4764,7 +4764,7 @@
       "asset": "smeltery_t2",
       "file": "smeltery_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | smeltery | T02 Architecture",
         "MMR | smeltery | T02 Autumn Dressing",
@@ -4792,7 +4792,7 @@
       "asset": "smeltery_t3",
       "file": "smeltery_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | smeltery | T03 Architecture",
         "MMR | smeltery | T03 Autumn Dressing",
@@ -4820,7 +4820,7 @@
       "asset": "smeltery_t4",
       "file": "smeltery_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | smeltery | T04 Architecture",
         "MMR | smeltery | T04 Autumn Dressing",
@@ -4848,7 +4848,7 @@
       "asset": "smeltery_t5",
       "file": "smeltery_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | smeltery | T05 Architecture",
         "MMR | smeltery | T05 Autumn Dressing",
@@ -4876,7 +4876,7 @@
       "asset": "smeltery_t6",
       "file": "smeltery_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | smeltery | T06 Architecture",
         "MMR | smeltery | T06 Autumn Dressing",
@@ -4904,7 +4904,7 @@
       "asset": "tannery_t1",
       "file": "tannery_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tannery | T01 Architecture",
         "MMR | tannery | T01 Autumn Dressing",
@@ -4931,7 +4931,7 @@
       "asset": "tannery_t2",
       "file": "tannery_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tannery | T02 Architecture",
         "MMR | tannery | T02 Autumn Dressing",
@@ -4958,7 +4958,7 @@
       "asset": "tannery_t3",
       "file": "tannery_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tannery | T03 Architecture",
         "MMR | tannery | T03 Autumn Dressing",
@@ -4985,7 +4985,7 @@
       "asset": "tannery_t4",
       "file": "tannery_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tannery | T04 Architecture",
         "MMR | tannery | T04 Autumn Dressing",
@@ -5012,7 +5012,7 @@
       "asset": "tannery_t5",
       "file": "tannery_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tannery | T05 Architecture",
         "MMR | tannery | T05 Autumn Dressing",
@@ -5039,7 +5039,7 @@
       "asset": "tannery_t6",
       "file": "tannery_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | tannery | T06 Architecture",
         "MMR | tannery | T06 Autumn Dressing",
@@ -5066,7 +5066,7 @@
       "asset": "butchery_t1",
       "file": "butchery_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | butchery | T01 Architecture",
         "MMR | butchery | Tier 01 Ground"
@@ -5092,7 +5092,7 @@
       "asset": "butchery_t2",
       "file": "butchery_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | butchery | T02 Architecture",
         "MMR | butchery | T02 Autumn Dressing",
@@ -5119,7 +5119,7 @@
       "asset": "butchery_t3",
       "file": "butchery_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | butchery | T03 Architecture",
         "MMR | butchery | Tier 03 Ground"
@@ -5145,7 +5145,7 @@
       "asset": "butchery_t4",
       "file": "butchery_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | butchery | T04 Architecture",
         "MMR | butchery | T04 Autumn Dressing",
@@ -5172,7 +5172,7 @@
       "asset": "butchery_t5",
       "file": "butchery_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | butchery | T05 Architecture",
         "MMR | butchery | T05 Autumn Dressing",
@@ -5199,7 +5199,7 @@
       "asset": "butchery_t6",
       "file": "butchery_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | butchery | T06 Architecture",
         "MMR | butchery | T06 Autumn Dressing",
@@ -5227,7 +5227,7 @@
       "asset": "bakery_t1",
       "file": "bakery_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bakery | T01 Architecture",
         "MMR | bakery | T01 Autumn Dressing",
@@ -5254,7 +5254,7 @@
       "asset": "bakery_t2",
       "file": "bakery_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bakery | T02 Architecture",
         "MMR | bakery | T02 Autumn Dressing",
@@ -5281,7 +5281,7 @@
       "asset": "bakery_t3",
       "file": "bakery_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bakery | T03 Architecture",
         "MMR | bakery | T03 Autumn Dressing",
@@ -5308,7 +5308,7 @@
       "asset": "bakery_t4",
       "file": "bakery_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bakery | T04 Architecture",
         "MMR | bakery | T04 Autumn Dressing",
@@ -5335,7 +5335,7 @@
       "asset": "bakery_t5",
       "file": "bakery_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bakery | T05 Architecture",
         "MMR | bakery | T05 Autumn Dressing",
@@ -5362,7 +5362,7 @@
       "asset": "bakery_t6",
       "file": "bakery_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bakery | T06 Architecture",
         "MMR | bakery | T06 Autumn Dressing",
@@ -5390,7 +5390,7 @@
       "asset": "mason_yard_t1",
       "file": "mason_yard_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mason_yard | T01 Architecture",
         "MMR | mason_yard | T01 Autumn Dressing",
@@ -5417,7 +5417,7 @@
       "asset": "mason_yard_t2",
       "file": "mason_yard_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mason_yard | T02 Architecture",
         "MMR | mason_yard | T02 Autumn Dressing",
@@ -5444,7 +5444,7 @@
       "asset": "mason_yard_t3",
       "file": "mason_yard_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mason_yard | T03 Architecture",
         "MMR | mason_yard | T03 Autumn Dressing",
@@ -5471,7 +5471,7 @@
       "asset": "mason_yard_t4",
       "file": "mason_yard_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mason_yard | T04 Architecture",
         "MMR | mason_yard | T04 Autumn Dressing",
@@ -5498,7 +5498,7 @@
       "asset": "mason_yard_t5",
       "file": "mason_yard_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mason_yard | T05 Architecture",
         "MMR | mason_yard | T05 Autumn Dressing",
@@ -5525,7 +5525,7 @@
       "asset": "mason_yard_t6",
       "file": "mason_yard_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | mason_yard | T06 Architecture",
         "MMR | mason_yard | T06 Autumn Dressing",
@@ -5552,7 +5552,7 @@
       "asset": "emberglass_t1",
       "file": "emberglass_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | emberglass | T01 Architecture",
         "MMR | emberglass | T01 Autumn Dressing",
@@ -5579,7 +5579,7 @@
       "asset": "emberglass_t2",
       "file": "emberglass_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | emberglass | T02 Architecture",
         "MMR | emberglass | T02 Autumn Dressing",
@@ -5606,7 +5606,7 @@
       "asset": "emberglass_t3",
       "file": "emberglass_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | emberglass | T03 Architecture",
         "MMR | emberglass | T03 Autumn Dressing",
@@ -5633,7 +5633,7 @@
       "asset": "emberglass_t4",
       "file": "emberglass_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | emberglass | T04 Architecture",
         "MMR | emberglass | T04 Autumn Dressing",
@@ -5661,7 +5661,7 @@
       "asset": "emberglass_t5",
       "file": "emberglass_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | emberglass | T05 Architecture",
         "MMR | emberglass | T05 Flame Glow",
@@ -5688,7 +5688,7 @@
       "asset": "emberglass_t6",
       "file": "emberglass_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | emberglass | T06 Architecture",
         "MMR | emberglass | T06 Flame Glow",
@@ -5715,7 +5715,7 @@
       "asset": "fletcher_t1",
       "file": "fletcher_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | fletcher | T01 Architecture",
         "MMR | fletcher | Tier 01 Ground"
@@ -5741,7 +5741,7 @@
       "asset": "fletcher_t2",
       "file": "fletcher_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | fletcher | T02 Architecture",
         "MMR | fletcher | T02 Autumn Dressing",
@@ -5768,7 +5768,7 @@
       "asset": "fletcher_t3",
       "file": "fletcher_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | fletcher | T03 Architecture",
         "MMR | fletcher | T03 Autumn Dressing",
@@ -5795,7 +5795,7 @@
       "asset": "fletcher_t4",
       "file": "fletcher_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | fletcher | T04 Architecture",
         "MMR | fletcher | Tier 04 Ground"
@@ -5821,7 +5821,7 @@
       "asset": "fletcher_t5",
       "file": "fletcher_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | fletcher | T05 Architecture",
         "MMR | fletcher | T05 Autumn Dressing",
@@ -5848,7 +5848,7 @@
       "asset": "fletcher_t6",
       "file": "fletcher_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | fletcher | T06 Architecture",
         "MMR | fletcher | T06 Banner Flag 1",
@@ -5875,7 +5875,7 @@
       "asset": "scout_post_t1",
       "file": "scout_post_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scout_post | T01 Architecture",
         "MMR | scout_post | Tier 01 Ground"
@@ -5901,7 +5901,7 @@
       "asset": "scout_post_t2",
       "file": "scout_post_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scout_post | T02 Architecture",
         "MMR | scout_post | Tier 02 Ground"
@@ -5927,7 +5927,7 @@
       "asset": "scout_post_t3",
       "file": "scout_post_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scout_post | T03 Architecture",
         "MMR | scout_post | Tier 03 Ground"
@@ -5953,7 +5953,7 @@
       "asset": "scout_post_t4",
       "file": "scout_post_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scout_post | T04 Architecture",
         "MMR | scout_post | Tier 04 Ground"
@@ -5979,7 +5979,7 @@
       "asset": "scout_post_t5",
       "file": "scout_post_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scout_post | T05 Architecture",
         "MMR | scout_post | Tier 05 Ground"
@@ -6005,7 +6005,7 @@
       "asset": "scout_post_t6",
       "file": "scout_post_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | scout_post | T06 Architecture",
         "MMR | scout_post | Tier 06 Ground"
@@ -6031,7 +6031,7 @@
       "asset": "watchfire_t1",
       "file": "watchfire_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | watchfire | T01 Architecture",
         "MMR | watchfire | T01 Autumn Dressing",
@@ -6059,7 +6059,7 @@
       "asset": "watchfire_t2",
       "file": "watchfire_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | watchfire | T02 Architecture",
         "MMR | watchfire | T02 Autumn Dressing",
@@ -6087,7 +6087,7 @@
       "asset": "watchfire_t3",
       "file": "watchfire_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | watchfire | T03 Architecture",
         "MMR | watchfire | T03 Autumn Dressing",
@@ -6115,7 +6115,7 @@
       "asset": "watchfire_t4",
       "file": "watchfire_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | watchfire | T04 Architecture",
         "MMR | watchfire | T04 Autumn Dressing",
@@ -6143,7 +6143,7 @@
       "asset": "watchfire_t5",
       "file": "watchfire_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | watchfire | T05 Architecture",
         "MMR | watchfire | T05 Autumn Dressing",
@@ -6172,7 +6172,7 @@
       "asset": "watchfire_t6",
       "file": "watchfire_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | watchfire | T06 Architecture",
         "MMR | watchfire | T06 Autumn Dressing",
@@ -6201,7 +6201,7 @@
       "asset": "ballista_t1",
       "file": "ballista_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | ballista | T01 Architecture",
         "MMR | ballista | T01 Autumn Dressing",
@@ -6228,7 +6228,7 @@
       "asset": "ballista_t2",
       "file": "ballista_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | ballista | T02 Architecture",
         "MMR | ballista | T02 Autumn Dressing",
@@ -6255,7 +6255,7 @@
       "asset": "ballista_t3",
       "file": "ballista_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | ballista | T03 Architecture",
         "MMR | ballista | T03 Autumn Dressing",
@@ -6282,7 +6282,7 @@
       "asset": "ballista_t4",
       "file": "ballista_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | ballista | T04 Architecture",
         "MMR | ballista | T04 Autumn Dressing",
@@ -6310,7 +6310,7 @@
       "asset": "ballista_t5",
       "file": "ballista_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | ballista | T05 Architecture",
         "MMR | ballista | T05 Autumn Dressing",
@@ -6338,7 +6338,7 @@
       "asset": "ballista_t6",
       "file": "ballista_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | ballista | T06 Architecture",
         "MMR | ballista | T06 Autumn Dressing",
@@ -6366,7 +6366,7 @@
       "asset": "bastion_t1",
       "file": "bastion_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bastion | T01 Architecture",
         "MMR | bastion | T01 Autumn Dressing",
@@ -6394,7 +6394,7 @@
       "asset": "bastion_t2",
       "file": "bastion_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bastion | T02 Architecture",
         "MMR | bastion | T02 Autumn Dressing",
@@ -6422,7 +6422,7 @@
       "asset": "bastion_t3",
       "file": "bastion_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bastion | T03 Architecture",
         "MMR | bastion | T03 Autumn Dressing",
@@ -6450,7 +6450,7 @@
       "asset": "bastion_t4",
       "file": "bastion_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bastion | T04 Architecture",
         "MMR | bastion | T04 Autumn Dressing",
@@ -6479,7 +6479,7 @@
       "asset": "bastion_t5",
       "file": "bastion_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bastion | T05 Architecture",
         "MMR | bastion | T05 Autumn Dressing",
@@ -6508,7 +6508,7 @@
       "asset": "bastion_t6",
       "file": "bastion_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bastion | T06 Architecture",
         "MMR | bastion | T06 Autumn Dressing",
@@ -6537,7 +6537,7 @@
       "asset": "rampart_t1",
       "file": "rampart_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | rampart | T01 Architecture",
         "MMR | rampart | Tier 01 Ground"
@@ -6563,7 +6563,7 @@
       "asset": "rampart_t2",
       "file": "rampart_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | rampart | T02 Architecture",
         "MMR | rampart | Tier 02 Ground"
@@ -6589,7 +6589,7 @@
       "asset": "rampart_t3",
       "file": "rampart_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | rampart | T03 Architecture",
         "MMR | rampart | Tier 03 Ground"
@@ -6615,7 +6615,7 @@
       "asset": "rampart_t4",
       "file": "rampart_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | rampart | T04 Architecture",
         "MMR | rampart | Tier 04 Ground"
@@ -6641,7 +6641,7 @@
       "asset": "rampart_t5",
       "file": "rampart_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | rampart | T05 Architecture",
         "MMR | rampart | Tier 05 Ground"
@@ -6667,7 +6667,7 @@
       "asset": "rampart_t6",
       "file": "rampart_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | rampart | T06 Architecture",
         "MMR | rampart | Tier 06 Ground"
@@ -6693,7 +6693,7 @@
       "asset": "longhouse_t1",
       "file": "longhouse_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | longhouse | T01 Architecture",
         "MMR | longhouse | T01 Autumn Dressing",
@@ -6720,7 +6720,7 @@
       "asset": "longhouse_t2",
       "file": "longhouse_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | longhouse | T02 Architecture",
         "MMR | longhouse | T02 Autumn Dressing",
@@ -6747,7 +6747,7 @@
       "asset": "longhouse_t3",
       "file": "longhouse_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | longhouse | T03 Architecture",
         "MMR | longhouse | T03 Autumn Dressing",
@@ -6774,7 +6774,7 @@
       "asset": "longhouse_t4",
       "file": "longhouse_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | longhouse | T04 Architecture",
         "MMR | longhouse | T04 Autumn Dressing",
@@ -6801,7 +6801,7 @@
       "asset": "longhouse_t5",
       "file": "longhouse_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | longhouse | T05 Architecture",
         "MMR | longhouse | T05 Autumn Dressing",
@@ -6828,7 +6828,7 @@
       "asset": "longhouse_t6",
       "file": "longhouse_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | longhouse | T06 Architecture",
         "MMR | longhouse | T06 Autumn Dressing",
@@ -6855,7 +6855,7 @@
       "asset": "bellcote_t1",
       "file": "bellcote_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bellcote | T01 Architecture",
         "MMR | bellcote | T01 Autumn Dressing",
@@ -6882,7 +6882,7 @@
       "asset": "bell-tower_t1",
       "file": "bell-tower_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bell-tower | T01 Architecture",
         "MMR | bell-tower | T01 Autumn Dressing",
@@ -6910,7 +6910,7 @@
       "asset": "bell-tower_t2",
       "file": "bell-tower_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bell-tower | T02 Architecture",
         "MMR | bell-tower | T02 Autumn Dressing",
@@ -6938,7 +6938,7 @@
       "asset": "bell-tower_t3",
       "file": "bell-tower_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bell-tower | T03 Architecture",
         "MMR | bell-tower | T03 Autumn Dressing",
@@ -6967,7 +6967,7 @@
       "asset": "bell-tower_t4",
       "file": "bell-tower_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bell-tower | T04 Architecture",
         "MMR | bell-tower | T04 Autumn Dressing",
@@ -6996,7 +6996,7 @@
       "asset": "bell-tower_t5",
       "file": "bell-tower_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bell-tower | T05 Architecture",
         "MMR | bell-tower | T05 Autumn Dressing",
@@ -7025,7 +7025,7 @@
       "asset": "bell-tower_t6",
       "file": "bell-tower_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | bell-tower | T06 Architecture",
         "MMR | bell-tower | T06 Autumn Dressing",
@@ -7054,7 +7054,7 @@
       "asset": "blackwater-weir_t1",
       "file": "blackwater-weir_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | blackwater-weir | T01 Architecture",
         "MMR | blackwater-weir | Tier 01 Ground"
@@ -7080,7 +7080,7 @@
       "asset": "blackwater-weir_t2",
       "file": "blackwater-weir_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | blackwater-weir | T02 Architecture",
         "MMR | blackwater-weir | Tier 02 Ground"
@@ -7106,7 +7106,7 @@
       "asset": "blackwater-weir_t3",
       "file": "blackwater-weir_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | blackwater-weir | T03 Architecture",
         "MMR | blackwater-weir | Tier 03 Ground"
@@ -7132,7 +7132,7 @@
       "asset": "blackwater-weir_t4",
       "file": "blackwater-weir_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | blackwater-weir | T04 Architecture",
         "MMR | blackwater-weir | Tier 04 Ground"
@@ -7158,7 +7158,7 @@
       "asset": "blackwater-weir_t5",
       "file": "blackwater-weir_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | blackwater-weir | T05 Architecture",
         "MMR | blackwater-weir | Tier 05 Ground"
@@ -7184,7 +7184,7 @@
       "asset": "blackwater-weir_t6",
       "file": "blackwater-weir_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | blackwater-weir | T06 Architecture",
         "MMR | blackwater-weir | Tier 06 Ground"
@@ -7210,7 +7210,7 @@
       "asset": "deephole_t1",
       "file": "deephole_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | deephole | T01 Architecture",
         "MMR | deephole | Tier 01 Ground"
@@ -7236,7 +7236,7 @@
       "asset": "deephole_t2",
       "file": "deephole_t2.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | deephole | T02 Architecture",
         "MMR | deephole | Tier 02 Ground"
@@ -7262,7 +7262,7 @@
       "asset": "deephole_t3",
       "file": "deephole_t3.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | deephole | T03 Architecture",
         "MMR | deephole | Tier 03 Ground"
@@ -7288,7 +7288,7 @@
       "asset": "deephole_t4",
       "file": "deephole_t4.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | deephole | T04 Architecture",
         "MMR | deephole | Tier 04 Ground"
@@ -7314,7 +7314,7 @@
       "asset": "deephole_t5",
       "file": "deephole_t5.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | deephole | T05 Architecture",
         "MMR | deephole | Tier 05 Ground"
@@ -7340,7 +7340,7 @@
       "asset": "deephole_t6",
       "file": "deephole_t6.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | deephole | T06 Architecture",
         "MMR | deephole | Tier 06 Ground"
@@ -7366,7 +7366,7 @@
       "asset": "cairnfield_t1",
       "file": "cairnfield_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | cairnfield | T01 Architecture",
         "MMR | cairnfield | T01 Autumn Dressing",
@@ -7393,7 +7393,7 @@
       "asset": "moon-dial_t1",
       "file": "moon-dial_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | moon-dial | T01 Architecture",
         "MMR | moon-dial | Tier 01 Ground"
@@ -7419,7 +7419,7 @@
       "asset": "dawn-gate_t1",
       "file": "dawn-gate_t1.glb",
       "kind": "building",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR | dawn-gate | T01 Architecture",
         "MMR | dawn-gate | T01 Banner Flag 1",
@@ -7448,7 +7448,7 @@
       "asset": "char_builder",
       "file": "char_builder.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | builder Rig",
         "MMR Character | builder Body",
@@ -7488,7 +7488,7 @@
       "asset": "char_warrior",
       "file": "char_warrior.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | warrior Rig",
         "MMR Character | warrior Body",
@@ -7529,7 +7529,7 @@
       "asset": "char_archer",
       "file": "char_archer.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | archer Rig",
         "MMR Character | archer Body",
@@ -7569,7 +7569,7 @@
       "asset": "char_farmer",
       "file": "char_farmer.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | farmer Rig",
         "MMR Character | farmer Body",
@@ -7609,7 +7609,7 @@
       "asset": "char_lumberjack",
       "file": "char_lumberjack.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | lumberjack Rig",
         "MMR Character | lumberjack Body",
@@ -7649,7 +7649,7 @@
       "asset": "char_miner",
       "file": "char_miner.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | miner Rig",
         "MMR Character | miner Body",
@@ -7689,7 +7689,7 @@
       "asset": "char_fisherman",
       "file": "char_fisherman.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | fisherman Rig",
         "MMR Character | fisherman Body",
@@ -7729,7 +7729,7 @@
       "asset": "char_shepherd",
       "file": "char_shepherd.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | shepherd Rig",
         "MMR Character | shepherd Body",
@@ -7769,7 +7769,7 @@
       "asset": "char_diver",
       "file": "char_diver.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | diver Rig",
         "MMR Character | diver Body",
@@ -7809,7 +7809,7 @@
       "asset": "char_sapper",
       "file": "char_sapper.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | sapper Rig",
         "MMR Character | sapper Body",
@@ -7849,7 +7849,7 @@
       "asset": "char_smelter",
       "file": "char_smelter.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | smelter Rig",
         "MMR Character | smelter Body",
@@ -7889,7 +7889,7 @@
       "asset": "char_forager",
       "file": "char_forager.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | forager Rig",
         "MMR Character | forager Body",
@@ -7929,7 +7929,7 @@
       "asset": "char_miller",
       "file": "char_miller.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | miller Rig",
         "MMR Character | miller Body",
@@ -7969,7 +7969,7 @@
       "asset": "char_butcher",
       "file": "char_butcher.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | butcher Rig",
         "MMR Character | butcher Body",
@@ -8009,7 +8009,7 @@
       "asset": "char_haggler",
       "file": "char_haggler.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | haggler Rig",
         "MMR Character | haggler Body",
@@ -8049,7 +8049,7 @@
       "asset": "char_heartwarden",
       "file": "char_heartwarden.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | heartwarden Rig",
         "MMR Character | heartwarden Body",
@@ -8089,7 +8089,7 @@
       "asset": "char_healer",
       "file": "char_healer.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | healer Rig",
         "MMR Character | healer Body",
@@ -8129,7 +8129,7 @@
       "asset": "char_chorister",
       "file": "char_chorister.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | chorister Rig",
         "MMR Character | chorister Body",
@@ -8169,7 +8169,7 @@
       "asset": "char_sawyer",
       "file": "char_sawyer.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | sawyer Rig",
         "MMR Character | sawyer Body",
@@ -8209,7 +8209,7 @@
       "asset": "char_woodward",
       "file": "char_woodward.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | woodward Rig",
         "MMR Character | woodward Body",
@@ -8249,7 +8249,7 @@
       "asset": "char_halberdier",
       "file": "char_halberdier.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | halberdier Rig",
         "MMR Character | halberdier Body",
@@ -8289,7 +8289,7 @@
       "asset": "char_pikewoman",
       "file": "char_pikewoman.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | pikewoman Rig",
         "MMR Character | pikewoman Body",
@@ -8329,7 +8329,7 @@
       "asset": "char_oathsworn",
       "file": "char_oathsworn.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | oathsworn Rig",
         "MMR Character | oathsworn Body",
@@ -8370,7 +8370,7 @@
       "asset": "char_warden",
       "file": "char_warden.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | warden Rig",
         "MMR Character | warden Body",
@@ -8411,7 +8411,7 @@
       "asset": "char_squire",
       "file": "char_squire.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | squire Rig",
         "MMR Character | squire Body",
@@ -8451,7 +8451,7 @@
       "asset": "char_weaponsmith",
       "file": "char_weaponsmith.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | weaponsmith Rig",
         "MMR Character | weaponsmith Body",
@@ -8491,7 +8491,7 @@
       "asset": "char_armorer",
       "file": "char_armorer.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | armorer Rig",
         "MMR Character | armorer Body",
@@ -8531,7 +8531,7 @@
       "asset": "char_toolsmith",
       "file": "char_toolsmith.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | toolsmith Rig",
         "MMR Character | toolsmith Body",
@@ -8571,7 +8571,7 @@
       "asset": "char_mason",
       "file": "char_mason.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | mason Rig",
         "MMR Character | mason Body",
@@ -8611,7 +8611,7 @@
       "asset": "char_apprentice",
       "file": "char_apprentice.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | apprentice Rig",
         "MMR Character | apprentice Body",
@@ -8650,7 +8650,7 @@
       "asset": "char_scholar",
       "file": "char_scholar.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | scholar Rig",
         "MMR Character | scholar Body",
@@ -8690,7 +8690,7 @@
       "asset": "char_leatherworker",
       "file": "char_leatherworker.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | leatherworker Rig",
         "MMR Character | leatherworker Body",
@@ -8730,7 +8730,7 @@
       "asset": "char_ranger",
       "file": "char_ranger.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | ranger Rig",
         "MMR Character | ranger Body",
@@ -8770,7 +8770,7 @@
       "asset": "char_longbowman",
       "file": "char_longbowman.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | longbowman Rig",
         "MMR Character | longbowman Body",
@@ -8810,7 +8810,7 @@
       "asset": "char_scout",
       "file": "char_scout.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | scout Rig",
         "MMR Character | scout Body",
@@ -8850,7 +8850,7 @@
       "asset": "char_mudlark",
       "file": "char_mudlark.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | mudlark Rig",
         "MMR Character | mudlark Body",
@@ -8890,7 +8890,7 @@
       "asset": "char_tidecaller",
       "file": "char_tidecaller.glb",
       "kind": "character",
-      "source_file": "Game Assets Autumn.blend",
+      "source_file": "Game Assets.blend",
       "source_objects": [
         "MMR Character | tidecaller Rig",
         "MMR Character | tidecaller Body",

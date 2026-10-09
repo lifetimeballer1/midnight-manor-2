@@ -2,7 +2,7 @@
   "asset": "char_haggler",
   "file": "char_haggler.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | haggler Rig",
     "MMR Character | haggler Body",

@@ -2,7 +2,7 @@
   "asset": "char_warrior",
   "file": "char_warrior.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | warrior Rig",
     "MMR Character | warrior Body",

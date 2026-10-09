@@ -1329,13 +1329,47 @@ func _building_asset(b: Dictionary) -> String:
 	return model_asset("manor_hall" if b["type"] == "hall" else str(b["type"]), int(b["tier"]))
 
 
+# What a building's 3D view is built from. Walls and gates also read which neighbours still stand
+# (their joins), so a neighbour falling changes their signature too. HP, build progress and the
+# ruined look are refreshed every frame in _update_actors and never need a rebuild.
+func _view_signature(b: Dictionary) -> String:
+	var signature: String = "%s|%d|%d|%d" % [_building_asset(b), int(b["x"]), int(b["y"]), int(b["size"])]
+	if str(b["type"]) in ["wall", "stonewall", "gate"]:
+		var mask: int = 0
+		for other: Dictionary in sim.buildings:
+			if other["type"] not in ["wall", "stonewall", "gate"] or other["hp"] <= 0: continue
+			var dx: int = int(other["x"]) - int(b["x"])
+			var dy: int = int(other["y"]) - int(b["y"])
+			if absi(dx) + absi(dy) != 1: continue
+			mask |= (1 if dx == 1 else 2) if dx != 0 else (4 if dy == 1 else 8)
+		signature += "|%d" % mask
+	return signature
+
+
+# A raid destroys buildings one at a time and every loss bumps sim.revision. Rebuilding all 67
+# models each time cost 250-500 ms per loss on a developed village, so views whose signature is
+# unchanged are kept and only the changed ones are rebuilt.
 func _rebuild_buildings() -> void:
-	details.smoke_count = 0
+	var wanted: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		wanted[int(b["id"])] = _view_signature(b)
+	var kept: Dictionary = {}
+	var kept_roots: Dictionary = {}
+	var smoke_kept: int = 0
+	for id: Variant in building_views.keys():
+		var old: Dictionary = building_views[id]
+		if is_instance_valid(old.get("root")) and wanted.get(id, "") == old.get("signature", null):
+			kept[id] = old
+			kept_roots[old["root"]] = true
+			if old.has("smoke"): smoke_kept += 1
+	details.smoke_count = smoke_kept
 	for child in building_layer.get_children():
+		if kept_roots.has(child): continue
 		building_layer.remove_child(child)
 		child.queue_free()
-	building_views.clear()
+	building_views = kept
 	for b: Dictionary in sim.buildings:
+		if kept.has(int(b["id"])): continue
 		var key: String = _building_asset(b)
 		var root_node := Node3D.new()
 		building_layer.add_child(root_node)
@@ -1390,7 +1424,7 @@ func _rebuild_buildings() -> void:
 			glow.position = lamp.position
 			glow.visible = night
 			root_node.add_child(glow)
-		building_views[int(b["id"])] = {"root": root_node, "model": model, "label": label, "lamp": lamp, "glow": glow}
+		building_views[int(b["id"])] = {"root": root_node, "model": model, "label": label, "lamp": lamp, "glow": glow, "signature": wanted[int(b["id"])]}
 		if b["type"] in ["hall", "cottage", "longhouse", "barracks", "storehouse", "schoolroom", "chapel", "forge", "armory", "workshop", "mill", "bakery", "market", "bathhouse"]:
 			var panes: Array[MeshInstance3D] = []
 			var count: int = 1 if int(b["size"]) == 1 else 2
@@ -3253,6 +3287,7 @@ func _confirm_new_game() -> void:
 	_sync_expansion(false)
 	selected_building = -1
 	selected_unit = -1
+	building_views.clear()
 	view_revision = -1
 	road_revision = -2
 	tick_accumulator = 0.0

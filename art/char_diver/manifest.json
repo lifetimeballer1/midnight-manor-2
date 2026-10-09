@@ -2,7 +2,7 @@
   "asset": "char_diver",
   "file": "char_diver.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | diver Rig",
     "MMR Character | diver Body",

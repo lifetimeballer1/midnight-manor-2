@@ -2,7 +2,7 @@
   "asset": "tower_t1",
   "file": "tower_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR | tower | T01 Architecture",
     "MMR | tower | T01 Autumn Dressing",

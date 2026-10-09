@@ -2,7 +2,7 @@
   "asset": "char_miller",
   "file": "char_miller.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | miller Rig",
     "MMR Character | miller Body",

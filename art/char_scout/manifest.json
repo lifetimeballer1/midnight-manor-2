@@ -2,7 +2,7 @@
   "asset": "char_scout",
   "file": "char_scout.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | scout Rig",
     "MMR Character | scout Body",

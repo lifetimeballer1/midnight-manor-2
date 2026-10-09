@@ -2,7 +2,7 @@
   "asset": "trap_t1",
   "file": "trap_t1.glb",
   "kind": "building",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR | trap | T01 Architecture",
     "MMR | trap | Tier 01 Ground"

@@ -2,7 +2,7 @@
   "asset": "char_shepherd",
   "file": "char_shepherd.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | shepherd Rig",
     "MMR Character | shepherd Body",

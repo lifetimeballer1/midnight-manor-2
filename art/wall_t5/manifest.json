@@ -2,7 +2,7 @@
   "asset": "wall_t5",
   "file": "wall_t5.glb",
   "kind": "building",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR | wall | T05 Architecture",
     "MMR | wall | Tier 05 Ground"

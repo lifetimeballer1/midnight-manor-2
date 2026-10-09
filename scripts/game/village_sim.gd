@@ -947,6 +947,61 @@ func _blocked(tile: Vector2i, enemy: bool) -> bool:
 	return false
 
 
+# Walk grids for the pathfinders. _blocked() scans every building per tile, which made one
+# route() on a developed village cost hundreds of milliseconds (a raid tick once hit ~950 ms).
+# The grids hold 1 for "cannot step here" (blocked or outside the claimed world) and are
+# rebuilt only when the building signature changes, so a search is O(tiles).
+var _walk_signature: int = -1
+var _walk_rect: Rect2i = Rect2i()
+var _walk_friendly: PackedByteArray = PackedByteArray()
+var _walk_enemy: PackedByteArray = PackedByteArray()
+
+
+func _building_signature() -> int:
+	var signature: int = buildings.size() * 7919 + expansions.size() * 104729
+	for b in buildings:
+		var state: int = 1
+		if b["hp"] > 0:
+			state += 1
+			if b["type"] == "gate" and b.get("gate_open", true):
+				state += 2
+		# Order-sensitive mix (not a plain sum) so different layouts cannot cancel out.
+		signature = (signature * 1000003) ^ ((int(b["id"]) << 20) + (int(b["x"]) << 14) + (int(b["y"]) << 8) + (int(b["size"]) << 4) + state)
+	return signature
+
+
+func _refresh_walk_grids() -> void:
+	var rect: Rect2i = world_bounds()
+	var signature: int = _building_signature()
+	if signature == _walk_signature and rect == _walk_rect:
+		return
+	_walk_signature = signature
+	_walk_rect = rect
+	var width: int = rect.size.x
+	var count: int = width * rect.size.y
+	_walk_friendly.resize(count)
+	_walk_enemy.resize(count)
+	_walk_friendly.fill(1)
+	_walk_enemy.fill(1)
+	for y in range(rect.position.y, rect.position.y + rect.size.y):
+		for x in range(rect.position.x, rect.position.x + rect.size.x):
+			if in_world(Vector2i(x, y)):
+				var index: int = (y - rect.position.y) * width + (x - rect.position.x)
+				_walk_friendly[index] = 0
+				_walk_enemy[index] = 0
+	for b in buildings:
+		if b["hp"] <= 0 or b["type"] == "trap":
+			continue
+		var friendly_open: bool = b["type"] == "gate" and b.get("gate_open", true)
+		var footprint: Rect2i = Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"])).intersection(rect)
+		for y in range(footprint.position.y, footprint.position.y + footprint.size.y):
+			for x in range(footprint.position.x, footprint.position.x + footprint.size.x):
+				var index: int = (y - rect.position.y) * width + (x - rect.position.x)
+				_walk_enemy[index] = 1
+				if not friendly_open:
+					_walk_friendly[index] = 1
+
+
 func route(start: Vector2i, goal: Vector2i, enemy: bool = false) -> Array[Vector2i]:
 	if not enemy and living.navigation_revision > 0:
 		return _weighted_route(start, goal)
@@ -955,26 +1010,43 @@ func route(start: Vector2i, goal: Vector2i, enemy: bool = false) -> Array[Vector
 		return result
 	if start == goal:
 		return [start]
-	if _blocked(goal, enemy):
+	_refresh_walk_grids()
+	var grid: PackedByteArray = _walk_enemy if enemy else _walk_friendly
+	var origin: Vector2i = _walk_rect.position
+	var width: int = _walk_rect.size.x
+	var height: int = _walk_rect.size.y
+	var goal_index: int = (goal.y - origin.y) * width + (goal.x - origin.x)
+	if grid[goal_index] != 0:
 		return result
-	var previous: Dictionary = {start: start}
-	var queue: Array[Vector2i] = [start]
-	var index: int = 0
-	while index < queue.size():
-		var tile: Vector2i = queue[index]
-		index += 1
+	var start_index: int = (start.y - origin.y) * width + (start.x - origin.x)
+	var previous: PackedInt32Array = PackedInt32Array()
+	previous.resize(grid.size())
+	previous.fill(-1)
+	previous[start_index] = start_index
+	var queue: PackedInt32Array = PackedInt32Array([start_index])
+	var head: int = 0
+	while head < queue.size():
+		var current: int = queue[head]
+		head += 1
+		var cx: int = current % width
+		var cy: int = current / width
 		for direction in DIRECTIONS:
-			var next: Vector2i = tile + direction
-			if not _inside(next) or previous.has(next) or _blocked(next, enemy):
+			var nx: int = cx + direction.x
+			var ny: int = cy + direction.y
+			if nx < 0 or ny < 0 or nx >= width or ny >= height:
 				continue
-			previous[next] = tile
+			var next: int = ny * width + nx
+			if previous[next] != -1 or grid[next] != 0:
+				continue
+			previous[next] = current
 			queue.append(next)
-			if next == goal:
-				var step: Vector2i = goal
-				while step != start:
-					result.push_front(step)
+			if next == goal_index:
+				var step: int = goal_index
+				while step != start_index:
+					result.append(Vector2i(origin.x + step % width, origin.y + step / width))
 					step = previous[step]
-				result.push_front(start)
+				result.append(start)
+				result.reverse()
 				return result
 	return result
 
@@ -999,30 +1071,60 @@ func _weighted_route(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	if not _inside(start) or not _inside(goal): return result
 	if start == goal: return [start]
-	if _blocked(goal, false): return result
-	var frontier: Array[Vector2i] = [start]
-	var distances: Dictionary = {start: 0.0}
-	var previous: Dictionary = {}
+	_refresh_walk_grids()
+	var origin: Vector2i = _walk_rect.position
+	var width: int = _walk_rect.size.x
+	var height: int = _walk_rect.size.y
+	var goal_index: int = (goal.y - origin.y) * width + (goal.x - origin.x)
+	if _walk_friendly[goal_index] != 0: return result
+	var start_index: int = (start.y - origin.y) * width + (start.x - origin.x)
+	var count: int = _walk_friendly.size()
+	var distances: PackedFloat64Array = PackedFloat64Array()
+	distances.resize(count)
+	distances.fill(INF)
+	distances[start_index] = 0.0
+	var previous: PackedInt32Array = PackedInt32Array()
+	previous.resize(count)
+	previous.fill(-1)
+	var queued: PackedByteArray = PackedByteArray()
+	queued.resize(count)
+	queued[start_index] = 1
+	# Same selection rule as before (lowest distance, earliest queued wins ties) so paths are unchanged.
+	var frontier: PackedInt32Array = PackedInt32Array([start_index])
 	while not frontier.is_empty():
 		var best: int = 0
+		var best_distance: float = distances[frontier[0]]
 		for index in range(1, frontier.size()):
-			if float(distances[frontier[index]]) < float(distances[frontier[best]]): best = index
-		var tile: Vector2i = frontier[best]
+			var candidate: float = distances[frontier[index]]
+			if candidate < best_distance:
+				best = index
+				best_distance = candidate
+		var tile_index: int = frontier[best]
 		frontier.remove_at(best)
-		if tile == goal:
-			while tile != start:
-				result.push_front(tile)
-				tile = previous[tile]
-			result.push_front(start)
+		queued[tile_index] = 0
+		if tile_index == goal_index:
+			var step: int = goal_index
+			while step != start_index:
+				result.append(Vector2i(origin.x + step % width, origin.y + step / width))
+				step = previous[step]
+			result.append(start)
+			result.reverse()
 			return result
+		var cx: int = tile_index % width
+		var cy: int = tile_index / width
 		for direction in DIRECTIONS:
-			var next: Vector2i = tile + direction
-			if not _inside(next) or _blocked(next, false): continue
-			var cost: float = float(distances[tile]) + living.route_cost(next)
-			if cost < float(distances.get(next, INF)):
+			var nx: int = cx + direction.x
+			var ny: int = cy + direction.y
+			if nx < 0 or ny < 0 or nx >= width or ny >= height: continue
+			var next: int = ny * width + nx
+			if _walk_friendly[next] != 0: continue
+			var cost: float = distances[tile_index] + living.route_cost(Vector2i(origin.x + nx, origin.y + ny))
+			if cost < distances[next]:
 				distances[next] = cost
-				previous[next] = tile
-				if not frontier.has(next): frontier.append(next)
+				previous[next] = tile_index
+				if queued[next] == 0:
+					queued[next] = 1
+					frontier.append(next)
 	return result
 
 

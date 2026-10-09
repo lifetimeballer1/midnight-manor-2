@@ -2,7 +2,7 @@
   "asset": "char_toolsmith",
   "file": "char_toolsmith.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | toolsmith Rig",
     "MMR Character | toolsmith Body",

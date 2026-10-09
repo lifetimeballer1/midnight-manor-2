@@ -2,7 +2,7 @@
   "asset": "char_forager",
   "file": "char_forager.glb",
   "kind": "character",
-  "source_file": "Game Assets Autumn.blend",
+  "source_file": "Game Assets.blend",
   "source_objects": [
     "MMR Character | forager Rig",
     "MMR Character | forager Body",

@@ -148,6 +148,7 @@ func _run() -> void:
 
 	# The soot switch (--no-autumn-art) turns the lightening off and leaves the dark soot alone.
 	game._art_soot_on = false
+	game.building_views.clear()  # views are kept across rebuilds unless their look changed
 	game._rebuild_buildings()
 	var unlit: Vector2i = _soot_counts(game)
 	check(unlit.y == 0 and unlit.x > 0, "with the soot switch off the dark soot is left as it was (%d dark, %d lightened)" % [unlit.x, unlit.y])
