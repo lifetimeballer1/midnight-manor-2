@@ -94,11 +94,12 @@ func _run() -> void:
 	check(gate_view["joins"].get_child_count() > 0, "gate connects to neighboring wall")
 	game.sim.enemies.append({"id": game.sim._id(), "type": "raider", "x": 5.5, "y": 12.0, "hp": 80.0, "max_hp": 80.0, "phase": "idle", "cooldown": 0.0})
 	game.sim.raid_active = true
+	gate["gate_open"] = false
 	game.sim._gate_tick()
-	check(not gate["gate_open"] and game.sim._blocked(Vector2i(5, 11), false), "enemy pressure closes visible and logical gate")
+	check(bool(gate.get("gate_open", false)), "gate stays open under enemy pressure so defenders can sally")
+	check(not game.sim._blocked(Vector2i(5, 11), false), "open gate lets friendly units through during a raid")
+	check(game.sim._blocked(Vector2i(5, 11), true), "raiders still have to break through the gate")
 	game.sim.enemies.clear()
-	game.sim._gate_tick()
-	check(gate["gate_open"] and not game.sim._blocked(Vector2i(5, 11), false), "gate reopens after danger passes")
 	game.sim.raid_active = false
 	game.sim.start_raid()
 	game.details.update(game, 0.1)

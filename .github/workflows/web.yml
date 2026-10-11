@@ -19,7 +19,11 @@ env:
   GODOT_STATUS: stable
 
 jobs:
+  test:
+    uses: ./.github/workflows/tests.yml
+
   export:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
