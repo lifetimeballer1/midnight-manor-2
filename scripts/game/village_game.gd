@@ -16,9 +16,9 @@ const PAPER := Color("f2e7cc")
 const TILE: float = 2.0
 const MAP_ORIGIN := Vector3(-20, 0, -16)
 # Camera pan limits, widened so all four expansion plots can be viewed.
-const PAN_LIMIT := Vector2(40.0, 36.0)
+var pan_limit := Vector2(40.0, 36.0)   # the realm layer widens this to the open world
 # Zoom-out limit: wide enough to see the whole potential 80x72 world at once.
-const ZOOM_MAX: float = 90.0
+var zoom_max: float = 90.0   # the realm layer raises this for the open world
 # ground_parts indices of the base lip and skirt on each edge (order set in _ground()).
 # A claimed plot covers its edge, so these are hidden while it is claimed.
 const EXPANSION_EDGE_PARTS := {"west": [2, 6], "east": [3, 7], "north": [4, 8], "south": [5, 9]}
@@ -4594,15 +4594,15 @@ func _pinch_update() -> void:
 	var a: Vector2 = pts[0]
 	var b: Vector2 = pts[1]
 	var cur_dist: float = maxf(a.distance_to(b), 1.0)
-	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, ZOOM_MAX)
+	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, zoom_max)
 	var cur_angle: float = atan2(b.y - a.y, b.x - a.x)
 	yaw = pinch_yaw - wrapf(cur_angle - pinch_angle, -PI, PI)
 	var mid: Vector2 = (a + b) * 0.5
 	if pinch_has_mid:
 		var movement: Vector2 = pick_ground(pinch_mid) - pick_ground(mid)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
-		target.x = clampf(target.x, -PAN_LIMIT.x, PAN_LIMIT.x)
-		target.z = clampf(target.z, -PAN_LIMIT.y, PAN_LIMIT.y)
+		target.x = clampf(target.x, -pan_limit.x, pan_limit.x)
+		target.z = clampf(target.z, -pan_limit.y, pan_limit.y)
 	pinch_mid = mid
 	pinch_has_mid = true
 	_camera_update()
@@ -4636,8 +4636,8 @@ func _drag_map(pointer: Vector2) -> void:
 		left_dragged = true
 		var movement: Vector2 = pick_ground(last_pointer) - pick_ground(pointer)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
-		target.x = clampf(target.x, -PAN_LIMIT.x, PAN_LIMIT.x)
-		target.z = clampf(target.z, -PAN_LIMIT.y, PAN_LIMIT.y)
+		target.x = clampf(target.x, -pan_limit.x, pan_limit.x)
+		target.z = clampf(target.z, -pan_limit.y, pan_limit.y)
 		_camera_update()
 	last_pointer = pointer
 
@@ -4663,7 +4663,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			panning = event.pressed
 		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			zoom = clampf(zoom * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 12, ZOOM_MAX)
+			zoom = clampf(zoom * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 12, zoom_max)
 			_camera_update()
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			left_pressed = true
@@ -4685,7 +4685,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		target += Vector3(event.delta.x, 0, event.delta.y) * 0.03
 		_camera_update()
 	if event is InputEventMagnifyGesture:
-		zoom = clampf(zoom / event.factor, 12, ZOOM_MAX)
+		zoom = clampf(zoom / event.factor, 12, zoom_max)
 		_camera_update()
 
 

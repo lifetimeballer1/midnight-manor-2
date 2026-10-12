@@ -47,6 +47,14 @@ You start with nine buildings, five villagers, 320 Wood / 180 Food / 210 Gold. C
 
 Research Stoneworking (quarry + miners at village level 2) and Road Masonry (pave worn dirt for 8 Stone/segment, +15% friendly speed). Villagers wear dirt into faint paths (~25 crossings) and full trails (~150); unused dirt regrows after ~10 active minutes. Living Manor generates 6 Insight/min; research pauses during alarms. See `docs/LIVING_VILLAGE_DELIVERY.md`.
 
+## The Realm (open world, in development)
+
+Pan and zoom out past the haunted edge: the manor now sits in a 512 m (256x256 tile) realm of
+hills, woods and lakes with five rival settlements. Their people walk between their halls and
+cottages, their land is tinted in their colour, and they grow over active play time, pushing
+their borders outward. Built for phones by streaming: one ground mesh, trees per nearby chunk,
+and models only for the nearest settlements. See `docs/REALM.md`; `test_realm` covers it.
+
 ## Project layout
 
 ### Manor Studio
