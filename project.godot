@@ -12,8 +12,10 @@ config_version=5
 
 config/name="Midnight Manor II"
 config/version="1.0.0"
-run/main_scene="res://scenes/game.tscn"
+run/main_scene="res://scenes/loading.tscn"
 config/features=PackedStringArray("4.7")
+boot_splash/bg_color=Color(0.027, 0.039, 0.086, 1)
+boot_splash/image="res://ui/loading/boot_splash.png"
 
 [autoload]
 

@@ -58,7 +58,8 @@ external-file conflict protection. Reopen the project or enable it in
 It does not modify the engine or player saves.
 
 ```
-scenes/game.tscn          main scene (Node3D MidnightManor2, procedural village)
+scenes/loading.tscn       startup loading screen (warms assets, then opens game.tscn)
+scenes/game.tscn          village scene (Node3D MidnightManor2, procedural village)
 scripts/game/             village_game.gd (UI/world), village_sim.gd (sim),
                           village_ui.gd (dark-medieval theme + thumbnails),
                           village_details.gd (scaffolds, smoke, warnings)
