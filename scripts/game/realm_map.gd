@@ -3,7 +3,8 @@ extends RefCounted
 # The Realm (data only): the open world around the manor, in the spirit of a WorldBox-style sandbox.
 #
 # The home village stays exactly where it was, at the centre of a 512 m (256 x 256 tile) square of
-# hills, woods and lakes. Five rival settlements sit out in the realm. Each one has a population that
+# rolling hills, woods and one winding river with bridges and fishing spots. Every bit of dry land is
+# buildable; slopes get stilts. Five rival settlements sit out in the realm. Each one has a population that
 # grows over active play time, and every settlement claims the land around it. Where two claims
 # overlap the stronger claim (radius minus distance) wins the ground, which is how borders move when
 # a neighbour grows: the groundwork for taking land and fighting neighbours.
@@ -25,8 +26,22 @@ const WATER_Y: float = -1.3
 const HOME_CALM: Vector2 = Vector2(62.0, 100.0)   # hills fade in between these distances from home
 const SCENERY_CLEAR: Vector2 = Vector2(52.0, 48.0)  # the existing outskirts trees fill this box
 const EDGE_DROP_FROM: float = 236.0
-const HILL_HEIGHT: float = 4.5
-const SITE_CORE: float = 16.0             # flattened ground around a settlement centre
+const HILL_HEIGHT: float = 14.0           # rolling hills; slopes stay gentle enough to build on
+const SITE_CORE: float = 16.0             # a settlement's streets (trees and outposts keep clear)
+const SITE_RIVER_CLEAR: float = 36.0      # settlements keep their streets this far from the river
+# The river: one winding river crosses the whole realm (the only water apart from the sea at the
+# edge). It keeps RIVER_CLEAR from home so the village is never flooded, and its banks are a
+# straight slope one terrain cell wide or more, so the shoreline stays smooth on phones' 8 m grid.
+const RIVER_CLEAR: float = 74.0           # closest the river line comes to the manor
+const RIVER_HALF: float = 3.0             # flat bed either side of the line
+const RIVER_BANK: float = 8.0             # bed up to the bank top
+const RIVER_VALLEY: float = 44.0          # the valley floor rises into the hills over this
+const RIVER_STEP: float = 4.0
+const RIVER_WIGGLE: Vector2 = Vector2(18.0, 7.0)  # the two meanders' amplitudes, metres
+const BRIDGE_WIDTH: float = 2.4
+const FISH_MAX: int = 8
+const FISH_SECONDS: float = 60.0          # active seconds per catch
+const FISH_FOOD: int = 6                  # Food per catch from each spot on the manor's land
 const HOME_COLOR := Color("d4b275")
 const HOME_CLAIM_BASE: float = 52.0
 const HOME_CLAIM_PER_PLOT: float = 8.0
@@ -86,9 +101,15 @@ var settlements: Array[Dictionary] = []  # {id, name, color, centre: Vector2, gr
 var outposts: Array[Dictionary] = []     # {id, pos: Vector2}
 var raid: Dictionary = {}                # {site, strength, left, total, start: Vector2} while marching
 var events: Array[Dictionary] = []       # for the realm layer: take_events() drains them
+var bridges: Array[Dictionary] = []      # {pos: Vector2, dir: Vector2, length: float}
+var fishing_spots: Array[Dictionary] = []  # {id, pos: Vector2 (bank end of the jetty), dir: Vector2 (toward the water)}
+var fish_clock: float = 0.0
 var _next_outpost: int = 1
 var _elev := FastNoiseLite.new()
 var _moist := FastNoiseLite.new()
+var _river_axis: Vector2 = Vector2.RIGHT  # the river runs along this, meandering across it
+var _river_from: float = 0.0              # along-axis position of the first river sample
+var _river_line := PackedFloat32Array()   # across-axis offset of the river line every RIVER_STEP
 
 
 func generate(new_seed: int) -> void:
@@ -100,8 +121,10 @@ func generate(new_seed: int) -> void:
 	raid = {}
 	events.clear()
 	_next_outpost = 1
+	fish_clock = 0.0
 	var rng := RandomNumberGenerator.new()
 	rng.seed = new_seed * 7919 + 13
+	_setup_river(rng)
 	var turn: float = rng.randf_range(0.0, TAU)
 	for index in FACTIONS.size():
 		var faction: Dictionary = FACTIONS[index]
@@ -116,6 +139,8 @@ func generate(new_seed: int) -> void:
 			"relation": RELATION_START + rng.randf_range(-8.0, 8.0), "vassal": false, "cooldown": 0.0,
 			"travel": rng.randf_range(0.0, 40.0),
 		})
+	_place_bridges()
+	_place_fishing_spots()
 	revision += 1
 
 
@@ -140,7 +165,7 @@ func _dry_spot(angle: float, distance: float) -> Vector2:
 		var spot: Vector2 = direction * (distance + float(step) * 8.0)
 		if absf(spot.x) > HALF - 40.0 or absf(spot.y) > HALF - 40.0:
 			break
-		if _raw_height(spot.x, spot.y) > 0.25:
+		if _raw_height(spot.x, spot.y) > 0.25 and river_distance(spot.x, spot.y) > SITE_RIVER_CLEAR:
 			return spot
 		best = spot
 	return best
@@ -148,36 +173,58 @@ func _dry_spot(angle: float, distance: float) -> Vector2:
 
 # --- Ground -------------------------------------------------------------------------------------
 
-# Height above BASE_Y before settlements flatten it.
-func _raw_height(x: float, z: float) -> float:
-	var n: float = _elev.get_noise_2d(x, z)
+# Rolling hills with flat meadows between them, never below the waterline: every bit of dry land
+# can take a building (slopes get stilts). Calm near home so the village diorama looks as before.
+func _land_height(x: float, z: float) -> float:
+	var t: float = _elev.get_noise_2d(x, z) + 0.12
+	var hill: float = (t + sqrt(t * t + 0.004)) * 0.5   # a soft max(t, 0): meadows meet hills smoothly
 	var calm: float = smoothstep(HOME_CALM.x, HOME_CALM.y, Vector2(x, z).length())
-	var h: float = (n + 0.25) * HILL_HEIGHT * calm
+	return (0.3 + hill * HILL_HEIGHT) * calm
+
+
+# Height above BASE_Y: the land, the river cut through it, and the drop to the sea at the edge.
+func _raw_height(x: float, z: float) -> float:
+	var h: float = _land_height(x, z)
+	var d: float = river_distance(x, z)
+	if d < RIVER_HALF + RIVER_BANK + RIVER_VALLEY:
+		var water: float = WATER_Y - BASE_Y
+		var bed: float = water - 0.9
+		var bank: float = water + 0.5
+		if d <= RIVER_HALF:
+			h = bed
+		elif d <= RIVER_HALF + RIVER_BANK:
+			h = lerpf(bed, bank, (d - RIVER_HALF) / RIVER_BANK)
+		else:
+			h = lerpf(bank, maxf(h, bank), smoothstep(RIVER_HALF + RIVER_BANK, RIVER_HALF + RIVER_BANK + RIVER_VALLEY, d))
 	var edge: float = maxf(absf(x), absf(z))
 	if edge > EDGE_DROP_FROM:
 		h -= (edge - EDGE_DROP_FROM) * 0.3
 	return h
 
 
-# World Y of the ground at (x, z), metres.
+# World Y of the ground at (x, z), metres. Settlements are no longer levelled: their buildings
+# stand on footings or stilts where the ground slopes.
 func height_at(x: float, z: float) -> float:
-	var h: float = _raw_height(x, z)
-	for site: Dictionary in settlements:
-		var reach: float = (site["centre"] as Vector2).distance_to(Vector2(x, z))
-		if reach < SITE_CORE + 16.0:
-			h = lerpf(float(site["ground"]), h, smoothstep(SITE_CORE, SITE_CORE + 16.0, reach))
-	return BASE_Y + h
+	return BASE_Y + _raw_height(x, z)
 
 
 func is_water(x: float, z: float) -> bool:
 	return height_at(x, z) < WATER_Y
 
 
+# Where people walk: bridge decks over the river, otherwise the ground, wading at most knee deep.
+func walk_height(x: float, z: float) -> float:
+	var deck: float = bridge_deck_at(x, z)
+	if not is_nan(deck):
+		return deck
+	return maxf(height_at(x, z), WATER_Y - 0.4)
+
+
 func biome_at(x: float, z: float) -> String:
 	var y: float = height_at(x, z)
 	if y < WATER_Y:
 		return "water"
-	if y < WATER_Y + 0.25:
+	if y < WATER_Y + 0.3:
 		return "shore"
 	var m: float = _moist.get_noise_2d(x, z)
 	if m > 0.18:
@@ -189,10 +236,216 @@ func biome_at(x: float, z: float) -> String:
 	return "meadow"
 
 
-func ground_color(x: float, z: float) -> Color:
-	var colour: Color = BIOME_COLORS[biome_at(x, z)]
-	var shade: float = _moist.get_noise_2d(x * 3.1, z * 3.1) * 0.06
+# Ground colour, blended rather than banded: meadow, wheat and woodland floor by moisture,
+# sun-bleached hilltops, bare earth and stone on the steeper slopes, mud and sand down to the
+# water, and a little patchiness so open country never reads as one flat wash. slope is
+# rise over run, from the terrain normals.
+func ground_color(x: float, z: float, slope: float = 0.0) -> Color:
+	var y: float = height_at(x, z)
+	if y < WATER_Y:
+		return BIOME_COLORS["water"]
+	var m: float = _moist.get_noise_2d(x, z)
+	var colour: Color = BIOME_COLORS["meadow"]
+	colour = colour.lerp(BIOME_COLORS["wheat"], 1.0 - smoothstep(-0.32, -0.12, m))
+	colour = colour.lerp(BIOME_COLORS["forest"], smoothstep(0.08, 0.26, m))
+	var h: float = y - BASE_Y
+	colour = colour.lerp(Color("8c8452"), smoothstep(3.0, 10.0, h) * 0.4)
+	var stony: float = smoothstep(0.14, 0.32, slope) * 0.65 + smoothstep(0.4, 0.58, _elev.get_noise_2d(x, z)) * 0.5
+	colour = colour.lerp(BIOME_COLORS["rocky"], clampf(stony, 0.0, 0.8))
+	var above: float = y - WATER_Y
+	if above < 0.7:
+		colour = colour.lerp(BIOME_COLORS["shore"], 1.0 - smoothstep(0.25, 0.7, above))
+		colour = colour.lerp(Color("4a4130"), 1.0 - smoothstep(0.0, 0.22, above))
+	var shade: float = _moist.get_noise_2d(x * 3.1, z * 3.1) * 0.06 + _elev.get_noise_2d(x * 7.3, z * 7.3) * 0.035
 	return Color(colour.r + shade, colour.g + shade, colour.b + shade * 0.6)
+
+
+# --- River --------------------------------------------------------------------------------------
+
+# The river line in its own frame: along the axis it crosses the realm; across it, two meanders
+# add up around an offset that keeps it RIVER_CLEAR from the manor at its closest.
+func _setup_river(rng: RandomNumberGenerator) -> void:
+	_river_axis = Vector2.from_angle(rng.randf_range(0.0, TAU))
+	var side: float = -1.0 if rng.randf() < 0.5 else 1.0
+	var offset: float = side * (RIVER_CLEAR + RIVER_WIGGLE.x + RIVER_WIGGLE.y)
+	var wave_a: float = TAU / rng.randf_range(190.0, 240.0)
+	var wave_b: float = TAU / rng.randf_range(70.0, 95.0)
+	var phase_a: float = rng.randf_range(0.0, TAU)
+	var phase_b: float = rng.randf_range(0.0, TAU)
+	var reach: float = HALF * 1.5
+	_river_from = -reach
+	var count: int = int(reach * 2.0 / RIVER_STEP) + 1
+	_river_line.resize(count)
+	for index in count:
+		var along: float = _river_from + float(index) * RIVER_STEP
+		_river_line[index] = offset + sin(along * wave_a + phase_a) * RIVER_WIGGLE.x + sin(along * wave_b + phase_b) * RIVER_WIGGLE.y
+	# A meander leaning toward home can bring the line closer than its offset; push it back out.
+	for attempt in 6:
+		var closest: float = river_distance(0.0, 0.0)
+		if closest >= RIVER_CLEAR:
+			break
+		for index in count:
+			_river_line[index] += side * (RIVER_CLEAR - closest + 1.0)
+
+
+func _river_frame(x: float, z: float) -> Vector2:
+	var across := Vector2(-_river_axis.y, _river_axis.x)
+	var p := Vector2(x, z)
+	return Vector2(p.dot(_river_axis), p.dot(across))
+
+
+func _river_world(along: float, across: float) -> Vector2:
+	return _river_axis * along + Vector2(-_river_axis.y, _river_axis.x) * across
+
+
+# Point on the river line at sample index (world metres).
+func river_point(index: int) -> Vector2:
+	index = clampi(index, 0, _river_line.size() - 1)
+	return _river_world(_river_from + float(index) * RIVER_STEP, _river_line[index])
+
+
+func river_samples() -> int:
+	return _river_line.size()
+
+
+# Metres from (x, z) to the river line. Far from the river a cheap bound answers without the
+# segment search (the meanders never turn more than about 50 degrees off the axis).
+func river_distance(x: float, z: float) -> float:
+	if _river_line.is_empty():
+		return INF
+	var f: Vector2 = _river_frame(x, z)
+	var i: int = clampi(int(floor((f.x - _river_from) / RIVER_STEP)), 0, _river_line.size() - 2)
+	var rough: float = absf(f.y - _river_line[i])
+	var limit: float = RIVER_HALF + RIVER_BANK + RIVER_VALLEY + 4.0
+	if rough * 0.6 > limit:
+		return rough * 0.6
+	var span: int = ceili(minf(rough, limit) / RIVER_STEP) + 1
+	var best: float = INF
+	for k in range(maxi(i - span, 0), mini(i + span, _river_line.size() - 2) + 1):
+		var a := Vector2(_river_from + float(k) * RIVER_STEP, _river_line[k])
+		var b := Vector2(a.x + RIVER_STEP, _river_line[k + 1])
+		var ab: Vector2 = b - a
+		var t: float = clampf((f - a).dot(ab) / ab.length_squared(), 0.0, 1.0)
+		best = minf(best, f.distance_to(a + ab * t))
+	return best
+
+
+# Unit vector across the river at the line point nearest (x, z), pointing toward (x, z)'s side.
+func river_side(x: float, z: float) -> Vector2:
+	var f: Vector2 = _river_frame(x, z)
+	var i: int = clampi(int(floor((f.x - _river_from) / RIVER_STEP)), 0, _river_line.size() - 2)
+	var tangent := Vector2(RIVER_STEP, _river_line[i + 1] - _river_line[i]).normalized()
+	var normal := Vector2(-tangent.y, tangent.x)
+	if (f - Vector2(_river_from + float(i) * RIVER_STEP, _river_line[i])).dot(normal) < 0.0:
+		normal = -normal
+	return _river_world(normal.x, normal.y)
+
+
+# Bridges carry the roads from the manor to each neighbour over the river, so traders, scouts and
+# the warband cross dry-shod (anyone else wades). One bridge per crossing; near ones are shared.
+func _place_bridges() -> void:
+	bridges.clear()
+	for site: Dictionary in settlements:
+		var to: Vector2 = site["centre"]
+		var from: Vector2 = to.normalized() * 40.0
+		var heading: Vector2 = (to - from).normalized()
+		var length: float = from.distance_to(to)
+		var wet_from: float = -1.0
+		var wet_to: float = -1.0
+		var step: float = 0.5
+		var along: float = 0.0
+		while along <= length:
+			var p: Vector2 = from + heading * along
+			if height_at(p.x, p.y) < WATER_Y + 0.15:
+				if wet_from < 0.0:
+					wet_from = along
+				wet_to = along
+			elif wet_from >= 0.0:
+				break
+			along += step
+		if wet_from < 0.0:
+			continue
+		var middle: Vector2 = from + heading * (wet_from + wet_to) * 0.5
+		var shared: bool = false
+		for bridge: Dictionary in bridges:
+			if (bridge["pos"] as Vector2).distance_to(middle) < 24.0:
+				shared = true
+		if not shared:
+			bridges.append({"pos": middle, "dir": heading, "length": wet_to - wet_from + 5.0})
+
+
+# Deck height at (x, z), or NAN off every bridge. The deck arches a little over the water.
+func bridge_deck_at(x: float, z: float) -> float:
+	for bridge: Dictionary in bridges:
+		var offset: Vector2 = Vector2(x, z) - (bridge["pos"] as Vector2)
+		var dir: Vector2 = bridge["dir"]
+		var along: float = offset.dot(dir)
+		var half: float = float(bridge["length"]) * 0.5
+		if absf(along) <= half and absf(offset.dot(Vector2(-dir.y, dir.x))) <= BRIDGE_WIDTH * 0.5:
+			var t: float = along / half
+			return WATER_Y + 0.5 + 0.45 * (1.0 - t * t)
+	return NAN
+
+
+# Fishing spots: little jetties along the banks, nearest the manor first, never at a bridge or in
+# a neighbour's streets. Any on the manor's land feed it (see advance).
+func _place_fishing_spots() -> void:
+	fishing_spots.clear()
+	var found: Array[Dictionary] = []
+	var side: float = 1.0
+	var index: int = 6
+	while index < _river_line.size() - 6:
+		var line: Vector2 = river_point(index)
+		var tangent: Vector2 = (river_point(index + 1) - river_point(index - 1)).normalized()
+		var normal: Vector2 = Vector2(-tangent.y, tangent.x) * side
+		var pos: Vector2 = line + normal * (RIVER_HALF + RIVER_BANK * 0.82)
+		index += 14
+		side = -side
+		if absf(pos.x) > HALF - 24.0 or absf(pos.y) > HALF - 24.0 or is_water(pos.x, pos.y):
+			continue
+		if _near_site(pos.x, pos.y, SITE_CORE + 8.0):
+			continue
+		var clear: bool = true
+		for bridge: Dictionary in bridges:
+			if (bridge["pos"] as Vector2).distance_to(pos) < 26.0:
+				clear = false
+		if clear:
+			found.append({"pos": pos, "dir": -normal})
+	found.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return (a["pos"] as Vector2).length() < (b["pos"] as Vector2).length())
+	for spot_index in mini(found.size(), FISH_MAX):
+		var spot: Dictionary = found[spot_index]
+		spot["id"] = spot_index + 1
+		fishing_spots.append(spot)
+
+
+func fishing_spot(id: int) -> Dictionary:
+	for spot: Dictionary in fishing_spots:
+		if int(spot["id"]) == id:
+			return spot
+	return {}
+
+
+# Fishing spots on the manor's land right now (its village, outposts and sworn neighbours).
+func home_fishing_spots() -> int:
+	var all_claims: Array[Dictionary] = claims()
+	var count: int = 0
+	for spot: Dictionary in fishing_spots:
+		var pos: Vector2 = spot["pos"]
+		if _owner_from(all_claims, pos) == "home":
+			count += 1
+	return count
+
+
+# Moves a point that ended up in the river (an old save's outpost) out to the nearest dry bank.
+func dry_ground_near(pos: Vector2) -> Vector2:
+	if not is_water(pos.x, pos.y):
+		return pos
+	var out: Vector2 = river_side(pos.x, pos.y)
+	for step in 30:
+		var spot: Vector2 = pos + out * float(step + 1)
+		if not is_water(spot.x, spot.y):
+			return spot + out * 2.0
+	return pos
 
 
 # --- Territory ----------------------------------------------------------------------------------
@@ -453,6 +706,13 @@ func advance(seconds: float) -> bool:
 				outposts.remove_at(index)
 				moved = true
 				break
+	# Fishers on the manor's banks land a catch every FISH_SECONDS of active play.
+	fish_clock += seconds
+	if fish_clock >= FISH_SECONDS:
+		fish_clock -= FISH_SECONDS
+		var spots: int = home_fishing_spots()
+		if spots > 0:
+			events.append({"kind": "catch", "spots": spots, "loot": {"food": spots * FISH_FOOD}})
 	if not raid.is_empty():
 		raid["left"] = float(raid["left"]) - seconds
 		if float(raid["left"]) <= 0.0:
@@ -507,7 +767,8 @@ func chunk_centre(chunk: Vector2i) -> Vector2:
 	return Vector2((float(chunk.x) + 0.5) * TREE_CHUNK - HALF, (float(chunk.y) + 0.5) * TREE_CHUNK - HALF)
 
 
-# Deterministic trees for one chunk: [{pos: Vector3, scale, turn, round: bool, tone: int}].
+# Deterministic trees for one chunk: [{pos: Vector3, scale, turn, round: bool, kind, tone: int}].
+# kind: 0 pine, 1 round tree, 2 reeds at the water's edge, 3 boulder.
 # density < 1 thins them for phones. Trees never land on water, near settlements or over the
 # outskirts box that already has its own hand-placed trees.
 func trees_in_chunk(chunk: Vector2i, density: float = 1.0) -> Array[Dictionary]:
@@ -528,11 +789,23 @@ func trees_in_chunk(chunk: Vector2i, density: float = 1.0) -> Array[Dictionary]:
 			var tone: int = rng.randi() % 9
 			if absf(x) < SCENERY_CLEAR.x and absf(z) < SCENERY_CLEAR.y:
 				continue
-			var biome: String = biome_at(x, z)
-			var chance: float = {"forest": 0.7, "meadow": 0.05, "wheat": 0.02, "rocky": 0.08}.get(biome, 0.0) * density
-			if roll >= chance or _near_site(x, z, SITE_CORE + 4.0):
+			if _near_site(x, z, SITE_CORE + 4.0):
 				continue
-			result.append({"pos": Vector3(x, height_at(x, z), z), "scale": size, "turn": turn, "round": shape < 0.45, "tone": tone})
+			var biome: String = biome_at(x, z)
+			if biome == "water":
+				continue
+			var y: float = height_at(x, z)
+			# Reeds crowd the river's edge; boulders sit on the stony hills.
+			if y < WATER_Y + 0.45:
+				if roll < 0.55 * density:
+					result.append({"pos": Vector3(x, y, z), "scale": size * 0.8, "turn": turn, "round": false, "kind": 2, "tone": tone})
+				continue
+			var chance: float = {"forest": 0.7, "meadow": 0.05, "wheat": 0.02, "rocky": 0.08}.get(biome, 0.0) * density
+			if roll >= chance:
+				if biome == "rocky" and roll < chance + 0.05 * density:
+					result.append({"pos": Vector3(x, y, z), "scale": size * 0.9, "turn": turn, "round": false, "kind": 3, "tone": tone})
+				continue
+			result.append({"pos": Vector3(x, y, z), "scale": size, "turn": turn, "round": shape < 0.45, "kind": 1 if shape < 0.45 else 0, "tone": tone})
 	return result
 
 
@@ -559,7 +832,7 @@ func to_dict() -> Dictionary:
 		march = {"site": raid["site"], "strength": int(raid["strength"]), "fighters": int(raid["fighters"]),
 			"left": float(raid["left"]), "total": float(raid["total"]),
 			"x": (raid["start"] as Vector2).x, "z": (raid["start"] as Vector2).y}
-	return {"version": VERSION, "seed": seed_value, "elapsed": elapsed, "settlements": sites, "outposts": posts, "raid": march}
+	return {"version": VERSION, "seed": seed_value, "elapsed": elapsed, "settlements": sites, "outposts": posts, "raid": march, "fish_clock": fish_clock}
 
 
 # Regenerates the world from its seed, then restores each settlement's growth. Returns false and
@@ -572,6 +845,7 @@ func from_dict(data: Variant) -> bool:
 		return false
 	generate(int(seed_read))
 	elapsed = maxf(0.0, float(data.get("elapsed", 0.0)))
+	fish_clock = clampf(float(data.get("fish_clock", 0.0)), 0.0, FISH_SECONDS)
 	var saved: Variant = data.get("settlements", [])
 	if not saved is Array:
 		return false
@@ -593,6 +867,7 @@ func from_dict(data: Variant) -> bool:
 			if entry is Dictionary and outposts.size() < OUTPOST_MAX:
 				var pos := Vector2(float(entry.get("x", 0.0)), float(entry.get("z", 0.0)))
 				if absf(pos.x) <= HALF and absf(pos.y) <= HALF:
+					pos = dry_ground_near(pos)   # saves from before the river: never leave one in it
 					var id: int = int(entry.get("id", _next_outpost))
 					outposts.append({"id": id, "pos": pos})
 					_next_outpost = maxi(_next_outpost, id + 1)

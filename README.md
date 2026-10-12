@@ -50,13 +50,15 @@ Research Stoneworking (quarry + miners at village level 2) and Road Masonry (pav
 ## The Realm (open world, in development)
 
 Pan and zoom out past the haunted edge: the manor now sits in a 512 m (256x256 tile) realm of
-hills, woods and lakes with five rival settlements. Their people walk between their halls and
+rolling hills, woods and a winding river with five rival settlements. All dry land is buildable;
+buildings on slopes stand on footings or stilts. Bridges carry the roads over the river, and
+jetties on the manor's banks land Food from fishing. Their people walk between their halls and
 cottages, their land is tinted in their colour, and they grow over active play time, pushing
 their borders outward. Built for phones by streaming: one ground mesh, trees per nearby chunk,
 and models only for the nearest settlements. Tap a neighbour for its card: send gifts or raid it
 with your fighters (win loot; beat it small enough and it swears to you). Tap wild land to found an
 outpost that pushes your border out. Friendly neighbours send traders, hostile ones send scouts and
-overrun outposts. See `docs/REALM.md`; `test_realm` and `test_realm_life` cover it.
+overrun outposts. See `docs/REALM.md`; `test_realm`, `test_realm_life` and `test_realm_terrain` cover it.
 
 ## Project layout
 

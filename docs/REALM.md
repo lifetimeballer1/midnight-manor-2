@@ -6,8 +6,8 @@ over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
 
 ## What is in this step
 
-- **A 512 m realm (256 x 256 tiles)** of hills, autumn woods, wheat, rocky rises and lakes around
-  the 20 x 16 home map. Hills fade out near home so the village diorama and its haunted edge look
+- **A 512 m realm (256 x 256 tiles)** of hills, autumn woods, wheat, rocky rises and a river around
+  the 20 x 16 home map (see "Terrain, river and fishing" for the current land). Hills fade out near home so the village diorama and its haunted edge look
   exactly as before; the haunted ground is trimmed to the outskirts and the realm ground starts in
   its colour, so the haunt still recedes as the manor grows.
 - **Five rival settlements** (Ashfen Hollow, Briarwatch, Cinderholt, Gallowmere, Thornvale), built
@@ -50,6 +50,28 @@ over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
 - **Save**: realm save v2 adds moods, outposts, sworn neighbours and a marching warband. v1 realm
   saves still load. The village save is unchanged.
 
+## Terrain, river and fishing
+
+- **Hills you can build on**: rolling hills up to about 9 m with flat meadows between them. The
+  steepest slope is about 20 degrees, so all dry land stays buildable, and there are no more lakes.
+  Home and its outskirts stay flat as before.
+- **Footings and stilts**: settlements are no longer levelled. Every building (and outpost tower)
+  stands level at the height of its highest corner: on a stone footing where the ground falls a
+  little, on timber stilts with a deck and rails where it falls more. Each footing is one mesh.
+- **The river**: one winding river crosses the whole realm, never closer than 74 m to the manor and
+  never through a settlement's streets. Its banks shade from grass to sand to wet mud, with reeds at
+  the water's edge; boulders sit on the stony hills. The water is a cheap animated shader on the
+  same single quad.
+- **Bridges and wading**: where the road from the manor to a neighbour crosses the river there is a
+  timber bridge, so traders, scouts and the warband cross on it. Anyone else wades, knee deep.
+- **Fishing**: up to eight jetties line the banks, nearest the manor first. Tap one for its card.
+  Each spot on the manor's land (its own claim, an outpost or a sworn neighbour) lands 6 Food every
+  minute of active play, banked within storage. A wild bank needs an outpost (the card offers one).
+  Someone fishes from every jetty on held land; the nearest few show a fisher, a bobbing float and
+  a ripple.
+- **Saves**: the realm save gains an optional fishing clock. Older saves load; an old outpost that
+  now sits in the river moves to the nearest dry bank.
+
 ## Mobile sizing
 
 The limit on phones is draw calls and per-frame script work, not map area. The realm is built so
@@ -58,7 +80,9 @@ cost follows what the camera sees, not the size of the world:
 | Piece | Cost |
 |---|---|
 | Ground | one mesh, 4 m cells (8 m on phones): ~33k triangles desktop, ~8k phone, one draw call |
-| Water | one flat quad |
+| Water | one flat quad, animated shader (no textures, no depth reads) |
+| Bridges, jetties, footings | one mesh each, built once (footings with their settlement) |
+| Fishers | at most 3 (2 on phones), only near the camera |
 | Trees | one MultiMesh per 64 m chunk and shape, streamed around the camera; at most 36 chunks (16 on phones), 3 built per 0.25 s so panning never hitches |
 | Settlements | only the 3 (2 on phones) nearest the camera get models and walkers; others are a banner pole + their territory tint |
 | Walkers | 6 per loaded settlement (3 on phones) |
@@ -76,5 +100,5 @@ performance.
 3. Neighbours fighting each other and trading land between themselves.
 4. Real-device performance pass on iPhone Safari and Android Chrome.
 
-Launch flags: `--no-realm` leaves the realm out; `--realm-view=x,z,zoom` frames a capture.
-Tests: `godot --headless --path . --script res://tests/test_realm.gd -- --no-save`.
+Launch flags: `--no-realm` leaves the realm out; `--realm-view=x,z,zoom[,yaw,tilt]` frames a capture.
+Tests: `godot --headless --path . --script res://tests/test_realm.gd -- --no-save` (also `test_realm_life.gd` and `test_realm_terrain.gd`).

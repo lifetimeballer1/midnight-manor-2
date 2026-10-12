@@ -10,6 +10,8 @@ extends "res://scripts/game/village_realm.gd"
 #     two things the manor can do: send gifts or raid it.
 #   * Tap wild land near the manor's own to found an outpost. Its claim joins the manor's, so the
 #     border moves out, and land a neighbour claimed more weakly changes hands.
+#   * Fishing: jetties along the river land Food for the manor while they stand on its land. Tap one
+#     for its card; an outpost on a wild bank brings it in.
 #   * Raid: the manor's fighters (the village's own warriors and archers, never removed from it)
 #     march out as a column you can watch. Their combined levels against the settlement's people
 #     decide it. A win brings loot and shrinks the neighbour; beaten down small enough it swears to
@@ -27,6 +29,7 @@ const REALM_WARBAND: int = 4
 const REALM_TRAVEL_SPEED: float = 2.4
 const REALM_TAP_SITE: float = 18.0            # metres from a settlement centre that count as tapping it
 const REALM_TAP_OUTPOST: float = 7.0
+const REALM_TAP_FISH: float = 6.0
 const REALM_EDGE: float = 44.0                # where travellers stop, just past the village plots
 const REALM_FIGHTER_MODELS: Array[String] = ["char_warrior", "char_archer", "char_halberdier", "char_pikewoman"]
 
@@ -36,6 +39,7 @@ var _realm_warband: Array[Dictionary] = []     # {model, player, offset: Vector3
 var _realm_card_site: String = ""
 var _realm_card_point: Vector2 = Vector2.ZERO
 var _realm_card_outpost: int = -1
+var _realm_card_fish: int = -1
 
 
 func _ready() -> void:
@@ -83,6 +87,10 @@ func _realm_event(event: Dictionary) -> void:
 				sim.notice += " %s swears to the manor; its land is yours." % name
 		"raid_lost":
 			sim.notice = "The warband was beaten back at %s." % name
+		"catch":
+			var food: int = sim._bank("food", float(event["loot"]["food"]))
+			if food > 0:
+				sim.notice = "The manor's fishers land +%d Food from %d spot%s on the river." % [food, int(event["spots"]), "" if int(event["spots"]) == 1 else "s"]
 	_realm_refresh_card()
 
 
@@ -111,7 +119,7 @@ func _realm_send_traveller(site: Dictionary, asset: String, arrive: Callable) ->
 
 
 func _realm_ground_point(at: Vector2) -> Vector3:
-	return Vector3(at.x, realm.height_at(at.x, at.y), at.y)
+	return Vector3(at.x, realm_walk_y(at.x, at.y), at.y)
 
 
 # Out to the manor's edge (the arrival fires there), then home again.
@@ -140,7 +148,7 @@ func _realm_move_travellers(delta: float) -> void:
 				_realm_travellers.remove_at(index)
 			continue
 		body.position += travel.limit_length(REALM_TRAVEL_SPEED * delta)
-		body.position.y = realm.height_at(body.position.x, body.position.z)
+		body.position.y = realm_walk_y(body.position.x, body.position.z)
 		body.rotation.y = rotate_toward(body.rotation.y, atan2(travel.x, travel.z), 8.0 * delta)
 
 
@@ -212,10 +220,14 @@ func _realm_sync_outposts() -> void:
 		if _realm_outpost_views.has(id):
 			continue
 		var pos: Vector2 = outpost["pos"]
+		# The tower stands level on a footing or stilts; the footing is placed in world space.
+		var base := Node3D.new()
+		base.name = "Outpost_%d" % id
+		_realm_root.add_child(base)
+		var top: float = _realm_footing(base, pos, 0.0, TILE * 0.8)
 		var root := Node3D.new()
-		root.name = "Outpost_%d" % id
-		root.position = _realm_ground_point(pos)
-		_realm_root.add_child(root)
+		root.position = Vector3(pos.x, top, pos.y)
+		base.add_child(root)
 		var key: String = model_asset("tower", 1)
 		if _asset_exists(key):
 			var model: Node3D = _model(key)
@@ -230,7 +242,7 @@ func _realm_sync_outposts() -> void:
 		flag_material.emission_enabled = true
 		flag_material.emission = RealmMap.HOME_COLOR.darkened(0.4)
 		flag.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		_realm_outpost_views[id] = root
+		_realm_outpost_views[id] = base
 	for id: int in _realm_outpost_views.keys():
 		if id not in present:
 			(_realm_outpost_views[id] as Node3D).queue_free()
@@ -265,11 +277,18 @@ func realm_tap(at: Vector2) -> bool:
 		return false
 	_realm_card_site = ""
 	_realm_card_outpost = -1
+	_realm_card_fish = -1
 	_realm_card_point = at
 	for outpost: Dictionary in realm.outposts:
 		if (outpost["pos"] as Vector2).distance_to(at) <= REALM_TAP_OUTPOST:
 			_realm_card_outpost = int(outpost["id"])
 			_open_panel("realm_outpost")
+			return true
+	for spot: Dictionary in realm.fishing_spots:
+		var jetty: Vector2 = (spot["pos"] as Vector2) + (spot["dir"] as Vector2) * 2.5
+		if jetty.distance_to(at) <= REALM_TAP_FISH:
+			_realm_card_fish = int(spot["id"])
+			_open_panel("realm_fish")
 			return true
 	for site: Dictionary in realm.settlements:
 		if (site["centre"] as Vector2).distance_to(at) <= REALM_TAP_SITE:
@@ -294,6 +313,8 @@ func _open_panel(which: String) -> void:
 			_realm_site_card()
 		"realm_land":
 			_realm_land_card()
+		"realm_fish":
+			_realm_fish_card()
 		"realm_outpost":
 			ui.heading("MANOR OUTPOST", side_content)
 			ui.rule(side_content)
@@ -344,6 +365,35 @@ func _realm_land_card() -> void:
 	ui.rule(side_content)
 	ui.body("An outpost here claims the land around it for the manor and pushes the border out.", side_content)
 	var reason: String = realm.outpost_reason(at)
+	if reason.is_empty() and not sim._affordable(RealmMap.OUTPOST_COST):
+		reason = "Not enough: " + _cost_text(RealmMap.OUTPOST_COST)
+	var button: Button = ui.gold_button("Found Outpost / " + _cost_text(RealmMap.OUTPOST_COST), _realm_found_outpost, side_content)
+	button.disabled = not reason.is_empty()
+	button.tooltip_text = reason
+	ui.body(reason if not reason.is_empty() else "Outposts: %d of %d" % [realm.outposts.size(), RealmMap.OUTPOST_MAX], side_content, 12)
+
+
+# A fishing spot: who fishes it, and how the manor can take it.
+func _realm_fish_card() -> void:
+	var spot: Dictionary = realm.fishing_spot(_realm_card_fish)
+	if spot.is_empty():
+		_close_panel()
+		return
+	var pos: Vector2 = spot["pos"]
+	var owner: String = realm.owner_at(pos.x, pos.y)
+	ui.heading("FISHING SPOT", side_content)
+	ui.rule(side_content)
+	if owner == "home":
+		ui.body("The manor's fishers work this jetty. It lands %d Food every minute of play." % RealmMap.FISH_FOOD, side_content)
+		ui.body("River spots held: %d of %d" % [realm.home_fishing_spots(), realm.fishing_spots.size()], side_content, 12)
+		return
+	if owner != "":
+		ui.body("%s fishes here. Take this bank for the manor (an outpost or a sworn neighbour) and it lands %d Food a minute." % [realm.settlement(owner).get("name", "A neighbour"), RealmMap.FISH_FOOD], side_content)
+	else:
+		ui.body("An empty jetty on wild river bank. Found an outpost to bring it into the manor's land; its fishers land %d Food a minute." % RealmMap.FISH_FOOD, side_content)
+	# The outpost goes on the dry bank behind the jetty.
+	_realm_card_point = pos - (spot["dir"] as Vector2) * 4.0
+	var reason: String = realm.outpost_reason(_realm_card_point)
 	if reason.is_empty() and not sim._affordable(RealmMap.OUTPOST_COST):
 		reason = "Not enough: " + _cost_text(RealmMap.OUTPOST_COST)
 	var button: Button = ui.gold_button("Found Outpost / " + _cost_text(RealmMap.OUTPOST_COST), _realm_found_outpost, side_content)
