@@ -25,6 +25,31 @@ over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
   and all gestures are unchanged.
 - **Save**: realm growth saves to `user://realm-v1.json`, beside (never inside) `village-v1.json`.
 
+## Realm life (neighbours, outposts, raids)
+
+`scripts/game/village_realm_life.gd` sits over the realm layer (the scene points at it).
+
+- **Moods**: every neighbour is friendly, wary or hostile (or sworn once beaten), shown on its
+  banner. Borders that touch the manor's land sour it by about 3 points a minute. Apart, it eases
+  back. Gifts (40 Gold) warm it by 20.
+- **Neighbours that act**: friendly neighbours send a trader every 90 active seconds who walks to
+  the manor's edge and leaves 10 Gold (banked within storage). Hostile ones send scouts every 70 s,
+  grow 1.5x faster and overrun any outpost their land swallows.
+- **Tap the realm**: tapping a settlement or its land opens its card (people, mood, land, defence,
+  Send Gifts, Raid). Tapping wild land offers an outpost. Taps on the village and its locked plots
+  behave as before.
+- **Outposts (land takeover)**: 120 Wood + 60 Gold, up to six, each within 36 m of land the manor
+  already holds. Each claims 26 m for the manor, so borders move out step by step and weaker
+  neighbour claims change hands.
+- **Raids (fighting neighbours)**: 20 Food + 10 Gold of supplies and at least two fighters. The
+  village's own fighters' combined levels set the warband's strength; they never leave the village's
+  defence. A column of up to four marches from the village edge, and the fight resolves on
+  arrival. A win brings Gold and Food (banked within storage) and costs the neighbour a quarter of
+  its people. A neighbour beaten down to five people swears to the manor: its land becomes yours
+  and it flies your colour. Each raid leaves the target on guard for two minutes.
+- **Save**: realm save v2 adds moods, outposts, sworn neighbours and a marching warband. v1 realm
+  saves still load. The village save is unchanged.
+
 ## Mobile sizing
 
 The limit on phones is draw calls and per-frame script work, not map area. The realm is built so
@@ -46,14 +71,10 @@ performance.
 
 ## Next steps
 
-1. **Neighbour AI and contact**: neighbours send scouts/traders along roads; relations
-   (friendly, wary, hostile) shown on their banners.
-2. **Land takeover**: claim wild land with outposts, and contested border cells flip over time to
-   the stronger claim.
-3. **Fighting neighbours**: reuse the Frontier battle map to raid or defend against a neighbour;
-   a win shrinks their claim and can make the settlement a vassal.
-4. **Tap a settlement** for its info card (name, people, attitude, actions).
-5. Real-device performance pass on iPhone Safari and Android Chrome.
+1. Neighbours raiding back: hostile neighbours' attacks arriving as home raid waves.
+2. Fought raids: play a raid out on the Frontier battle map instead of resolving it on arrival.
+3. Neighbours fighting each other and trading land between themselves.
+4. Real-device performance pass on iPhone Safari and Android Chrome.
 
 Launch flags: `--no-realm` leaves the realm out; `--realm-view=x,z,zoom` frames a capture.
 Tests: `godot --headless --path . --script res://tests/test_realm.gd -- --no-save`.

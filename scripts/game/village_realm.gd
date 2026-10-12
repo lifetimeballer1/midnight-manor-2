@@ -224,10 +224,7 @@ func _realm_paint_ground() -> void:
 	_realm_haunt_color = _realm_haunt_now()
 	var side: int = _realm_side
 	var last: int = side - 1
-	var owners: Array[String] = []
-	owners.resize(side * side)
-	for index in side * side:
-		owners[index] = realm.owner_at(_realm_vertices[index].x, _realm_vertices[index].z)
+	var owners: Array[String] = realm.owners_at(_realm_vertices)
 	var colors := PackedColorArray()
 	colors.resize(side * side)
 	for gz in side:
@@ -426,7 +423,7 @@ func _realm_build_banners() -> void:
 		label.outline_modulate = Color(0.05, 0.06, 0.09, 0.9)
 		label.position = Vector3(0, 8.0, 0)
 		root.add_child(label)
-		_realm_banners[site["id"]] = {"root": root, "label": label}
+		_realm_banners[site["id"]] = {"root": root, "label": label, "flag": flag_material}
 		_realm_label(site)
 
 
@@ -434,7 +431,13 @@ func _realm_label(site: Dictionary) -> void:
 	var banner: Dictionary = _realm_banners.get(site["id"], {})
 	if banner.is_empty():
 		return
-	(banner["label"] as Label3D).text = "%s\n%d people" % [site["name"], int(site["pop"])]
+	(banner["label"] as Label3D).text = "%s / %s\n%d people" % [site["name"], realm.attitude(site), int(site["pop"])]
+	# A settlement sworn to the manor flies the manor's colour.
+	var colour: Color = RealmMap.HOME_COLOR if bool(site.get("vassal", false)) else site["color"]
+	var flag: StandardMaterial3D = banner["flag"]
+	if flag.albedo_color != colour:
+		flag.albedo_color = colour
+		flag.emission = colour.darkened(0.35)
 
 
 func _realm_stream_sites(focus: Vector2, reach: float) -> void:

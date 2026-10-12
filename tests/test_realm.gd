@@ -67,7 +67,7 @@ func _data_checks() -> void:
 	var buildings: int = a.layout(site).size()
 	check(not a.advance(RealmMap.GROWTH_SECONDS * 0.5), "half a growth step adds nobody")
 	check(a.advance(RealmMap.GROWTH_SECONDS * 20.0), "time adds settlers")
-	check(int(site["pop"]) == mini(pop + 20, RealmMap.POP_CAP), "one settler per growth step (pop %d)" % int(site["pop"]))
+	check(int(site["pop"]) >= mini(pop + 20, RealmMap.POP_CAP), "at least one settler per growth step (pop %d)" % int(site["pop"]))
 	check(a.claim_radius(site) > claim, "more people claim more land")
 	check(a.layout(site).size() > buildings, "more people build more cottages")
 	a.advance(RealmMap.GROWTH_SECONDS * 200.0)
