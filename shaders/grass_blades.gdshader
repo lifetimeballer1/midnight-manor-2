@@ -11,7 +11,7 @@ render_mode cull_disabled, specular_disabled;
 
 uniform sampler2D mask_tex : filter_linear, repeat_disable;
 uniform vec2 map_size = vec2(40.0, 32.0);
-uniform vec3 root_col : source_color = vec3(0.11, 0.14, 0.04);
+uniform vec3 root_col : source_color = vec3(0.24, 0.31, 0.10);
 uniform vec2 wind_dir = vec2(0.85, 0.52);
 uniform float wind_power : hint_range(0.0, 2.0) = 1.0;
 uniform float wet : hint_range(0.0, 1.0) = 0.0;
@@ -66,8 +66,10 @@ void vertex() {
 }
 
 void fragment() {
-	float t = smoothstep(0.0, 0.5, tip);
+	// Roots sit close to the ground colour so a clump reads as grass, not a dark spike.
+	float t = smoothstep(0.0, 0.42, tip);
 	vec3 col = mix(root_col, tint, t);
+	col *= 0.9 + 0.22 * tip;  // a little brighter toward the sunlit tip
 	col *= 1.0 - 0.38 * wet;
 	col = mix(col, col * vec3(0.78, 0.9, 1.15), night * 0.5);
 	ALBEDO = col;

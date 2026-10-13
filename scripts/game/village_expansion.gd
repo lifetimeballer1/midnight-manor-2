@@ -953,13 +953,16 @@ func _dot_texture() -> Texture2D:
 
 # Vertical beam: narrow at the top, bright at the base, for the beacon quad.
 func _beam_texture() -> Texture2D:
-	var width: int = 16
+	var width: int = 32
 	var height: int = 64
 	var image := Image.create(width, height, false, Image.FORMAT_RGBA8)
 	for x in width:
-		var across: float = 1.0 - absf(float(x) + 0.5 - float(width) * 0.5) / (float(width) * 0.5)
-		across = pow(clampf(across, 0.0, 1.0), 0.8)
+		# Bell-shaped across and softened where it meets the ground, so the shaft
+		# reads as a glow and never as a pale rectangle from the high camera.
+		var off: float = (float(x) + 0.5 - float(width) * 0.5) / (float(width) * 0.5)
+		var across: float = exp(-off * off * 3.2) * (1.0 - smoothstep(0.8, 1.0, absf(off)))
 		for y in height:
-			var up: float = pow(float(y) / float(height - 1), 1.1)
+			var v: float = float(y) / float(height - 1)
+			var up: float = pow(v, 1.6) * (1.0 - smoothstep(0.86, 1.0, v) * 0.75)
 			image.set_pixel(x, y, Color(1, 1, 1, across * up))
 	return ImageTexture.create_from_image(image)

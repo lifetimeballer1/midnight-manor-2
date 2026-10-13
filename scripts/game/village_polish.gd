@@ -38,6 +38,7 @@ func _ready() -> void:
 	super()
 	if is_instance_valid(hud_root):
 		_wire_press_juice(hud_root)
+	bottom.add_theme_stylebox_override("panel", _bottom_scrim())
 	get_tree().node_added.connect(_on_polish_node_added)
 
 
@@ -103,6 +104,31 @@ func _terrain_apply_night() -> void:
 		var material := (patch["node"] as MeshInstance3D).material_override as StandardMaterial3D
 		var tint: Color = MIST_DAY.lerp(MIST_MOON, dark)
 		material.albedo_color = Color(tint.r, tint.g, tint.b, material.albedo_color.a * lerpf(1.0, 0.6, dark))
+
+
+# --- Bottom bar ----------------------------------------------------------------
+
+# The bottom bar was a solid walnut slab the width of the screen, mostly empty
+# behind three buttons. A scrim that fades up from the screen edge keeps the
+# buttons and notice line readable while the village shows through above them.
+func _bottom_scrim() -> StyleBoxTexture:
+	var gradient := Gradient.new()
+	gradient.set_color(0, Color(UI.WALNUT, 0.0))
+	gradient.set_color(1, Color(UI.WALNUT, 0.86))
+	gradient.add_point(0.45, Color(UI.WALNUT, 0.5))
+	var fill := GradientTexture2D.new()
+	fill.gradient = gradient
+	fill.fill_from = Vector2(0.5, 0.0)
+	fill.fill_to = Vector2(0.5, 1.0)
+	fill.width = 4
+	fill.height = 64
+	var box := StyleBoxTexture.new()
+	box.texture = fill
+	box.content_margin_left = 6.0
+	box.content_margin_right = 6.0
+	box.content_margin_top = 3.0
+	box.content_margin_bottom = 6.0
+	return box
 
 
 # --- Selection bounce ----------------------------------------------------------
