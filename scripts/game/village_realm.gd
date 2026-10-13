@@ -46,6 +46,7 @@ const REALM_BORDER_TINT: float = 0.6       # where two owners meet
 const REALM_HAUNT_BOX := Vector2(56.0, 52.0)  # half size of the haunted ground, just past its dead trees
 const REALM_FISHERS: int = 3
 const REALM_FISHERS_LOW: int = 2
+const REALM_HILLSHADE := Vector3(-0.5, 0.78, -0.38)   # unit vector: a high light from the far left
 const REALM_WOOD := Color("6b5238")
 const REALM_WOOD_DARK := Color("4a3826")
 const REALM_STONE := Color("6b6457")
@@ -220,7 +221,14 @@ func _realm_build_ground() -> void:
 			# Baked relief: hollows a shade darker, crests a shade lighter, so hills read from above
 			# whichever way the sun has turned.
 			var bend: float = clampf((left + right + up + down - 4.0 * heights[gz * side + gx]) / (step * step) * 4.0, -1.0, 1.0)
-			colour = colour.darkened(maxf(bend, 0.0) * 0.3 + minf(slope, 0.4) * 0.35)
+			colour = colour.darkened(maxf(bend, 0.0) * 0.3 + minf(slope, 0.4) * 0.2)
+			# A soft hillshade from a fixed high light, as on a painted map: slopes facing it warm
+			# up, slopes facing away cool down, so the hills read from straight above too.
+			var facing: float = normal.dot(REALM_HILLSHADE) - REALM_HILLSHADE.y
+			if facing > 0.0:
+				colour = colour.lerp(Color("e0c27a"), minf(facing * 0.9, 0.22))
+			else:
+				colour = colour.lerp(Color("1d2030"), minf(-facing * 1.1, 0.3))
 			_realm_base_colors[gz * side + gx] = colour.lightened(maxf(-bend, 0.0) * 0.16)
 	# The outskirts slab already covers the middle; quads wholly inside it are left out.
 	_realm_indices.clear()
@@ -730,6 +738,14 @@ func _realm_footing(parent: Node3D, centre: Vector2, facing: float, half: float)
 				continue
 			var rail_basis := Basis(Vector3.UP, facing + (0.0 if side % 2 == 0 else PI * 0.5))
 			parts.append([Vector3(half * 2.0 + 0.1, 0.12, 0.12), Transform3D(rail_basis, Vector3(spot.x, maxf(rail_y, ground + 0.4), spot.z)), REALM_WOOD_DARK])
+			# A diagonal brace from the rail up to the deck corner, like a real timber frame.
+			var rise: float = top - 0.2 - maxf(rail_y, ground + 0.4)
+			if rise > 0.35:
+				var run: float = half
+				var brace_basis := rail_basis * Basis(Vector3.BACK, atan2(rise, run))
+				var mid_y: float = maxf(rail_y, ground + 0.4) + rise * 0.5
+				var shift: Vector3 = (rail_basis * Vector3.RIGHT) * (half * 0.5)
+				parts.append([Vector3(sqrt(rise * rise + run * run), 0.1, 0.1), Transform3D(brace_basis, Vector3(spot.x, mid_y, spot.z) + shift), REALM_WOOD_DARK])
 	parent.add_child(_realm_props(parts))
 	return top
 

@@ -52,7 +52,7 @@ over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
 
 ## Terrain, river and fishing
 
-- **Hills you can build on**: rolling hills up to about 9 m with flat meadows between them. The
+- **Hills you can build on**: rolling hills up to about 9 m, with knolls and low ridges on them and flat meadows between. The
   steepest slope is about 20 degrees, so all dry land stays buildable, and there are no more lakes.
   Home and its outskirts stay flat as before.
 - **Footings and stilts**: settlements are no longer levelled. Every building (and outpost tower)

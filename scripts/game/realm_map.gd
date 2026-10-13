@@ -26,7 +26,8 @@ const WATER_Y: float = -1.3
 const HOME_CALM: Vector2 = Vector2(62.0, 100.0)   # hills fade in between these distances from home
 const SCENERY_CLEAR: Vector2 = Vector2(52.0, 48.0)  # the existing outskirts trees fill this box
 const EDGE_DROP_FROM: float = 236.0
-const HILL_HEIGHT: float = 14.0           # rolling hills; slopes stay gentle enough to build on
+const HILL_HEIGHT: float = 12.5           # rolling hills; slopes stay gentle enough to build on
+const KNOLL_HEIGHT: float = 1.1          # small ridges and knolls over the hills
 const SITE_CORE: float = 16.0             # a settlement's streets (trees and outposts keep clear)
 const SITE_RIVER_CLEAR: float = 36.0      # settlements keep their streets this far from the river
 # The river: one winding river crosses the whole realm (the only water apart from the sea at the
@@ -178,8 +179,13 @@ func _dry_spot(angle: float, distance: float) -> Vector2:
 func _land_height(x: float, z: float) -> float:
 	var t: float = _elev.get_noise_2d(x, z) + 0.12
 	var hill: float = (t + sqrt(t * t + 0.004)) * 0.5   # a soft max(t, 0): meadows meet hills smoothly
+	# Knolls and low ridges ride on the big hills (and rumple the meadows a little), so the land
+	# reads as rolling country from above rather than a few smooth domes.
+	var bump: float = _moist.get_noise_2d(x * 1.9 + 300.0, z * 1.9 - 170.0)
+	var ridge: float = 1.0 - minf(bump * bump * 4.0, 1.0)   # rounded crests where the noise crosses zero
+	var knolls: float = ridge * ridge * (0.6 + hill * 1.2) * KNOLL_HEIGHT
 	var calm: float = smoothstep(HOME_CALM.x, HOME_CALM.y, Vector2(x, z).length())
-	return (0.3 + hill * HILL_HEIGHT) * calm
+	return (0.3 + hill * HILL_HEIGHT + knolls) * calm
 
 
 # Height above BASE_Y: the land, the river cut through it, and the drop to the sea at the edge.
