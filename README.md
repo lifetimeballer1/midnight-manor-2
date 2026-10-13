@@ -50,7 +50,8 @@ Research Stoneworking (quarry + miners at village level 2) and Road Masonry (pav
 ## The Realm (open world, in development)
 
 Pan and zoom out past the haunted edge: the manor now sits in a 512 m (256x256 tile) realm of
-rolling hills, woods and a winding river with five rival settlements. All dry land is buildable;
+rolling hills, woods and a winding river with five rival settlements; past its edge the land runs
+on into wooded foothills and mountains. All dry land is buildable;
 buildings on slopes stand on footings or stilts. Bridges carry the roads over the river, and
 jetties on the manor's banks land Food from fishing. Their people walk between their halls and
 cottages, their land is tinted in their colour, and they grow over active play time, pushing
