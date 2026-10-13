@@ -30,7 +30,7 @@ const POP_CAP: int = 6                 # live collect pops; the oldest is droppe
 const MODEL_LIMIT: int = 160
 # Cousin models: the two types without exports reuse the closest delivered
 # Mixar look. Every other type now resolves to its own exported tiers.
-const MODEL_COUSINS := {"stone_quarry": "mine", "bathhouse": "cottage", "stone-road": "wall", "city-wall": "stonewall", "forge-quarter": "forge", "grand-watchtower": "tower", "manner-citadel": "manor_hall", "grand-granary": "storehouse", "manor-gardens": "grove", "market-square": "market", "monument": "oathstone"}
+const MODEL_COUSINS := {"stone_quarry": "mine", "bathhouse": "cottage", "stone-road": "wall", "city-wall": "stonewall", "forge-quarter": "forge", "grand-watchtower": "tower", "manner-citadel": "manor_hall", "grand-granary": "storehouse", "manor-gardens": "grove", "market-square": "market", "monument": "oathstone", "fire-trap": "fire_trap"}
 const ENEMY_MODELS := {"raider": "warrior", "scout": "ranger", "archer": "archer", "breaker": "halberdier", "ram": "sapper", "bombard": "sapper"}
 # Resource glyphs stay monochrome brass so the numbers stay the loudest thing.
 const RESOURCE_GLYPHS: Dictionary = {"wood": "W", "food": "F", "gold": "G", "lumber": "L", "stone": "S"}
