@@ -8,7 +8,7 @@ extends "res://scripts/game/village_moon.gd"
 # the base layer would otherwise chime once per building, so its chime is muted for
 # the frame that carries a flagged batch.
 # Everything runs in _process scaled by the sim's pause state, so pausing freezes the
-# flight and the count-up. Glyphs come from a fixed pool of Labels (no Tweens are used).
+# flight and the count-up. Glyphs come from a fixed pool of drawn icons (no Tweens are used).
 
 const ICON_LAYER: int = 2
 const ICON_SLOTS: int = 24
@@ -23,7 +23,7 @@ const COLLECT_KEY: String = "juice_collect"
 const COUNTER_TINT: Color = Color(1.35, 1.3, 1.1)
 
 var _icon_layer: CanvasLayer = null
-var _free_slots: Array[Label] = []
+var _free_slots: Array[Control] = []
 var _icon_jobs: Array[Dictionary] = []   # {label, resource, from, to, share, age, delay, duration}
 var _counter: Dictionary = {}             # resource -> {shown, goal, final, icons_left, pulse}
 
@@ -34,12 +34,9 @@ func _ready() -> void:
 	_icon_layer.layer = ICON_LAYER
 	add_child(_icon_layer)
 	for slot in ICON_SLOTS:
-		var label := Label.new()
+		var label: Control = UI.ResourceIcon.make("", 22.0)
 		label.visible = false
-		label.add_theme_font_size_override("font_size", 18)
-		label.add_theme_color_override("font_color", GOLD)
-		label.add_theme_color_override("font_outline_color", NAVY)
-		label.add_theme_constant_override("outline_size", 5)
+		label.pivot_offset = Vector2(11.0, 11.0)
 		_icon_layer.add_child(label)
 		_free_slots.append(label)
 
@@ -56,7 +53,7 @@ func _process(delta: float) -> void:
 func _exit_tree() -> void:
 	super()
 	for job: Dictionary in _icon_jobs:
-		var label: Label = job["label"]
+		var label: Control = job["label"]
 		if is_instance_valid(label):
 			label.visible = false
 	_icon_jobs.clear()
@@ -172,8 +169,8 @@ func _launch_feedback(batch: Array[Dictionary]) -> void:
 func _spawn_icon(resource: String, from: Vector2, to: Vector2, share: float, piece: int) -> bool:
 	if _free_slots.is_empty():
 		return false
-	var label: Label = _free_slots.pop_back()
-	label.text = str(RESOURCE_GLYPHS.get(resource, "*"))
+	var label: Control = _free_slots.pop_back()
+	label.set("kind", resource)
 	label.visible = false
 	label.scale = Vector2.ONE
 	label.modulate = Color.WHITE
@@ -190,13 +187,13 @@ func _tend_icons(step: float) -> void:
 		job["age"] = float(job["age"]) + step
 		var elapsed: float = float(job["age"]) - float(job["delay"])
 		if elapsed >= 0.0:
-			var label: Label = job["label"]
+			var label: Control = job["label"]
 			var t: float = clampf(elapsed / float(job["duration"]), 0.0, 1.0)
 			var eased: float = 1.0 - pow(1.0 - t, 2.0)
 			var from: Vector2 = job["from"]
 			var to: Vector2 = job["to"]
 			label.visible = true
-			label.position = from.lerp(to, eased) - Vector2(0.0, sin(t * PI) * ICON_ARC) - Vector2(8.0, 12.0)
+			label.position = from.lerp(to, eased) - Vector2(0.0, sin(t * PI) * ICON_ARC) - Vector2(11.0, 11.0)
 			label.scale = Vector2.ONE * (1.0 - 0.35 * t)
 			label.modulate.a = 1.0 - maxf(0.0, (t - 0.85) / 0.15)
 			if t >= 1.0:
@@ -258,9 +255,8 @@ func _restore_counter(resource: String) -> void:
 
 # Mirrors the base HUD text formats so a ticking counter reads the same as a static one.
 func _hud_text(resource: String, held: int) -> String:
-	var glyph: String = str(RESOURCE_GLYPHS.get(resource, "*"))
 	if _is_small():
-		return "%s %d" % [glyph, held]
+		return "%d" % held
 	return "%s  %d / %d" % [resource.capitalize(), held, int(sim.storage_cap(resource))]
 
 
