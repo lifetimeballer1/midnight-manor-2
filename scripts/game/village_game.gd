@@ -16,9 +16,9 @@ const PAPER := Color("f2e7cc")
 const TILE: float = 2.0
 const MAP_ORIGIN := Vector3(-20, 0, -16)
 # Camera pan limits, widened so all four expansion plots can be viewed.
-const PAN_LIMIT := Vector2(40.0, 36.0)
+var pan_limit := Vector2(40.0, 36.0)   # the realm layer widens this to the open world
 # Zoom-out limit: wide enough to see the whole potential 80x72 world at once.
-const ZOOM_MAX: float = 90.0
+var zoom_max: float = 90.0   # the realm layer raises this for the open world
 # ground_parts indices of the base lip and skirt on each edge (order set in _ground()).
 # A claimed plot covers its edge, so these are hidden while it is claimed.
 const EXPANSION_EDGE_PARTS := {"west": [2, 6], "east": [3, 7], "north": [4, 8], "south": [5, 9]}
@@ -1896,6 +1896,7 @@ func _ui() -> void:
 	left_content.add_child(crest_row)
 	crest_label = ui.crest("I", crest_row, "gold", 15)
 	crest_label.tooltip_text = "Settlement crest and act"
+	crest_row.add_child(UI.ResourceIcon.make("souls", 16.0))
 	pop_label = Label.new()
 	pop_label.add_theme_font_size_override("font_size", 13)
 	pop_label.add_theme_color_override("font_color", UI.PAPER)
@@ -1963,7 +1964,15 @@ func _ui() -> void:
 	toast_label.add_theme_color_override("font_color", UI.PAPER)
 	toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	toast_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	toast.add_child(toast_label)
+	# The brass tick lives inside the toast so it hides with it (the raven note
+	# fades the toast out; a lone tick there read as a stray text cursor).
+	var toast_row := HBoxContainer.new()
+	toast_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	toast_row.add_theme_constant_override("separation", 8)
+	toast.add_child(toast_row)
+	notice_tick.get_parent().remove_child(notice_tick)
+	toast_row.add_child(notice_tick)
+	toast_row.add_child(toast_label)
 	notice_wrap.add_child(toast)
 	root_control.add_child(banner_panel)
 	banner_panel.add_theme_stylebox_override("panel", ui.panel_box())
@@ -2221,6 +2230,11 @@ func _is_small() -> bool:
 
 func _is_narrow() -> bool:
 	var size: Vector2 = get_viewport().get_visible_rect().size
+	# Short landscape screens (1280x720 laptops, 1366x768) have room for the
+	# compact desktop clusters; stretching them edge to edge buried the village.
+	var win: Vector2i = DisplayServer.window_get_size()
+	if win.x >= 1000 and win.y >= 560 and win.x > win.y and size.x >= 760.0:
+		return false
 	return _window_min() < 800.0 or size.x < 760.0
 
 
@@ -2249,7 +2263,9 @@ func _layout_ui() -> void:
 	# Five bottom buttons fit phones only with tighter spacing and smaller hero discs.
 	if small != nav_compact:
 		nav_compact = small
-		nav.add_theme_constant_override("separation", 4 if small else 12)
+		nav.add_theme_constant_override("separation", 6 if small else 12)
+		# Spacers hide on phones; centre the buttons instead of piling them left.
+		nav.alignment = BoxContainer.ALIGNMENT_CENTER if small else BoxContainer.ALIGNMENT_BEGIN
 		_paint_ring(nav_attack, UI.BLOOD, 64.0 if small else 84.0)
 		_paint_ring(nav_shop, UI.GOLD, 64.0 if small else 84.0)
 		for button: Button in [more_button, collect_all_button, repair_all_button]:
@@ -2270,11 +2286,14 @@ func _layout_ui() -> void:
 	# a 4px overlap on portrait phones).
 	var gutter: float = maxf(0.0, size.x - safe * 2.0)
 	var dock_width: float = gutter * 0.52 if narrow else UI.RAIL_WIDTH + 198.0
-	left_dock.size = Vector2(dock_width, 0)
-	left_dock.position = Vector2(safe, safe)
 	var stack_width: float = gutter * 0.48 if narrow else 226.0
 	if small:
-		stack_width = minf(165.0, size.x - dock_width - safe * 3.0)
+		# Phone pills show an icon and a number only, so the dock takes the room
+		# they free and its objective lines wrap less.
+		stack_width = minf(112.0, gutter * 0.4)
+		dock_width = maxf(0.0, gutter - stack_width - safe * 0.75)
+	left_dock.size = Vector2(dock_width, 0)
+	left_dock.position = Vector2(safe, safe)
 	resource_stack.size = Vector2(stack_width, 0)
 	resource_stack.position = Vector2(size.x - stack_width - safe, safe)
 	if small:
@@ -3782,7 +3801,7 @@ func _refresh_hud() -> void:
 		var cap: int = int(sim.storage_cap(resource))
 		var held: int = int(sim.resources.get(resource, 0))
 		if _is_small():
-			resource_rows[resource].text = "%s %d" % [RESOURCE_GLYPHS.get(resource, "*"), held]
+			resource_rows[resource].text = "%d" % held
 		else:
 			resource_rows[resource].text = "%s  %d / %d" % [resource.capitalize(), held, cap]
 		var gauge: ProgressBar = resource_bars[resource]
@@ -3802,7 +3821,9 @@ func _refresh_hud() -> void:
 		collect_all_button.tooltip_text = "Collect from every workplace" if bankable else "Nothing to collect yet"
 		if bankable != collect_glow:
 			collect_glow = bankable
-			_paint_ring(collect_all_button, UI.READY if bankable else UI.SLATE, 56.0)
+			# Repaint at the current nav size so the phone disc and label match their neighbours.
+			_paint_ring(collect_all_button, UI.READY if bankable else UI.SLATE, 44.0 if nav_compact else 56.0)
+			collect_all_button.add_theme_font_size_override("font_size", 12 if nav_compact else 13)
 	var repair_wood: int = 0
 	for b: Dictionary in sim.buildings:
 		if float(b.get("hp", 0.0)) < float(b.get("max_hp", 0.0)) and float(b.get("remaining", 0.0)) <= 0.0:
@@ -4194,11 +4215,15 @@ func _spawn_collect_pop(event: Dictionary) -> void:
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.font_size = 42
 	label.pixel_size = 0.014
+	label.outline_size = 10
+	label.outline_modulate = Color(0.09, 0.06, 0.03, 0.85)
 	label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 3.5 + float(stack) * step)
+	label.scale = Vector3.ONE * 0.55
 	add_child(label)
 	effect_nodes.append(label)
 	var tween: Tween = _effect_tween()
-	tween.tween_property(label, "position:y", label.position.y + 2, 1.5)
+	tween.tween_property(label, "scale", Vector3.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(label, "position:y", label.position.y + 2, 1.5)
 	tween.parallel().tween_property(label, "modulate:a", 0.0, 1.5)
 	tween.tween_callback(label.queue_free)
 	collect_pops.append({"resource": resource, "amount": amount, "label": label, "tween": tween, "born": now})
@@ -4594,15 +4619,15 @@ func _pinch_update() -> void:
 	var a: Vector2 = pts[0]
 	var b: Vector2 = pts[1]
 	var cur_dist: float = maxf(a.distance_to(b), 1.0)
-	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, ZOOM_MAX)
+	zoom = clampf(pinch_zoom * pinch_dist / cur_dist, 12, zoom_max)
 	var cur_angle: float = atan2(b.y - a.y, b.x - a.x)
 	yaw = pinch_yaw - wrapf(cur_angle - pinch_angle, -PI, PI)
 	var mid: Vector2 = (a + b) * 0.5
 	if pinch_has_mid:
 		var movement: Vector2 = pick_ground(pinch_mid) - pick_ground(mid)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
-		target.x = clampf(target.x, -PAN_LIMIT.x, PAN_LIMIT.x)
-		target.z = clampf(target.z, -PAN_LIMIT.y, PAN_LIMIT.y)
+		target.x = clampf(target.x, -pan_limit.x, pan_limit.x)
+		target.z = clampf(target.z, -pan_limit.y, pan_limit.y)
 	pinch_mid = mid
 	pinch_has_mid = true
 	_camera_update()
@@ -4636,8 +4661,8 @@ func _drag_map(pointer: Vector2) -> void:
 		left_dragged = true
 		var movement: Vector2 = pick_ground(last_pointer) - pick_ground(pointer)
 		target += Vector3(movement.x * TILE, 0, movement.y * TILE)
-		target.x = clampf(target.x, -PAN_LIMIT.x, PAN_LIMIT.x)
-		target.z = clampf(target.z, -PAN_LIMIT.y, PAN_LIMIT.y)
+		target.x = clampf(target.x, -pan_limit.x, pan_limit.x)
+		target.z = clampf(target.z, -pan_limit.y, pan_limit.y)
 		_camera_update()
 	last_pointer = pointer
 
@@ -4663,7 +4688,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			panning = event.pressed
 		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			zoom = clampf(zoom * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 12, ZOOM_MAX)
+			zoom = clampf(zoom * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 12, zoom_max)
 			_camera_update()
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			left_pressed = true
@@ -4685,7 +4710,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		target += Vector3(event.delta.x, 0, event.delta.y) * 0.03
 		_camera_update()
 	if event is InputEventMagnifyGesture:
-		zoom = clampf(zoom / event.factor, 12, ZOOM_MAX)
+		zoom = clampf(zoom / event.factor, 12, zoom_max)
 		_camera_update()
 
 

@@ -20,7 +20,8 @@ const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 240
 const DIRECTIONS: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 # The starting 20x16 village. Claimed expansion plots extend it (see in_world).
 const BASE_RECT: Rect2i = Rect2i(0, 0, 20, 16)
-# Expansion plots ring the base. "region" is the Frontier region that must be secured before claiming.
+# Expansion plots ring the base. "region" is the Frontier region that must be secured before claiming,
+# unless the realm layer has handed the reaches to the tribes (reach_holders): then each is won in battle.
 const EXPANSION_PLOTS: Dictionary = {
 	"north": {"label": "North Reach", "rect": Rect2i(-10, -10, 40, 10), "region": "starwatch-ridge"},
 	"east": {"label": "East Reach", "rect": Rect2i(20, 0, 10, 16), "region": "whisperwood"},
@@ -75,6 +76,9 @@ var workplace_specs: Dictionary = {}
 var stand_cache: Dictionary = {}
 # Claimed expansion plot ids, in claim order.
 var expansions: Array[String] = []
+# Set by the realm layer, never saved: reach id -> why it cannot be claimed (the tribe holding it).
+# While a reach has a holder it is only taken in battle (claim_reach), never bought.
+var reach_holders: Dictionary = {}
 
 const KITE_TRIGGER: float = 1.5
 const KITE_RELEASE_RATIO: float = 0.7
@@ -864,6 +868,8 @@ func expansion_reason(id: String) -> String:
 		return "Already claimed."
 	if raid_active or raid_warning:
 		return "No claiming during a raid."
+	if reach_holders.has(id):
+		return str(reach_holders[id])
 	# Same act gate as the Frontier button in village_game.gd.
 	if chronicle.act < 4:
 		return "The Frontier is not open yet."
@@ -886,6 +892,17 @@ func expand(id: String) -> bool:
 	_spend(expansion_cost(id))
 	expansions.append(id)
 	notice = "%s claimed. The ground grows." % str(EXPANSION_PLOTS[id]["label"])
+	_invalidate()
+	return true
+
+
+# A reach won from the tribe holding it joins the village. No cost: the battle was the price.
+func claim_reach(id: String) -> bool:
+	if not EXPANSION_PLOTS.has(id) or id in expansions:
+		return false
+	expansions.append(id)
+	reach_holders.erase(id)
+	notice = "%s taken. The ground grows." % str(EXPANSION_PLOTS[id]["label"])
 	_invalidate()
 	return true
 

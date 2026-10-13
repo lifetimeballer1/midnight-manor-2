@@ -47,6 +47,21 @@ You start with nine buildings, five villagers, 320 Wood / 180 Food / 210 Gold. C
 
 Research Stoneworking (quarry + miners at village level 2) and Road Masonry (pave worn dirt for 8 Stone/segment, +15% friendly speed). Villagers wear dirt into faint paths (~25 crossings) and full trails (~150); unused dirt regrows after ~10 active minutes. Living Manor generates 6 Insight/min; research pauses during alarms. See `docs/LIVING_VILLAGE_DELIVERY.md`.
 
+## The Realm (open world, in development)
+
+Pan and zoom out past the haunted edge: the manor now sits in a 512 m (256x256 tile) realm of
+rolling hills, woods and a winding river with five rival settlements; past its edge the land runs
+on into wooded foothills and mountains. All dry land is buildable;
+buildings on slopes stand on footings or stilts. Bridges carry the roads over the river, and
+jetties on the manor's banks land Food from fishing. Their people walk between their halls and
+cottages, their land is tinted in their colour, and they grow over active play time, pushing
+their borders outward. Built for phones by streaming: one ground mesh, trees per nearby chunk,
+and models only for the nearest settlements. Tap a neighbour for its card: send gifts or raid it
+with your fighters (win loot; beat it small enough and it swears to you). Tap wild land to found an
+outpost that pushes your border out. Friendly neighbours send traders, hostile ones send scouts and
+overrun outposts. The four expansion reaches are no longer bought: each is held by a tribe and
+won in battle, East first (garrison 3) up to South (45), and farther tribes are much stronger. See `docs/REALM.md`; `test_realm`, `test_realm_life` and `test_realm_terrain` cover it.
+
 ## Project layout
 
 ### Manor Studio

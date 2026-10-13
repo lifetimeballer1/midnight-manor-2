@@ -339,8 +339,7 @@ func _ensure_ghost(id: String, plot: Dictionary, lite: bool) -> void:
 	for spot: Vector2 in spots:
 		post_xf.append(Transform3D(Basis(), Vector3(spot.x, POST_SIZE.y * 0.5, spot.y)))
 		lantern_xf.append(Transform3D(Basis(), Vector3(spot.x, LANTERN_Y, spot.y)))
-	var post_box := BoxMesh.new()
-	post_box.size = POST_SIZE
+	var post_box: Mesh = _stake_mesh()
 	var iron_mat := StandardMaterial3D.new()
 	iron_mat.albedo_color = IRON_POST
 	iron_mat.metallic = 0.5
@@ -351,12 +350,28 @@ func _ensure_ghost(id: String, plot: Dictionary, lite: bool) -> void:
 	lantern_mat.emission = LANTERN_AMBER
 	lantern_mat.roughness = 0.5
 	lantern_mat.emission_enabled = true
-	var lantern_ball := SphereMesh.new()
-	lantern_ball.radius = LANTERN_RADIUS
-	lantern_ball.height = LANTERN_RADIUS * 2.0
-	lantern_ball.radial_segments = 8
-	lantern_ball.rings = 4
+	# A boxy lantern pane between the stake's iron base plate and roof.
+	var lantern_ball := BoxMesh.new()
+	lantern_ball.size = Vector3(LANTERN_RADIUS * 0.8, LANTERN_RADIUS, LANTERN_RADIUS * 0.8)
 	var lanterns := _multimesh(lantern_ball, lantern_mat, lantern_xf, "Lanterns", root)
+	# Warm pools of lantern light on the ground under each stake.
+	var pool_xf: Array[Transform3D] = []
+	for spot: Vector2 in spots:
+		pool_xf.append(Transform3D(Basis(Vector3.RIGHT, -PI * 0.5), Vector3(spot.x, 0.25, spot.y)))
+	var pool_mat := StandardMaterial3D.new()
+	pool_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pool_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	pool_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	pool_mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	pool_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	# The village slab stands above the plot; skip the depth test so the pool
+	# spills over both sides of the edge instead of stopping at the kerb.
+	pool_mat.no_depth_test = true
+	pool_mat.albedo_color = Color(LANTERN_AMBER, 0.2)
+	pool_mat.albedo_texture = dot_texture
+	var pool_quad := QuadMesh.new()
+	pool_quad.size = Vector2(2.8, 2.8)
+	_multimesh(pool_quad, pool_mat, pool_xf, "LanternPools", root)
 
 	# Dashed brass claim line along the edge shared with the village.
 	var dash_mat := StandardMaterial3D.new()
@@ -724,6 +739,37 @@ func _mesh_node(parent: Node3D, mesh: Mesh, material: Material, at: Vector3, nod
 
 
 # One MultiMesh with an instance per transform: a single draw call for every stake, lantern or dash.
+# Survey stake as one iron mesh: a footed post with a lantern base plate, corner
+# bars and a peaked roof around LANTERN_Y. Centred on the post like the old box.
+func _stake_mesh() -> Mesh:
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var mid: float = POST_SIZE.y * 0.5
+	var lantern: float = LANTERN_Y - mid
+	var half: float = LANTERN_RADIUS * 0.5
+	var parts: Array = [
+		[Vector3(POST_SIZE.x * 0.7, POST_SIZE.y, POST_SIZE.z * 0.7), Vector3.ZERO],
+		[Vector3(0.42, 0.12, 0.42), Vector3(0.0, -mid + 0.06, 0.0)],
+		[Vector3(0.34, 0.08, 0.34), Vector3(0.0, -mid + 0.16, 0.0)],
+		[Vector3(0.36, 0.05, 0.36), Vector3(0.0, lantern - half - 0.025, 0.0)],
+		[Vector3(0.38, 0.05, 0.38), Vector3(0.0, lantern + half + 0.025, 0.0)],
+	]
+	for corner: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
+		parts.append([Vector3(0.035, LANTERN_RADIUS, 0.035), Vector3(corner.x * half * 0.85, lantern, corner.y * half * 0.85)])
+	for part: Array in parts:
+		var box := BoxMesh.new()
+		box.size = part[0]
+		tool.append_from(box, 0, Transform3D(Basis(), part[1]))
+	var roof := PrismMesh.new()
+	roof.size = Vector3(0.4, 0.2, 0.4)
+	tool.append_from(roof, 0, Transform3D(Basis(), Vector3(0.0, lantern + half + 0.15, 0.0)))
+	tool.append_from(roof, 0, Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(0.0, lantern + half + 0.15, 0.0)))
+	var knob := BoxMesh.new()
+	knob.size = Vector3(0.06, 0.08, 0.06)
+	tool.append_from(knob, 0, Transform3D(Basis(), Vector3(0.0, lantern + half + 0.29, 0.0)))
+	return tool.commit()
+
+
 func _multimesh(mesh: Mesh, material: Material, transforms: Array[Transform3D], node_name: String, parent: Node3D,
 		colors: Array = [], casts_shadow: bool = false) -> MultiMeshInstance3D:
 	var multi := MultiMesh.new()

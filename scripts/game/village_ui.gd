@@ -5,6 +5,7 @@ class_name VillageUI
 # categories, cached model thumbnails and the soft ground textures used by the
 # living-trail renderer. Nothing here owns simulation state.
 
+const ResourceIcon = preload("res://scripts/game/resource_icon.gd")
 const THUMB_SIZE: int = 96
 const THUMB_CACHE_LIMIT: int = 32
 const THUMB_RENDER_SIZE: int = 256
@@ -406,6 +407,8 @@ func crest_color(tone: String) -> Color:
 func portrait_medallion(character: String, parent: Node, diameter: float = 44.0) -> Control:
 	var holder := Control.new()
 	holder.custom_minimum_size = Vector2(diameter, diameter)
+	# Stay round inside taller rows instead of stretching into an oval.
+	holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	holder.tooltip_text = character
 	parent.add_child(holder)
 	var disc := Panel.new()
@@ -476,12 +479,15 @@ func resource_row(parent: Node, label: String, glyph: String, key: String = "") 
 	var line := HBoxContainer.new()
 	line.add_theme_constant_override("separation", 6)
 	row.add_child(line)
-	var icon := Label.new()
-	icon.text = glyph
-	icon.add_theme_font_size_override("font_size", 13)
-	icon.add_theme_color_override("font_color", BRASS_SOFT)
-	icon.custom_minimum_size.x = 16
-	line.add_child(icon)
+	if RESOURCE_TINTS.has(key):
+		line.add_child(ResourceIcon.make(key, 22.0))
+	else:
+		var icon := Label.new()
+		icon.text = glyph
+		icon.add_theme_font_size_override("font_size", 13)
+		icon.add_theme_color_override("font_color", BRASS_SOFT)
+		icon.custom_minimum_size.x = 16
+		line.add_child(icon)
 	var value := Label.new()
 	value.text = label
 	value.add_theme_font_size_override("font_size", 15)

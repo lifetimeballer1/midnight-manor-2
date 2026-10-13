@@ -1,0 +1,145 @@
+# The Realm: open world groundwork
+
+The manor now sits in the middle of a WorldBox-style open realm. The home village, its art,
+controls and simulation are unchanged; the realm is a new visual layer (`scripts/game/village_realm.gd`)
+over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
+
+## What is in this step
+
+- **A 512 m realm (256 x 256 tiles)** of hills, autumn woods, wheat, rocky rises and a river around
+  the 20 x 16 home map (see "Terrain, river and fishing" for the current land). Hills fade out near home so the village diorama and its haunted edge look
+  exactly as before; the haunted ground is trimmed to the outskirts and the realm ground starts in
+  its colour, so the haunt still recedes as the manor grows.
+- **Five rival settlements** (Ashfen Hollow, Briarwatch, Cinderholt, Gallowmere, Thornvale), built
+  from the delivered building models, each with a tall banner in its colour and a name/population
+  label. The nearest is about 100 m from the manor, so it shows at the edge of a zoomed-out view.
+- **People in the distance**: villagers (the delivered character models and walk/idle clips) stroll
+  between the buildings of the settlements near the camera.
+- **Territory**: each settlement and the manor claim land. Claims show as a light wash in the
+  owner's colour with a brighter border line. The strongest claim (radius minus distance) wins
+  contested ground, so borders move as neighbours grow. The manor's claim widens with every
+  expansion plot.
+- **Growth**: each neighbour gains a settler every 75 active seconds (cap 40). More people means a
+  higher building tier, more cottages and a wider claim. Paused or closed time adds nothing.
+- **Camera**: pan reaches the whole realm and zoom goes out to 130 (was 90). Default view, recentre
+  and all gestures are unchanged.
+- **Save**: realm growth saves to `user://realm-v1.json`, beside (never inside) `village-v1.json`.
+
+## Realm life (neighbours, outposts, raids)
+
+`scripts/game/village_realm_life.gd` sits over the realm layer (the scene points at it).
+
+- **Moods**: every neighbour is friendly, wary or hostile (or sworn once beaten), shown on its
+  banner. Borders that touch the manor's land sour it by about 3 points a minute. Apart, it eases
+  back. Gifts (40 Gold) warm it by 20.
+- **Neighbours that act**: friendly neighbours send a trader every 90 active seconds who walks to
+  the manor's edge and leaves 10 Gold (banked within storage). Hostile ones send scouts every 70 s,
+  grow 1.5x faster and overrun any outpost their land swallows.
+- **Tap the realm**: tapping a settlement or its land opens its card (people, mood, land, defence,
+  Send Gifts, Raid). Tapping wild land offers an outpost. Taps on the village and its locked plots
+  behave as before.
+- **Outposts (land takeover)**: 120 Wood + 60 Gold, up to six, each within 36 m of land the manor
+  already holds. The manor must have taken at least one reach first, and an outpost never goes on
+  a tribe's own land (beat or swear the tribe first). Each claims 26 m for the manor, so borders move out step by step and weaker
+  neighbour claims change hands.
+- **Raids (fighting neighbours)**: 20 Food + 10 Gold of supplies and at least two fighters. The
+  village's own fighters' combined levels set the warband's strength; they never leave the village's
+  defence. A column of up to four marches from the village edge, and the fight resolves on
+  arrival. A win brings Gold and Food (banked within storage) and costs the neighbour a quarter of
+  its people. A neighbour beaten down to five people swears to the manor: its land becomes yours
+  and it flies your colour. Each raid leaves the target on guard for two minutes.
+- **Save**: realm save v2 adds moods, outposts, sworn neighbours and a marching warband. v1 realm
+  saves still load. The village save is unchanged.
+
+## Taking the reaches (expansion is conquest)
+
+The four expansion plots around the village (East, West, North and South Reach) can no longer be
+bought. Each is held by the nearest tribe in its direction, which camps a flag and two guards on it.
+Tapping a held reach opens its card: the holder, the garrison's strength, your fighters, and an
+Attack button (20 Food + 10 Gold of supplies, at least two fighters). The warband marches out and the
+fight resolves on arrival, with the same dice as a raid (strength x 4, x0.8 to x1.25).
+
+| Reach | Garrison strength | When |
+|---|---|---|
+| East | 3 | the first fight, early game |
+| West | 8 | early to mid game |
+| North | 20 | mid game |
+| South | 45 | late game |
+
+A win claims the reach for free (the ground grows as before, the camp leaves) and costs the holder
+10 relation. A loss puts that garrison on guard for two minutes. The village goal line names the
+next reach and the strength it needs. Reach ownership is stored in the village save's expansion list
+as before, so old saves keep the reaches they already bought.
+
+**Tribes get mightier with distance**: ranked nearest to farthest, their defence is multiplied by
+0.5, 1, 2, 5 and 11. At 20 people the nearest needs under strength 25 to beat and the farthest over
+100, so the two farthest tribes are late-game fights. The tribe card shows its rank and the strength
+needed.
+
+## Terrain, river and fishing
+
+- **Hills you can build on**: rolling hills up to about 9 m, with knolls and low ridges on them and flat meadows between. The
+  steepest slope is about 20 degrees, so all dry land stays buildable, and there are no more lakes.
+  Home and its outskirts stay flat as before.
+- **Footings and stilts**: settlements are no longer levelled. Every building (and outpost tower)
+  stands level at the height of its highest corner: on a stone footing where the ground falls a
+  little, on timber stilts with a deck and rails where it falls more. Each footing is one mesh.
+- **The river**: one winding river crosses the whole realm, never closer than 74 m to the manor and
+  never through a settlement's streets. Its banks shade from grass to sand to wet mud, with reeds at
+  the water's edge; boulders sit on the stony hills. The water is a ribbon that follows the river:
+  clear shallows over silt at the banks, dark water in the channel, soft foam lapping the shore and
+  streaks and ripples running downstream, fastest mid-channel.
+- **Beyond the edge**: the realm no longer ends in a cliff over the sky. Past the playable edge the
+  land runs on to the horizon: wooded foothills climbing into rock and snow-capped mountains, with
+  the river leaving through its own valley. It is scenery only (the camera pan limit is unchanged).
+  The projection is orthographic, so mountains on the camera's side of the view would hide the
+  realm; the ground and tree shaders lower those to foothills around the camera's focus.
+- **Ground, trees and grass**: the ground shader paints detail over the baked colours: light and
+  dark swells, a grassy grain, leaf litter on the woodland floor, stones on steeper slopes and
+  wildflowers in the meadows (the haunted ground near home stays bare). Trees are layered pines,
+  lumpy broadleaf crowns, slim poplars and meadow bushes, shaded darker low and lighter high, and
+  they sway in rolling gusts. Close up (zoom 55 or nearer) the village's swaying grass tufts grow
+  over the nearest chunks.
+- **Bridges and wading**: where the road from the manor to a neighbour crosses the river there is a
+  timber bridge, so traders, scouts and the warband cross on it. Anyone else wades, knee deep.
+- **Fishing**: up to eight jetties line the banks, nearest the manor first. Tap one for its card.
+  Each spot on the manor's land (its own claim, an outpost or a sworn neighbour) lands 6 Food every
+  minute of active play, banked within storage. A wild bank needs an outpost (the card offers one).
+  Someone fishes from every jetty on held land; the nearest few show a fisher, a bobbing float and
+  a ripple.
+- **Saves**: the realm save gains an optional fishing clock. Older saves load; an old outpost that
+  now sits in the river moves to the nearest dry bank.
+
+## Mobile sizing
+
+The limit on phones is draw calls and per-frame script work, not map area. The realm is built so
+cost follows what the camera sees, not the size of the world:
+
+| Piece | Cost |
+|---|---|
+| Ground | one mesh, 4 m cells (8 m on phones): ~33k triangles desktop, ~8k phone, one draw call; detail shader of four fetches of one 128 px noise texture |
+| Land beyond the edge | one ring mesh (~20k triangles desktop, ~5k phone), cells widening with distance; one draw call |
+| Border woods | fixed MultiMeshes, one per shape and side (~2,000 trees desktop, ~800 phone) |
+| Water | one ribbon mesh along the river (13 vertices across, 7 on phones), animated shader (no textures, no depth reads) |
+| Grass tufts | only at zoom 55 or nearer: one MultiMesh per nearby chunk, at most 9 (4 on phones) |
+| Bridges, jetties, footings | one mesh each, built once (footings with their settlement) |
+| Fishers | at most 3 (2 on phones), only near the camera |
+| Trees | one MultiMesh per 64 m chunk and shape, streamed around the camera; at most 36 chunks (16 on phones), 3 built per 0.25 s so panning never hitches |
+| Settlements | only the 3 (2 on phones) nearest the camera get models and walkers; others are a banner pole + their territory tint |
+| Walkers | 6 per loaded settlement (3 on phones) |
+| Rival growth | a few numbers per settlement per frame |
+
+Recommendation: keep the realm at 256 x 256 tiles until it has been played on real phones. With the
+same streaming it could go to 384 x 384 tiles (768 m), but bigger maps mostly add empty travel, and
+real Safari/Android frame rates have not been measured yet. Desktop captures do not establish phone
+performance.
+
+## Next steps
+
+1. Neighbours raiding back: hostile neighbours' attacks arriving as home raid waves.
+2. Fought raids: play a raid out on the Frontier battle map instead of resolving it on arrival.
+3. Neighbours fighting each other and trading land between themselves.
+4. Real-device performance pass on iPhone Safari and Android Chrome.
+
+Launch flags: `--no-realm` leaves the realm out; `--realm-view=x,z,zoom[,yaw,tilt]` frames a capture.
+Tests: `godot --headless --path . --script res://tests/test_realm.gd -- --no-save` (also `test_realm_life.gd` and `test_realm_terrain.gd`).
