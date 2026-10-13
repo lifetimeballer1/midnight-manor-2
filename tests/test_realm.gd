@@ -50,6 +50,16 @@ func _data_checks() -> void:
 		check(centre.length() > 80.0, "%s stays clear of the village and its plots" % site["name"])
 		check(not a.is_water(centre.x, centre.y), "%s is on dry land" % site["name"])
 		check(a.owner_at(centre.x, centre.y) == site["id"], "%s owns its own centre" % site["name"])
+	# The batched owner lookup used by the ground repaint agrees with the single-point rule.
+	var probes := PackedVector3Array()
+	for pz in range(-250, 251, 10):
+		for px in range(-250, 251, 10):
+			probes.append(Vector3(px, 0.0, pz))
+	var batched: Array[String] = a.owners_at(probes)
+	var agree: bool = true
+	for index in probes.size():
+		agree = agree and batched[index] == a.owner_at(probes[index].x, probes[index].z)
+	check(agree, "batched owner lookup matches owner_at everywhere")
 	check(nearest < 130.0, "the nearest neighbour is close enough to find from home (%.0f m)" % nearest)
 	check(a.owner_at(0.0, 0.0) == "home", "the manor owns the middle")
 	check(is_equal_approx(a.height_at(0.0, 0.0), RealmMap.BASE_Y), "the ground around home stays flat")

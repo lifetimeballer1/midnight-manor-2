@@ -247,7 +247,11 @@ func walk_height(x: float, z: float) -> float:
 
 
 func biome_at(x: float, z: float) -> String:
-	var y: float = height_at(x, z)
+	return _biome_for(x, z, height_at(x, z))
+
+
+# biome_at with the ground height already known (height_at is the costly part).
+func _biome_for(x: float, z: float, y: float) -> String:
 	if y < WATER_Y:
 		return "water"
 	if y < WATER_Y + 0.3:
@@ -265,9 +269,10 @@ func biome_at(x: float, z: float) -> String:
 # Ground colour, blended rather than banded: meadow, wheat and woodland floor by moisture,
 # sun-bleached hilltops, bare earth and stone on the steeper slopes, mud and sand down to the
 # water, and a little patchiness so open country never reads as one flat wash. slope is
-# rise over run, from the terrain normals.
-func ground_color(x: float, z: float, slope: float = 0.0) -> Color:
-	var y: float = height_at(x, z)
+# rise over run, from the terrain normals. Callers that already know height_at(x, z) pass it as y.
+func ground_color(x: float, z: float, slope: float = 0.0, y: float = NAN) -> Color:
+	if is_nan(y):
+		y = height_at(x, z)
 	if y < WATER_Y:
 		return BIOME_COLORS["water"]
 	var m: float = _moist.get_noise_2d(x, z)
@@ -510,13 +515,30 @@ func _owner_from(all_claims: Array[Dictionary], point: Vector2) -> String:
 	return best
 
 
-# Faster owner lookups for many points (the ground repaint): claims are gathered once.
+# Faster owner lookups for many points (the ground repaint): the same rule as _owner_from, with
+# the claims gathered once into flat arrays so the per-vertex loop does no Dictionary lookups.
 func owners_at(points: PackedVector3Array) -> Array[String]:
 	var all_claims: Array[Dictionary] = claims()
+	var centres := PackedVector2Array()
+	var radii := PackedFloat64Array()
+	var names: Array[String] = []
+	for claim: Dictionary in all_claims:
+		centres.append(claim["centre"])
+		radii.append(float(claim["radius"]))
+		names.append(str(claim["owner"]))
+	var count: int = centres.size()
 	var result: Array[String] = []
 	result.resize(points.size())
 	for index in points.size():
-		result[index] = _owner_from(all_claims, Vector2(points[index].x, points[index].z))
+		var point := Vector2(points[index].x, points[index].z)
+		var best: int = -1
+		var best_margin: float = 0.0
+		for c in count:
+			var margin: float = radii[c] - centres[c].distance_to(point)
+			if margin > best_margin:
+				best = c
+				best_margin = margin
+		result[index] = names[best] if best >= 0 else ""
 	return result
 
 
@@ -816,10 +838,10 @@ func trees_in_chunk(chunk: Vector2i, density: float = 1.0) -> Array[Dictionary]:
 				continue
 			if _near_site(x, z, SITE_CORE + 4.0):
 				continue
-			var biome: String = biome_at(x, z)
+			var y: float = height_at(x, z)
+			var biome: String = _biome_for(x, z, y)
 			if biome == "water":
 				continue
-			var y: float = height_at(x, z)
 			# Reeds crowd the river's edge; boulders sit on the stony hills.
 			if y < WATER_Y + 0.45:
 				if roll < 0.55 * density:

@@ -40,6 +40,9 @@ const REALM_GRASS_CHUNKS: int = 9
 const REALM_GRASS_CHUNKS_LOW: int = 4
 const REALM_GRASS_TUFTS: int = 1400         # tries per 64 m chunk; meadows keep most of them
 const REALM_GRASS_TUFTS_LOW: int = 520
+const REALM_GRASS_KEEP: Dictionary = {"meadow": 0.9, "wheat": 0.8, "forest": 0.35, "rocky": 0.25}
+const REALM_GRASS_STEPS: int = 300         # scatter tries per frame while a chunk builds
+const REALM_BORDER_CELL: float = 128.0     # culling cell for the scenery woods past the edge
 const REALM_SITES_LOADED: int = 3
 const REALM_SITES_LOADED_LOW: int = 2
 const REALM_WALKERS: int = 6
@@ -75,6 +78,9 @@ var _realm_tree_meshes: Array[Mesh] = []
 var _realm_tree_material: ShaderMaterial = null
 var _realm_trees: Dictionary = {}          # Vector2i chunk -> Array[MultiMeshInstance3D]
 var _realm_grass: Dictionary = {}          # Vector2i chunk -> MultiMeshInstance3D
+var _realm_grass_job: Dictionary = {}      # the chunk being scattered a slice per frame, if any
+var _realm_grass_mesh: Mesh = null
+var _realm_grass_queue: Array[Vector2i] = []   # wanted chunks still to scatter, nearest first
 var _realm_sites: Dictionary = {}          # settlement id -> {root, pop_shown, walkers: Array[Dictionary]}
 var _realm_banners: Dictionary = {}        # settlement id -> {root, label}
 var _realm_clock: float = 0.0
@@ -161,6 +167,7 @@ func _process(delta: float) -> void:
 			_realm_save_clock = 0.0
 			realm_save()
 	_realm_walk(delta if active else 0.0)
+	_realm_grass_tick()
 	_realm_animate_fishers(delta if active else 0.0)
 	_realm_clock += delta
 	if _realm_clock >= REALM_POLL:
@@ -246,7 +253,7 @@ func _realm_build_ground() -> void:
 			_realm_normals[gz * side + gx] = normal
 			# Slope (rise over run) shades steeper ground toward bare earth and stone.
 			var slope: float = sqrt(maxf(1.0 - normal.y * normal.y, 0.0)) / maxf(normal.y, 0.05)
-			var colour: Color = realm.ground_color(-RealmMap.HALF + float(gx) * step, -RealmMap.HALF + float(gz) * step, slope)
+			var colour: Color = realm.ground_color(-RealmMap.HALF + float(gx) * step, -RealmMap.HALF + float(gz) * step, slope, heights[gz * side + gx])
 			# Baked relief: hollows a shade darker, crests a shade lighter, so hills read from above
 			# whichever way the sun has turned.
 			var bend: float = clampf((left + right + up + down - 4.0 * heights[gz * side + gx]) / (step * step) * 4.0, -1.0, 1.0)
@@ -352,7 +359,7 @@ func _realm_square_point(radius: float, t: float) -> Vector2:
 
 
 func _realm_outskirt_color(p: Vector2, y: float, slope: float, normal: Vector3) -> Color:
-	var colour: Color = realm.ground_color(p.x, p.y, slope)
+	var colour: Color = realm.ground_color(p.x, p.y, slope, y)
 	var h: float = y - RealmMap.BASE_Y
 	# Dark woods clothe the foothills, bare rock the mountainsides, snow the tallest peaks; all of
 	# it eases in away from the edge so the seam with the realm's own ground never shows.
@@ -401,10 +408,8 @@ func _realm_paint_ground() -> void:
 			var colour: Color = base.lerp(_realm_haunt_color, _realm_haunt_weight[index])
 			var owner: String = owners[index]
 			if owner != "":
-				var border: bool = false
-				for other: int in [gz * side + maxi(gx - 1, 0), gz * side + mini(gx + 1, last), maxi(gz - 1, 0) * side + gx, mini(gz + 1, last) * side + gx]:
-					if owners[other] != owner:
-						border = true
+				var border: bool = owners[gz * side + maxi(gx - 1, 0)] != owner or owners[gz * side + mini(gx + 1, last)] != owner \
+						or owners[maxi(gz - 1, 0) * side + gx] != owner or owners[mini(gz + 1, last) * side + gx] != owner
 				colour = colour.lerp(realm.owner_color(owner), REALM_BORDER_TINT if border else REALM_TINT)
 			colour.a = base.a
 			colors[index] = colour
@@ -695,13 +700,13 @@ func _realm_build_chunk(chunk: Vector2i) -> Array:
 
 
 # Woods on the foothills past the playable edge: fixed scenery, never streamed. Pines climb the
-# slopes, broadleaf trees keep to the lower ground; one MultiMesh per shape and side of the realm
-# so the sides behind the camera are culled.
+# slopes, broadleaf trees keep to the lower ground; one MultiMesh per shape and 128 m cell, so
+# woods outside the view are culled (one per whole side drew nearly all of them at every zoom).
 func _realm_build_border_forest() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = realm.seed_value * 7919 + 41
 	var tries: int = 2600 if _realm_phone else 6500
-	var groups: Dictionary = {}   # Vector2i(shape, side) -> Array[Transform3D, Color]
+	var groups: Dictionary = {}   # Vector3i(shape, cell x, cell z) -> Array[Transform3D, Color]
 	for attempt in tries:
 		var reach: float = RealmMap.HALF + 3.0 + pow(rng.randf(), 1.6) * 190.0
 		var p: Vector2 = _realm_square_point(reach, rng.randf())
@@ -720,17 +725,16 @@ func _realm_build_border_forest() -> void:
 		if rng.randf() > thick:
 			continue
 		var shape: int = 0 if h > 9.0 or rng.randf() < 0.55 else 1
-		var side: int = 0 if absf(p.x) > absf(p.y) and p.x > 0.0 else (1 if absf(p.x) > absf(p.y) else (2 if p.y > 0.0 else 3))
 		var size: float = rng.randf_range(1.1, 2.0) * (1.0 + smoothstep(0.0, 8.0, h) * 0.3)
 		var basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).scaled(Vector3.ONE * size)
 		var tone := Color(TREE_FALL_TONES[rng.randi() % TREE_FALL_TONES.size()])
 		if shape == 0:
 			tone = Color("24402a").lerp(tone, 0.2)
-		var key := Vector2i(shape, side)
+		var key := Vector3i(shape, floori(p.x / REALM_BORDER_CELL), floori(p.y / REALM_BORDER_CELL))
 		if not groups.has(key):
 			groups[key] = []
 		groups[key].append([Transform3D(basis, Vector3(p.x, y - 0.35, p.y)), tone.darkened(0.2)])
-	for key: Vector2i in groups:
+	for key: Vector3i in groups:
 		var picked: Array = groups[key]
 		var multimesh := MultiMesh.new()
 		multimesh.transform_format = MultiMesh.TRANSFORM_3D
@@ -741,7 +745,7 @@ func _realm_build_border_forest() -> void:
 			multimesh.set_instance_transform(index, picked[index][0])
 			multimesh.set_instance_color(index, picked[index][1])
 		var node := MultiMeshInstance3D.new()
-		node.name = "BorderForest_%d_%d" % [key.x, key.y]
+		node.name = "BorderForest_%d_%d_%d" % [key.x, key.y, key.z]
 		node.multimesh = multimesh
 		node.material_override = _realm_tree_material
 		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -770,23 +774,54 @@ func _realm_stream_grass(focus: Vector2, reach: float, force: bool) -> void:
 		if chunk not in wanted:
 			(_realm_grass[chunk] as Node).queue_free()
 			_realm_grass.erase(chunk)
-	var built: int = 0
+	if not _realm_grass_job.is_empty() and (force or _realm_grass_job["chunk"] not in wanted):
+		_realm_grass_job = {}
+	_realm_grass_queue.clear()
 	for chunk: Vector2i in wanted:
 		if _realm_grass.has(chunk):
 			continue
-		if not force and built >= 2:
-			break
-		_realm_grass[chunk] = _realm_build_grass(chunk)
-		built += 1
+		if force:
+			_realm_grass[chunk] = _realm_build_grass(chunk)
+		elif _realm_grass_job.is_empty() or _realm_grass_job["chunk"] != chunk:
+			_realm_grass_queue.append(chunk)
+
+
+# A chunk of tufts costs several milliseconds to scatter, so while panning it is built a slice at
+# a time over a few frames (REALM_GRASS_STEPS tries per frame) instead of in one hitch.
+func _realm_grass_tick() -> void:
+	if _realm_grass_job.is_empty():
+		if _realm_grass_queue.is_empty():
+			return
+		_realm_grass_job = _realm_grass_begin(_realm_grass_queue.pop_front())
+	if _realm_grass_step(_realm_grass_job, REALM_GRASS_STEPS):
+		_realm_grass[_realm_grass_job["chunk"]] = _realm_grass_finish(_realm_grass_job)
+		_realm_grass_job = {}
 
 
 func _realm_build_grass(chunk: Vector2i) -> MultiMeshInstance3D:
+	var job: Dictionary = _realm_grass_begin(chunk)
+	_realm_grass_step(job, int(job["left"]))
+	return _realm_grass_finish(job)
+
+
+func _realm_grass_begin(chunk: Vector2i) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = realm.seed_value * 6131 + chunk.x * 977 + chunk.y * 61
-	var corner: Vector2 = realm.chunk_centre(chunk) - Vector2.ONE * RealmMap.TREE_CHUNK * 0.5
 	var xforms: Array[Transform3D] = []
 	var colors: Array[Color] = []
-	for attempt in (REALM_GRASS_TUFTS_LOW if _realm_phone else REALM_GRASS_TUFTS):
+	return {"chunk": chunk, "rng": rng, "left": REALM_GRASS_TUFTS_LOW if _realm_phone else REALM_GRASS_TUFTS,
+		"corner": realm.chunk_centre(chunk) - Vector2.ONE * RealmMap.TREE_CHUNK * 0.5, "xforms": xforms, "colors": colors}
+
+
+# Runs up to `tries` of the chunk's remaining scatter tries; true once all are done.
+func _realm_grass_step(job: Dictionary, tries: int) -> bool:
+	var rng: RandomNumberGenerator = job["rng"]
+	var corner: Vector2 = job["corner"]
+	var xforms: Array[Transform3D] = job["xforms"]
+	var colors: Array[Color] = job["colors"]
+	var count: int = mini(tries, int(job["left"]))
+	job["left"] = int(job["left"]) - count
+	for attempt in count:
 		var x: float = corner.x + rng.randf() * RealmMap.TREE_CHUNK
 		var z: float = corner.y + rng.randf() * RealmMap.TREE_CHUNK
 		var keep: float = rng.randf()
@@ -795,17 +830,27 @@ func _realm_build_grass(chunk: Vector2i) -> MultiMeshInstance3D:
 		var height: float = rng.randf_range(0.9, 1.5) if tall else rng.randf_range(0.5, 0.85)
 		var width: float = rng.randf_range(1.6, 2.4) * (1.5 if tall else 1.0)
 		var colour: Color = _grass_tip_color(rng, 0.65, tall)
+		# No biome keeps more than 0.9, so these are dropped before the costly height and biome
+		# lookups (every random draw above still happens, so the scatter is unchanged).
+		if keep >= 0.9:
+			continue
 		if absf(x) < RealmMap.SCENERY_CLEAR.x and absf(z) < RealmMap.SCENERY_CLEAR.y:
 			continue
 		var y: float = realm_surface_y(x, z)
 		if y < RealmMap.WATER_Y + 0.3:
 			continue
-		var chance: float = {"meadow": 0.9, "wheat": 0.8, "forest": 0.35, "rocky": 0.25}.get(realm.biome_at(x, z), 0.0)
+		var chance: float = REALM_GRASS_KEEP.get(realm.biome_at(x, z), 0.0)
 		if keep >= chance:
 			continue
 		xforms.append(Transform3D(spin * Basis.from_scale(Vector3(width, height, width)), Vector3(x, y - 0.03, z)))
 		colors.append(colour)
-	var node: MultiMeshInstance3D = _add_multimesh(_grass_clump_mesh(), _grass_material, xforms, colors, _realm_root, false)
+	return int(job["left"]) <= 0
+
+
+func _realm_grass_finish(job: Dictionary) -> MultiMeshInstance3D:
+	if _realm_grass_mesh == null:
+		_realm_grass_mesh = _grass_clump_mesh()
+	var node: MultiMeshInstance3D = _add_multimesh(_realm_grass_mesh, _grass_material, job["xforms"], job["colors"], _realm_root, false)
 	node.name = "RealmGrass"
 	return node
 
