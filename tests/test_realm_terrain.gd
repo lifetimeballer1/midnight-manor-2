@@ -2,7 +2,8 @@ extends SceneTree
 
 # Realm terrain: rolling hills that stay buildable, one river (the only inland water) with bridges
 # on the manor's roads and fishing spots on its banks, buildings that stand level on footings or
-# stilts, and fishing that feeds the manor only from its own land.
+# stilts, and fishing that feeds the manor only from its own land. Past the playable edge the land
+# runs on into wooded foothills and mountains, with the river leaving through its valley.
 
 const RealmMap = preload("res://scripts/game/realm_map.gd")
 const BUILDABLE_SLOPE: float = 0.42       # rise over run, about 23 degrees
@@ -25,6 +26,7 @@ func check(value: bool, message: String) -> void:
 func _run() -> void:
 	_land_checks()
 	_river_checks()
+	_beyond_checks()
 	_fishing_checks()
 	await _scene_checks()
 	print("test_realm_terrain: %d checks, %d failures" % [checks, failures.size()])
@@ -100,6 +102,41 @@ func _river_checks() -> void:
 	check(not loaded.is_water(moved.x, moved.y) and moved.distance_to(line) < 20.0, "that outpost moves to the nearest dry bank")
 
 
+func _beyond_checks() -> void:
+	var realm = _fresh()
+	# No cliff at the edge: the ground just past it is no lower than the realm's own.
+	var lowest: float = INF
+	var tallest: float = 0.0
+	for i in 64:
+		var t: float = float(i) / 64.0 * TAU
+		var dir := Vector2(cos(t), sin(t))
+		var edge: Vector2 = dir * RealmMap.HALF / maxf(absf(dir.x), absf(dir.y))
+		if realm.river_distance(edge.x, edge.y) > 40.0:
+			lowest = minf(lowest, realm.height_at(edge.x * 1.06, edge.y * 1.06))
+		var far: Vector2 = edge * 1.9
+		if realm.river_distance(far.x, far.y) > 100.0:
+			tallest = maxf(tallest, realm.height_at(far.x, far.y) - RealmMap.BASE_Y)
+	check(lowest > RealmMap.WATER_Y + 0.3, "the land past the edge never drops away (lowest %.1f)" % lowest)
+	check(tallest > 25.0, "mountains ring the realm (%.0f m)" % tallest)
+	# The river runs on through the scenery in its valley, still water to the horizon.
+	var beyond: int = 0
+	for index in realm.river_samples():
+		var p: Vector2 = realm.river_point(index)
+		var edge: float = maxf(absf(p.x), absf(p.y))
+		if edge > RealmMap.HALF + 20.0 and edge < RealmMap.OUTER_HALF - 20.0:
+			beyond += 1
+			if not realm.is_water(p.x, p.y):
+				check(false, "the river stays water past the edge at %s" % p.round())
+	check(beyond > 40, "the river leaves the realm through the mountains (%d samples)" % beyond)
+	# Every tree shape turns up somewhere.
+	var kinds: Dictionary = {}
+	for cz in realm.chunk_count():
+		for cx in realm.chunk_count():
+			for tree: Dictionary in realm.trees_in_chunk(Vector2i(cx, cz)):
+				kinds[int(tree["kind"])] = true
+	check(kinds.size() == 6, "pines, broadleaf, reeds, boulders, bushes and poplars all grow (%s)" % str(kinds.keys()))
+
+
 func _fishing_checks() -> void:
 	var realm = _fresh()
 	check(realm.fishing_spots.size() >= 4 and realm.fishing_spots.size() <= RealmMap.FISH_MAX, "fishing spots line the river (%d)" % realm.fishing_spots.size())
@@ -155,7 +192,27 @@ func _scene_checks() -> void:
 	check(bridges == realm.bridges.size(), "every bridge is built")
 	check(jetties == realm.fishing_spots.size(), "every fishing spot has a jetty")
 	var water: MeshInstance3D = game._realm_root.get_node_or_null("RealmWater")
-	check(water != null and water.material_override is ShaderMaterial, "the river and sea have moving water")
+	check(water != null and water.material_override is ShaderMaterial, "the river has moving water")
+	check(water != null and water.get_aabb().size.x < RealmMap.OUTER_HALF * 2.2 and water.get_aabb().end.x > RealmMap.HALF, "the water follows the river out past the edge, with no sea")
+	var outskirts: MeshInstance3D = game._realm_root.get_node_or_null("RealmOutskirts")
+	check(outskirts != null and outskirts.get_aabb().size.x >= RealmMap.OUTER_HALF * 2.0 - 1.0, "land runs on to the horizon past the edge")
+	check(game._realm_ground.material_override is ShaderMaterial, "the ground has painted detail")
+	var forest: int = 0
+	for child: Node in game._realm_root.get_children():
+		if child.name.begins_with("BorderForest"):
+			forest += (child as MultiMeshInstance3D).multimesh.instance_count
+	check(forest > 300, "woods cover the foothills past the edge (%d trees)" % forest)
+	# Grass tufts only close up, within the phone cap.
+	game.target = Vector3(120.0, 0.0, -60.0)
+	game.zoom = 30.0
+	game._camera_update()
+	game.realm_stream(true)
+	var grass_cap: int = game.REALM_GRASS_CHUNKS_LOW if game._realm_phone else game.REALM_GRASS_CHUNKS
+	check(game.realm_grass_chunks_loaded() >= 1 and game.realm_grass_chunks_loaded() <= grass_cap, "grass tufts grow around a close view")
+	game.zoom = game.zoom_max
+	game._camera_update()
+	game.realm_stream(true)
+	check(game.realm_grass_chunks_loaded() == 0, "zoomed out, the tufts are dropped")
 
 	# Footings: a building on a slope stands level at or above every corner of its ground.
 	var steep := Vector2.ZERO

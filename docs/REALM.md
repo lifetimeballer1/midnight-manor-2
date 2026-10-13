@@ -60,8 +60,20 @@ over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
   little, on timber stilts with a deck and rails where it falls more. Each footing is one mesh.
 - **The river**: one winding river crosses the whole realm, never closer than 74 m to the manor and
   never through a settlement's streets. Its banks shade from grass to sand to wet mud, with reeds at
-  the water's edge; boulders sit on the stony hills. The water is a cheap animated shader on the
-  same single quad.
+  the water's edge; boulders sit on the stony hills. The water is a ribbon that follows the river:
+  clear shallows over silt at the banks, dark water in the channel, soft foam lapping the shore and
+  streaks and ripples running downstream, fastest mid-channel.
+- **Beyond the edge**: the realm no longer ends in a cliff over the sky. Past the playable edge the
+  land runs on to the horizon: wooded foothills climbing into rock and snow-capped mountains, with
+  the river leaving through its own valley. It is scenery only (the camera pan limit is unchanged).
+  The projection is orthographic, so mountains on the camera's side of the view would hide the
+  realm; the ground and tree shaders lower those to foothills around the camera's focus.
+- **Ground, trees and grass**: the ground shader paints detail over the baked colours: light and
+  dark swells, a grassy grain, leaf litter on the woodland floor, stones on steeper slopes and
+  wildflowers in the meadows (the haunted ground near home stays bare). Trees are layered pines,
+  lumpy broadleaf crowns, slim poplars and meadow bushes, shaded darker low and lighter high, and
+  they sway in rolling gusts. Close up (zoom 55 or nearer) the village's swaying grass tufts grow
+  over the nearest chunks.
 - **Bridges and wading**: where the road from the manor to a neighbour crosses the river there is a
   timber bridge, so traders, scouts and the warband cross on it. Anyone else wades, knee deep.
 - **Fishing**: up to eight jetties line the banks, nearest the manor first. Tap one for its card.
@@ -79,8 +91,11 @@ cost follows what the camera sees, not the size of the world:
 
 | Piece | Cost |
 |---|---|
-| Ground | one mesh, 4 m cells (8 m on phones): ~33k triangles desktop, ~8k phone, one draw call |
-| Water | one flat quad, animated shader (no textures, no depth reads) |
+| Ground | one mesh, 4 m cells (8 m on phones): ~33k triangles desktop, ~8k phone, one draw call; detail shader of four fetches of one 128 px noise texture |
+| Land beyond the edge | one ring mesh (~20k triangles desktop, ~5k phone), cells widening with distance; one draw call |
+| Border woods | fixed MultiMeshes, one per shape and side (~2,000 trees desktop, ~800 phone) |
+| Water | one ribbon mesh along the river (13 vertices across, 7 on phones), animated shader (no textures, no depth reads) |
+| Grass tufts | only at zoom 55 or nearer: one MultiMesh per nearby chunk, at most 9 (4 on phones) |
 | Bridges, jetties, footings | one mesh each, built once (footings with their settlement) |
 | Fishers | at most 3 (2 on phones), only near the camera |
 | Trees | one MultiMesh per 64 m chunk and shape, streamed around the camera; at most 36 chunks (16 on phones), 3 built per 0.25 s so panning never hitches |

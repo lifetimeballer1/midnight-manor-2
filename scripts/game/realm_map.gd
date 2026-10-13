@@ -25,7 +25,12 @@ const BASE_Y: float = -0.58               # just under the outskirts slab top (-
 const WATER_Y: float = -1.3
 const HOME_CALM: Vector2 = Vector2(62.0, 100.0)   # hills fade in between these distances from home
 const SCENERY_CLEAR: Vector2 = Vector2(52.0, 48.0)  # the existing outskirts trees fill this box
-const EDGE_DROP_FROM: float = 236.0
+const EDGE_DROP_FROM: float = 236.0         # playable ground ends about here (camera pan limit)
+# Past the realm's edge the land runs on to the horizon: foothills rise into a ring of mountains
+# (scenery only), with the river's valley cutting through them, so the realm never ends in a cliff.
+const OUTER_HALF: float = 720.0            # the scenery ring reaches this far from the centre
+const FOOTHILLS_FROM: float = 250.0
+const MOUNTAIN_HEIGHT: float = 60.0
 const HILL_HEIGHT: float = 12.5           # rolling hills; slopes stay gentle enough to build on
 const KNOLL_HEIGHT: float = 1.1          # small ridges and knolls over the hills
 const SITE_CORE: float = 16.0             # a settlement's streets (trees and outposts keep clear)
@@ -188,6 +193,11 @@ func _land_height(x: float, z: float) -> float:
 	return (0.3 + hill * HILL_HEIGHT + knolls) * calm
 
 
+# Woodland moisture in -1..1 (the same field that places the forests), for scenery placement.
+func woodland(x: float, z: float) -> float:
+	return _moist.get_noise_2d(x, z)
+
+
 # Height above BASE_Y: the land, the river cut through it, and the drop to the sea at the edge.
 func _raw_height(x: float, z: float) -> float:
 	var h: float = _land_height(x, z)
@@ -203,9 +213,19 @@ func _raw_height(x: float, z: float) -> float:
 		else:
 			h = lerpf(bank, maxf(h, bank), smoothstep(RIVER_HALF + RIVER_BANK, RIVER_HALF + RIVER_BANK + RIVER_VALLEY, d))
 	var edge: float = maxf(absf(x), absf(z))
-	if edge > EDGE_DROP_FROM:
-		h -= (edge - EDGE_DROP_FROM) * 0.3
+	if edge > FOOTHILLS_FROM:
+		h += _mountains(x, z, edge, river_distance(x, z, 96.0))
 	return h
+
+
+# Scenery past the edge: a rise that grows with distance, rumpled into ridges and peaks, held
+# low along the river so it leaves through a valley.
+func _mountains(x: float, z: float, edge: float, river: float) -> float:
+	var rise: float = smoothstep(FOOTHILLS_FROM - 10.0, FOOTHILLS_FROM + 170.0, edge)
+	var ridges: float = 1.0 - absf(_elev.get_noise_2d(x * 0.55 + 911.0, z * 0.55 - 377.0))
+	var peaks: float = 0.45 + ridges * ridges * 0.75 + _moist.get_noise_2d(x * 0.7, z * 0.7) * 0.25
+	var valley: float = smoothstep(RIVER_HALF + RIVER_BANK + 6.0, 90.0, river)
+	return rise * (0.35 + rise * 0.65) * MOUNTAIN_HEIGHT * peaks * valley + smoothstep(FOOTHILLS_FROM, FOOTHILLS_FROM + 60.0, edge) * 2.0 * valley
 
 
 # World Y of the ground at (x, z), metres. Settlements are no longer levelled: their buildings
@@ -278,7 +298,7 @@ func _setup_river(rng: RandomNumberGenerator) -> void:
 	var wave_b: float = TAU / rng.randf_range(70.0, 95.0)
 	var phase_a: float = rng.randf_range(0.0, TAU)
 	var phase_b: float = rng.randf_range(0.0, TAU)
-	var reach: float = HALF * 1.5
+	var reach: float = OUTER_HALF * 1.45   # the river runs on through the scenery ring
 	_river_from = -reach
 	var count: int = int(reach * 2.0 / RIVER_STEP) + 1
 	_river_line.resize(count)
@@ -316,13 +336,12 @@ func river_samples() -> int:
 
 # Metres from (x, z) to the river line. Far from the river a cheap bound answers without the
 # segment search (the meanders never turn more than about 50 degrees off the axis).
-func river_distance(x: float, z: float) -> float:
+func river_distance(x: float, z: float, limit: float = RIVER_HALF + RIVER_BANK + RIVER_VALLEY + 4.0) -> float:
 	if _river_line.is_empty():
 		return INF
 	var f: Vector2 = _river_frame(x, z)
 	var i: int = clampi(int(floor((f.x - _river_from) / RIVER_STEP)), 0, _river_line.size() - 2)
 	var rough: float = absf(f.y - _river_line[i])
-	var limit: float = RIVER_HALF + RIVER_BANK + RIVER_VALLEY + 4.0
 	if rough * 0.6 > limit:
 		return rough * 0.6
 	var span: int = ceili(minf(rough, limit) / RIVER_STEP) + 1
@@ -774,7 +793,7 @@ func chunk_centre(chunk: Vector2i) -> Vector2:
 
 
 # Deterministic trees for one chunk: [{pos: Vector3, scale, turn, round: bool, kind, tone: int}].
-# kind: 0 pine, 1 round tree, 2 reeds at the water's edge, 3 boulder.
+# kind: 0 pine, 1 round tree, 2 reeds at the water's edge, 3 boulder, 4 meadow bush, 5 poplar.
 # density < 1 thins them for phones. Trees never land on water, near settlements or over the
 # outskirts box that already has its own hand-placed trees.
 func trees_in_chunk(chunk: Vector2i, density: float = 1.0) -> Array[Dictionary]:
@@ -810,8 +829,12 @@ func trees_in_chunk(chunk: Vector2i, density: float = 1.0) -> Array[Dictionary]:
 			if roll >= chance:
 				if biome == "rocky" and roll < chance + 0.05 * density:
 					result.append({"pos": Vector3(x, y, z), "scale": size * 0.9, "turn": turn, "round": false, "kind": 3, "tone": tone})
+				elif biome in ["meadow", "wheat"] and roll < chance + 0.03 * density:
+					result.append({"pos": Vector3(x, y, z), "scale": size * 0.85, "turn": turn, "round": false, "kind": 4, "tone": tone})
 				continue
-			result.append({"pos": Vector3(x, y, z), "scale": size, "turn": turn, "round": shape < 0.45, "kind": 1 if shape < 0.45 else 0, "tone": tone})
+			# Kinds: 0 pine, 1 round broadleaf, 5 slim poplar (2 reeds, 3 boulder, 4 bush above).
+			var kind: int = 1 if shape < 0.45 else (5 if shape < 0.55 else 0)
+			result.append({"pos": Vector3(x, y, z), "scale": size, "turn": turn, "round": kind == 1, "kind": kind, "tone": tone})
 	return result
 
 

@@ -28,12 +28,18 @@ const REALM_SEED: int = 7
 const REALM_PAN: float = 236.0
 const REALM_ZOOM_MAX: float = 130.0
 const REALM_FAR: float = 460.0
+const REALM_NEAR_BACK: float = 240.0
 const REALM_GRID: float = 4.0
 const REALM_GRID_LOW: float = 8.0
 const REALM_POLL: float = 0.25
 const REALM_TREE_CHUNKS: int = 36
 const REALM_TREE_CHUNKS_LOW: int = 16
 const REALM_TREE_BUILDS_PER_POLL: int = 3
+const REALM_GRASS_ZOOM: float = 55.0        # tufts only show from this close; further they're specks
+const REALM_GRASS_CHUNKS: int = 9
+const REALM_GRASS_CHUNKS_LOW: int = 4
+const REALM_GRASS_TUFTS: int = 1400         # tries per 64 m chunk; meadows keep most of them
+const REALM_GRASS_TUFTS_LOW: int = 520
 const REALM_SITES_LOADED: int = 3
 const REALM_SITES_LOADED_LOW: int = 2
 const REALM_WALKERS: int = 6
@@ -66,8 +72,9 @@ var _realm_haunt_weight := PackedFloat32Array()
 var _realm_indices := PackedInt32Array()
 var _realm_haunt_color := Color.BLACK
 var _realm_tree_meshes: Array[Mesh] = []
-var _realm_tree_material: StandardMaterial3D = null
+var _realm_tree_material: ShaderMaterial = null
 var _realm_trees: Dictionary = {}          # Vector2i chunk -> Array[MultiMeshInstance3D]
+var _realm_grass: Dictionary = {}          # Vector2i chunk -> MultiMeshInstance3D
 var _realm_sites: Dictionary = {}          # settlement id -> {root, pop_shown, walkers: Array[Dictionary]}
 var _realm_banners: Dictionary = {}        # settlement id -> {root, label}
 var _realm_clock: float = 0.0
@@ -94,6 +101,9 @@ func _ready() -> void:
 	pan_limit = Vector2(REALM_PAN, REALM_PAN)
 	zoom_max = REALM_ZOOM_MAX
 	camera.far = REALM_FAR
+	# Orthographic: a near plane behind the camera keeps tall ground near the screen's bottom edge
+	# from being clipped away (the camera sits only 60 m from its target).
+	camera.near = -REALM_NEAR_BACK
 	# The sky layer paints its backdrop just inside the far plane; keep it there.
 	if is_instance_valid(_sky_backdrop):
 		_sky_backdrop.position.z = -(camera.far - 12.0)
@@ -103,9 +113,12 @@ func _ready() -> void:
 	_realm_trim_haunt()
 	_realm_build_water()
 	_realm_build_ground()
+	_realm_build_outskirts()
 	_realm_build_river_works()
 	_realm_build_tree_meshes()
+	_realm_build_border_forest()
 	_realm_build_banners()
+	_camera_update()
 	for arg in args:
 		if arg.begins_with("--realm-view="):
 			var parts: PackedStringArray = arg.trim_prefix("--realm-view=").split(",")
@@ -118,6 +131,21 @@ func _ready() -> void:
 					tilt = clampf(deg_to_rad(float(parts[4])), 0.3, 1.25)
 				_camera_update()
 	realm_stream(true)
+
+
+# The scenery mountains on the camera's side of the view would stand between it and the realm
+# (the projection is orthographic, so nothing hides them); the ground and tree shaders lower the
+# ones behind the view's focus to foothills, around the focus and facing set here.
+func _camera_update() -> void:
+	super()
+	var focus := Vector4(target.x, target.z, -sin(yaw), -cos(yaw))
+	for material: ShaderMaterial in [_realm_ground_material(), _realm_tree_material]:
+		if material != null:
+			material.set_shader_parameter("focus", focus)
+
+
+func _realm_ground_material() -> ShaderMaterial:
+	return _realm_ground.material_override as ShaderMaterial if is_instance_valid(_realm_ground) else null
 
 
 func _process(delta: float) -> void:
@@ -168,6 +196,7 @@ func realm_stream(force: bool) -> void:
 	var reach: float = realm_view_reach()
 	var focus := Vector2(target.x, target.z)
 	_realm_stream_trees(focus, reach, force)
+	_realm_stream_grass(focus, reach, force)
 	_realm_stream_sites(focus, reach + 10.0)
 	_realm_stream_fishers(focus, reach + 10.0)
 
@@ -229,7 +258,9 @@ func _realm_build_ground() -> void:
 				colour = colour.lerp(Color("e0c27a"), minf(facing * 0.9, 0.22))
 			else:
 				colour = colour.lerp(Color("1d2030"), minf(-facing * 1.1, 0.3))
-			_realm_base_colors[gz * side + gx] = colour.lightened(maxf(-bend, 0.0) * 0.16)
+			colour = colour.lightened(maxf(-bend, 0.0) * 0.16)
+			colour.a = _realm_wooded(-RealmMap.HALF + float(gx) * step, -RealmMap.HALF + float(gz) * step)
+			_realm_base_colors[gz * side + gx] = colour
 	# The outskirts slab already covers the middle; quads wholly inside it are left out.
 	_realm_indices.clear()
 	for gz in cells:
@@ -242,15 +273,116 @@ func _realm_build_ground() -> void:
 			_realm_indices.append_array([a, a + 1, a + side, a + 1, a + side + 1, a + side])
 	_realm_ground = MeshInstance3D.new()
 	_realm_ground.name = "RealmGround"
-	var material := StandardMaterial3D.new()
-	material.vertex_color_use_as_albedo = true
-	material.vertex_color_is_srgb = true
-	material.roughness = 1.0
-	material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	var material := ShaderMaterial.new()
+	material.shader = preload("res://shaders/realm_ground.gdshader")
+	material.set_shader_parameter("noise_tex", _realm_noise_texture())
+	material.set_shader_parameter("water_y", RealmMap.WATER_Y)
 	_realm_ground.material_override = material
 	_realm_ground.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_realm_root.add_child(_realm_ground)
 	_realm_paint_ground()
+
+
+# Past the playable edge the country runs on to the horizon: square rings from the realm's edge
+# out to OUTER_HALF, foothills rising into mountains (rock, then snow on the tallest peaks) with
+# the river's valley cutting through. The first ring shares the ground mesh's edge vertices, so the
+# two meet without a crack; the rings spread out with distance, where the haze hides the detail.
+func _realm_build_outskirts() -> void:
+	var per_side: int = int(RealmMap.HALF * 2.0 / _realm_step)   # matches the ground's edge vertices
+	var around: int = per_side * 4
+	var radii: Array[float] = []
+	var r: float = RealmMap.HALF
+	while r < RealmMap.OUTER_HALF:
+		radii.append(r)
+		r += _realm_step * (1.0 + (r - RealmMap.HALF) * 0.035)
+	radii.append(RealmMap.OUTER_HALF)
+	var vertices := PackedVector3Array()
+	var colors := PackedColorArray()
+	var normals := PackedVector3Array()
+	for ring in radii.size():
+		var radius: float = radii[ring]
+		var probe: float = maxf(_realm_step, (radii[mini(ring + 1, radii.size() - 1)] - radii[maxi(ring - 1, 0)]) * 0.5)
+		for i in around:
+			var p: Vector2 = _realm_square_point(radius, float(i) / float(around))
+			var y: float = realm.height_at(p.x, p.y)
+			var dx: float = realm.height_at(p.x + probe, p.y) - realm.height_at(p.x - probe, p.y)
+			var dz: float = realm.height_at(p.x, p.y + probe) - realm.height_at(p.x, p.y - probe)
+			var normal := Vector3(-dx, probe * 2.0, -dz).normalized()
+			var slope: float = sqrt(maxf(1.0 - normal.y * normal.y, 0.0)) / maxf(normal.y, 0.05)
+			vertices.append(Vector3(p.x, y, p.y))
+			normals.append(normal)
+			colors.append(_realm_outskirt_color(p, y, slope, normal))
+	var indices := PackedInt32Array()
+	for ring in radii.size() - 1:
+		var inner: int = ring * around
+		var outer: int = inner + around
+		for i in around:
+			var j: int = (i + 1) % around
+			indices.append_array([inner + i, outer + i, inner + j, inner + j, outer + i, outer + j])
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_COLOR] = colors
+	arrays[Mesh.ARRAY_INDEX] = indices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var node := MeshInstance3D.new()
+	node.name = "RealmOutskirts"
+	node.mesh = mesh
+	node.material_override = _realm_ground.material_override
+	node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_realm_root.add_child(node)
+
+
+# A point on the square of half-size radius, t in 0..1 once around (anticlockwise from the -x,-z
+# corner), so every ring has the same vertex count and neighbouring rings stitch index to index.
+func _realm_square_point(radius: float, t: float) -> Vector2:
+	var s: float = t * 4.0
+	var side: int = mini(int(s), 3)
+	var f: float = (s - float(side)) * 2.0 - 1.0
+	match side:
+		0:
+			return Vector2(f * radius, -radius)
+		1:
+			return Vector2(radius, f * radius)
+		2:
+			return Vector2(-f * radius, radius)
+	return Vector2(-radius, -f * radius)
+
+
+func _realm_outskirt_color(p: Vector2, y: float, slope: float, normal: Vector3) -> Color:
+	var colour: Color = realm.ground_color(p.x, p.y, slope)
+	var h: float = y - RealmMap.BASE_Y
+	# Dark woods clothe the foothills, bare rock the mountainsides, snow the tallest peaks; all of
+	# it eases in away from the edge so the seam with the realm's own ground never shows.
+	var away: float = smoothstep(RealmMap.HALF + 4.0, RealmMap.HALF + 90.0, maxf(absf(p.x), absf(p.y)))
+	colour = colour.lerp(Color("2c3b25"), smoothstep(3.0, 9.0, h) * (1.0 - smoothstep(22.0, 34.0, h)) * 0.7 * away)
+	colour = colour.lerp(Color("6b6862"), (smoothstep(20.0, 36.0, h) * 0.85 + smoothstep(0.5, 0.9, slope) * 0.3) * away)
+	colour = colour.lerp(Color("dfe3ea"), smoothstep(52.0, 66.0, h + normal.y * 6.0) * away)
+	var facing: float = normal.dot(REALM_HILLSHADE) - REALM_HILLSHADE.y
+	if facing > 0.0:
+		colour = colour.lerp(Color("e0c27a"), minf(facing * 0.9, 0.22))
+	else:
+		colour = colour.lerp(Color("1d2030"), minf(-facing * 1.1, 0.35))
+	colour.a = _realm_wooded(p.x, p.y)
+	return colour
+
+
+# How wooded the ground is, 0..1, for leaf litter in the ground shader (COLOR.a).
+func _realm_wooded(x: float, z: float) -> float:
+	return smoothstep(0.02, 0.3, realm.woodland(x, z))
+
+
+# A small tiling noise for the ground's painted detail.
+func _realm_noise_texture() -> Texture2D:
+	var noise := FastNoiseLite.new()
+	noise.seed = realm.seed_value + 5
+	noise.frequency = 0.045
+	noise.fractal_octaves = 3
+	var image: Image = noise.get_seamless_image(128, 128)
+	image.generate_mipmaps()
+	return ImageTexture.create_from_image(image)
 
 
 # Territory wash (brighter where two owners meet) and the haunted edge's own colour near home.
@@ -265,7 +397,8 @@ func _realm_paint_ground() -> void:
 	for gz in side:
 		for gx in side:
 			var index: int = gz * side + gx
-			var colour: Color = _realm_base_colors[index].lerp(_realm_haunt_color, _realm_haunt_weight[index])
+			var base: Color = _realm_base_colors[index]
+			var colour: Color = base.lerp(_realm_haunt_color, _realm_haunt_weight[index])
 			var owner: String = owners[index]
 			if owner != "":
 				var border: bool = false
@@ -273,6 +406,7 @@ func _realm_paint_ground() -> void:
 					if owners[other] != owner:
 						border = true
 				colour = colour.lerp(realm.owner_color(owner), REALM_BORDER_TINT if border else REALM_TINT)
+			colour.a = base.a
 			colors[index] = colour
 	var arrays: Array = []
 	arrays.resize(Mesh.ARRAY_MAX)
@@ -329,13 +463,56 @@ func realm_walk_y(x: float, z: float) -> float:
 	return maxf(realm_surface_y(x, z), RealmMap.WATER_Y - 0.4)
 
 
+# The river as a ribbon that follows its line, from one side of the scenery ring to the other.
+# Each vertex carries how deep the water is over the ground there (COLOR.r: 0.5 at the shoreline,
+# 1 at a metre or more), which way the stream runs (COLOR.gb) and its place along and across the
+# stream (UV in metres), so the shader
+# can shade deep and shallow water, ring the banks with foam and run the current downstream.
 func _realm_build_water() -> void:
+	var across: PackedFloat32Array = [-9.0, -7.5, -6.0, -4.5, -3.0, -1.5, 0.0, 1.5, 3.0, 4.5, 6.0, 7.5, 9.0]
+	if _realm_phone:
+		across = [-9.0, -6.0, -3.0, 0.0, 3.0, 6.0, 9.0]
+	var columns: int = across.size()
+	var vertices := PackedVector3Array()
+	var colors := PackedColorArray()
+	var uvs := PackedVector2Array()
+	var rows: int = 0
+	var along: float = 0.0
+	var last := Vector2.INF
+	var count: int = realm.river_samples()
+	for index in count:
+		var p: Vector2 = realm.river_point(index)
+		if maxf(absf(p.x), absf(p.y)) > RealmMap.OUTER_HALF + 20.0:
+			continue
+		var ahead: Vector2 = realm.river_point(mini(index + 1, count - 1)) - realm.river_point(maxi(index - 1, 0))
+		var flow: Vector2 = ahead.normalized()
+		var normal := Vector2(-flow.y, flow.x)
+		if last != Vector2.INF:
+			along += p.distance_to(last)
+		last = p
+		for offset: float in across:
+			var q: Vector2 = p + normal * offset
+			var depth: float = RealmMap.WATER_Y - realm.height_at(q.x, q.y)
+			vertices.append(Vector3(q.x, RealmMap.WATER_Y, q.y))
+			colors.append(Color(clampf(depth, -1.0, 1.0) * 0.5 + 0.5, flow.x * 0.5 + 0.5, flow.y * 0.5 + 0.5))
+			uvs.append(Vector2(offset, along))
+		rows += 1
+	var indices := PackedInt32Array()
+	for row in rows - 1:
+		for column in columns - 1:
+			var a: int = row * columns + column
+			indices.append_array([a, a + columns, a + 1, a + 1, a + columns, a + columns + 1])
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_COLOR] = colors
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
+	arrays[Mesh.ARRAY_INDEX] = indices
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	var water := MeshInstance3D.new()
 	water.name = "RealmWater"
-	var plane := PlaneMesh.new()
-	plane.size = Vector2.ONE * RealmMap.HALF * 2.0
-	water.mesh = plane
-	water.position.y = RealmMap.WATER_Y
+	water.mesh = mesh
 	var material := ShaderMaterial.new()
 	material.shader = preload("res://shaders/realm_water.gdshader")
 	water.material_override = material
@@ -345,45 +522,55 @@ func _realm_build_water() -> void:
 
 # --- Trees --------------------------------------------------------------------------------------
 
-# A pine and a round autumn tree, each trunk + crown baked into one vertex-coloured mesh so a chunk
-# costs one draw call per shape. Instance colours carry the autumn tones of the terrain layer.
+# The realm's tree shapes, each baked into one vertex-coloured mesh so a chunk costs one draw call
+# per shape: a layered pine, a lumpy broadleaf crown, reeds, a boulder, a meadow bush and a slim
+# poplar. Foliage is white shaded dark at the bottom to full at the top (the instance colour
+# carries the autumn tone), with a little per-facet variation so crowns read as painted, not
+# flat; trunks are dark brown. Indexed by the "kind" from RealmMap.trees_in_chunk.
 func _realm_build_tree_meshes() -> void:
 	var trunk := BoxMesh.new()
-	trunk.size = Vector3(0.28, 0.9, 0.28)
+	trunk.size = Vector3(0.24, 1.0, 0.24)
+	var bark := Color(0.3, 0.22, 0.17)
 	var pine := SurfaceTool.new()
 	pine.begin(Mesh.PRIMITIVE_TRIANGLES)
-	pine.append_from(trunk, 0, Transform3D(Basis(), Vector3(0, 0.45, 0)))
-	for tier in 3:
+	_realm_tree_part(pine, trunk, Transform3D(Basis(), Vector3(0, 0.5, 0)), bark, 0.0, 1.0)
+	for tier in 4:
 		var cone := CylinderMesh.new()
 		cone.top_radius = 0.0
-		cone.bottom_radius = 0.9 - tier * 0.24
-		cone.height = 1.0 - tier * 0.1
-		cone.radial_segments = 6
+		cone.bottom_radius = 1.0 - tier * 0.2
+		cone.height = 0.95 - tier * 0.1
+		cone.radial_segments = 7
 		cone.rings = 1
-		pine.append_from(cone, 0, Transform3D(Basis(), Vector3(0, 0.9 + tier * 0.5, 0)))
+		var turn := Basis(Vector3.UP, tier * 0.45)
+		_realm_tree_part(pine, cone, Transform3D(turn, Vector3(0, 0.98 + tier * 0.42, 0)), Color.WHITE, 0.45, 2.5)
 	var round := SurfaceTool.new()
 	round.begin(Mesh.PRIMITIVE_TRIANGLES)
-	round.append_from(trunk, 0, Transform3D(Basis(), Vector3(0, 0.45, 0)))
-	var crown := SphereMesh.new()
-	crown.radius = 0.85
-	crown.height = 1.6
-	crown.radial_segments = 7
-	crown.rings = 4
-	round.append_from(crown, 0, Transform3D(Basis(), Vector3(0, 1.55, 0)))
+	_realm_tree_part(round, trunk, Transform3D(Basis(), Vector3(0, 0.5, 0)), bark, 0.0, 1.0)
+	# Phones get three coarser lobes: the realm draws thousands of these.
+	var lobes: Array[Vector4] = [Vector4(0, 1.55, 0, 0.78), Vector4(0.42, 1.3, 0.18, 0.52), Vector4(-0.36, 1.32, 0.3, 0.5), Vector4(-0.12, 1.95, -0.22, 0.48)]
+	if _realm_phone:
+		lobes.resize(3)
+	for lobe: Vector4 in lobes:
+		var crown := SphereMesh.new()
+		crown.radius = lobe.w
+		crown.height = lobe.w * 1.8
+		crown.radial_segments = 5 if _realm_phone else 7
+		crown.rings = 3
+		_realm_tree_part(round, crown, Transform3D(Basis(), Vector3(lobe.x, lobe.y, lobe.z)), Color.WHITE, 0.75, 2.4)
 	# Reeds: a clump of thin blades, all tinted by the instance colour.
 	var reeds := SurfaceTool.new()
 	reeds.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for blade in 5:
+	for blade in 7:
 		var stalk := CylinderMesh.new()
 		stalk.top_radius = 0.0
 		stalk.bottom_radius = 0.07
-		stalk.height = 1.1 + float(blade % 3) * 0.25
+		stalk.height = 1.0 + float(blade % 3) * 0.3
 		stalk.radial_segments = 4
 		stalk.rings = 1
-		var spot := Vector3.FORWARD.rotated(Vector3.UP, TAU * float(blade) / 5.0) * 0.28
-		var lean := Basis(Vector3(spot.z, 0, -spot.x).normalized(), 0.18)
-		reeds.append_from(stalk, 0, Transform3D(lean, spot + Vector3(0, stalk.height * 0.5, 0)))
-	# A boulder: a squashed low-poly sphere.
+		var spot := Vector3.FORWARD.rotated(Vector3.UP, TAU * float(blade) / 7.0) * (0.18 + 0.12 * float(blade % 2))
+		var lean := Basis(Vector3(spot.z, 0, -spot.x).normalized(), 0.22)
+		_realm_tree_part(reeds, stalk, Transform3D(lean, spot + Vector3(0, stalk.height * 0.5, 0)), Color.WHITE, 0.0, 1.5)
+	# A boulder: a squashed low-poly sphere with a smaller stone at its foot.
 	var rock := SurfaceTool.new()
 	rock.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var stone := SphereMesh.new()
@@ -391,27 +578,49 @@ func _realm_build_tree_meshes() -> void:
 	stone.height = 0.9
 	stone.radial_segments = 6
 	stone.rings = 3
-	rock.append_from(stone, 0, Transform3D(Basis().scaled(Vector3(1.0, 0.8, 0.85)), Vector3(0, 0.22, 0)))
-	_realm_tree_meshes = [_realm_paint_trunks(pine.commit()), _realm_paint_trunks(round.commit()), _realm_paint_trunks(reeds.commit(), false), _realm_paint_trunks(rock.commit(), false)]
-	_realm_tree_material = StandardMaterial3D.new()
-	_realm_tree_material.vertex_color_use_as_albedo = true
-	_realm_tree_material.roughness = 0.9
+	_realm_tree_part(rock, stone, Transform3D(Basis().scaled(Vector3(1.0, 0.8, 0.85)), Vector3(0, 0.22, 0)), Color.WHITE, -0.2, 0.7)
+	_realm_tree_part(rock, stone, Transform3D(Basis(Vector3.UP, 0.8).scaled(Vector3(0.45, 0.4, 0.4)), Vector3(0.7, 0.05, 0.35)), Color.WHITE, -0.2, 0.7)
+	# A meadow bush: three low clumps.
+	var bush := SurfaceTool.new()
+	bush.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for clump: Vector4 in [Vector4(0, 0.32, 0, 0.5), Vector4(0.45, 0.26, 0.2, 0.36), Vector4(-0.3, 0.24, 0.32, 0.34)]:
+		var ball := SphereMesh.new()
+		ball.radius = clump.w
+		ball.height = clump.w * 1.7
+		ball.radial_segments = 6
+		ball.rings = 3
+		_realm_tree_part(bush, ball, Transform3D(Basis(), Vector3(clump.x, clump.y, clump.z)), Color.WHITE, -0.1, 0.8)
+	# A slim poplar: a tall narrow crown on a short trunk.
+	var poplar := SurfaceTool.new()
+	poplar.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_realm_tree_part(poplar, trunk, Transform3D(Basis(), Vector3(0, 0.5, 0)), bark, 0.0, 1.0)
+	var spire := SphereMesh.new()
+	spire.radius = 0.5
+	spire.height = 2.7
+	spire.radial_segments = 7
+	spire.rings = 5
+	_realm_tree_part(poplar, spire, Transform3D(Basis(), Vector3(0, 2.0, 0)), Color.WHITE, 0.7, 3.3)
+	_realm_tree_meshes = [pine.commit(), round.commit(), reeds.commit(), rock.commit(), bush.commit(), poplar.commit()]
+	_realm_tree_material = ShaderMaterial.new()
+	_realm_tree_material.shader = preload("res://shaders/realm_trees.gdshader")
 
 
-# Trunk vertices (low and narrow) go dark brown, crowns stay white so the instance colour shows.
-func _realm_paint_trunks(mesh: ArrayMesh, trunks: bool = true) -> ArrayMesh:
-	var arrays: Array = mesh.surface_get_arrays(0)
+# Adds one primitive to a tree mesh: colour shaded from 60% at height low to full at height high,
+# times a small per-triangle variation so the facets catch the light differently.
+func _realm_tree_part(tool: SurfaceTool, mesh: PrimitiveMesh, place: Transform3D, colour: Color, low: float, high: float) -> void:
+	var arrays: Array = mesh.get_mesh_arrays()
 	var points: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-	var colors := PackedColorArray()
-	colors.resize(points.size())
-	for index in points.size():
-		var p: Vector3 = points[index]
-		var is_trunk: bool = trunks and p.y <= 0.9 and absf(p.x) <= 0.15 and absf(p.z) <= 0.15
-		colors[index] = Color(0.32, 0.24, 0.2) if is_trunk else Color.WHITE
-	arrays[Mesh.ARRAY_COLOR] = colors
-	var painted := ArrayMesh.new()
-	painted.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	return painted
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	for corner in indices.size():
+		var index: int = indices[corner]
+		var at: Vector3 = place * points[index]
+		var facet: int = corner / 3
+		var vary: float = 0.94 + 0.12 * fposmod(sin(float(facet) * 12.9898 + at.y * 4.1) * 43758.5453, 1.0)
+		var shade: float = lerpf(0.6, 1.0, smoothstep(low, high, at.y)) * vary
+		tool.set_color(Color(minf(colour.r * shade, 1.0), minf(colour.g * shade, 1.0), minf(colour.b * shade, 1.0)))
+		tool.set_normal((place.basis * normals[index]).normalized())
+		tool.add_vertex(at)
 
 
 func _realm_stream_trees(focus: Vector2, reach: float, force: bool) -> void:
@@ -471,6 +680,10 @@ func _realm_build_chunk(chunk: Vector2i) -> Array:
 				tone = Color("6f7a3a").lerp(Color("8f7a45"), float(int(tree["tone"]) % 3) * 0.35)
 			elif shape == 3:
 				tone = Color("6e695c").lerp(Color("57524a"), float(int(tree["tone"]) % 3) * 0.4)
+			elif shape == 4:
+				tone = Color("5d6b2c").lerp(tone, 0.45)
+			elif shape == 5:
+				tone = Color("c9a02a").lerp(tone, 0.35)
 			multimesh.set_instance_color(index, tone.darkened(0.12))
 		var node := MultiMeshInstance3D.new()
 		node.multimesh = multimesh
@@ -479,6 +692,126 @@ func _realm_build_chunk(chunk: Vector2i) -> Array:
 		_realm_root.add_child(node)
 		nodes.append(node)
 	return nodes
+
+
+# Woods on the foothills past the playable edge: fixed scenery, never streamed. Pines climb the
+# slopes, broadleaf trees keep to the lower ground; one MultiMesh per shape and side of the realm
+# so the sides behind the camera are culled.
+func _realm_build_border_forest() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = realm.seed_value * 7919 + 41
+	var tries: int = 2600 if _realm_phone else 6500
+	var groups: Dictionary = {}   # Vector2i(shape, side) -> Array[Transform3D, Color]
+	for attempt in tries:
+		var reach: float = RealmMap.HALF + 3.0 + pow(rng.randf(), 1.6) * 190.0
+		var p: Vector2 = _realm_square_point(reach, rng.randf())
+		p += Vector2(rng.randf_range(-6.0, 6.0), rng.randf_range(-6.0, 6.0))
+		if maxf(absf(p.x), absf(p.y)) < RealmMap.HALF + 2.0:
+			continue
+		var y: float = realm.height_at(p.x, p.y)
+		var h: float = y - RealmMap.BASE_Y
+		if h > 34.0 or realm.river_distance(p.x, p.y) < RealmMap.RIVER_HALF + RealmMap.RIVER_BANK + 3.0:
+			continue
+		var thick: float = 0.55 + realm.woodland(p.x * 1.4, p.y * 1.4) * 0.6 - smoothstep(24.0, 34.0, h) * 0.5
+		# Just past the edge the woods follow the realm's own (forest thick, meadow sparse), so no
+		# line shows where the streamed trees stop and the scenery begins.
+		var own: float = 1.0 if realm.biome_at(p.x, p.y) == "forest" else 0.12
+		thick = lerpf(own, thick, smoothstep(RealmMap.HALF + 10.0, RealmMap.HALF + 70.0, maxf(absf(p.x), absf(p.y))))
+		if rng.randf() > thick:
+			continue
+		var shape: int = 0 if h > 9.0 or rng.randf() < 0.55 else 1
+		var side: int = 0 if absf(p.x) > absf(p.y) and p.x > 0.0 else (1 if absf(p.x) > absf(p.y) else (2 if p.y > 0.0 else 3))
+		var size: float = rng.randf_range(1.1, 2.0) * (1.0 + smoothstep(0.0, 8.0, h) * 0.3)
+		var basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).scaled(Vector3.ONE * size)
+		var tone := Color(TREE_FALL_TONES[rng.randi() % TREE_FALL_TONES.size()])
+		if shape == 0:
+			tone = Color("24402a").lerp(tone, 0.2)
+		var key := Vector2i(shape, side)
+		if not groups.has(key):
+			groups[key] = []
+		groups[key].append([Transform3D(basis, Vector3(p.x, y - 0.35, p.y)), tone.darkened(0.2)])
+	for key: Vector2i in groups:
+		var picked: Array = groups[key]
+		var multimesh := MultiMesh.new()
+		multimesh.transform_format = MultiMesh.TRANSFORM_3D
+		multimesh.use_colors = true
+		multimesh.mesh = _realm_tree_meshes[key.x]
+		multimesh.instance_count = picked.size()
+		for index in picked.size():
+			multimesh.set_instance_transform(index, picked[index][0])
+			multimesh.set_instance_color(index, picked[index][1])
+		var node := MultiMeshInstance3D.new()
+		node.name = "BorderForest_%d_%d" % [key.x, key.y]
+		node.multimesh = multimesh
+		node.material_override = _realm_tree_material
+		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_realm_root.add_child(node)
+
+
+# Grass tufts close up: the village's swaying grass clumps (same shader and wind), scattered
+# over the nearest chunks only while the camera is near enough to see them. Meadows and wheat get
+# the most, woods and stony ground fewer, water and shore none.
+func _realm_stream_grass(focus: Vector2, reach: float, force: bool) -> void:
+	var wanted: Array[Vector2i] = []
+	if _grass_material != null and zoom <= REALM_GRASS_ZOOM:
+		var span: int = ceili(reach / RealmMap.TREE_CHUNK) + 1
+		var middle: Vector2i = realm.chunk_of(focus.x, focus.y)
+		var last: int = realm.chunk_count() - 1
+		for cz in range(maxi(middle.y - span, 0), mini(middle.y + span, last) + 1):
+			for cx in range(maxi(middle.x - span, 0), mini(middle.x + span, last) + 1):
+				var chunk := Vector2i(cx, cz)
+				if realm.chunk_centre(chunk).distance_to(focus) <= reach + RealmMap.TREE_CHUNK * 0.71:
+					wanted.append(chunk)
+		wanted.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return realm.chunk_centre(a).distance_squared_to(focus) < realm.chunk_centre(b).distance_squared_to(focus))
+		var cap: int = REALM_GRASS_CHUNKS_LOW if _realm_phone else REALM_GRASS_CHUNKS
+		if wanted.size() > cap:
+			wanted.resize(cap)
+	for chunk: Vector2i in _realm_grass.keys():
+		if chunk not in wanted:
+			(_realm_grass[chunk] as Node).queue_free()
+			_realm_grass.erase(chunk)
+	var built: int = 0
+	for chunk: Vector2i in wanted:
+		if _realm_grass.has(chunk):
+			continue
+		if not force and built >= 2:
+			break
+		_realm_grass[chunk] = _realm_build_grass(chunk)
+		built += 1
+
+
+func _realm_build_grass(chunk: Vector2i) -> MultiMeshInstance3D:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = realm.seed_value * 6131 + chunk.x * 977 + chunk.y * 61
+	var corner: Vector2 = realm.chunk_centre(chunk) - Vector2.ONE * RealmMap.TREE_CHUNK * 0.5
+	var xforms: Array[Transform3D] = []
+	var colors: Array[Color] = []
+	for attempt in (REALM_GRASS_TUFTS_LOW if _realm_phone else REALM_GRASS_TUFTS):
+		var x: float = corner.x + rng.randf() * RealmMap.TREE_CHUNK
+		var z: float = corner.y + rng.randf() * RealmMap.TREE_CHUNK
+		var keep: float = rng.randf()
+		var tall: bool = rng.randf() < 0.18
+		var spin := Basis(Vector3.UP, rng.randf_range(0.0, TAU))
+		var height: float = rng.randf_range(0.9, 1.5) if tall else rng.randf_range(0.5, 0.85)
+		var width: float = rng.randf_range(1.6, 2.4) * (1.5 if tall else 1.0)
+		var colour: Color = _grass_tip_color(rng, 0.65, tall)
+		if absf(x) < RealmMap.SCENERY_CLEAR.x and absf(z) < RealmMap.SCENERY_CLEAR.y:
+			continue
+		var y: float = realm_surface_y(x, z)
+		if y < RealmMap.WATER_Y + 0.3:
+			continue
+		var chance: float = {"meadow": 0.9, "wheat": 0.8, "forest": 0.35, "rocky": 0.25}.get(realm.biome_at(x, z), 0.0)
+		if keep >= chance:
+			continue
+		xforms.append(Transform3D(spin * Basis.from_scale(Vector3(width, height, width)), Vector3(x, y - 0.03, z)))
+		colors.append(colour)
+	var node: MultiMeshInstance3D = _add_multimesh(_grass_clump_mesh(), _grass_material, xforms, colors, _realm_root, false)
+	node.name = "RealmGrass"
+	return node
+
+
+func realm_grass_chunks_loaded() -> int:
+	return _realm_grass.size()
 
 
 func realm_tree_chunks_loaded() -> int:
