@@ -1,0 +1,57 @@
+name: Tests
+
+on:
+  push:
+    branches-ignore: [main] # main runs these through web.yml before deploying
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: 4.7.2
+  GODOT_STATUS: stable
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Godot headless
+        run: |
+          set -eux
+          BASE="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_STATUS}"
+          wget -q "${BASE}/Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64.zip" -O godot.zip
+          unzip -q godot.zip
+          chmod +x "Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64"
+          sudo mv "Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64" /usr/local/bin/godot
+          godot --version
+
+      - name: Import project
+        run: godot --headless --editor --import --path .
+
+      - name: Python asset tests
+        run: python3 -m unittest tests/test_asset_verification.py
+
+      # Every tests/test_*.gd suite must exit 0 AND print its PASS marker.
+      # A GDScript runtime error does not quit the SceneTree, so a broken
+      # suite would otherwise hang; the timeout turns that into a failure.
+      - name: GDScript suites
+        run: |
+          failed=0
+          for t in tests/test_*.gd; do
+            rc=0
+            out=$(timeout 300 godot --headless --path . --script "res://$t" -- --no-save 2>&1) || rc=$?
+            marker=$(echo "$out" | grep -E '\b(PASS|FAIL)\b' | tail -1 || true)
+            if [ $rc -eq 0 ] && echo "$marker" | grep -q PASS; then
+              echo "ok   $t :: $marker"
+            else
+              echo "FAIL $t (exit $rc) :: $marker"
+              echo "$out" | grep -E 'ERROR|SCRIPT ERROR|FAIL' | head -40 || true
+              failed=1
+            fi
+          done
+          exit $failed
