@@ -1896,6 +1896,7 @@ func _ui() -> void:
 	left_content.add_child(crest_row)
 	crest_label = ui.crest("I", crest_row, "gold", 15)
 	crest_label.tooltip_text = "Settlement crest and act"
+	crest_row.add_child(UI.ResourceIcon.make("souls", 16.0))
 	pop_label = Label.new()
 	pop_label.add_theme_font_size_override("font_size", 13)
 	pop_label.add_theme_color_override("font_color", UI.PAPER)
@@ -1963,7 +1964,15 @@ func _ui() -> void:
 	toast_label.add_theme_color_override("font_color", UI.PAPER)
 	toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	toast_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	toast.add_child(toast_label)
+	# The brass tick lives inside the toast so it hides with it (the raven note
+	# fades the toast out; a lone tick there read as a stray text cursor).
+	var toast_row := HBoxContainer.new()
+	toast_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	toast_row.add_theme_constant_override("separation", 8)
+	toast.add_child(toast_row)
+	notice_tick.get_parent().remove_child(notice_tick)
+	toast_row.add_child(notice_tick)
+	toast_row.add_child(toast_label)
 	notice_wrap.add_child(toast)
 	root_control.add_child(banner_panel)
 	banner_panel.add_theme_stylebox_override("panel", ui.panel_box())
@@ -2221,6 +2230,11 @@ func _is_small() -> bool:
 
 func _is_narrow() -> bool:
 	var size: Vector2 = get_viewport().get_visible_rect().size
+	# Short landscape screens (1280x720 laptops, 1366x768) have room for the
+	# compact desktop clusters; stretching them edge to edge buried the village.
+	var win: Vector2i = DisplayServer.window_get_size()
+	if win.x >= 1000 and win.y >= 560 and win.x > win.y and size.x >= 760.0:
+		return false
 	return _window_min() < 800.0 or size.x < 760.0
 
 
@@ -2249,7 +2263,9 @@ func _layout_ui() -> void:
 	# Five bottom buttons fit phones only with tighter spacing and smaller hero discs.
 	if small != nav_compact:
 		nav_compact = small
-		nav.add_theme_constant_override("separation", 4 if small else 12)
+		nav.add_theme_constant_override("separation", 6 if small else 12)
+		# Spacers hide on phones; centre the buttons instead of piling them left.
+		nav.alignment = BoxContainer.ALIGNMENT_CENTER if small else BoxContainer.ALIGNMENT_BEGIN
 		_paint_ring(nav_attack, UI.BLOOD, 64.0 if small else 84.0)
 		_paint_ring(nav_shop, UI.GOLD, 64.0 if small else 84.0)
 		for button: Button in [more_button, collect_all_button, repair_all_button]:
@@ -2270,11 +2286,14 @@ func _layout_ui() -> void:
 	# a 4px overlap on portrait phones).
 	var gutter: float = maxf(0.0, size.x - safe * 2.0)
 	var dock_width: float = gutter * 0.52 if narrow else UI.RAIL_WIDTH + 198.0
-	left_dock.size = Vector2(dock_width, 0)
-	left_dock.position = Vector2(safe, safe)
 	var stack_width: float = gutter * 0.48 if narrow else 226.0
 	if small:
-		stack_width = minf(165.0, size.x - dock_width - safe * 3.0)
+		# Phone pills show an icon and a number only, so the dock takes the room
+		# they free and its objective lines wrap less.
+		stack_width = minf(112.0, gutter * 0.4)
+		dock_width = maxf(0.0, gutter - stack_width - safe * 0.75)
+	left_dock.size = Vector2(dock_width, 0)
+	left_dock.position = Vector2(safe, safe)
 	resource_stack.size = Vector2(stack_width, 0)
 	resource_stack.position = Vector2(size.x - stack_width - safe, safe)
 	if small:
@@ -3782,7 +3801,7 @@ func _refresh_hud() -> void:
 		var cap: int = int(sim.storage_cap(resource))
 		var held: int = int(sim.resources.get(resource, 0))
 		if _is_small():
-			resource_rows[resource].text = "%s %d" % [RESOURCE_GLYPHS.get(resource, "*"), held]
+			resource_rows[resource].text = "%d" % held
 		else:
 			resource_rows[resource].text = "%s  %d / %d" % [resource.capitalize(), held, cap]
 		var gauge: ProgressBar = resource_bars[resource]
@@ -3802,7 +3821,9 @@ func _refresh_hud() -> void:
 		collect_all_button.tooltip_text = "Collect from every workplace" if bankable else "Nothing to collect yet"
 		if bankable != collect_glow:
 			collect_glow = bankable
-			_paint_ring(collect_all_button, UI.READY if bankable else UI.SLATE, 56.0)
+			# Repaint at the current nav size so the phone disc and label match their neighbours.
+			_paint_ring(collect_all_button, UI.READY if bankable else UI.SLATE, 44.0 if nav_compact else 56.0)
+			collect_all_button.add_theme_font_size_override("font_size", 12 if nav_compact else 13)
 	var repair_wood: int = 0
 	for b: Dictionary in sim.buildings:
 		if float(b.get("hp", 0.0)) < float(b.get("max_hp", 0.0)) and float(b.get("remaining", 0.0)) <= 0.0:
@@ -4194,11 +4215,15 @@ func _spawn_collect_pop(event: Dictionary) -> void:
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.font_size = 42
 	label.pixel_size = 0.014
+	label.outline_size = 10
+	label.outline_modulate = Color(0.09, 0.06, 0.03, 0.85)
 	label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 3.5 + float(stack) * step)
+	label.scale = Vector3.ONE * 0.55
 	add_child(label)
 	effect_nodes.append(label)
 	var tween: Tween = _effect_tween()
-	tween.tween_property(label, "position:y", label.position.y + 2, 1.5)
+	tween.tween_property(label, "scale", Vector3.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(label, "position:y", label.position.y + 2, 1.5)
 	tween.parallel().tween_property(label, "modulate:a", 0.0, 1.5)
 	tween.tween_callback(label.queue_free)
 	collect_pops.append({"resource": resource, "amount": amount, "label": label, "tween": tween, "born": now})
