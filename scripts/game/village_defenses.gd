@@ -34,6 +34,9 @@ const DEF_STONE: Array[String] = ["stonewall", "archer_tower", "ballista", "bast
 const DEF_SOOT := Color("957f68")            # the shared weathering every building gets
 const DEF_LIFT := Color("b9a389")            # lighter weathering for defenses
 const DEF_LIFT_EARTH := Color(1.5, 1.3, 1.1)  # the dark log-and-earth ramparts need more to read
+const DEF_LANTERN_REACH: float = 0.5        # metres from the axis: just off a tower face
+const DEF_LANTERN_POST: float = 0.66        # metres along a gate to its post
+const DEF_HALO: float = 0.3                  # halo quad size, against the shared 1.7 m disc
 const DEF_SENTRY_MAX: int = 12
 const DEF_SENTRY_LOW: int = 5
 const DEF_SENTRY_SCALE: float = 0.42
@@ -139,10 +142,54 @@ func _def_dress(b: Dictionary, view: Dictionary) -> void:
 	state["lights"] = lights
 	if type_name in DEF_WALLS:
 		_def_dress_wall(b, view, state, _def_body_length(model) * factor)
+	if is_instance_valid(view.get("glow")):
+		_def_hang_lantern(state, view, type_name, model)
 	if type_name in DEF_TOWERS:
 		_def_add_sentry(state, model, factor)
 	view["def"] = state
 	_def[int(b["id"])] = state
+
+
+# The shared night glow is a 1.7 m soft disc floating in front of the building, which reads as a
+# blob on a slim tower or gate. Defenses hang a real lantern on a bracket instead: an iron cage
+# with a hot core, a tight halo around the flame and the lamp's light falling off on the ground.
+func _def_hang_lantern(state: Dictionary, view: Dictionary, type_name: String, model: Node3D) -> void:
+	var glow: MeshInstance3D = view["glow"]
+	var lamp: OmniLight3D = view.get("lamp")
+	var mount := Vector3(0.0, 1.15, DEF_LANTERN_REACH)
+	var wall := Vector3(0.0, 1.15, DEF_LANTERN_REACH - 0.2)
+	if type_name == "gate":
+		# On the gate post, out of the way of the lift.
+		mount = Vector3(DEF_LANTERN_POST, 1.25, 0.28).rotated(Vector3.UP, model.rotation.y)
+		wall = Vector3(DEF_LANTERN_POST, 1.25, 0.08).rotated(Vector3.UP, model.rotation.y)
+	var lantern := Node3D.new()
+	lantern.name = "DefenseLantern"
+	(state["lights"] as Node3D).add_child(lantern)
+	lantern.position = mount
+	lantern.look_at_from_position(mount, mount + (mount - wall).normalized() * Vector3(1, 0, 1) + Vector3(0, 0, 0.0001), Vector3.UP)
+	_box(Vector3(0.04, 0.04, 0.24), Vector3(0, 0.16, 0.12), DEF_IRON, lantern)          # bracket arm
+	_box(Vector3(0.17, 0.03, 0.17), Vector3(0, 0.1, 0), DEF_IRON, lantern)              # cap
+	_box(Vector3(0.14, 0.02, 0.14), Vector3(0, -0.1, 0), DEF_IRON, lantern)             # base
+	for corner: Vector2 in [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]:
+		_box(Vector3(0.02, 0.2, 0.02), Vector3(corner.x * 0.065, 0, corner.y * 0.065), DEF_IRON, lantern)
+	var core: MeshInstance3D = _box(Vector3(0.08, 0.13, 0.08), Vector3.ZERO, DEF_FLAME, lantern)
+	var hot := core.material_override as StandardMaterial3D
+	hot.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	hot.albedo_color = Color(1.0, 0.78, 0.42)
+	core.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for child in lantern.get_children():
+		(child as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# The glow becomes a small halo on the flame; the lamp sits just in front so its light
+	# pools on the wall and ground below instead of hanging in the air.
+	glow.position = mount
+	if glow.mesh is QuadMesh:
+		(glow.mesh as QuadMesh).size = Vector2.ONE * DEF_HALO
+	if is_instance_valid(lamp):
+		lamp.position = mount + Vector3(0, -0.05, 0)
+		lamp.omni_range = 3.0
+		lamp.omni_attenuation = 1.6
+	state["lantern_core"] = core
+	state["glow"] = glow
 
 
 # Defenses keep their soot override but take the lighter defense weathering.
@@ -510,6 +557,14 @@ func _update_actors(delta: float) -> void:
 		if not is_equal_approx(lean, goal):
 			lean = move_toward(lean, goal, step * 0.08)
 			state["lean"] = lean
+		if state.has("lantern_core"):
+			# The core is lit only while the lamp is, and breathes with the shared flicker.
+			var halo: MeshInstance3D = state["glow"]
+			var core: MeshInstance3D = state["lantern_core"]
+			if is_instance_valid(halo) and is_instance_valid(core):
+				core.visible = halo.visible
+				if halo.visible:
+					core.scale = Vector3(1.0, halo.scale.y * 1.6 - 0.6, 1.0)
 		var kick: float = float(state["kick"])
 		var shake: float = float(state["shake"])
 		var snap: float = float(state["snap"])
