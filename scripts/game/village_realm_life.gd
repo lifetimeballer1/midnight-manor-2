@@ -12,6 +12,9 @@ extends "res://scripts/game/village_realm.gd"
 #     border moves out, and land a neighbour claimed more weakly changes hands.
 #   * Fishing: jetties along the river land Food for the manor while they stand on its land. Tap one
 #     for its card; an outpost on a wild bank brings it in.
+#   * Reaches: the four plots around the village are held by tribe warbands, not bought. Tap one
+#     for its card and attack it; a win claims it outright. Garrisons rise from East (3) to South
+#     (45), so the village grows as its fighters do. Outposts beyond wait for the first reach.
 #   * Raid: the manor's fighters (the village's own warriors and archers, never removed from it)
 #     march out as a column you can watch. Their combined levels against the settlement's people
 #     decide it. A win brings loot and shrinks the neighbour; beaten down small enough it swears to
@@ -40,6 +43,8 @@ var _realm_card_site: String = ""
 var _realm_card_point: Vector2 = Vector2.ZERO
 var _realm_card_outpost: int = -1
 var _realm_card_fish: int = -1
+var _realm_card_reach: String = ""
+var _realm_camps: Dictionary = {}             # reach id -> Node3D (the tribe's banner and guards)
 
 
 func _ready() -> void:
@@ -47,6 +52,7 @@ func _ready() -> void:
 	if realm == null:
 		return
 	_realm_sync_outposts()
+	_realm_sync_reaches()
 
 
 func _process(delta: float) -> void:
@@ -56,6 +62,7 @@ func _process(delta: float) -> void:
 	for event: Dictionary in realm.take_events():
 		_realm_event(event)
 	_realm_sync_outposts()
+	_realm_sync_reaches()
 	var moving: float = delta if started and not sim.paused else 0.0
 	_realm_move_travellers(moving)
 	_realm_move_warband(moving)
@@ -87,6 +94,14 @@ func _realm_event(event: Dictionary) -> void:
 				sim.notice += " %s swears to the manor; its land is yours." % name
 		"raid_lost":
 			sim.notice = "The warband was beaten back at %s." % name
+		"reach_won":
+			var reach: String = str(event["reach"])
+			if sim.claim_reach(reach):
+				sim.notice = "%s taken from %s! The ground grows." % [Sim.EXPANSION_PLOTS[reach]["label"], name]
+				_sync_expansion(true)
+				_play_sfx("confirm")
+		"reach_lost":
+			sim.notice = "%s's warband held %s. Grow stronger and try again." % [name, Sim.EXPANSION_PLOTS[str(event["reach"])]["label"]]
 		"catch":
 			var food: int = sim._bank("food", float(event["loot"]["food"]))
 			if food > 0:
@@ -164,9 +179,8 @@ func _realm_move_warband(delta: float) -> void:
 			(marcher["model"] as Node3D).queue_free()
 		_realm_warband.clear()
 		return
-	var site: Dictionary = realm.settlement(str(realm.raid["site"]))
 	var start: Vector2 = realm.raid["start"]
-	var target: Vector2 = site["centre"]
+	var target: Vector2 = realm.raid_target()
 	var heading: Vector2 = (target - start).normalized()
 	if _realm_warband.is_empty():
 		var count: int = mini(int(realm.raid.get("fighters", REALM_WARBAND)), REALM_WARBAND)
@@ -253,6 +267,115 @@ func realm_outpost_views() -> int:
 	return _realm_outpost_views.size()
 
 
+# --- Reaches -----------------------------------------------------------------------------------
+
+# Every unclaimed reach is held by a tribe: the village's claim rules say so (sim.reach_holders),
+# and a banner in the tribe's colour with two guards stands on it.
+func _realm_sync_reaches() -> void:
+	for id: String in RealmMap.REACHES:
+		var held: bool = id not in sim.expansions
+		if held:
+			var holder: Dictionary = realm.reach_holder(id)
+			sim.reach_holders[id] = "Held by %s. Strength %d to take it." % [holder.get("name", "a tribe"), realm.reach_garrison(id)]
+		else:
+			sim.reach_holders.erase(id)
+		if held and not _realm_camps.has(id):
+			_realm_camps[id] = _realm_build_camp(id)
+		elif not held and _realm_camps.has(id):
+			(_realm_camps[id] as Node3D).queue_free()
+			_realm_camps.erase(id)
+
+
+func _realm_build_camp(id: String) -> Node3D:
+	var holder: Dictionary = realm.reach_holder(id)
+	var colour: Color = holder.get("color", Color("7a6a5a"))
+	var centre: Vector2 = RealmMap.REACHES[id]["centre"]
+	var root := Node3D.new()
+	root.name = "ReachCamp_%s" % id
+	root.position = Vector3(centre.x, 0.0, centre.y)
+	_realm_root.add_child(root)
+	var pole := _box(Vector3(0.18, 4.6, 0.18), Vector3(0, 2.3, 0), Color("2b2d33"), root)
+	pole.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var flag := _box(Vector3(1.6, 1.0, 0.06), Vector3(0.85, 4.0, 0), colour, root)
+	var flag_material := flag.material_override as StandardMaterial3D
+	flag_material.emission_enabled = true
+	flag_material.emission = colour.darkened(0.4)
+	flag.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for index in 2:
+		if not _asset_exists("char_warrior"):
+			break
+		var guard: Node3D = _model("char_warrior")
+		root.add_child(guard)
+		guard.position = Vector3(-1.2 + 2.4 * float(index), 0, 1.4)
+		guard.rotation.y = -centre.angle() + PI * 0.5
+		var player: AnimationPlayer = _find_player_cached("char_warrior", guard)
+		if player != null and player.has_animation("idle"):
+			player.get_animation("idle").loop_mode = Animation.LOOP_LINEAR
+			player.play("idle")
+	return root
+
+
+func realm_camp_count() -> int:
+	return _realm_camps.size()
+
+
+# A tap on a held reach opens its battle card instead of a purchase.
+func _claim_plot(id: String) -> void:
+	if realm == null or not sim.reach_holders.has(id):
+		super(id)
+		return
+	_realm_card_reach = id
+	_open_panel("realm_reach")
+
+
+# The HUD's expansion goal: the next reach to take, easiest first.
+func _expansion_goal_text() -> String:
+	if realm == null:
+		return super()
+	for id: String in realm.reach_order():
+		if id in sim.expansions:
+			continue
+		var holder: Dictionary = realm.reach_holder(id)
+		return "Take %s from %s - strength %d" % [Sim.EXPANSION_PLOTS[id]["label"], holder.get("name", "a tribe"), realm.reach_garrison(id)]
+	return ""
+
+
+func _realm_reach_card() -> void:
+	var id: String = _realm_card_reach
+	if not RealmMap.REACHES.has(id):
+		_close_panel()
+		return
+	var holder: Dictionary = realm.reach_holder(id)
+	ui.heading(str(Sim.EXPANSION_PLOTS[id]["label"]).to_upper(), side_content)
+	ui.rule(side_content)
+	if id in sim.expansions:
+		ui.body("The manor's land.", side_content)
+		return
+	var fighters: Dictionary = realm_fighters()
+	ui.body("Held by a %s warband.\nGarrison strength %d / Your fighters %d (strength %d)" % [holder.get("name", "tribe"), realm.reach_garrison(id), int(fighters["count"]), int(fighters["strength"])], side_content)
+	ui.body("Win and the reach joins the village. Strength is your fighters' levels added up; hire and train fighters to grow it.", side_content, 12)
+	var reason: String = realm.reach_reason(id, int(fighters["count"]), sim.expansions)
+	if reason.is_empty() and not sim._affordable(RealmMap.RAID_COST):
+		reason = "Not enough supplies: " + _cost_text(RealmMap.RAID_COST)
+	var attack: Button = ui.gold_button("Attack / " + _cost_text(RealmMap.RAID_COST), _realm_attack_reach.bind(id), side_content)
+	attack.disabled = not reason.is_empty()
+	attack.tooltip_text = reason
+	if not reason.is_empty():
+		ui.body(reason, side_content, 12)
+	elif int(fighters["strength"]) <= realm.reach_garrison(id):
+		ui.body("Your warband looks too weak for this garrison. You can still try.", side_content, 12)
+
+
+func _realm_attack_reach(id: String) -> void:
+	var fighters: Dictionary = realm_fighters()
+	if not realm.reach_reason(id, int(fighters["count"]), sim.expansions).is_empty() or not sim._spend(RealmMap.RAID_COST):
+		return
+	realm.start_reach_battle(id, int(fighters["count"]), int(fighters["strength"]), sim.expansions)
+	sim.notice = "The warband marches on %s." % Sim.EXPANSION_PLOTS[id]["label"]
+	_close_panel()
+	_refresh_hud()
+
+
 # --- Taps and cards -----------------------------------------------------------------------------
 
 # Taps inside the village (and on its locked plots) behave exactly as before. A tap out in the
@@ -315,6 +438,8 @@ func _open_panel(which: String) -> void:
 			_realm_land_card()
 		"realm_fish":
 			_realm_fish_card()
+		"realm_reach":
+			_realm_reach_card()
 		"realm_outpost":
 			ui.heading("MANOR OUTPOST", side_content)
 			ui.rule(side_content)
@@ -336,7 +461,7 @@ func _realm_site_card() -> void:
 	var mood: String = realm.attitude(site)
 	ui.heading(str(site["name"]).to_upper(), side_content)
 	ui.rule(side_content)
-	ui.body("%d people / %s\nLand reaches %d m / Defence %d" % [int(site["pop"]), mood.capitalize(), int(realm.claim_radius(site)), int(realm.defence_of(site))], side_content)
+	ui.body("%d people / %s\nLand reaches %d m / Tribe %d of %d in might\nStrength to beat them: about %d" % [int(site["pop"]), mood.capitalize(), int(realm.claim_radius(site)), int(site.get("rank", 1)), realm.settlements.size(), realm.strength_needed(realm.defence_of(site))], side_content)
 	if mood == "sworn":
 		ui.body("Sworn to the manor. Its land is yours, and it keeps growing under your banner.", side_content, 12)
 		return

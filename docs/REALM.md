@@ -39,7 +39,8 @@ over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
   Send Gifts, Raid). Tapping wild land offers an outpost. Taps on the village and its locked plots
   behave as before.
 - **Outposts (land takeover)**: 120 Wood + 60 Gold, up to six, each within 36 m of land the manor
-  already holds. Each claims 26 m for the manor, so borders move out step by step and weaker
+  already holds. The manor must have taken at least one reach first, and an outpost never goes on
+  a tribe's own land (beat or swear the tribe first). Each claims 26 m for the manor, so borders move out step by step and weaker
   neighbour claims change hands.
 - **Raids (fighting neighbours)**: 20 Food + 10 Gold of supplies and at least two fighters. The
   village's own fighters' combined levels set the warband's strength; they never leave the village's
@@ -49,6 +50,31 @@ over the idle-motion layer, with its world data in `scripts/game/realm_map.gd`.
   and it flies your colour. Each raid leaves the target on guard for two minutes.
 - **Save**: realm save v2 adds moods, outposts, sworn neighbours and a marching warband. v1 realm
   saves still load. The village save is unchanged.
+
+## Taking the reaches (expansion is conquest)
+
+The four expansion plots around the village (East, West, North and South Reach) can no longer be
+bought. Each is held by the nearest tribe in its direction, which camps a flag and two guards on it.
+Tapping a held reach opens its card: the holder, the garrison's strength, your fighters, and an
+Attack button (20 Food + 10 Gold of supplies, at least two fighters). The warband marches out and the
+fight resolves on arrival, with the same dice as a raid (strength x 4, x0.8 to x1.25).
+
+| Reach | Garrison strength | When |
+|---|---|---|
+| East | 3 | the first fight, early game |
+| West | 8 | early to mid game |
+| North | 20 | mid game |
+| South | 45 | late game |
+
+A win claims the reach for free (the ground grows as before, the camp leaves) and costs the holder
+10 relation. A loss puts that garrison on guard for two minutes. The village goal line names the
+next reach and the strength it needs. Reach ownership is stored in the village save's expansion list
+as before, so old saves keep the reaches they already bought.
+
+**Tribes get mightier with distance**: ranked nearest to farthest, their defence is multiplied by
+0.5, 1, 2, 5 and 11. At 20 people the nearest needs under strength 25 to beat and the farthest over
+100, so the two farthest tribes are late-game fights. The tribe card shows its rank and the strength
+needed.
 
 ## Terrain, river and fishing
 

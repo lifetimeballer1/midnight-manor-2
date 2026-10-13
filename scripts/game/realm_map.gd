@@ -80,6 +80,19 @@ const MARCH_SPEED: float = 4.0            # m/s, start at the village edge
 const RAID_RELATION: float = 25.0         # starting a raid sours the target
 const RAID_LOSS_RELATION: float = 15.0
 const VASSAL_POP: int = 5                 # a beaten settlement this small submits
+# Land is taken, not bought. The four reaches around the village are held by tribe warbands; the
+# manor wins each in battle, easiest first, and only then can it plant outposts beyond. Out in the
+# realm the tribes grow harder with distance: the nearest is a fair early fight, the farthest two
+# are meant to stay a challenge late in the game. Strength is the warband's combined fighter levels.
+const REACHES: Dictionary = {
+	"east": {"centre": Vector2(30.0, 0.0), "garrison": 3, "rank": 1},
+	"west": {"centre": Vector2(-30.0, 0.0), "garrison": 8, "rank": 2},
+	"north": {"centre": Vector2(0.0, -26.0), "garrison": 20, "rank": 3},
+	"south": {"centre": Vector2(0.0, 26.0), "garrison": 45, "rank": 4},
+}
+const REACH_LOSS_RELATION: float = 10.0   # the tribe that held a reach resents losing it
+const TRIBE_MIGHT: Array[float] = [0.5, 1.0, 2.0, 5.0, 11.0]   # by distance, nearest tribe first
+const OUTPOST_NEEDS_REACHES: int = 1
 
 const FACTIONS: Array = [
 	{"id": "ashfen", "name": "Ashfen Hollow", "color": "b0543a"},
@@ -105,7 +118,8 @@ var home_plots: int = 0
 var settlements: Array[Dictionary] = []  # {id, name, color, centre: Vector2, ground: float, pop, growth,
                                           #  relation, vassal, cooldown, travel}
 var outposts: Array[Dictionary] = []     # {id, pos: Vector2}
-var raid: Dictionary = {}                # {site, strength, left, total, start: Vector2} while marching
+var raid: Dictionary = {}                # {site, strength, left, total, start: Vector2, reach?} while marching
+var reach_guard: Dictionary = {}         # reach id -> seconds its garrison stays on guard after a loss
 var events: Array[Dictionary] = []       # for the realm layer: take_events() drains them
 var bridges: Array[Dictionary] = []      # {pos: Vector2, dir: Vector2, length: float}
 var fishing_spots: Array[Dictionary] = []  # {id, pos: Vector2 (bank end of the jetty), dir: Vector2 (toward the water)}
@@ -125,6 +139,7 @@ func generate(new_seed: int) -> void:
 	settlements.clear()
 	outposts.clear()
 	raid = {}
+	reach_guard = {}
 	events.clear()
 	_next_outpost = 1
 	fish_clock = 0.0
@@ -145,9 +160,19 @@ func generate(new_seed: int) -> void:
 			"relation": RELATION_START + rng.randf_range(-8.0, 8.0), "vassal": false, "cooldown": 0.0,
 			"travel": rng.randf_range(0.0, 40.0),
 		})
+	_rank_tribes()
 	_place_bridges()
 	_place_fishing_spots()
 	revision += 1
+
+
+# Nearest tribe first: rank 1 is a fair early fight, rank 5 a late-game one.
+func _rank_tribes() -> void:
+	var order: Array[Dictionary] = settlements.duplicate()
+	order.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return (a["centre"] as Vector2).length() < (b["centre"] as Vector2).length())
+	for index in order.size():
+		order[index]["rank"] = index + 1
+		order[index]["might"] = TRIBE_MIGHT[mini(index, TRIBE_MIGHT.size() - 1)]
 
 
 func _setup_noise() -> void:
@@ -581,9 +606,14 @@ func outpost_reason(pos: Vector2) -> String:
 		return "An outpost needs dry ground."
 	if pos.length() < home_radius() * 0.6:
 		return "The manor already holds this ground."
+	if home_plots < OUTPOST_NEEDS_REACHES:
+		return "Take a reach around the village first."
 	for site: Dictionary in settlements:
 		if (site["centre"] as Vector2).distance_to(pos) < OUTPOST_SITE_CLEAR:
 			return "That is %s's own streets." % site["name"]
+	var holder: String = owner_at(pos.x, pos.y)
+	if holder != "" and holder != "home":
+		return "That land is %s's. Beat them first." % settlement(holder).get("name", holder)
 	var near_home: bool = false
 	for claim: Dictionary in claims():
 		if claim["owner"] == "home" and (claim["centre"] as Vector2).distance_to(pos) <= float(claim["radius"]) + OUTPOST_REACH:
@@ -653,10 +683,98 @@ func raid_progress() -> float:
 
 
 func defence_of(site: Dictionary) -> float:
-	return float(site["pop"]) * 1.6 + float(tier_of(site)) * 4.0
+	return (float(site["pop"]) * 1.6 + float(tier_of(site)) * 4.0) * float(site.get("might", 1.0))
+
+
+# Combined fighter levels that usually win (attack is strength x4, give or take a quarter).
+func strength_needed(defence: float) -> int:
+	return ceili(defence / 4.0)
+
+
+# Where the marching warband is headed: a settlement or a reach.
+func raid_target() -> Vector2:
+	if raid.is_empty():
+		return Vector2.ZERO
+	if raid.has("reach"):
+		return REACHES[str(raid["reach"])]["centre"]
+	return settlement(str(raid["site"])).get("centre", Vector2.ZERO)
+
+
+# --- Reaches ------------------------------------------------------------------------------------
+
+# The tribe whose banner flies over a reach: the one lying most nearly in that direction.
+func reach_holder(id: String) -> Dictionary:
+	if not REACHES.has(id):
+		return {}
+	var facing: Vector2 = (REACHES[id]["centre"] as Vector2).normalized()
+	var best: Dictionary = {}
+	var best_dot: float = -2.0
+	for site: Dictionary in settlements:
+		var dot: float = (site["centre"] as Vector2).normalized().dot(facing)
+		if dot > best_dot:
+			best_dot = dot
+			best = site
+	return best
+
+
+func reach_garrison(id: String) -> int:
+	return int(REACHES.get(id, {}).get("garrison", 0))
+
+
+# Reaches in the order they get harder.
+func reach_order() -> Array[String]:
+	var ids: Array[String] = []
+	for id: String in REACHES:
+		ids.append(id)
+	ids.sort_custom(func(a: String, b: String) -> bool: return int(REACHES[a]["rank"]) < int(REACHES[b]["rank"]))
+	return ids
+
+
+func reach_reason(id: String, fighters: int, claimed: Array) -> String:
+	if not REACHES.has(id):
+		return "Unknown reach."
+	if id in claimed:
+		return "Already the manor's."
+	if not raid.is_empty():
+		return "The warband is already marching."
+	if float(reach_guard.get(id, 0.0)) > 0.0:
+		return "The garrison is still on guard (%ds)." % ceili(float(reach_guard[id]))
+	if fighters < RAID_MIN_FIGHTERS:
+		return "Raise at least %d fighters first." % RAID_MIN_FIGHTERS
+	return ""
+
+
+# The caller pays RAID_COST first.
+func start_reach_battle(id: String, fighters: int, strength: int, claimed: Array) -> bool:
+	if not reach_reason(id, fighters, claimed).is_empty():
+		return false
+	var target: Vector2 = REACHES[id]["centre"]
+	var start: Vector2 = target * 0.25
+	var total: float = maxf(start.distance_to(target) / MARCH_SPEED, 5.0)
+	raid = {"site": str(reach_holder(id).get("id", "")), "reach": id, "strength": strength, "fighters": fighters, "left": total, "total": total, "start": start}
+	return true
+
+
+func _resolve_reach() -> void:
+	var id: String = str(raid["reach"])
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value * 37 + int(elapsed * 10.0)
+	var attack: float = float(raid["strength"]) * 4.0 * rng.randf_range(0.8, 1.25)
+	var holder: Dictionary = settlement(str(raid["site"]))
+	if attack > float(reach_garrison(id)) * 4.0:
+		if not holder.is_empty():
+			_shift_relation(holder, -REACH_LOSS_RELATION)
+		events.append({"kind": "reach_won", "reach": id, "site": raid["site"]})
+	else:
+		reach_guard[id] = RAID_COOLDOWN
+		events.append({"kind": "reach_lost", "reach": id, "site": raid["site"]})
+	raid = {}
 
 
 func _resolve_raid() -> void:
+	if raid.has("reach"):
+		_resolve_reach()
+		return
 	var site: Dictionary = settlement(str(raid["site"]))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value * 31 + int(elapsed * 10.0)
@@ -698,6 +816,10 @@ func set_home_plots(count: int) -> void:
 func advance(seconds: float) -> bool:
 	elapsed += seconds
 	var moved: bool = false
+	for id: String in reach_guard.keys():
+		reach_guard[id] = maxf(0.0, float(reach_guard[id]) - seconds)
+		if float(reach_guard[id]) <= 0.0:
+			reach_guard.erase(id)
 	for site: Dictionary in settlements:
 		site["cooldown"] = maxf(0.0, float(site["cooldown"]) - seconds)
 		if not bool(site["vassal"]):
@@ -861,7 +983,12 @@ func to_dict() -> Dictionary:
 		march = {"site": raid["site"], "strength": int(raid["strength"]), "fighters": int(raid["fighters"]),
 			"left": float(raid["left"]), "total": float(raid["total"]),
 			"x": (raid["start"] as Vector2).x, "z": (raid["start"] as Vector2).y}
-	return {"version": VERSION, "seed": seed_value, "elapsed": elapsed, "settlements": sites, "outposts": posts, "raid": march, "fish_clock": fish_clock}
+		if raid.has("reach"):
+			march["reach"] = raid["reach"]
+	var guards: Dictionary = {}
+	for id: String in reach_guard:
+		guards[id] = float(reach_guard[id])
+	return {"reach_guard": guards, "version": VERSION, "seed": seed_value, "elapsed": elapsed, "settlements": sites, "outposts": posts, "raid": march, "fish_clock": fish_clock}
 
 
 # Regenerates the world from its seed, then restores each settlement's growth. Returns false and
@@ -906,5 +1033,12 @@ func from_dict(data: Variant) -> bool:
 		raid = {"site": str(march["site"]), "strength": maxi(0, int(march.get("strength", 0))), "fighters": maxi(0, int(march.get("fighters", 0))),
 			"left": clampf(float(march.get("left", 0.0)), 0.0, total), "total": total,
 			"start": Vector2(float(march.get("x", 0.0)), float(march.get("z", 0.0)))}
+		if REACHES.has(str(march.get("reach", ""))):
+			raid["reach"] = str(march["reach"])
+	var guards: Variant = data.get("reach_guard", {})
+	if guards is Dictionary:
+		for id: Variant in guards:
+			if REACHES.has(str(id)):
+				reach_guard[str(id)] = clampf(float(guards[id]), 0.0, RAID_COOLDOWN)
 	revision += 1
 	return true

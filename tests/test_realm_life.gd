@@ -27,6 +27,7 @@ func _run() -> void:
 	_outpost_checks()
 	_raid_checks()
 	_save_checks()
+	_reach_checks()
 	await _scene_checks()
 	print("test_realm_life: %d checks, %d failures" % [checks, failures.size()])
 	if failures.is_empty():
@@ -75,6 +76,8 @@ func _mood_checks() -> void:
 
 func _outpost_checks() -> void:
 	var realm = _fresh()
+	check(realm.outpost_reason(Vector2(realm.home_radius() + 20.0, 0.0)) == "Take a reach around the village first.", "outposts wait for the first reach")
+	realm.set_home_plots(1)
 	var edge: Vector2 = Vector2(realm.home_radius() + 20.0, 0.0)
 	# Find dry ground just past the manor's land.
 	for turn in 16:
@@ -152,6 +155,61 @@ func _raid_checks() -> void:
 	check(not bool(strong["vassal"]), "a lost raid takes nothing")
 
 
+func _reach_checks() -> void:
+	var realm = _fresh()
+	var order: Array[String] = realm.reach_order()
+	check(order == ["east", "west", "north", "south"], "reaches get harder from east to south")
+	var last: int = 0
+	for id: String in order:
+		check(realm.reach_garrison(id) > last, "%s's garrison is stronger than the last" % id)
+		last = realm.reach_garrison(id)
+		check(not realm.reach_holder(id).is_empty(), "%s is held by a tribe" % id)
+	check(realm.reach_garrison("south") >= 40, "the last reach is a late-game fight")
+	check(not realm.reach_reason("east", 1, []).is_empty(), "one fighter cannot take a reach")
+	check(realm.reach_reason("east", 2, ["east"]) == "Already the manor's.", "a taken reach is not fought again")
+	# A weak warband loses and the garrison stands guard.
+	check(realm.start_reach_battle("west", 2, 2, []), "the warband marches on a reach")
+	check(realm.raid_target().is_equal_approx(RealmMap.REACHES["west"]["centre"]), "it marches to the reach")
+	var lost: bool = false
+	for step in 30:
+		realm.advance(1.0)
+		for event: Dictionary in realm.take_events():
+			lost = lost or (event["kind"] == "reach_lost" and event["reach"] == "west")
+	check(lost and realm.raid.is_empty(), "a weak warband is beaten back from a reach")
+	check(not realm.reach_reason("west", 6, []).is_empty(), "the garrison stands guard after a win")
+	realm.advance(RealmMap.RAID_COOLDOWN + 1.0)
+	check(realm.reach_reason("west", 6, []).is_empty(), "and stands down later")
+	# A strong one takes it.
+	realm.start_reach_battle("west", 6, 40, [])
+	var won: bool = false
+	for step in 30:
+		realm.advance(1.0)
+		for event: Dictionary in realm.take_events():
+			won = won or (event["kind"] == "reach_won" and event["reach"] == "west")
+	check(won, "a strong warband takes the reach")
+	# Tribes get mightier with distance: the farthest needs a late-game warband.
+	var by_rank: Array[Dictionary] = realm.settlements.duplicate()
+	by_rank.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["rank"]) < int(b["rank"]))
+	check((by_rank[0]["centre"] as Vector2).length() <= (by_rank[4]["centre"] as Vector2).length(), "rank follows distance")
+	for site: Dictionary in by_rank:
+		site["pop"] = 20
+	check(realm.strength_needed(realm.defence_of(by_rank[0])) < realm.strength_needed(realm.defence_of(by_rank[4])), "the farthest tribe is the hardest")
+	check(realm.strength_needed(realm.defence_of(by_rank[0])) <= 25, "the nearest tribe is an early fight")
+	check(realm.strength_needed(realm.defence_of(by_rank[4])) >= 100, "the farthest tribe is a late-game challenge")
+	# Outposts never go on a tribe's own land.
+	realm.set_home_plots(1)
+	var near_centre: Vector2 = by_rank[0]["centre"]
+	var inside: Vector2 = near_centre - near_centre.normalized() * 30.0
+	check(realm.owner_at(inside.x, inside.y) == str(by_rank[0]["id"]), "the test point is the tribe's land")
+	check(realm.outpost_reason(inside).contains("Beat them first"), "a tribe's land must be won, not planted on")
+	# A marching reach battle survives the save.
+	var marching = _fresh()
+	marching.start_reach_battle("east", 3, 9, [])
+	var loaded = RealmMap.new()
+	loaded.from_dict(JSON.parse_string(JSON.stringify(marching.to_dict())))
+	check(str(loaded.raid.get("reach", "")) == "east", "a reach battle keeps marching after a save")
+
+
 func _save_checks() -> void:
 	var realm = _fresh()
 	realm.found_outpost(Vector2(realm.home_radius() + 10.0, 0.0))
@@ -190,6 +248,23 @@ func _scene_checks() -> void:
 	var wild := Vector2(game.realm.home_radius() + 14.0, 0.0)
 	check(game.realm_tap(wild) and game.panel == "realm_land", "tapping wild land offers an outpost")
 	check(not game.realm_tap(Vector2(900, 0)), "taps beyond the realm do nothing")
+
+	# The reaches are held by tribes: no buying them, a battle takes them.
+	check(game.realm_camp_count() == 4, "a tribe camp stands on each of the four reaches")
+	check(game.sim.expansion_reason("east").begins_with("Held by"), "a reach says who holds it")
+	game.sim.resources["wood"] = 5000.0
+	game.sim.resources["stone"] = 5000.0
+	game.sim.chronicle.act = 4
+	check(not game.sim.expand("east") and game.sim.expansions.is_empty(), "a reach cannot be bought, even late")
+	game._claim_plot("east")
+	check(game.panel == "realm_reach", "tapping a held reach opens its battle card")
+	check(game._expansion_goal_text().begins_with("Take East Reach"), "the HUD goal points at the easiest reach")
+	game._realm_event({"kind": "reach_won", "reach": "east", "site": str(game.realm.reach_holder("east")["id"])})
+	check("east" in game.sim.expansions, "winning a reach claims it")
+	game._realm_sync_reaches()
+	check(game.realm_camp_count() == 3 and not game.sim.reach_holders.has("east"), "its tribe camp leaves")
+	check(game._expansion_goal_text().begins_with("Take West Reach"), "the goal moves to the next reach")
+	game.realm.set_home_plots(game.sim.expansions.size())
 
 	# Founding an outpost spends through the village and shows a tower.
 	for turn in 16:

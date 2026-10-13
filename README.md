@@ -59,7 +59,8 @@ their borders outward. Built for phones by streaming: one ground mesh, trees per
 and models only for the nearest settlements. Tap a neighbour for its card: send gifts or raid it
 with your fighters (win loot; beat it small enough and it swears to you). Tap wild land to found an
 outpost that pushes your border out. Friendly neighbours send traders, hostile ones send scouts and
-overrun outposts. See `docs/REALM.md`; `test_realm`, `test_realm_life` and `test_realm_terrain` cover it.
+overrun outposts. The four expansion reaches are no longer bought: each is held by a tribe and
+won in battle, East first (garrison 3) up to South (45), and farther tribes are much stronger. See `docs/REALM.md`; `test_realm`, `test_realm_life` and `test_realm_terrain` cover it.
 
 ## Project layout
 
