@@ -63,7 +63,12 @@ overrun outposts. See `docs/REALM.md`; `test_realm`, `test_realm_life` and `test
 
 ## The Town Outside the Walls (zoning, in development)
 
-Tap **Town** in the bottom bar to zone the manor's land outside the village: lay roads from the
+Tap **Zone** in the bottom bar to zone the village from the first day: paint Homes, Farms, Industry
+or Civic on open village ground and cottages, farms, lumber camps, mines and chapels rise there on
+their own, free, then grow a tier on their own as the village levels up (the Manor Hall grows with
+its people). The Build menu sells only defences, troops and the Great Works.
+
+Outside the village, zoning covers the manor's land in the realm: lay roads from the
 village edge (or an outpost), paint Homes, Farms, Industry and Civic beside them, and the town
 builds itself when there is demand, levelling lots up into finer buildings as their needs are met.
 Lots send Gold, Food, Wood and Stone to the manor. Pave roads with Stone to speed the lots beside
@@ -71,7 +76,7 @@ them, keep homes away from industry, and watch the town earn its titles (Hamlet,
 Town...). The land past the border is never locked: buy wild ground, or take a neighbour's by
 raiding them; the four reaches can be bought or won on the Frontier. Art per level lives in
 `data/zones.json`.
-See `docs/TOWN_ZONING.md`; `test_town_zoning` covers it.
+See `docs/TOWN_ZONING.md`; `test_town_zoning` and `test_village_zoning` cover it.
 
 ## Project layout
 

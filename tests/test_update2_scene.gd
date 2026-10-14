@@ -37,8 +37,9 @@ func _run() -> void:
 	game._begin_research("stoneworking")
 	check(game.sim.living.active == "stoneworking", "research UI starts real paid project")
 	game._open_panel("build")
-	check(game.build_category_order == ["Economy", "Homes", "Defense", "Roads"], "four build categories are present")
-	check(game.build_cards.size() >= 29, "base buildings, ten Great Works and unlocked trades have cards")
+	# Homes, farms and industry grow from zones (test_village_zoning); the menu sells defences.
+	check(game.build_category_order == ["Defense", "Roads"], "the bought categories are present")
+	check(game.build_cards.size() >= 17, "defences, ten Great Works and unlocked trades have cards")
 	for type_name in game.build_cards:
 		check(game.build_cards[type_name].icon != null, "thumbnail queued/cached for " + str(type_name))
 		check(game._asset_exists(game.thumbnail_asset(type_name)), "thumbnail comes from an existing GLB")
@@ -46,13 +47,13 @@ func _run() -> void:
 	game.selected_building = int(game.sim.buildings[0]["id"])
 	game._open_panel("building")
 	check(game.sidebar.visible and game.bottom.visible, "selected building exposes details alongside compact bottom actions")
-	game._choose_build("farm")
+	game._choose_build("tower")
 	game.preview_tile = Vector2i(1, 1)
 	game._preview()
 	game._cancel_placement()
 	await process_frame
 	check(is_instance_valid(game.ghost_layer), "cancel never deletes reusable preview layer")
-	game._choose_build("farm")
+	game._choose_build("tower")
 	game.preview_tile = Vector2i(1, 1)
 	game._preview()
 	check(game.ghost_layer.get_child_count() > 0, "preview still works after cancelling")

@@ -4,7 +4,8 @@ extends RefCounted
 # land in the realm (its claim around the village, its outposts and any sworn neighbour's land).
 #
 #   * The land is a grid of 4 m cells (two village tiles each, aligned with the village grid).
-#     The village and its four reaches are never part of it; that ground keeps hand-placed building.
+#     The village and its four reaches are not part of the town. Their ground can be zoned too
+#     (village, below), where the village's own buildings rise instead of town lots.
 #   * The player paints cells as housing, farming, industry or civic, and lays roads. Nothing is
 #     built by hand: a zoned cell beside a road that leads back to the manor (or an outpost) grows
 #     a lot when there is demand for its kind, and the lot moves up a level when its needs are met
@@ -23,6 +24,10 @@ extends RefCounted
 # Everything here is data in data/zones.json (art per level, needs, income, timings), its own save
 # (town-v1.json, beside the village and realm saves) and plain numbers advanced by active time, so
 # paused or closed time adds nothing. The village simulation and its save are not touched.
+#
+# Village zoning: cells inside the village may be zoned as well (`village`, cell -> zone). Nothing
+# here grows on them; village_growth.gd raises the village's own buildings there, free. Those zones
+# are kept in this save so the village save stays as it was.
 
 const VERSION: int = 1
 const VILLAGE_HALF := Vector2(40.0, 36.0)   # the village and all four reaches, world metres
@@ -40,6 +45,7 @@ var zones: Dictionary = {}                  # Vector2i -> zone id
 var roads: Dictionary = {}                  # Vector2i -> true
 var paved: Dictionary = {}                  # Vector2i -> true, a subset of roads
 var lots: Dictionary = {}                   # Vector2i -> {zone, level, build, progress, variant, age}
+var village: Dictionary = {}                # Vector2i -> zone id, zoned ground inside the village
 var elapsed: float = 0.0
 var grow_clock: float = 0.0
 var income_clock: float = 0.0
@@ -94,6 +100,32 @@ func zone_color(zone: String) -> Color:
 	if zone == "road":
 		return Color(str(specs.get("road", {}).get("color", "a68a62")))
 	return Color(str(zone_spec(zone).get("color", "ffffff")))
+
+
+func village_spec() -> Dictionary:
+	return specs.get("village", {})
+
+
+# Zones a village cell can take: those with village building types listed for them.
+func village_zone_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for zone: String in zone_ids():
+		if not (village_spec().get("zones", {}).get(zone, []) as Array).is_empty():
+			ids.append(zone)
+	return ids
+
+
+# Zones a village cell. The village layer checks first that the ground is the manor's.
+func paint_village(c: Vector2i, zone: String) -> String:
+	if not in_village(c):
+		return "Outside the village."
+	if zone not in village_zone_ids():
+		return "Unknown zone."
+	if str(village.get(c, "")) == zone:
+		return ""
+	village[c] = zone
+	revision += 1
+	return ""
 
 
 func road_cost() -> Dictionary:
@@ -215,7 +247,7 @@ func _ground_reason(c: Vector2i) -> String:
 
 func _ground_check(c: Vector2i) -> String:
 	if in_village(c):
-		return "The manor's own grounds. Build there by hand."
+		return "The village keeps its own paths. Roads start at its edge."
 	if realm == null:
 		return "There is no land out here."
 	var centre: Vector2 = cell_centre(c)
@@ -316,6 +348,9 @@ func erase(c: Vector2i) -> bool:
 	if roads.has(c):
 		roads.erase(c)
 		paved.erase(c)
+		changed = true
+	if village.has(c):
+		village.erase(c)
 		changed = true
 	if changed:
 		revision += 1
@@ -773,9 +808,12 @@ func to_dict() -> Dictionary:
 		var lot: Dictionary = lots[c]
 		lot_data[_key(c)] = {"zone": lot["zone"], "level": lot["level"], "build": lot["build"],
 			"progress": lot["progress"], "variant": lot["variant"], "age": lot["age"]}
+	var village_data: Dictionary = {}
+	for c: Vector2i in village:
+		village_data[_key(c)] = village[c]
 	return {"version": VERSION, "elapsed": elapsed, "grow": grow_clock, "income": income_clock,
 		"zones": zone_data, "roads": road_data, "paved": paved_data, "lots": lot_data, "rng": str(rng.state),
-		"tier": best_tier}
+		"tier": best_tier, "village": village_data}
 
 
 # Loads a save. Anything malformed is refused whole, leaving the town as it was.
@@ -792,6 +830,16 @@ func from_dict(data: Variant) -> bool:
 	if not zone_data is Dictionary or not road_data is Array or not lot_data is Dictionary or not paved_data is Array:
 		return false
 	var new_paved: Dictionary = {}
+	var village_data: Variant = data.get("village", {})
+	if not village_data is Dictionary:
+		return false
+	var new_village: Dictionary = {}
+	for key: Variant in village_data:
+		var c: Variant = _cell_from(key)
+		if c == null or str(village_data[key]) not in village_zone_ids():
+			return false
+		if in_village(c):
+			new_village[c] = str(village_data[key])
 	for key: Variant in zone_data:
 		var c: Variant = _cell_from(key)
 		if c == null or zone_spec(str(zone_data[key])).is_empty():
@@ -826,6 +874,7 @@ func from_dict(data: Variant) -> bool:
 	roads = new_roads
 	paved = new_paved
 	lots = new_lots
+	village = new_village
 	var tier: Variant = data.get("tier", null)
 	best_tier = clampi(int(tier), 0, titles().size() - 1) if (tier is int or tier is float) and is_finite(float(tier)) else -1
 	elapsed = maxf(float(data.get("elapsed", 0.0)), 0.0)

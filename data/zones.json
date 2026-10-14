@@ -76,5 +76,20 @@
          "needs": [{"kind": "people", "amount": 50}, {"kind": "farming", "within": 10}, {"kind": "paved"}]}
       ]
     }
+  },
+  "village": {
+    "_note": "Zoning inside the village from the first day. Buildings of these types rise on their own on ground zoned for them (the whole footprint must be zoned), free, and later move up a tier on their own (one at a time, once the village reaches the level in tierLevels). Anything not listed (walls, towers, traps, the gate, barracks, armouries) is still bought from the Build menu. The Manor Hall moves up a tier on its own once the village has hallPeople villagers. Homes (types with beds) rise only while fewer than bedsSpare beds stand empty, so the village grows into them. 'after' holds a type back until that many buildings of its zone already stand. Research and story locks still apply.",
+    "growSeconds": 5,
+    "upgradeSeconds": 24,
+    "tierLevels": {"2": 2, "3": 4, "4": 6, "5": 8},
+    "hallPeople": {"2": 12, "3": 24},
+    "maxRising": 2,
+    "bedsSpare": 3,
+    "zones": {
+      "housing": [{"type": "cottage"}, {"type": "storehouse", "after": 2}, {"type": "bathhouse", "after": 2}, {"type": "longhouse", "after": 3}],
+      "farming": [{"type": "farm"}, {"type": "pond"}, {"type": "grove"}, {"type": "pasture"}, {"type": "butchery", "after": 3}, {"type": "deephole", "after": 3}, {"type": "blackwater-weir", "after": 3}, {"type": "mill", "after": 4}, {"type": "bakery", "after": 5}],
+      "industrial": [{"type": "lumber"}, {"type": "mine"}, {"type": "timber_yard"}, {"type": "sawmill", "after": 2}, {"type": "stone_quarry"}, {"type": "mason_yard", "after": 3}, {"type": "tannery", "after": 3}, {"type": "workshop", "after": 3}, {"type": "whisper-grove"}, {"type": "frostgrove"}, {"type": "smeltery", "after": 4}, {"type": "emberglass", "after": 4}],
+      "civic": [{"type": "chapel"}, {"type": "scriptorium"}, {"type": "schoolroom"}, {"type": "bellcote"}, {"type": "market"}, {"type": "moon-dial"}, {"type": "sunken-chapel"}, {"type": "cairnfield"}]
+    }
   }
 }

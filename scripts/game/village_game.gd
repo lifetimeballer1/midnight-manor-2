@@ -2882,15 +2882,29 @@ func _toggle_doctrine(id: String) -> void:
 		_open_panel("doctrine")
 
 
+# True for buildings that rise on their own on zoned ground instead of being bought (the zoning
+# layer answers); the Build menu leaves them out and their upgrades come on their own.
+func _zone_grown(_type_name: String) -> bool:
+	return false
+
+
+# A note at the top of the Build menu (the zoning layer points at its zones here).
+func _build_catalog_note() -> void:
+	pass
+
+
 # Categorised build cards, each showing the real exported model as a cached thumbnail.
 func _build_catalog() -> void:
 	_label("RAISE THE VILLAGE", side_content, true)
 	ui.rule(side_content)
+	_build_catalog_note()
 	_label("Choose a structure, %s a tile, then confirm.\nThumbnails are the real exported models." % _input_verb().to_lower(), side_content)
 	build_cards.clear()
 	build_category_order.clear()
 	for category: String in UI.CATEGORIES:
-		var types: Array = UI.CATEGORY_TYPES[category]
+		var types: Array = UI.CATEGORY_TYPES[category].filter(func(type_name: String) -> bool: return not _zone_grown(type_name))
+		if not (UI.CATEGORY_TYPES[category] as Array).is_empty() and types.is_empty():
+			continue
 		if types.is_empty():
 			if category == "Roads":
 				build_category_order.append(category)
@@ -2950,7 +2964,7 @@ func _build_catalog() -> void:
 		build_cards[type_name] = card
 	_label("VILLAGE TRADES", side_content, true)
 	for type_name: String in sim.playable_building_types():
-		if type_name == "hall" or build_cards.has(type_name) or not sim.chronicle.is_unlocked(type_name): continue
+		if type_name == "hall" or build_cards.has(type_name) or not sim.chronicle.is_unlocked(type_name) or _zone_grown(type_name): continue
 		var spec: Dictionary = sim.building_specs[type_name]
 		var card := ui.command_button("%s\n%s" % [spec["name"], _cost_text(sim.building_cost(type_name), true)], _choose_build.bind(type_name), side_content, 52.0)
 		card.add_theme_font_size_override("font_size", 13)
@@ -3016,10 +3030,13 @@ func _build_inspector() -> void:
 	inspect_collect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	inspect_upgrade = ui.command_button("Upgrade", _upgrade_selected, act_row, 40.0)
 	inspect_upgrade.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	if sim.upgrade_reason(selected_building).is_empty():
+	if sim.upgrade_reason(selected_building).is_empty() and not _zone_grown(str(b["type"])):
 		ui.paint_command(inspect_upgrade, "gold")
 	ui.body("Move and Repair live under More / ··· .", side_content)
-	_label("Upgrade / %s." % _cost_text(sim.building_cost(b["type"], int(b["tier"]) + 1)), side_content)
+	if _zone_grown(str(b["type"])):
+		_label("Grows a tier on its own as the village grows.", side_content)
+	else:
+		_label("Upgrade / %s." % _cost_text(sim.building_cost(b["type"], int(b["tier"]) + 1)), side_content)
 	_label("Matching workers", side_content, true)
 	for u: Dictionary in sim.units:
 		if workplace != "" and str(u["type"]) == workplace:
@@ -3068,6 +3085,8 @@ func _refresh_inspector() -> void:
 				inspect_collect.tooltip_text = "Bank the on-site reserve of %s" % str(sim.building_specs[shown["type"]]["name"])
 			if inspect_upgrade != null and is_instance_valid(inspect_upgrade):
 				var upgrade_reason: String = sim.upgrade_reason(selected_building)
+				if _zone_grown(str(shown["type"])):
+					upgrade_reason = "Grows a tier on its own as the village grows."
 				inspect_upgrade.disabled = not upgrade_reason.is_empty()
 				inspect_upgrade.tooltip_text = upgrade_reason if not upgrade_reason.is_empty() else "Upgrade to tier %d" % (int(shown["tier"]) + 1)
 			if inspect_hp != null and is_instance_valid(inspect_hp):
@@ -3557,11 +3576,18 @@ func _refresh_shop() -> void:
 		return
 	nav_shop.text = "Upgrade"
 	var reason: String = sim.upgrade_reason(selected_building)
+	if _zone_grown(str(b["type"])):
+		reason = "Grows a tier on its own as the village grows."
 	nav_shop.disabled = not reason.is_empty()
 	nav_shop.tooltip_text = reason if not reason.is_empty() else "Upgrade to tier %d" % (int(b["tier"]) + 1)
 
 
 func _upgrade_selected() -> void:
+	var picked: Dictionary = sim.get_building(selected_building)
+	if not picked.is_empty() and _zone_grown(str(picked["type"])):
+		sim.notice = "This grows a tier on its own as the village grows."
+		_play_sfx("deny")
+		return
 	if sim.upgrade(selected_building):
 		_play_sfx("upgrade")
 		_poof(_tile_of_selected(), Color(0.95, 0.8, 0.4))

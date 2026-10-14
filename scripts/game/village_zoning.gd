@@ -2,7 +2,7 @@ extends "res://scripts/game/village_polish.gd"
 
 # The town outside the walls: city-builder zoning over the realm layer (model: town_zoning.gd).
 #
-#   * Town (bottom bar) opens the zoning tools: Homes, Farms, Industry, Civic, Road and Clear, a
+#   * Zone (bottom bar) opens the zoning tools: Homes, Farms, Industry, Civic, Road and Clear, a
 #     1x1 or 3x3 brush, and a Move toggle so one finger can pan on phones (two fingers always do).
 #     Tap or drag to paint 4 m cells on the manor's land outside the village and its reaches.
 #   * Roads start at the village edge (gold squares while the Road tool is out) or beside an
@@ -22,16 +22,23 @@ extends "res://scripts/game/village_polish.gd"
 #   * With the tools out, each lot held back shows what it needs; a lot cut off from the manor
 #     shows it at any time. Income rises off the lots as it arrives, and the town's title (Hamlet,
 #     Village...) heads the zoning bar.
+#   * The village itself is zoned too, from the first day (village_growth.gd): paint Homes, Farms,
+#     Industry or Civic on open village ground and the village's own cottages, farms, lumber camps,
+#     mines and chapels rise there free, then grow a tier on their own as the village levels up.
+#     The Build menu keeps only what is bought: walls, towers, traps, the gate and the barracks
+#     (plus the Great Works). A Raise button for a zoned building opens its zone instead.
 #
 # Painting never knocks down a lot by accident: zone and road strokes skip built lots, only Clear
-# removes them. The village's own buildings, simulation and save are untouched; the town banks its
-# income through the simulation's spend/bank rules and saves to TOWN_SAVE_PATH on its own.
+# removes them. The village simulation's rules and save format are untouched (zoned buildings are
+# ordinary building records); the town banks its income through the simulation's spend/bank rules
+# and saves to TOWN_SAVE_PATH on its own, village zones included.
 #
 # Phone budget: zone colours, the grid and all roads are one mesh each, rebuilt only when the town
 # changes; each lot is one footing/yard mesh plus its model; at most TOWN_WALKERS townsfolk
 # (TOWN_WALKERS_LOW on phones), only animated near the camera.
 
 const Town = preload("res://scripts/game/town_zoning.gd")
+const Growth = preload("res://scripts/game/village_growth.gd")
 
 const TOWN_SAVE_PATH: String = "user://town-v1.json"
 const TOWN_SAVE_SECONDS: float = 10.0
@@ -63,6 +70,8 @@ const TOWN_RESOURCE_COLORS: Dictionary = {"gold": Color("f2c75c"), "food": Color
 const TOWN_NO_CELL := Vector2i(-9999, -9999)
 
 var town = null
+var growth = null                           # village_growth.gd: free buildings on zoned village ground
+var _zoning_move: bool = false              # a Move of a zoned building uses the ordinary placement
 var town_bar: VBoxContainer = null
 var _town_button: Button = null
 var _town_root: Node3D = null
@@ -120,6 +129,8 @@ func _ready() -> void:
 	town.height_at = _town_ground_y
 	if not no_save and FileAccess.file_exists(TOWN_SAVE_PATH):
 		town.from_dict(JSON.parse_string(FileAccess.get_file_as_string(TOWN_SAVE_PATH)))
+	growth = Growth.new()
+	growth.setup(town.village_spec(), Vector2i(roundi(-MAP_ORIGIN.x / TILE), roundi(-MAP_ORIGIN.z / TILE)), roundi(town.cell / TILE))
 	_town_root = Node3D.new()
 	_town_root.name = "Town"
 	add_child(_town_root)
@@ -195,6 +206,23 @@ func _town_advance(dt: float) -> void:
 	town.tick(dt)
 	for event: Dictionary in town.take_events():
 		_town_event(event)
+	for event: Dictionary in growth.tick(sim, town, dt):
+		_village_grew(event)
+
+
+# A building rose (or grew a tier) on zoned village ground.
+func _village_grew(event: Dictionary) -> void:
+	var b: Dictionary = sim.get_building(int(event["id"]))
+	if b.is_empty():
+		return
+	var tile := Vector2i(int(b["x"]), int(b["y"]))
+	var size: int = int(b["size"])
+	var at: Vector3 = world_position(Vector2(tile) + Vector2.ONE * size * 0.5, 0.4)
+	var colour: Color = town.zone_color(growth.zone_of(str(b["type"])))
+	_impact_burst(at, colour, 10 if str(event["kind"]) == "rose" else 14, 1.0, true)
+	if camera.is_position_in_frustum(at):
+		_play_sfx("confirm" if str(event["kind"]) == "rose" else "upgrade")
+	_refresh_hud()
 
 
 func _town_event(event: Dictionary) -> void:
@@ -250,6 +278,63 @@ func _town_event(event: Dictionary) -> void:
 			_refresh_hud()
 	if panel.begins_with("town_") and sidebar.visible:
 		_open_panel(panel)
+
+
+# --- Zoning in the village ------------------------------------------------------------------------
+
+func _zone_grown(type_name: String) -> bool:
+	return growth != null and (growth.grows(type_name) or type_name == "hall")
+
+
+func _build_catalog_note() -> void:
+	if growth == null:
+		return
+	ui.body("Homes, farms, industry and civic buildings are not bought: zone open ground and they rise there free, then grow on their own. Here you buy defences and troops.", side_content, 13)
+	ui.gold_button("Zone the Village", _zone_for.bind(""), side_content)
+
+
+# A Raise button for a zoned building opens its zone instead, and that building rises first.
+func _choose_build(type_name: String) -> void:
+	if not _zoning_move and growth != null and growth.grows(type_name):
+		_zone_for(type_name)
+		return
+	super(type_name)
+
+
+func _move_selected() -> void:
+	_zoning_move = true
+	super()
+	_zoning_move = false
+
+
+func _zone_for(type_name: String) -> void:
+	if town == null:
+		return
+	_close_panel()
+	if not _town_active:
+		town_open()
+	var zone: String = growth.zone_of(type_name)
+	if zone.is_empty():
+		town_set_tool(_town_tool if _town_tool in town.village_zone_ids() else "housing")
+		sim.notice = "Paint Homes, Farms, Industry or Civic on open village ground. Buildings rise there free."
+	else:
+		if type_name not in growth.wishes:
+			growth.wishes.append(type_name)
+		town_set_tool(zone)
+		sim.notice = "Paint %s on open village ground: the next one there is a %s, free." % [str(TOWN_TOOL_NAMES.get(zone, zone)), str(sim.building_specs[type_name]["name"])]
+	_refresh_hud()
+
+
+# Village tiles taken by standing buildings (zone colours stay faint under them).
+func _village_taken() -> Dictionary:
+	var taken: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		if float(b["hp"]) <= 0.0:
+			continue
+		for dy in int(b["size"]):
+			for dx in int(b["size"]):
+				taken[growth.tile_cell(Vector2i(int(b["x"]) + dx, int(b["y"]) + dy))] = true
+	return taken
 
 
 func _town_on_screen(c: Vector2i) -> bool:
@@ -379,6 +464,8 @@ func _town_paint_one(c: Vector2i, centre: bool) -> bool:
 			town.pave(c)
 			_refresh_hud()
 			return true
+	if town.in_village(c):
+		return _village_paint_one(c, centre)
 	if town.lots.has(c) or str(town.zones.get(c, "")) == _town_tool:
 		return false
 	var reason: String = town.paint_zone(c, _town_tool)
@@ -386,6 +473,23 @@ func _town_paint_one(c: Vector2i, centre: bool) -> bool:
 		if centre and reason != "A road runs here.":
 			_town_deny(reason)
 		return false
+	return true
+
+
+# Zoning village ground: free, and the village's own buildings rise on it (village_growth.gd).
+func _village_paint_one(c: Vector2i, centre: bool) -> bool:
+	if str(town.village.get(c, "")) == _town_tool:
+		return false
+	var reason: String = growth.cell_reason(sim, c)
+	if reason.is_empty() and _town_tool not in town.village_zone_ids():
+		reason = "That zone is for the land outside the walls."
+	if not reason.is_empty():
+		if centre:
+			_town_deny(reason)
+		return false
+	town.paint_village(c, _town_tool)
+	# Something rises soon after the first strokes, not a whole cycle later.
+	growth.grow_clock = maxf(growth.grow_clock, float(town.village_spec().get("growSeconds", 5.0)) - 1.5)
 	return true
 
 
@@ -808,10 +912,10 @@ func _town_unzone(c: Vector2i) -> void:
 # --- UI -----------------------------------------------------------------------------------------
 
 func _town_build_ui() -> void:
-	_town_button = ui.command_button("Town", town_toggle, nav, 56.0)
+	_town_button = ui.command_button("Zone", town_toggle, nav, 56.0)
 	_paint_ring(_town_button, UI.SLATE, 56.0)
 	_town_button.add_theme_font_size_override("font_size", 13)
-	_town_button.tooltip_text = "Zone the land outside the walls"
+	_town_button.tooltip_text = "Zone the village and the land outside the walls"
 	nav.move_child(_town_button, more_button.get_index() + 1)
 	var dock: Node = nav.get_parent()
 	town_bar = VBoxContainer.new()
@@ -944,8 +1048,12 @@ func _town_refresh_status() -> void:
 	for zone: String in _town_demand_bars:
 		(_town_demand_bars[zone] as ProgressBar).value = float(wants.get(zone, 0.0))
 	var hint: String
-	if town.roads.is_empty():
+	if town.village.is_empty() and _town_tool in town.village_zone_ids():
+		hint = "Paint %s on open village ground and buildings rise there free. Outside the walls, lay a Road first." % str(TOWN_TOOL_NAMES.get(_town_tool, ""))
+	elif town.roads.is_empty() and _town_tool in ["road", "pave"]:
 		hint = "Lay a Road out from the village edge (the gold squares), then paint zones beside it."
+	elif town.roads.is_empty() and town.zones.is_empty():
+		hint = "Village zones fill on their own. To grow a town outside the walls, lay a Road from the village edge."
 	elif town.zones.is_empty() and town.lots.is_empty():
 		hint = "Paint Homes beside the road. Farms and Industry give them work."
 	elif _town_tool == "road":
@@ -1081,7 +1189,7 @@ func _town_build_nodes() -> void:
 func _town_sync() -> void:
 	if town == null:
 		return
-	var mode: String = "%s/%s" % [str(_town_active), _town_tool if _town_active else ""]
+	var mode: String = "%s/%s/%d" % [str(_town_active), _town_tool if _town_active else "", sim.revision if not town.village.is_empty() else 0]
 	if town.revision == _town_drawn_revision and mode == _town_drawn_mode:
 		return
 	var roads_changed: bool = town.revision != _town_drawn_revision
@@ -1140,6 +1248,30 @@ func _town_build_overlay() -> void:
 				if town.can_build(c) and not town.roads.has(c):
 					_town_cell_quad(tool, c, Vector2(0.6, 0.6), Vector2(3.4, 3.4), Color(UI.GOLD, 0.32 + 0.1 * float(posmod(z, 2))))
 		count += 1
+	# Zoned village ground: the same wash, faint under buildings that stand on it already.
+	if not town.village.is_empty():
+		var taken: Dictionary = _village_taken()
+		for c: Vector2i in town.village:
+			var zone: String = str(town.village[c])
+			var built: bool = taken.has(c)
+			if built and not _town_active:
+				continue
+			var tint: Color = town.zone_color(zone)
+			var wash: float = (0.14 if built else 0.34) if _town_active else 0.1
+			var rim: float = 0.85 if _town_active else 0.4
+			_town_cell_quad(tool, c, Vector2(0.15, 0.15), Vector2(3.85, 3.85), Color(tint, wash))
+			for d: Vector2i in town.DIRS:
+				if str(town.village.get(c + d, "")) == zone:
+					continue
+				var from := Vector2(0.15, 0.15)
+				var to := Vector2(3.85, 3.85)
+				match d:
+					Vector2i(1, 0): from.x = 3.5
+					Vector2i(-1, 0): to.x = 0.5
+					Vector2i(0, 1): from.y = 3.5
+					Vector2i(0, -1): to.y = 0.5
+				_town_cell_quad(tool, c, from, to, Color(tint.lightened(0.2), rim), 0.01)
+			count += 1
 	_town_overlay.mesh = tool.commit() if count > 0 else null
 
 
@@ -1182,6 +1314,13 @@ func _town_build_grid() -> void:
 	for dz in range(-reach, reach + 1):
 		for dx in range(-reach, reach + 1):
 			var c: Vector2i = centre + Vector2i(dx, dz)
+			if town.in_village(c):
+				# Village ground the manor holds can be zoned: the same faint grid.
+				if growth.cell_reason(sim, c).is_empty() and not town.village.has(c):
+					_town_cell_quad(tool, c, Vector2(0.0, 0.0), Vector2(4.0, 0.09), line, -0.005)
+					_town_cell_quad(tool, c, Vector2(0.0, 0.0), Vector2(0.09, 4.0), line, -0.005)
+					count += 1
+				continue
 			if not town.can_build(c):
 				# Wild ground the town could buy shows a faint gold grid.
 				if town.buyable(c):

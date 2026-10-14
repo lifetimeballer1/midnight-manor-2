@@ -1,11 +1,12 @@
 # The Town Outside the Walls (zoning, first version)
 
 City-builder zoning on the manor's own land in the realm: you lay roads and paint zones, and the
-town builds itself. The village and its four reaches keep hand-placed building exactly as before.
+town builds itself. The village and the reaches it holds are zoned too, from the first day: homes,
+farms, industry and civic buildings rise there on their own, free (see "Zoning the village").
 
 ## Playing it
 
-- **Town** (bottom bar) opens the zoning tools; **Done** or Esc closes them.
+- **Zone** (bottom bar) opens the zoning tools; **Done** or Esc closes them.
 - **Road** (4 Wood a stretch): start at the village edge (gold squares) or beside an outpost.
   Drag to plan a straight run: the cells and the total cost show first, letting go lays it (as far
   as the Wood lasts). A tap lays one stretch.
@@ -17,6 +18,33 @@ town builds itself. The village and its four reaches keep hand-placed building e
 - With the tools out, each lot held back shows what it needs ("Needs farms"). Zoned cells with no
   road yet are dotted. The Civic tool tints the ground that is already safe.
 - On phones one finger paints and two fingers move the map; **Move** makes one finger pan.
+
+## Zoning the village
+
+- From the first day, paint **Homes, Farms, Industry** or **Civic** on open village ground (the
+  base village and any reach the manor holds). No roads are needed inside the walls and painting
+  costs nothing.
+- The village's own buildings then rise there by themselves, free, one or two at a time while no
+  raid is on: cottages (later storehouses, bathhouses, longhouses) on Homes; farms, ponds, groves
+  and pastures (later butcheries, mills, bakeries) on Farms; lumber camps, mines and timber yards
+  (later sawmills, quarries, workshops) on Industry; chapels, scriptoria and schoolrooms on Civic.
+  A building rises only where its whole footprint is zoned for it, nearest the Manor Hall first.
+- The simulation's own rules still apply: research and story locks, the village level, the
+  building limits per level. Homes rise only while few beds stand empty, so the village grows into
+  them. What the current quest asks for, or what a Raise button asked for, rises first.
+- Zoned buildings move up a tier on their own, free, one at a time, once the village level allows
+  it (tier 2 at level 2, tier 3 at level 4...). The **Manor Hall** rises a tier on its own once
+  enough villagers live in the village (12 for tier 2, 24 for tier 3).
+- The **Build** menu now sells only what is bought: walls, towers, traps, the gate and the
+  barracks (plus the Great Works, Roads paving, and unlocked military trades). A Raise button for
+  a farm or cottage (quests, the needs panel) opens its zone instead. Moving an existing building
+  works as before.
+- Village zones are kept in the town's save (`town-v1.json`, field `village`); the village save is
+  untouched (zoned buildings are ordinary building records). Clear removes a zone, never a building.
+- Which buildings belong to which zone, the pace (`growSeconds`, `upgradeSeconds`, `maxRising`,
+  `bedsSpare`, `tierLevels`, `hallPeople`) and the order they are tried in all live in
+  `data/zones.json` under `village`. `tests/test_village_zoning.gd` covers it;
+  `tests/capture_village_zoning.gd` captures it.
 
 ## The frontier is open: buy it or fight for it
 
