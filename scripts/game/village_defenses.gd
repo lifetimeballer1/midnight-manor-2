@@ -36,7 +36,7 @@ const DEF_LIFT := Color("b9a389")            # lighter weathering for defenses
 const DEF_LIFT_EARTH := Color(1.5, 1.3, 1.1)  # the dark log-and-earth ramparts need more to read
 const DEF_LANTERN_REACH: float = 0.5        # metres from the axis: just off a tower face
 const DEF_LANTERN_POST: float = 0.66        # metres along a gate to its post
-const DEF_HALO: float = 0.3                  # halo quad size, against the shared 1.7 m disc
+const DEF_LANTERN_SIZE: float = 1.7         # lantern scale, so the cage and flame read at village zoom
 const DEF_SENTRY_MAX: int = 12
 const DEF_SENTRY_LOW: int = 5
 const DEF_SENTRY_SCALE: float = 0.42
@@ -151,8 +151,8 @@ func _def_dress(b: Dictionary, view: Dictionary) -> void:
 
 
 # The shared night glow is a 1.7 m soft disc floating in front of the building, which reads as a
-# blob on a slim tower or gate. Defenses hang a real lantern on a bracket instead: an iron cage
-# with a hot core, a tight halo around the flame and the lamp's light falling off on the ground.
+# blob with nothing making it. Defenses hang a real lantern on a bracket instead: an iron cage
+# around a visible flame, with the lamp's light coming from that flame onto the wall and ground.
 func _def_hang_lantern(state: Dictionary, view: Dictionary, type_name: String, model: Node3D) -> void:
 	var glow: MeshInstance3D = view["glow"]
 	var lamp: OmniLight3D = view.get("lamp")
@@ -166,30 +166,50 @@ func _def_hang_lantern(state: Dictionary, view: Dictionary, type_name: String, m
 	lantern.name = "DefenseLantern"
 	(state["lights"] as Node3D).add_child(lantern)
 	lantern.position = mount
-	lantern.look_at_from_position(mount, mount + (mount - wall).normalized() * Vector3(1, 0, 1) + Vector3(0, 0, 0.0001), Vector3.UP)
+	var toward_wall: Vector3 = wall - mount
+	lantern.rotation.y = atan2(toward_wall.x, toward_wall.z)   # the bracket (local +Z) reaches the wall
 	_box(Vector3(0.04, 0.04, 0.24), Vector3(0, 0.16, 0.12), DEF_IRON, lantern)          # bracket arm
 	_box(Vector3(0.17, 0.03, 0.17), Vector3(0, 0.1, 0), DEF_IRON, lantern)              # cap
 	_box(Vector3(0.14, 0.02, 0.14), Vector3(0, -0.1, 0), DEF_IRON, lantern)             # base
 	for corner: Vector2 in [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]:
 		_box(Vector3(0.02, 0.2, 0.02), Vector3(corner.x * 0.065, 0, corner.y * 0.065), DEF_IRON, lantern)
-	var core: MeshInstance3D = _box(Vector3(0.08, 0.13, 0.08), Vector3.ZERO, DEF_FLAME, lantern)
-	var hot := core.material_override as StandardMaterial3D
-	hot.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	hot.albedo_color = Color(1.0, 0.78, 0.42)
-	core.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	for child in lantern.get_children():
+	# A flame you can see: a hot inner tongue inside a taller amber one, both unshaded.
+	var flame := Node3D.new()
+	flame.name = "Flame"
+	lantern.add_child(flame)
+	flame.position = Vector3(0, -0.085, 0)
+	for layer: Array in [[0.05, 0.17, Color(1.0, 0.55, 0.16)], [0.028, 0.11, Color(1.0, 0.9, 0.6)]]:
+		var tongue := MeshInstance3D.new()
+		var cone := CylinderMesh.new()
+		cone.top_radius = 0.0
+		cone.bottom_radius = float(layer[0])
+		cone.height = float(layer[1])
+		cone.radial_segments = 6
+		cone.rings = 1
+		var hot := StandardMaterial3D.new()
+		hot.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		hot.albedo_color = layer[2]
+		cone.material = hot
+		tongue.mesh = cone
+		tongue.position = Vector3(0, float(layer[1]) * 0.5, 0)
+		flame.add_child(tongue)
+	lantern.scale = Vector3.ONE * DEF_LANTERN_SIZE
+	for child in lantern.find_children("*", "GeometryInstance3D", true, false):
 		(child as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# The glow becomes a small halo on the flame; the lamp sits just in front so its light
-	# pools on the wall and ground below instead of hanging in the air.
-	glow.position = mount
-	if glow.mesh is QuadMesh:
-		(glow.mesh as QuadMesh).size = Vector2.ONE * DEF_HALO
+	# No free-floating glow: the shared soft disc is parked in a hidden holder (the game still
+	# toggles it, unseen), and the lamp sits on the flame so the light on the wall and ground
+	# visibly comes from the lantern.
+	var parked := Node3D.new()
+	parked.name = "ParkedGlow"
+	parked.visible = false
+	(state["lights"] as Node3D).add_child(parked)
+	glow.reparent(parked, false)
 	if is_instance_valid(lamp):
-		lamp.position = mount + Vector3(0, -0.05, 0)
+		lamp.position = mount
 		lamp.omni_range = 3.0
 		lamp.omni_attenuation = 1.6
-	state["lantern_core"] = core
-	state["glow"] = glow
+	state["flame"] = flame
+	state["lamp"] = lamp
 
 
 # Defenses keep their soot override but take the lighter defense weathering.
@@ -543,6 +563,7 @@ func _update_actors(delta: float) -> void:
 	var step: float = 0.0 if sim.paused else delta
 	_def_poll -= delta
 	var poll: bool = _def_poll <= 0.0
+	var lit: bool = _dusk_strength() > 0.01
 	if poll:
 		_def_poll = DEF_POLL
 	for id: Variant in _def.keys():
@@ -557,14 +578,15 @@ func _update_actors(delta: float) -> void:
 		if not is_equal_approx(lean, goal):
 			lean = move_toward(lean, goal, step * 0.08)
 			state["lean"] = lean
-		if state.has("lantern_core"):
-			# The core is lit only while the lamp is, and breathes with the shared flicker.
-			var halo: MeshInstance3D = state["glow"]
-			var core: MeshInstance3D = state["lantern_core"]
-			if is_instance_valid(halo) and is_instance_valid(core):
-				core.visible = halo.visible
-				if halo.visible:
-					core.scale = Vector3(1.0, halo.scale.y * 1.6 - 0.6, 1.0)
+		if state.has("flame"):
+			# Lit from dusk to dawn whether or not its lamp is in the six-light budget, and
+			# licking with its own flicker.
+			var flame: Node3D = state["flame"]
+			if is_instance_valid(flame):
+				flame.visible = lit
+				if lit:
+					var t: float = Time.get_ticks_msec() / 1000.0 + float(id) * 1.7
+					flame.scale = Vector3(1.0 + 0.08 * sin(t * 13.0), 0.85 + 0.2 * sin(t * 9.0) + 0.08 * sin(t * 23.0), 1.0 + 0.08 * cos(t * 11.0))
 		var kick: float = float(state["kick"])
 		var shake: float = float(state["shake"])
 		var snap: float = float(state["snap"])
