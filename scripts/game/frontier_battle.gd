@@ -16,6 +16,9 @@ var actors: Array[Dictionary] = []
 var status: Label
 var save_status: Label
 var back: Button
+var heading_panel: PanelContainer = null
+var command_panel: PanelContainer = null
+var command_grid: GridContainer = null
 var flash := ColorRect.new()
 var last_status: String = "running"
 var paused: bool = false
@@ -113,6 +116,24 @@ func _tint(node: Node) -> void:
 func _frame_camera() -> void:
 	var size: Vector2 = get_viewport().get_visible_rect().size
 	camera.size = 34.0 if size.x >= size.y else 68.0
+	_fit_panels()
+
+
+# The status card and the command buttons hug their content: on wide screens the four commands sit in
+# one row and both panels keep a readable width in the middle, leaving the battlefield in view.
+func _fit_panels() -> void:
+	if heading_panel == null or command_panel == null:
+		return
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	var wide: bool = size.x >= 640.0
+	command_grid.columns = 4 if wide else 2
+	var width: float = minf(size.x - 32.0, 900.0 if wide else size.x)
+	var side: float = (size.x - width) * 0.5
+	for panel: Control in [heading_panel, command_panel]:
+		panel.offset_left = side
+		panel.offset_right = -side
+	command_panel.offset_top = -16.0 - command_panel.get_combined_minimum_size().y
+	command_panel.offset_bottom = -16.0
 
 
 func _build_ui() -> void:
@@ -124,6 +145,7 @@ func _build_ui() -> void:
 	root_control.theme = kit.theme()
 	layer.add_child(root_control)
 	var heading := kit.manor_panel(root_control)
+	heading_panel = heading
 	heading.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	heading.offset_left = 16
 	heading.offset_right = -16
@@ -142,6 +164,8 @@ func _build_ui() -> void:
 	commands.offset_bottom = -16
 	var grid := GridContainer.new()
 	grid.columns = 2
+	command_panel = commands
+	command_grid = grid
 	grid.add_theme_constant_override("h_separation", 8)
 	grid.add_theme_constant_override("v_separation", 8)
 	commands.add_child(grid)
@@ -157,6 +181,8 @@ func _build_ui() -> void:
 	root_control.add_child(flash)
 	var arrival := create_tween()
 	arrival.tween_property(flash, "color:a", 0.0, 0.9)
+	_fit_panels()
+	_fit_panels.call_deferred()
 
 
 func _toggle_pause() -> void:

@@ -1086,21 +1086,17 @@ func _layout_ui() -> void:
 		_paint_ring(_town_button, UI.GOLD if _town_active else UI.SLATE, 44.0 if _is_small() else 56.0)
 		_town_button.add_theme_font_size_override("font_size", 12 if _is_small() else 13)
 	if _town_tools_grid != null:
-		_town_tools_grid.columns = 5 if _is_small() else 10
+		_town_tools_grid.columns = 5 if _is_small() and not _is_landscape_phone() else 10
 		for child: Node in _town_tools_grid.get_children():
 			(child as Control).custom_minimum_size.x = 0.0 if _is_small() else 76.0
 			(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL if _is_small() else Control.SIZE_FILL
 	if not _town_active:
 		return
 	# The zoning bar is taller than the nav it replaces; keep the phone sheet above it.
-	var view: Vector2 = get_viewport().get_visible_rect().size
 	var safe: float = 16.0 if _is_small() else UI.SAFE_MARGIN
 	var bar_h: float = maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y)
 	bottom.offset_top = -bar_h - safe
-	if _is_small() and sidebar.visible:
-		var sheet_h: float = minf(sidebar.size.y, maxf(160.0, view.y - bar_h - safe * 3.0 - 96.0))
-		sidebar.position = Vector2(safe, view.y - bar_h - safe - 8.0 - sheet_h)
-		sidebar.size.y = sheet_h
+	_fit_sheet()
 
 
 # The raven's note is pinned just above the toast when it lands; the zoning bar is taller than the

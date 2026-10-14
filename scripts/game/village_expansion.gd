@@ -214,9 +214,10 @@ func attach_banners(layer: Control, kit: VillageUI) -> void:
 # Hangs each banner above its beacon point, clamped inside clip (the screen minus the bottom bar). A banner
 # whose beacon is off screen or behind the camera, or that cannot fit inside clip, is hidden instead of cut off.
 # Four plots, so this is cheap enough to run on every camera move.
-func place_banners(camera: Camera3D, clip: Rect2) -> void:
+func place_banners(camera: Camera3D, clip: Rect2, avoid: Array[Rect2] = []) -> void:
 	if banner_layer == null:
 		return
+	var placed: Array[Rect2] = avoid.duplicate()
 	for id: String in ghosts:
 		var record: Dictionary = ghosts[id]
 		var panel: PanelContainer = record["panel"]
@@ -226,12 +227,31 @@ func place_banners(camera: Camera3D, clip: Rect2) -> void:
 			continue
 		var screen: Vector2 = camera.unproject_position(anchor)
 		var box: Vector2 = record["box"]
+		if panel.size.x > 0.0:
+			box = box.max(panel.size)   # wrapped text can lay out larger than its first measure
 		if not clip.has_point(screen) or box.x > clip.size.x or box.y > clip.size.y:
 			panel.hide()
 			continue
 		var at := Vector2(screen.x - box.x * 0.5, screen.y - box.y - BANNER_GAP)
 		at.x = clampf(at.x, clip.position.x, clip.end.x - box.x)
 		at.y = clampf(at.y, clip.position.y, clip.end.y - box.y)
+		# Two plots seen edge-on (or a narrow phone screen) can pull their banners on top of each other;
+		# the later one steps aside, above or below, and stays hidden if neither has room.
+		var rect := Rect2(at, box)
+		for other: Rect2 in placed:
+			if rect.grow(-2.0).intersects(other):
+				var above := Vector2(at.x, other.position.y - box.y - 6.0)
+				var below := Vector2(at.x, other.end.y + 6.0)
+				at = above if above.y >= clip.position.y else below
+				rect = Rect2(at, box)
+		var clear: bool = clip.encloses(rect)
+		for other: Rect2 in placed:
+			if rect.grow(-2.0).intersects(other):
+				clear = false
+		if not clear:
+			panel.hide()
+			continue
+		placed.append(rect)
 		panel.position = at
 		panel.show()
 

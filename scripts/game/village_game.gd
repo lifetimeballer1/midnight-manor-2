@@ -77,6 +77,14 @@ var inspect_hp: ProgressBar
 var inspect_reserve: ProgressBar
 var sidebar := PanelContainer.new()
 var side_content := VBoxContainer.new()
+var side_scroll: ScrollContainer = null
+var sheet_header: HBoxContainer = null
+var sheet_close_button: Button = null
+var more_scroll: ScrollContainer = null
+var more_box: VBoxContainer = null
+var welcome_scroll: ScrollContainer = null
+var _laying_out: bool = false
+var welcome_intro: VBoxContainer = null
 var bottom := PanelContainer.new()
 var placement_box := PanelContainer.new()
 var placement_label := Label.new()
@@ -1208,13 +1216,22 @@ func _banner_clip() -> Rect2:
 	return Rect2(safe, safe, vp.x - safe * 2.0, bar_top - safe)
 
 
+# HUD panels the region banners must not land on (they would be unreadable under them).
+func _banner_avoid() -> Array[Rect2]:
+	var avoid: Array[Rect2] = []
+	for control: Control in [left_dock, resource_stack, banner_panel, placement_box, sidebar, more_sheet]:
+		if control != null and is_instance_valid(control) and control.visible:
+			avoid.append(control.get_rect())
+	return avoid
+
+
 func _camera_update() -> void:
 	var size: Vector2 = get_viewport().get_visible_rect().size
 	var ratio: float = size.x / maxf(size.y, 1)
 	camera.size = zoom * maxf(1, 0.95 / ratio)
 	camera.position = target + Vector3(sin(yaw) * cos(tilt), sin(tilt), cos(yaw) * cos(tilt)) * 60
 	camera.look_at(target)
-	expansion.place_banners(camera, _banner_clip())
+	expansion.place_banners(camera, _banner_clip(), _banner_avoid())
 	# Bunny-judged yaw-follow: shadows fall away from viewer, offset 35deg right.
 	# Elevation arcs with the cycle: high moon, low dramatic dawn/dusk sun.
 	var sun_yaw_deg: float = rad_to_deg(yaw) - 35.0
@@ -1757,6 +1774,8 @@ func _paint_ring(node: Button, accent: Color, d: float) -> void:
 	# Floating hero disc: AA-safe radius (not d/2), soft lift shadow.
 	var r: int = clampi(int(d * 0.5) - 10, 8, int(d * 0.5) - 1)
 	node.custom_minimum_size = Vector2(d, d)
+	# Round discs stay round: the small ones sit centred beside the big ones instead of stretching tall.
+	node.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	node.focus_mode = Control.FOCUS_NONE
 	node.add_theme_font_size_override("font_size", 19 if d >= 72.0 else 15)
 	node.add_theme_color_override("font_color", UI.PAPER)
@@ -1798,6 +1817,8 @@ func _build_more_sheet(root_control: Control) -> void:
 	more_sheet.add_child(scroll)
 	mv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(mv)
+	more_scroll = scroll
+	more_box = mv
 	ui.heading("ACTIONS", mv)
 	ui.rule(mv)
 	var command_head := Label.new()
@@ -1843,8 +1864,8 @@ func _build_more_sheet(root_control: Control) -> void:
 	system_grid.add_theme_constant_override("h_separation", 8)
 	system_grid.add_theme_constant_override("v_separation", 8)
 	mv.add_child(system_grid)
-	_action_button("⟲ Orbit", _orbit_left, system_grid)
-	_action_button("⟳ Orbit", _orbit_right, system_grid)
+	_action_button("Orbit Left", _orbit_left, system_grid)
+	_action_button("Orbit Right", _orbit_right, system_grid)
 	_action_button("Pause / Save", _open_pause, system_grid)
 	_action_button("Close", _toggle_more, system_grid)
 	_action_button("Mentor", _open_panel.bind("mentor"), system_grid)
@@ -1883,6 +1904,9 @@ func _ui() -> void:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root_control.add_child(left_dock)
 	left_dock.add_theme_stylebox_override("panel", ui.panel_box())
+	# A panel grows with its content but never shrinks back by itself: when a HUD line hides or
+	# unwraps, fit the dock to it again so it does not leave an empty slab over the village.
+	left_content.minimum_size_changed.connect(_shrink_dock.call_deferred)
 	left_content.add_theme_constant_override("separation", 6)
 	left_dock.add_child(left_content)
 	title_label = Label.new()
@@ -2044,9 +2068,26 @@ func _ui() -> void:
 	alarm_pulse.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	alarm_pulse.color = Color(0.5, 0.05, 0.08, 0.0)
 	root_control.add_child(alarm_pulse)
-	var side_scroll := ScrollContainer.new()
+	# The sheet's Close lives in a header pinned above the scrolling content, so it is one tap away
+	# however far a long menu has been scrolled.
+	var sheet_box := VBoxContainer.new()
+	sheet_box.add_theme_constant_override("separation", 6)
+	sidebar.add_child(sheet_box)
+	sheet_header = HBoxContainer.new()
+	sheet_header.add_theme_constant_override("separation", 8)
+	sheet_box.add_child(sheet_header)
+	var grip := Control.new()
+	grip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sheet_header.add_child(grip)
+	sheet_close_button = ui.command_button("Close", _close_panel, sheet_header, 44.0)
+	sheet_close_button.custom_minimum_size = Vector2(96, 44)
+	sheet_close_button.add_theme_font_size_override("font_size", 14)
+	sheet_close_button.tooltip_text = "Close this menu"
+	side_scroll = ScrollContainer.new()
 	side_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	sidebar.add_child(side_scroll)
+	side_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	sheet_box.add_child(side_scroll)
 	side_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	side_scroll.add_child(side_content)
 	sidebar.hide()
@@ -2079,7 +2120,13 @@ func _ui() -> void:
 	welcome.add_theme_stylebox_override("panel", ui.panel_box())
 	var intro := VBoxContainer.new()
 	intro.add_theme_constant_override("separation", 8)
-	welcome.add_child(intro)
+	intro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Short screens (a phone on its side) scroll the welcome instead of pushing its buttons off screen.
+	welcome_scroll = ScrollContainer.new()
+	welcome_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	welcome.add_child(welcome_scroll)
+	welcome_scroll.add_child(intro)
+	welcome_intro = intro
 	ui.heading("THE MANOR STANDS", intro)
 	ui.title_rule(intro)
 	ui.body("Build your village beneath the moon.\nGather, grow, and hold the walls.", intro)
@@ -2225,7 +2272,35 @@ func _window_min() -> float:
 
 func _is_small() -> bool:
 	var size: Vector2 = get_viewport().get_visible_rect().size
-	return _window_min() < 460.0 or size.x < 420.0
+	return _window_min() < 460.0 or size.x < 420.0 or minf(size.x, size.y) < 460.0
+
+
+# A phone on its side: the compact phone HUD, laid out for a short, wide screen.
+func _is_landscape_phone() -> bool:
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	return _is_small() and size.x > size.y * 1.2
+
+
+# The UI is authored for a 390x844 portrait phone and scaled to fit the window. A phone held sideways
+# would shrink every button and line of text to under half its size to fit 844 tall into ~390, so on
+# phone-sized landscape screens the UI is drawn at its natural size (1 UI px = 1 CSS px) instead.
+# Desktop windows and portrait phones keep the original scale.
+func _apply_ui_scale() -> void:
+	var window: Window = get_window()
+	if window == null:
+		return
+	var win: Vector2 = Vector2(DisplayServer.window_get_size())
+	if win.x <= 0.0 or win.y <= 0.0:
+		return
+	var dpr: float = maxf(1.0, DisplayServer.screen_get_scale())
+	var css: Vector2 = win / dpr
+	var factor: float = 1.0
+	if css.x > css.y and minf(css.x, css.y) < 500.0:
+		var base: float = minf(win.x / 390.0, win.y / 844.0)
+		if base / dpr < 0.85:
+			factor = dpr / base
+	if absf(window.content_scale_factor - factor) > 0.01:
+		window.content_scale_factor = factor
 
 
 func _is_narrow() -> bool:
@@ -2239,9 +2314,15 @@ func _is_narrow() -> bool:
 
 
 func _layout_ui() -> void:
+	if _laying_out:
+		return
+	_laying_out = true
+	_apply_ui_scale()
+	_laying_out = false
 	var size: Vector2 = get_viewport().get_visible_rect().size
 	var narrow: bool = _is_narrow()
 	var small: bool = _is_small()
+	var landscape: bool = _is_landscape_phone()
 	var safe: float = 16.0 if small else UI.SAFE_MARGIN
 	crest_label.text = str(sim.chronicle.act_data(sim.chronicle.act).get("numeral", "I"))
 	crest_label.tooltip_text = "Act %s - %s" % [str(sim.chronicle.act_data(sim.chronicle.act).get("numeral", "I")), str(sim.chronicle.act_data(sim.chronicle.act).get("name", "Unwritten"))]
@@ -2292,55 +2373,163 @@ func _layout_ui() -> void:
 		# they free and its objective lines wrap less.
 		stack_width = minf(112.0, gutter * 0.4)
 		dock_width = maxf(0.0, gutter - stack_width - safe * 0.75)
+		if landscape:
+			# Sideways the screen is wide but short: keep the dock to a corner so the village shows.
+			dock_width = minf(dock_width, 330.0)
 	left_dock.size = Vector2(dock_width, 0)
 	left_dock.position = Vector2(safe, safe)
 	resource_stack.size = Vector2(stack_width, 0)
 	resource_stack.position = Vector2(size.x - stack_width - safe, safe)
-	if small:
-		# Bottom sheet like the shop ref: full-width, above the bottom bar.
-		var sheet_max: float = maxf(160.0, size.y - bar_h - safe * 3.0 - 96.0)
-		var sheet_h: float = clampf(size.y * 0.45, minf(160.0, sheet_max), sheet_max)
-		sidebar.position = Vector2(safe, size.y - bar_h - safe - 8.0 - sheet_h)
-		sidebar.size = Vector2(size.x - safe * 2.0, sheet_h)
-	else:
-		_fit_sidebar()
-		_fit_sidebar.call_deferred()
-	more_sheet.position = sidebar.position
-	more_sheet.size = sidebar.size
 	# Compact resource pills on phones: values only, bars stay on desktop.
 	for resource: String in resource_bars:
 		var gauge: ProgressBar = resource_bars[resource]
 		if is_instance_valid(gauge):
 			gauge.visible = not small
-	placement_box.position = Vector2(maxf(16, (size.x - 330) / 2), size.y - bottom.size.y - 146)
-	placement_box.size.x = minf(330, size.x - 32)
 	# The story banner sits above the command bar and below the HUD cluster, so
 	# it never covers a control the player needs mid-raid.
 	var banner_w: float = minf(size.x - safe * 2.0, 420.0)
+	if landscape:
+		# Sideways, the story line sits at the top between the two HUD corners.
+		var gap: float = resource_stack.position.x - (left_dock.position.x + left_dock.size.x) - safe * 2.0
+		banner_w = clampf(gap, 240.0, 420.0)
 	banner_panel.size = Vector2(banner_w, banner_panel.get_combined_minimum_size().y)
-	banner_panel.position = Vector2((size.x - banner_w) * 0.5, maxf(8.0, bar_h + safe * 2.0 + 120.0))
-	welcome.size = Vector2(minf(480, size.x - 36), 0)
-	welcome.position = Vector2((size.x - welcome.size.x) / 2, maxf(110, size.y * 0.28))
+	banner_panel.position = Vector2((size.x - banner_w) * 0.5, safe if landscape else maxf(8.0, bar_h + safe * 2.0 + 120.0))
+	if landscape:
+		banner_panel.position.x = clampf(banner_panel.position.x, left_dock.position.x + left_dock.size.x + safe, maxf(safe, resource_stack.position.x - safe - banner_w))
+	# The welcome card scrolls when the screen is too short for it, so its buttons are never pushed off.
+	var welcome_w: float = minf(480, size.x - 36)
+	var welcome_pad: float = welcome.get_theme_stylebox("panel").get_minimum_size().y if welcome.has_theme_stylebox("panel") else 24.0
+	welcome_intro.custom_minimum_size.x = welcome_w - 40.0
+	var welcome_h: float = minf(welcome_intro.get_combined_minimum_size().y + welcome_pad, size.y - safe * 2.0)
+	welcome.size = Vector2(welcome_w, welcome_h)
+	welcome_scroll.custom_minimum_size.y = welcome_h - welcome_pad
+	var welcome_y: float = maxf(110, size.y * 0.28)
+	if small and not landscape:
+		# On a phone the card sits centred between the HUD and the command bar.
+		welcome_y = maxf(safe, (size.y - bar_h - safe - welcome_h) * 0.5 + 40.0)
+	welcome.position = Vector2((size.x - welcome.size.x) / 2, maxf(safe, minf(welcome_y, size.y - safe - welcome_h)))
 	combat_banner.size = Vector2(minf(390.0, size.x - safe * 2.0), 58.0)
 	combat_banner.position = Vector2((size.x - combat_banner.size.x) * 0.5, maxf(96.0, size.y * 0.18))
+	_fit_sheet()
+	_fit_sheet.call_deferred()
 	_camera_update()
 
 
-# The sidebar (raid report, menus) starts under the real bottom of the left HUD and stops above the bottom
-# bar. Run now and once more deferred, because containers only settle their final heights after a sort.
+func _shrink_dock() -> void:
+	_fit_sheet()   # refits the dock to its content, then the sheets to the room it leaves
+
+
+# Kept for callers from the older layout code: the sheets are placed by _fit_sheet now.
 func _fit_sidebar() -> void:
-	if _is_small():
+	_fit_sheet()
+
+
+# Panels about one thing in the world (a building, a villager, a lot): on a phone their sheet stays
+# low so the thing itself stays in view. Menus (Build, People, Chronicle, Chart...) may use the screen.
+func _sheet_is_context() -> bool:
+	return panel in ["building", "unit", "workers", "wall_row_upgrade", "action"] or panel.begins_with("realm_") or panel.begins_with("town_")
+
+
+# Places the menu sheet (sidebar) and the More sheet. Each is as tall as its content needs, up to the
+# room it has: on a phone that is everything between the top HUD and the bottom bar (bottom-anchored,
+# within thumb reach); sideways it is the left side above the buttons; on desktop a column on the right
+# under the resource counts. Runs now and once more deferred, because wrapped text only settles its height after a sort.
+func _fit_sheet() -> void:
+	if sidebar == null or more_sheet == null or side_content == null:
 		return
 	var vp: Vector2 = get_viewport().get_visible_rect().size
-	var safe: float = UI.SAFE_MARGIN
+	var small: bool = _is_small()
+	var landscape: bool = _is_landscape_phone()
+	var safe: float = 16.0 if small else UI.SAFE_MARGIN
+	# Wrapped HUD lines only know their height after a sort; shrink the corner panels back to it.
+	left_dock.size = Vector2(left_dock.size.x, 0)
+	resource_stack.size = Vector2(resource_stack.size.x, 0)
 	var bar_top: float = vp.y - maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y) - safe
 	var left_bottom: float = left_dock.position.y + maxf(left_dock.size.y, left_dock.get_combined_minimum_size().y)
 	var stack_bottom: float = resource_stack.position.y + maxf(resource_stack.size.y, resource_stack.get_combined_minimum_size().y)
-	var top: float = maxf(left_bottom, stack_bottom) + 16.0
-	sidebar.position = Vector2(safe, top)
-	sidebar.size = Vector2(vp.x - 32.0 if _is_narrow() else 310.0, maxf(130.0, bar_top - 12.0 - top))
-	more_sheet.position = sidebar.position
-	more_sheet.size = sidebar.size
+	var hud_bottom: float = maxf(left_bottom, stack_bottom)
+	var frame: Rect2
+	var bottom_anchored: bool = small
+	if landscape:
+		# The sheet covers the objective dock (it comes back on Close) and the notice line, but never
+		# the resource counts or the buttons that open and close it.
+		var buttons_top: float = bar_top
+		for row: Node in nav.get_parent().get_children():
+			if (row == nav or row.name == "TownBar") and (row as Control).is_visible_in_tree():
+				buttons_top = (row as Control).get_global_rect().position.y
+		var width: float = clampf(resource_stack.position.x - safe * 2.0, 260.0, 520.0)
+		frame = Rect2(safe, safe, width, maxf(120.0, buttons_top - 8.0 - safe))
+	elif small:
+		var top: float = hud_bottom + 10.0
+		frame = Rect2(safe, top, vp.x - safe * 2.0, maxf(160.0, bar_top - 8.0 - top))
+	elif _is_narrow():
+		var top: float = hud_bottom + 16.0
+		frame = Rect2(safe, top, vp.x - 32.0, maxf(130.0, bar_top - 12.0 - top))
+	else:
+		# Desktop: the sheet hangs on the right under the resource counts, which are much shorter than
+		# the objective dock, so long menus get most of the screen's height.
+		var top: float = stack_bottom + 16.0
+		var width: float = 340.0
+		frame = Rect2(vp.x - width - safe, top, width, maxf(130.0, bar_top - 12.0 - top))
+	for sheet: PanelContainer in [sidebar, more_sheet]:
+		var pad: float = sheet.get_theme_stylebox("panel").get_minimum_size().y if sheet.has_theme_stylebox("panel") else 16.0
+		var content: float
+		if sheet == sidebar:
+			content = pad + sheet_header.get_combined_minimum_size().y + 6.0 + side_content.get_combined_minimum_size().y
+		else:
+			content = pad + more_box.get_combined_minimum_size().y
+		var cap: float = frame.size.y
+		if sheet == sidebar and small and not landscape and _sheet_is_context():
+			cap = minf(cap, maxf(240.0, vp.y * 0.45))
+		var height: float = clampf(content, minf(160.0, cap), cap)
+		sheet.size = Vector2(frame.size.x, height)
+		sheet.position = Vector2(frame.position.x, frame.end.y - height if bottom_anchored else frame.position.y)
+	# The placement card hugs its content and sits just above the command bar, never over it.
+	placement_box.size = Vector2(minf(330.0, vp.x - 32.0), 0)
+	placement_box.position = Vector2(maxf(16.0, (vp.x - placement_box.size.x) * 0.5), bar_top - 12.0 - placement_box.size.y)
+	if landscape:
+		# Sideways, centre it in the open strip between the two HUD corners when it fits there.
+		var left_edge: float = left_dock.position.x + left_dock.size.x + 8.0
+		var right_edge: float = resource_stack.position.x - 8.0
+		if right_edge - left_edge >= placement_box.size.x:
+			placement_box.position.x = (left_edge + right_edge - placement_box.size.x) * 0.5
+	# Sideways the sheet lies over the objective dock; fade the dock out rather than show it through.
+	left_dock.modulate.a = 0.0 if landscape and (sidebar.visible or more_sheet.visible) else 1.0
+	_fit_story_banner(vp, safe, hud_bottom)
+	expansion.place_banners(camera, _banner_clip(), _banner_avoid())   # region labels step out from under the sheets
+
+
+# The story banner and an open sheet share the screen: on a phone the banner rides just above the sheet,
+# and when the sheet is tall the sheet gives up the banner's height while the banner shows. Sideways it
+# tucks behind the sheet (the Chronicle keeps the line). Desktop sheets sit in a column clear of it.
+func _fit_story_banner(vp: Vector2, safe: float, hud_bottom: float) -> void:
+	if not _is_small() or not banner_panel.visible:
+		return
+	var sheets: Array[PanelContainer] = []
+	for sheet: PanelContainer in [sidebar, more_sheet]:
+		if sheet.visible:
+			sheets.append(sheet)
+	if sheets.is_empty():
+		return
+	if _is_landscape_phone():
+		banner_panel.position.x = safe
+		return
+	var top: float = vp.y
+	for sheet: PanelContainer in sheets:
+		top = minf(top, sheet.position.y)
+	var height: float = banner_panel.size.y
+	if height > vp.y * 0.3:
+		return   # its text has not been wrapped to its width yet; the next layout pass places it
+	if banner_panel.position.y + height + 8.0 <= top:
+		return
+	var y: float = maxf(hud_bottom + 6.0, top - height - 8.0)
+	banner_panel.position.y = y
+	var clear_top: float = y + height + 8.0
+	for sheet: PanelContainer in sheets:
+		if sheet.position.y < clear_top:
+			var bottom_edge: float = sheet.position.y + sheet.size.y
+			sheet.position.y = clear_top
+			sheet.size.y = maxf(120.0, bottom_edge - clear_top)
 
 
 func _clear_sidebar() -> void:
@@ -2355,16 +2544,18 @@ func _clear_sidebar() -> void:
 	for child in side_content.get_children():
 		side_content.remove_child(child)
 		child.queue_free()
-	ui.command_button("Close", _close_panel, side_content, 36.0)
 
 
 func _open_panel(which: String) -> void:
 	if panel == "pause" and which != "pause": paused = false
 	if which != "wall_row_upgrade": wall_row_preview.clear()
+	var switching: bool = which != panel or not sidebar.visible
 	panel = which
 	more_sheet.hide()
 	_paint_more()
 	sidebar.show()
+	if switching and side_scroll != null:
+		side_scroll.scroll_vertical = 0   # a newly opened menu starts at its top
 	_clear_sidebar()
 	match which:
 		"build":
@@ -3142,6 +3333,7 @@ func _close_panel() -> void:
 	wall_row_preview.clear()
 	_update_marker()
 	sidebar.hide()
+	_layout_ui()   # the HUD and story banner take back the sheet's room
 
 
 func _pause_panel() -> void:
@@ -3364,6 +3556,7 @@ func _choose_build(type_name: String) -> void:
 	more_sheet.hide()
 	_close_panel()
 	placement_box.show()
+	_fit_sheet.call_deferred()   # size the card to its text, above the command bar
 	placement_label.text = "Place %s / %s the map" % [str(sim.building_specs[type_name]["name"]), _input_verb().to_lower()]
 	confirm_button.disabled = true
 	confirm_button.text = "Confirm Build"
@@ -3386,6 +3579,7 @@ func _toggle_pave() -> void:
 	more_sheet.hide()
 	_close_panel()
 	placement_box.show()
+	_fit_sheet.call_deferred()   # size the card to its text, above the command bar
 	placement_label.text = "Pave stone road / %s a worn dirt trail" % _input_verb().to_lower()
 	confirm_button.disabled = true
 	confirm_button.text = "Confirm Pave"
@@ -4034,6 +4228,7 @@ func _pump_banner() -> void:
 		banner_panel.modulate = Color(1, 1, 1, alpha)
 		if banner_left <= 0.0:
 			banner_panel.hide()
+			_layout_ui()   # an open sheet takes back the banner's room
 		return
 	if sim.chronicle.banner_count() == 0 or not started:
 		return
@@ -4045,6 +4240,7 @@ func _pump_banner() -> void:
 	banner_panel.show()
 	banner_panel.modulate = Color(1, 1, 1, 0)
 	banner_left = BANNER_HOLD
+	_layout_ui()   # make room for it beside an open sheet
 
 
 func banner_tooltip(character: String) -> void:

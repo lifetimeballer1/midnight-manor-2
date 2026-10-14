@@ -17,6 +17,7 @@ const FLY_OUT: float = 0.8
 const NOTE_FADE: float = 0.3
 const NOTE_HOLD: float = 4.5
 const TAP_MIN: float = 44.0
+const NOTE_MAX_WIDTH: float = 560.0
 const RAVEN_INK: Color = Color("1c1a21")
 const RAVEN_FAR: Color = Color("2b2832")
 const LAYER_Z: int = 40
@@ -73,8 +74,10 @@ func _deliver(text: String) -> void:
 	var note_bottom: float = toast_rect.position.y - hud_rect.position.y - 8.0
 
 	_raven_note_label.text = text
-	_raven_note.offset_left = 16.0
-	_raven_note.offset_right = -16.0
+	# A note, not a banner: on wide screens it stays a readable width in the middle.
+	var side: float = maxf(16.0, (width - NOTE_MAX_WIDTH) * 0.5)
+	_raven_note.offset_left = side
+	_raven_note.offset_right = -side
 	_raven_note.offset_bottom = note_bottom - hud_rect.size.y
 	_raven_note.offset_top = _raven_note.offset_bottom - TAP_MIN
 	_raven_note.visible = false
@@ -140,7 +143,24 @@ func _raven_busy() -> bool:
 
 
 func _raven_blocked() -> bool:
-	return sim.raid_active or sim.raid_warning or is_instance_valid(battle_view) or not sim.frontier.active.is_empty()
+	return sim.raid_active or sim.raid_warning or is_instance_valid(battle_view) or not sim.frontier.active.is_empty() or _menu_sheet_open()
+
+
+# The note lands where an open menu sheet is; while one is open the plain toast carries the line.
+func _menu_sheet_open() -> bool:
+	return (sidebar != null and sidebar.visible) or (more_sheet != null and more_sheet.visible)
+
+
+func _open_panel(which: String) -> void:
+	super(which)
+	if sidebar.visible:
+		_dismiss_note()
+
+
+func _toggle_more() -> void:
+	super()
+	if more_sheet.visible:
+		_dismiss_note()
 
 
 # --- Procedural nodes ---------------------------------------------------------
