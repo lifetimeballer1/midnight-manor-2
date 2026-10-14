@@ -12,6 +12,12 @@ extends "res://scripts/game/village_polish.gd"
 #     farms, homes, civic buildings, townsfolk) moves them up a level into finer art. Tap a lot for
 #     its card: what it is, what it sends the manor, and what its next level needs.
 #   * Townsfolk walk the roads. Trees and rocks give way where roads and lots go.
+#   * Dragging the Road (or Pave) tool plans a straight run with its cost shown before anything is
+#     spent; letting go lays it. Pave turns a road to cobbles for Stone, which speeds the lots
+#     beside it and lets the finest homes and halls rise.
+#   * With the tools out, each lot held back shows what it needs; a lot cut off from the manor
+#     shows it at any time. Income rises off the lots as it arrives, and the town's title (Hamlet,
+#     Village...) heads the zoning bar.
 #
 # Painting never knocks down a lot by accident: zone and road strokes skip built lots, only Clear
 # removes them. The village's own buildings, simulation and save are untouched; the town banks its
@@ -25,15 +31,18 @@ const Town = preload("res://scripts/game/town_zoning.gd")
 
 const TOWN_SAVE_PATH: String = "user://town-v1.json"
 const TOWN_SAVE_SECONDS: float = 10.0
-const TOWN_TOOLS: Array[String] = ["housing", "farming", "industrial", "civic", "road", "erase"]
-const TOWN_TOOL_NAMES: Dictionary = {"housing": "Homes", "farming": "Farms", "industrial": "Industry", "civic": "Civic", "road": "Road", "erase": "Clear"}
+const TOWN_TOOLS: Array[String] = ["housing", "farming", "industrial", "civic", "road", "pave", "erase"]
+const TOWN_TOOL_NAMES: Dictionary = {"housing": "Homes", "farming": "Farms", "industrial": "Industry", "civic": "Civic", "road": "Road", "pave": "Pave", "erase": "Clear"}
+const TOWN_LINE_TOOLS: Array[String] = ["road", "pave"]   # dragging these plans a straight run first
 const TOWN_LOT_FIT: float = 3.3             # metres a lot's building spans
 const TOWN_LIFT: float = 0.045              # zone colours and roads sit just above the ground
 const TOWN_GRID_REACH: float = 72.0         # the paint grid shows this far from the view's centre
 const TOWN_WALKERS: int = 6
 const TOWN_WALKERS_LOW: int = 3
 const TOWN_WALK_SPEED: float = 1.15
-const TOWN_LABELS: int = 4
+const TOWN_LABELS: int = 14               # floating level names and income at once
+const TOWN_BADGES: int = 24               # need badges over lots at once, nearest the view first
+const TOWN_BADGE_SECONDS: float = 0.6
 const TOWN_OPEN_ZOOM: float = 70.0
 const TOWN_ERASE_COLOR := Color("d0574a")
 const TOWN_DENY_COLOR := Color("b0473d")
@@ -41,6 +50,12 @@ const TOWN_ROAD_VERGE := Color("3b3026")
 const TOWN_ROAD_BED := Color("665640")
 const TOWN_ROAD_RUT := Color("4e4133")
 const TOWN_SCAFFOLD := Color("5c4430")
+const TOWN_PAVE_COLOR := Color("a3a7ad")
+const TOWN_PAVE_VERGE := Color("3f3b36")
+const TOWN_PAVE_BED := Color("4e4a44")
+const TOWN_PAVE_SETTS: Array[Color] = [Color("5d5851"), Color("54504a"), Color("645f57")]
+const TOWN_SAFE_COLOR := Color("6f9be8")
+const TOWN_RESOURCE_COLORS: Dictionary = {"gold": Color("f2c75c"), "food": Color("e3c14b"), "wood": Color("c9935a"), "stone": Color("c3c7cc")}
 const TOWN_NO_CELL := Vector2i(-9999, -9999)
 
 var town = null
@@ -84,6 +99,12 @@ var _town_clear_clock: float = 0.0
 var _town_click_clock: float = 0.0
 var _town_cursor_cell: Vector2i = TOWN_NO_CELL
 var _town_time: float = 0.0
+var _town_plan: Array[Vector2i] = []        # a planned road or paving run while the drag lasts
+var _town_plan_start: Vector2i = TOWN_NO_CELL
+var _town_ghost: MeshInstance3D = null
+var _town_ghost_label: Label3D = null
+var _town_badges: Dictionary = {}           # Vector2i -> Label3D
+var _town_badge_clock: float = 0.0
 
 
 func _ready() -> void:
@@ -127,6 +148,10 @@ func _process(delta: float) -> void:
 		var focus := Vector2(target.x, target.z)
 		if focus.distance_to(_town_grid_focus) > 12.0 or _town_grid_revision != town.revision:
 			_town_build_grid()
+	_town_badge_clock -= delta
+	if _town_badge_clock <= 0.0:
+		_town_badge_clock = TOWN_BADGE_SECONDS
+		_town_refresh_badges()
 
 
 func _notification(what: int) -> void:
@@ -186,7 +211,7 @@ func _town_event(event: Dictionary) -> void:
 			if not view.is_empty():
 				_town_pop(view, true)
 			var level_name: String = str(town.level_spec(str(event["zone"]), int(event["level"])).get("name", ""))
-			_town_label(event["cell"], level_name)
+			_town_label(event["cell"], "Level %d: %s" % [int(event["level"]), level_name])
 			if _town_on_screen(event["cell"]):
 				_play_sfx("upgrade")
 		"cleared":
@@ -200,6 +225,24 @@ func _town_event(event: Dictionary) -> void:
 					gained.append("+%d %s" % [banked, resource.capitalize()])
 			if not gained.is_empty():
 				sim.notice = "The town sends %s." % ", ".join(PackedStringArray(gained))
+				_town_income_floaters()
+			_refresh_hud()
+		"title":
+			var won: Array[String] = []
+			var reward: Dictionary = event.get("reward", {})
+			for resource: String in reward:
+				var banked: int = sim._bank(resource, float(reward[resource]))
+				if banked > 0:
+					won.append("+%d %s" % [banked, resource.capitalize()])
+			var line: String = "The town outside the walls is now a %s." % str(event["name"])
+			if not won.is_empty():
+				line += " The folk send %s." % ", ".join(PackedStringArray(won))
+			sim.notice = line
+			_play_sfx("upgrade")
+			var heart: Vector2i = _town_heart()
+			if heart != TOWN_NO_CELL:
+				_town_float(heart, str(event["name"]).to_upper(), UI.GOLD, 5.0, 84)
+				_impact_burst(_town_point(heart, 2.0), UI.GOLD, 18, 1.6, true)
 			_refresh_hud()
 	if panel.begins_with("town_") and sidebar.visible:
 		_open_panel(panel)
@@ -243,6 +286,7 @@ func town_open() -> void:
 	_town_drawn_mode = ""
 	_town_build_grid()
 	_town_cursor.visible = false
+	_town_badge_clock = 0.0
 	if zoom < TOWN_OPEN_ZOOM:
 		var tween := create_tween()
 		tween.tween_method(func(value: float) -> void:
@@ -257,11 +301,13 @@ func town_close() -> void:
 		return
 	_town_active = false
 	_town_stroke = false
+	_town_clear_plan()
 	town_bar.hide()
 	nav.show()
 	_town_cursor.visible = false
 	_town_grid.visible = false
 	_town_drawn_mode = ""
+	_town_badge_clock = 0.0
 	if panel.begins_with("town_"):
 		_close_panel()
 	town_save()
@@ -315,6 +361,18 @@ func _town_paint_one(c: Vector2i, centre: bool) -> bool:
 				_town_deny("Roads cost %s a stretch. Not enough in store." % _cost_text(cost))
 				return false
 			town.paint_road(c)
+			_refresh_hud()
+			return true
+		"pave":
+			if not town.pave_reason(c).is_empty():
+				if centre and not town.paved.has(c):
+					_town_deny(town.pave_reason(c))
+				return false
+			var cost: Dictionary = town.pave_cost()
+			if not sim._spend(cost):
+				_town_deny("Paving costs %s a stretch. Not enough in store." % _cost_text(cost))
+				return false
+			town.pave(c)
 			_refresh_hud()
 			return true
 	if town.lots.has(c) or str(town.zones.get(c, "")) == _town_tool:
@@ -403,12 +461,18 @@ func _drag_map(pointer: Vector2) -> void:
 		_town_stroke_denied = false
 		_town_stroke_count = 0
 		var start: Vector2 = town_pick(press_point)
-		if is_finite(start.x):
+		_town_plan_start = town.cell_of(start) if is_finite(start.x) else TOWN_NO_CELL
+		if is_finite(start.x) and _town_tool not in TOWN_LINE_TOOLS:
 			_town_stroke_to(town.cell_of(start))
 	left_dragged = true
 	var at: Vector2 = town_pick(pointer)
 	if is_finite(at.x):
-		_town_stroke_to(town.cell_of(at))
+		if _town_tool in TOWN_LINE_TOOLS:
+			if _town_plan_start != TOWN_NO_CELL:
+				town_plan(_town_plan_start, town.cell_of(at))
+				_town_place_cursor(town.cell_of(at))
+		else:
+			_town_stroke_to(town.cell_of(at))
 	last_pointer = pointer
 
 
@@ -421,6 +485,8 @@ func _input(event: InputEvent) -> void:
 	if released and _town_stroke:
 		_town_stroke = false
 		_town_stroke_last = TOWN_NO_CELL
+		if not _town_plan.is_empty():
+			town_commit_plan()
 		town_save()
 
 
@@ -448,6 +514,8 @@ func _town_place_cursor(c: Vector2i) -> void:
 			ok = town.lots.has(c) or town.zones.has(c) or town.roads.has(c)
 		"road":
 			ok = town.road_reason(c).is_empty() and not town.lots.has(c)
+		"pave":
+			ok = town.pave_reason(c).is_empty()
 		_:
 			ok = town.can_build(c) and not town.roads.has(c)
 	var tint: Color = _town_tool_color(_town_tool) if ok else TOWN_DENY_COLOR
@@ -461,7 +529,108 @@ func _town_place_cursor(c: Vector2i) -> void:
 func _town_tool_color(tool: String) -> Color:
 	if tool == "erase":
 		return TOWN_ERASE_COLOR
+	if tool == "pave":
+		return TOWN_PAVE_COLOR
 	return town.zone_color(tool)
+
+
+# --- Road runs ----------------------------------------------------------------------------------
+
+# A straight run of cells from one cell to another: along the longer way first, then across.
+func town_plan_line(from: Vector2i, to: Vector2i) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = [from]
+	var at: Vector2i = from
+	var delta: Vector2i = to - from
+	var first: Vector2i = Vector2i(signi(delta.x), 0) if absi(delta.x) >= absi(delta.y) else Vector2i(0, signi(delta.y))
+	var second: Vector2i = Vector2i(0, signi(delta.y)) if first.x != 0 else Vector2i(signi(delta.x), 0)
+	while (at - from) * first.abs() != delta * first.abs():
+		at += first
+		cells.append(at)
+	while at != to and second != Vector2i.ZERO:
+		at += second
+		cells.append(at)
+	return cells
+
+
+# What laying (or paving) one cell of a run would do: "new", "have" (already done, free) or "no".
+func _town_plan_state(c: Vector2i) -> String:
+	if _town_tool == "pave":
+		if town.paved.has(c):
+			return "have"
+		return "new" if town.pave_reason(c).is_empty() else "no"
+	if town.roads.has(c):
+		return "have"
+	return "new" if town.road_reason(c).is_empty() and not town.lots.has(c) else "no"
+
+
+func _town_plan_cost(count: int) -> Dictionary:
+	var each: Dictionary = town.pave_cost() if _town_tool == "pave" else town.road_cost()
+	var total: Dictionary = {}
+	for resource: String in each:
+		total[resource] = int(each[resource]) * count
+	return total
+
+
+# Plans a run and draws it: the cells it would lay, those it can't, and what it costs.
+func town_plan(from: Vector2i, to: Vector2i) -> void:
+	_town_plan = town_plan_line(from, to)
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var fresh: int = 0
+	var tint: Color = _town_tool_color(_town_tool)
+	for c: Vector2i in _town_plan:
+		var state: String = _town_plan_state(c)
+		var colour: Color = Color(tint, 0.62) if state == "new" else (Color(1, 1, 1, 0.14) if state == "have" else Color(TOWN_DENY_COLOR, 0.6))
+		_town_cell_quad(tool, c, Vector2(0.3, 0.3), Vector2(3.7, 3.7), colour, 0.06)
+		if state == "new":
+			fresh += 1
+	_town_ghost.mesh = tool.commit()
+	_town_ghost.visible = true
+	var cost: Dictionary = _town_plan_cost(fresh)
+	var afford: bool = sim._affordable(cost)
+	var noun: String = ("%d to pave" % fresh) if _town_tool == "pave" else ("%d stretch%s of road" % [fresh, "" if fresh == 1 else "es"])
+	_town_ghost_label.text = ("%s  ·  %s" % [noun, _cost_text(cost)]) if fresh > 0 else ("Nothing to pave here" if _town_tool == "pave" else "Nothing to lay here")
+	if fresh > 0 and not afford:
+		_town_ghost_label.text += "  ·  not enough"
+	_town_ghost_label.modulate = UI.PAPER if afford and fresh > 0 else Color("f0a08f")
+	_town_ghost_label.position = _town_point(_town_plan[_town_plan.size() - 1], 2.6)
+	_town_ghost_label.visible = true
+
+
+# Lays the planned run in order, as far as the stores allow. Returns how many cells were laid.
+func town_commit_plan() -> int:
+	var laid: int = 0
+	var short: bool = false
+	var each: Dictionary = town.pave_cost() if _town_tool == "pave" else town.road_cost()
+	for c: Vector2i in _town_plan:
+		if _town_plan_state(c) != "new":
+			continue
+		if not sim._spend(each):
+			short = true
+			break
+		if _town_tool == "pave":
+			town.pave(c)
+		else:
+			town.paint_road(c)
+		laid += 1
+	var noun: String = "paved %d stretch%s" % [laid, "" if laid == 1 else "es"] if _town_tool == "pave" else "laid %d stretch%s of road" % [laid, "" if laid == 1 else "es"]
+	if laid > 0:
+		sim.notice = ("%s%s." % [noun.capitalize(), (", then the stores ran dry" if short else "")])
+		_play_sfx("confirm")
+		_refresh_hud()
+	elif short:
+		_town_stroke_denied = false
+		_town_deny("Not enough in store: %s a stretch." % _cost_text(each))
+	_town_clear_plan()
+	return laid
+
+
+func _town_clear_plan() -> void:
+	_town_plan.clear()
+	_town_plan_start = TOWN_NO_CELL
+	if _town_ghost != null:
+		_town_ghost.visible = false
+		_town_ghost_label.visible = false
 
 
 # --- Cards --------------------------------------------------------------------------------------
@@ -497,14 +666,18 @@ func _town_lot_card(c: Vector2i) -> void:
 	var lines: Array[String] = ["%s / level %d of %d" % [str(spec.get("name", zone)), level, town.max_level(zone)]]
 	if not town.built(lot):
 		lines.append("Under construction.")
+	var cut_off: bool = town.built(lot) and not town.has_access(c)
 	if int(info.get("residents", 0)) > 0:
 		lines.append("%d townsfolk live here" % int(info["residents"]))
 	if int(info.get("jobs", 0)) > 0:
 		lines.append("%d jobs" % int(info["jobs"]))
 	var income: Dictionary = info.get("income", {})
 	if not income.is_empty():
-		lines.append("Sends %s a minute" % _cost_text(income))
+		lines.append("Sends %s a minute" % ("nothing while cut off" if cut_off else _cost_text(income)))
 	ui.body("\n".join(PackedStringArray(lines)), side_content)
+	if cut_off:
+		var warning: Label = ui.body("Cut off: no road from here reaches the manor or an outpost. Join it up and it works again.", side_content, 12)
+		warning.add_theme_color_override("font_color", Color("f0a08f"))
 	ui.body(str(spec.get("blurb", "")), side_content, 12)
 	var needs: Array[Dictionary] = town.next_needs(c)
 	if needs.is_empty():
@@ -512,11 +685,15 @@ func _town_lot_card(c: Vector2i) -> void:
 	else:
 		var next: Dictionary = town.level_spec(zone, level + 1)
 		ui.heading("NEXT: %s" % str(next.get("name", "")).to_upper(), side_content)
-		var rows: Array[String] = []
+		# One line per need, green when met; plain marks the web build's font has (no tick glyphs).
 		for need: Dictionary in needs:
-			rows.append(("✓  " if bool(need["met"]) else "✗  ") + str(need["label"]))
-		ui.body("\n".join(PackedStringArray(rows)), side_content, 13)
+			var met: bool = bool(need["met"])
+			var row: Label = ui.body(("+  " if met else "-  ") + str(need["label"]), side_content, 13)
+			row.add_theme_color_override("font_color", Color("9fd88f") if met else Color("e9a58f"))
 		ui.bar(float(lot["progress"]), float(next.get("seconds", 60.0)), side_content, town.zone_color(zone))
+		for note: Dictionary in town.pace(c)["notes"]:
+			var line: Label = ui.body(str(note["label"]), side_content, 12)
+			line.add_theme_color_override("font_color", Color("9fd88f") if bool(note["good"]) else Color("e9a58f"))
 	ui.command_button("Clear Lot", _town_clear_lot.bind(c), side_content)
 
 
@@ -528,7 +705,7 @@ func _town_cell_card(c: Vector2i) -> void:
 	ui.body(str(spec.get("blurb", "")), side_content)
 	var why: String
 	if not town.has_access(c):
-		why = "Waiting for a road. Zones grow only beside a road that leads back to the manor or an outpost."
+		why = "Waiting for a road (the dotted cells). Zones grow only beside a road that leads back to the manor or an outpost."
 	elif float(town.demand().get(zone, 0.0)) <= town.DEMAND_GROW:
 		why = "Waiting for demand. The town does not want more %s yet." % str(spec.get("short", zone)).to_lower()
 	else:
@@ -591,7 +768,8 @@ func _town_build_ui() -> void:
 	for zone: String in town.zone_ids():
 		var column := VBoxContainer.new()
 		column.add_theme_constant_override("separation", 2)
-		column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		column.mouse_filter = Control.MOUSE_FILTER_PASS
+		column.tooltip_text = "How much the town wants more %s" % str(town.zone_spec(zone).get("short", zone)).to_lower()
 		demand.add_child(column)
 		var gauge := ProgressBar.new()
 		gauge.fill_mode = ProgressBar.FILL_BOTTOM_TO_TOP
@@ -619,7 +797,7 @@ func _town_build_ui() -> void:
 		_town_demand_bars[zone] = gauge
 	var tools := GridContainer.new()
 	_town_tools_grid = tools
-	tools.columns = 9
+	tools.columns = 10
 	tools.add_theme_constant_override("h_separation", 6)
 	tools.add_theme_constant_override("v_separation", 6)
 	tools.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -676,7 +854,13 @@ func _town_refresh_status() -> void:
 		return
 	var stats: Dictionary = town.stats()
 	var small: bool = _is_small()
-	_town_stats_label.text = ("TOWN  %d folk / %d jobs / %d lots" if small else "TOWN  %d townsfolk / %d jobs / %d lots") % [int(stats["people"]), int(stats["jobs"]), int(stats["lots"])]
+	var heading: String = ("%s  %d folk / %d jobs / %d lots" if small else "%s  %d townsfolk / %d jobs / %d lots") % [town.title().to_upper(), int(stats["people"]), int(stats["jobs"]), int(stats["lots"])]
+	var next: Dictionary = town.next_title()
+	if not small and not next.is_empty():
+		heading += "   (%s at %d)" % [str(next.get("name", "")), int(next.get("people", 0))]
+	if int(stats["cut_off"]) > 0:
+		heading += ("  /  %d cut off" % int(stats["cut_off"]))
+	_town_stats_label.text = heading
 	var wants: Dictionary = town.demand()
 	for zone: String in _town_demand_bars:
 		(_town_demand_bars[zone] as ProgressBar).value = float(wants.get(zone, 0.0))
@@ -686,7 +870,9 @@ func _town_refresh_status() -> void:
 	elif town.zones.is_empty() and town.lots.is_empty():
 		hint = "Paint Homes beside the road. Farms and Industry give them work."
 	elif _town_tool == "road":
-		hint = "Road: %s a stretch. Zones grow only beside roads that reach the manor or an outpost." % _cost_text(town.road_cost())
+		hint = "Road: %s a stretch. Drag to plan a straight run, let go to lay it. Zones grow only beside roads that reach the manor or an outpost." % _cost_text(town.road_cost())
+	elif _town_tool == "pave":
+		hint = "Pave: %s a stretch turns a road to cobbles. Lots beside it level faster; the finest homes and halls want one." % _cost_text(town.pave_cost())
 	elif _town_tool == "erase":
 		hint = "Clear: removes zones, roads and lots."
 	else:
@@ -708,11 +894,12 @@ func _layout_ui() -> void:
 	super()
 	if town == null or town_bar == null:
 		return
+	_town_fit_raven_note.call_deferred()
 	if _town_button != null:
 		_paint_ring(_town_button, UI.GOLD if _town_active else UI.SLATE, 44.0 if _is_small() else 56.0)
 		_town_button.add_theme_font_size_override("font_size", 12 if _is_small() else 13)
 	if _town_tools_grid != null:
-		_town_tools_grid.columns = 5 if _is_small() else 9
+		_town_tools_grid.columns = 5 if _is_small() else 10
 		for child: Node in _town_tools_grid.get_children():
 			(child as Control).custom_minimum_size.x = 0.0 if _is_small() else 76.0
 			(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL if _is_small() else Control.SIZE_FILL
@@ -727,6 +914,22 @@ func _layout_ui() -> void:
 		var sheet_h: float = minf(sidebar.size.y, maxf(160.0, view.y - bar_h - safe * 3.0 - 96.0))
 		sidebar.position = Vector2(safe, view.y - bar_h - safe - 8.0 - sheet_h)
 		sidebar.size.y = sheet_h
+
+
+# The raven's note is pinned just above the toast when it lands; the zoning bar is taller than the
+# nav it replaces (and grows when its hint wraps), so keep a note that is showing above the toast.
+func _town_fit_raven_note() -> void:
+	if _raven_note == null or not is_instance_valid(_raven_note) or not _raven_note.visible:
+		return
+	if hud_root == null or not is_instance_valid(hud_root) or not toast.is_inside_tree():
+		return
+	var hud_rect: Rect2 = hud_root.get_global_rect()
+	var toast_rect: Rect2 = toast.get_global_rect()
+	if toast_rect.size.y <= 0.0:
+		return
+	var height: float = maxf(_raven_note.offset_bottom - _raven_note.offset_top, _raven_note.size.y)
+	_raven_note.offset_bottom = toast_rect.position.y - hud_rect.position.y - 8.0 - hud_rect.size.y
+	_raven_note.offset_top = _raven_note.offset_bottom - height
 
 
 # --- Views --------------------------------------------------------------------------------------
@@ -776,6 +979,23 @@ func _town_build_nodes() -> void:
 	_town_cursor.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_town_cursor.visible = false
 	_town_root.add_child(_town_cursor)
+	# A planned road run: drawn over everything while the drag lasts, with its cost at the far end.
+	_town_ghost = MeshInstance3D.new()
+	_town_ghost.name = "TownPlan"
+	var ghost_material := StandardMaterial3D.new()
+	ghost_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ghost_material.vertex_color_use_as_albedo = true
+	ghost_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ghost_material.no_depth_test = true
+	ghost_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	ghost_material.render_priority = 3
+	_town_ghost.material_override = ghost_material
+	_town_ghost.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_town_ghost.visible = false
+	_town_root.add_child(_town_ghost)
+	_town_ghost_label = _town_text_node(40)
+	_town_ghost_label.visible = false
+	_town_root.add_child(_town_ghost_label)
 
 
 # Brings every view in line with the model, once per change.
@@ -807,9 +1027,16 @@ func _town_build_overlay() -> void:
 		if has_lot and not _town_active:
 			continue
 		var tint: Color = town.zone_color(zone)
+		var waiting: bool = not has_lot and not town.has_access(c)
 		var wash: float = (0.16 if has_lot else 0.34) if _town_active else 0.2
+		if waiting:
+			wash *= 0.45
 		var rim: float = 0.85 if _town_active else 0.45
 		_town_cell_quad(tool, c, Vector2(0.15, 0.15), Vector2(3.85, 3.85), Color(tint, wash))
+		# No road reaches it yet: four dots, so a stalled zone reads apart from one about to grow.
+		if waiting:
+			for spot: Vector2 in [Vector2(1.05, 1.05), Vector2(2.45, 1.05), Vector2(1.05, 2.45), Vector2(2.45, 2.45)]:
+				_town_cell_quad(tool, c, spot, spot + Vector2(0.5, 0.5), Color(tint.lightened(0.15), rim * 0.8), 0.012)
 		for d: Vector2i in town.DIRS:
 			if str(town.zones.get(c + d, "")) == zone:
 				continue
@@ -870,10 +1097,17 @@ func _town_build_grid() -> void:
 	var reach: int = int(TOWN_GRID_REACH / town.cell)
 	var count: int = 0
 	var line := Color(1.0, 0.97, 0.88, 0.16)
+	# The Civic tool shows where the town is safe already (walls, outposts, watch posts).
+	var show_safe: bool = _town_tool == "civic"
 	for dz in range(-reach, reach + 1):
 		for dx in range(-reach, reach + 1):
 			var c: Vector2i = centre + Vector2i(dx, dz)
-			if not town.can_build(c) or town.roads.has(c) or town.lots.has(c):
+			if not town.can_build(c) or town.roads.has(c):
+				continue
+			if show_safe and town.safe(c):
+				_town_cell_quad(tool, c, Vector2(0.0, 0.0), Vector2(4.0, 4.0), Color(TOWN_SAFE_COLOR, 0.11), -0.008)
+				count += 1
+			if town.lots.has(c):
 				continue
 			# Two edges per cell (the far edges come from the neighbours), plus the outer ones.
 			_town_cell_quad(tool, c, Vector2(0.0, 0.0), Vector2(4.0, 0.09), line, -0.005)
@@ -899,7 +1133,8 @@ func _town_build_roads() -> void:
 		for d: Vector2i in town.DIRS:
 			if town.roads.has(c + d) or town.in_village(c + d):
 				arms.append(d)
-		var layers: Array = [[1.45, TOWN_ROAD_VERGE, 0.0], [1.08, TOWN_ROAD_BED, 0.012]]
+		var paved: bool = town.paved.has(c)
+		var layers: Array = [[1.45, TOWN_PAVE_VERGE if paved else TOWN_ROAD_VERGE, 0.0], [1.08, TOWN_PAVE_BED if paved else TOWN_ROAD_BED, 0.012]]
 		for layer: Array in layers:
 			var w: float = layer[0]
 			_town_strip(tool, centre + Vector2(-w, -w), centre + Vector2(w, w), layer[1], layer[2])
@@ -909,6 +1144,10 @@ func _town_build_roads() -> void:
 				var a: Vector2 = centre + dir * w - side * w
 				var b: Vector2 = centre + dir * (half + 0.02) + side * w
 				_town_strip(tool, a, b, layer[1], layer[2])
+		if paved:
+			_town_setts(tool, c, centre, arms)
+			count += 1
+			continue
 		# Wheel ruts along each arm.
 		for d: Vector2i in arms:
 			var dir := Vector2(d)
@@ -931,6 +1170,29 @@ func _town_build_roads() -> void:
 		_town_roads.mesh = null
 		return
 	_town_roads.mesh = tool.commit()
+
+
+# Cobbles on a paved road: rows of setts in slightly different greys over the bed and its arms.
+func _town_setts(tool: SurfaceTool, c: Vector2i, centre: Vector2, arms: Array[Vector2i]) -> void:
+	var half: float = town.cell * 0.5
+	var w: float = 1.0
+	var boxes: Array[Rect2] = [Rect2(centre - Vector2(w, w), Vector2(w, w) * 2.0)]
+	for d: Vector2i in arms:
+		var dir := Vector2(d)
+		var side := Vector2(-dir.y, dir.x)
+		var a: Vector2 = centre + dir * w - side * w
+		var b: Vector2 = centre + dir * half + side * w
+		boxes.append(Rect2(Vector2(minf(a.x, b.x), minf(a.y, b.y)), (a - b).abs()))
+	var size: float = 0.5
+	for box: Rect2 in boxes:
+		var nx: int = maxi(1, roundi(box.size.x / size))
+		var nz: int = maxi(1, roundi(box.size.y / size))
+		var step := Vector2(box.size.x / nx, box.size.y / nz)
+		for j in nz:
+			for i in nx:
+				var corner: Vector2 = box.position + Vector2(i, j) * step
+				var shade: Color = TOWN_PAVE_SETTS[posmod(i * 7 + j * 3 + c.x * 5 + c.y, TOWN_PAVE_SETTS.size())]
+				_town_strip(tool, corner + Vector2(0.04, 0.04), corner + step - Vector2(0.04, 0.04), shade, 0.02)
 
 
 # An axis-aligned strip between two corners, split into 1 m pieces so it follows the ground.
@@ -1133,34 +1395,136 @@ func _town_pop(view: Dictionary, levelled: bool) -> void:
 
 # A floating name that rises and fades over a lot that just moved up a level.
 func _town_label(c: Vector2i, text: String) -> void:
+	_town_float(c, text, UI.GOLD, 3.4, 54)
+
+
+# Text in the world: billboarded, drawn over the town, dark-outlined to read on any ground. Only
+# glyphs the web build's default font has (no stars or ticks).
+func _town_text_node(font_size: int) -> Label3D:
+	var label := Label3D.new()
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.no_depth_test = true
+	label.font_size = font_size
+	label.outline_size = maxi(8, font_size / 4)
+	# The same size on screen at any zoom, so a badge stays readable from the town view.
+	label.fixed_size = true
+	label.pixel_size = 0.0011
+	label.outline_modulate = Color(0.08, 0.06, 0.04, 0.9)
+	label.render_priority = 4
+	label.outline_render_priority = 3
+	return label
+
+
+# Floating text that rises and fades over a cell (level names, income, the town's new title).
+func _town_float(c: Vector2i, text: String, colour: Color, height: float, font_size: int, delay: float = 0.0) -> void:
 	if text.is_empty() or not started:
 		return
 	while _town_labels.size() >= TOWN_LABELS:
 		var oldest: Node3D = _town_labels.pop_front()
 		if is_instance_valid(oldest):
 			oldest.queue_free()
-	var label := Label3D.new()
-	label.text = "★ " + text
-	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	label.no_depth_test = true
-	label.font_size = 54
-	label.outline_size = 14
-	label.pixel_size = 0.012
-	label.modulate = UI.GOLD
-	label.outline_modulate = Color(0.08, 0.06, 0.04, 0.9)
-	label.position = _town_point(c, 3.4)
+	var label: Label3D = _town_text_node(font_size)
+	label.text = text
+	label.modulate = Color(colour, 0.0 if delay > 0.0 else 1.0)
+	label.position = _town_point(c, height)
 	_town_root.add_child(label)
 	_town_labels.append(label)
 	var tween := create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(label, "position:y", label.position.y + 2.2, 2.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tween.tween_property(label, "modulate:a", 0.0, 0.8).set_delay(1.4)
+	if delay > 0.0:
+		tween.tween_property(label, "modulate:a", 1.0, 0.15).set_delay(delay)
+	tween.tween_property(label, "position:y", label.position.y + 2.2, 2.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT).set_delay(delay)
+	tween.tween_property(label, "modulate:a", 0.0, 0.8).set_delay(delay + 1.4)
 	var id: int = label.get_instance_id()
 	tween.chain().tween_callback(func() -> void:
 		var node: Object = instance_from_id(id)
 		if node != null:
 			_town_labels.erase(node)
 			(node as Node).queue_free())
+
+
+# Income rising off the lots that sent it: the nearest few on screen, each in its resource's colour.
+func _town_income_floaters() -> void:
+	var focus := Vector2(target.x, target.z)
+	var senders: Array[Vector2i] = []
+	for c: Vector2i in town.lots:
+		var lot: Dictionary = town.lots[c]
+		if not town.built(lot) or not town.has_access(c) or not _town_on_screen(c):
+			continue
+		if (town.level_spec(str(lot["zone"]), int(lot["level"])).get("income", {}) as Dictionary).is_empty():
+			continue
+		senders.append(c)
+	senders.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return town.cell_centre(a).distance_to(focus) < town.cell_centre(b).distance_to(focus))
+	for index in mini(senders.size(), TOWN_LABELS - 2):
+		var c: Vector2i = senders[index]
+		var lot: Dictionary = town.lots[c]
+		var income: Dictionary = town.level_spec(str(lot["zone"]), int(lot["level"]))["income"]
+		var resource: String = str(income.keys()[0])
+		_town_float(c, "+%d %s" % [int(income[resource]), resource.capitalize()], TOWN_RESOURCE_COLORS.get(resource, UI.GOLD), 1.6, 38, 0.06 * index)
+
+
+# The middle of the built town (the built lot nearest its centre), for town-wide moments.
+func _town_heart() -> Vector2i:
+	var sum := Vector2.ZERO
+	var built: Array[Vector2i] = []
+	for c: Vector2i in town.lots:
+		if town.built(town.lots[c]):
+			built.append(c)
+			sum += town.cell_centre(c)
+	if built.is_empty():
+		return TOWN_NO_CELL
+	var middle: Vector2 = sum / float(built.size())
+	var best: Vector2i = built[0]
+	for c: Vector2i in built:
+		if town.cell_centre(c).distance_to(middle) < town.cell_centre(best).distance_to(middle):
+			best = c
+	return best
+
+
+# Need badges: with the tools out, each lot held back shows the first thing it needs; a lot cut
+# off from the manor says so at any time. Only the lots nearest the view get one.
+func _town_refresh_badges() -> void:
+	var wanted: Dictionary = {}
+	var focus := Vector2(target.x, target.z)
+	var reach: float = realm_view_reach()
+	var found: Array[Vector2i] = []
+	for c: Vector2i in town.lots:
+		if not town.built(town.lots[c]) or town.cell_centre(c).distance_to(focus) > reach:
+			continue
+		var text: String = town.problem(c) if _town_active else ("No road" if not town.has_access(c) else "")
+		if text.is_empty():
+			continue
+		wanted[c] = text
+		found.append(c)
+	var most: int = TOWN_BADGES / 2 if _realm_phone else TOWN_BADGES
+	if found.size() > most:
+		found.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+			return town.cell_centre(a).distance_to(focus) < town.cell_centre(b).distance_to(focus))
+		for c: Vector2i in found.slice(most):
+			wanted.erase(c)
+	for c: Vector2i in _town_badges.keys():
+		if not wanted.has(c):
+			(_town_badges[c] as Node).queue_free()
+			_town_badges.erase(c)
+	for c: Vector2i in wanted:
+		var text: String = str(wanted[c])
+		var badge: Label3D = _town_badges.get(c, null)
+		if badge == null:
+			badge = _town_text_node(30)
+			_town_root.add_child(badge)
+			_town_badges[c] = badge
+		var cut_off: bool = text == "No road"
+		badge.text = text if cut_off else "Needs " + (text if text.left(1).is_valid_int() else text.to_lower())
+		badge.modulate = Color("f0a08f") if cut_off else Color("f3e6c8")
+		badge.position = _town_point(c, 4.4)
+
+
+func town_badge_texts() -> Dictionary:
+	var result: Dictionary = {}
+	for c: Vector2i in _town_badges:
+		result[c] = (_town_badges[c] as Label3D).text
+	return result
 
 
 # --- Townsfolk ----------------------------------------------------------------------------------

@@ -12,7 +12,13 @@ extends RefCounted
 #   * Demand follows the town itself: homes want jobs, farms and industry want hands, civic wants a
 #     growing population.
 #   * Built lots send income to the manor every incomeSeconds of active play; the village layer banks
-#     it through the simulation's own storage rules.
+#     it through the simulation's own storage rules. A lot whose road no longer reaches the manor or
+#     an outpost is cut off and sends nothing until it is joined up again.
+#   * Roads can be paved with Stone. Lots beside a paved road level faster, and the finest homes and
+#     halls want one. Neighbours matter too: industry next door slows a home, civic buildings nearby
+#     speed lots along (pace()).
+#   * The town earns a title as it grows (Hamlet, Village, Market Town...), each with a one-off
+#     reward the first time it is reached.
 #
 # Everything here is data in data/zones.json (art per level, needs, income, timings), its own save
 # (town-v1.json, beside the village and realm saves) and plain numbers advanced by active time, so
@@ -32,6 +38,7 @@ var height_at: Callable                     # optional: (x, z) -> ground height,
 
 var zones: Dictionary = {}                  # Vector2i -> zone id
 var roads: Dictionary = {}                  # Vector2i -> true
+var paved: Dictionary = {}                  # Vector2i -> true, a subset of roads
 var lots: Dictionary = {}                   # Vector2i -> {zone, level, build, progress, variant, age}
 var elapsed: float = 0.0
 var grow_clock: float = 0.0
@@ -41,6 +48,7 @@ var revision: int = 0                       # bumps on any change the view draws
 var events: Array[Dictionary] = []          # grew / levelled / income / cleared; take_events() drains them
 var village_food: float = 0.0               # set by the village layer each tick (the "food" need)
 var rng := RandomNumberGenerator.new()
+var best_tier: int = 0                      # the highest town title reached (-1: set it quietly from the town)
 
 var _land: Dictionary = {}                  # Vector2i -> reason ("" = buildable), per land key
 var _land_key: String = ""
@@ -49,6 +57,8 @@ var _claims: Array[Dictionary] = []
 var _network: Dictionary = {}               # road cells that reach the manor or an outpost
 var _network_key: String = ""
 var _people_now: int = -1                   # townsfolk, refreshed with each needs check
+var _near: Dictionary = {}                  # _nearby() answers for the current revision
+var _near_revision: int = -1
 
 
 func _init() -> void:
@@ -88,6 +98,40 @@ func zone_color(zone: String) -> Color:
 
 func road_cost() -> Dictionary:
 	return specs.get("road", {}).get("cost", {})
+
+
+func pave_cost() -> Dictionary:
+	return specs.get("road", {}).get("paveCost", {})
+
+
+func pace_spec() -> Dictionary:
+	return specs.get("pace", {})
+
+
+# Town titles by townsfolk, lowest first: [{name, people, reward}].
+func titles() -> Array:
+	return specs.get("titles", [{"name": "Outskirts", "people": 0}])
+
+
+func tier_for(people: int) -> int:
+	var tier: int = 0
+	var list: Array = titles()
+	for index in list.size():
+		if people >= int(list[index].get("people", 0)):
+			tier = index
+	return tier
+
+
+func title() -> String:
+	var list: Array = titles()
+	return str(list[clampi(tier_for(int(stats()["people"])), 0, list.size() - 1)].get("name", ""))
+
+
+# The next title and the townsfolk it takes, or {} at the top.
+func next_title() -> Dictionary:
+	var list: Array = titles()
+	var tier: int = tier_for(int(stats()["people"]))
+	return list[tier + 1] if tier + 1 < list.size() else {}
 
 
 # --- Grid -----------------------------------------------------------------------------------------
@@ -223,6 +267,24 @@ func paint_road(c: Vector2i) -> String:
 	return ""
 
 
+# Paving an existing road (the village layer charges pave_cost() first).
+func pave_reason(c: Vector2i) -> String:
+	if not roads.has(c):
+		return "Pave a road: lay one here first."
+	if paved.has(c):
+		return "This road is paved already."
+	return ""
+
+
+func pave(c: Vector2i) -> String:
+	var reason: String = pave_reason(c)
+	if not reason.is_empty():
+		return reason
+	paved[c] = true
+	revision += 1
+	return ""
+
+
 # Removes whatever is on a cell. Returns true when something was there.
 func erase(c: Vector2i) -> bool:
 	var changed: bool = false
@@ -234,6 +296,7 @@ func erase(c: Vector2i) -> bool:
 		changed = true
 	if roads.has(c):
 		roads.erase(c)
+		paved.erase(c)
 		changed = true
 	if changed:
 		revision += 1
@@ -302,6 +365,15 @@ func has_access(c: Vector2i) -> bool:
 	return false
 
 
+# A connected, paved road beside the cell.
+func paved_access(c: Vector2i) -> bool:
+	var net: Dictionary = network()
+	for d: Vector2i in DIRS:
+		if paved.has(c + d) and net.has(c + d):
+			return true
+	return false
+
+
 # The road neighbour a lot faces, or (0, 0) when it has none.
 func road_side(c: Vector2i) -> Vector2i:
 	var net: Dictionary = network()
@@ -321,7 +393,8 @@ func built(lot: Dictionary) -> bool:
 
 
 func stats() -> Dictionary:
-	var result: Dictionary = {"people": 0, "jobs": 0, "lots": 0, "building": 0, "zoned": zones.size(), "roads": roads.size()}
+	var result: Dictionary = {"people": 0, "jobs": 0, "lots": 0, "building": 0, "zoned": zones.size(), "roads": roads.size(),
+		"paved": paved.size(), "cut_off": 0}
 	var by_zone: Dictionary = {}
 	var jobs_by: Dictionary = {}
 	for id: String in zone_ids():
@@ -335,6 +408,8 @@ func stats() -> Dictionary:
 		var zone: String = str(lot["zone"])
 		var level: Dictionary = level_spec(zone, int(lot["level"]))
 		result["lots"] = int(result["lots"]) + 1
+		if not has_access(c):
+			result["cut_off"] = int(result["cut_off"]) + 1
 		by_zone[zone] = int(by_zone.get(zone, 0)) + 1
 		result["people"] = int(result["people"]) + int(level.get("residents", 0))
 		result["jobs"] = int(result["jobs"]) + int(level.get("jobs", 0))
@@ -378,6 +453,14 @@ func demand() -> Dictionary:
 # --- Needs ----------------------------------------------------------------------------------------
 
 func _nearby(c: Vector2i, zone: String, within: int, min_level: int = 1) -> int:
+	# Every lot asks this for each need a couple of times a second; the answers only change with
+	# the town, so they are kept until the next change.
+	if _near_revision != revision:
+		_near_revision = revision
+		_near.clear()
+	var key: String = "%d,%d,%s,%d,%d" % [c.x, c.y, zone, within, min_level]
+	if _near.has(key):
+		return _near[key]
 	var found: int = 0
 	for other: Vector2i in lots:
 		if other == c:
@@ -387,6 +470,7 @@ func _nearby(c: Vector2i, zone: String, within: int, min_level: int = 1) -> int:
 			continue
 		if absi(other.x - c.x) <= within and absi(other.y - c.y) <= within:
 			found += 1
+	_near[key] = found
 	return found
 
 
@@ -407,22 +491,24 @@ func need_status(c: Vector2i, need: Dictionary) -> Dictionary:
 	match kind:
 		"food":
 			var amount: float = float(need.get("amount", 1))
-			return {"label": "The manor has Food in store (%d)" % int(amount), "met": village_food >= amount}
+			return {"label": "The manor has Food in store (%d)" % int(amount), "met": village_food >= amount, "short": "Food"}
 		"safety":
-			return {"label": "Safe: near the walls, an outpost or a watch post", "met": safe(c)}
+			return {"label": "Safe: near the walls, an outpost or a watch post", "met": safe(c), "short": "Safety"}
 		"people":
 			var amount: int = int(need.get("amount", 1))
 			var people: int = _people_now if _people_now >= 0 else int(stats()["people"])
-			return {"label": "%d townsfolk" % amount, "met": people >= amount}
+			return {"label": "%d townsfolk" % amount, "met": people >= amount, "short": "%d folk" % amount}
 		"road":
-			return {"label": "A road to the manor", "met": has_access(c)}
+			return {"label": "A road to the manor", "met": has_access(c), "short": "Road"}
+		"paved":
+			return {"label": "A paved road beside it", "met": paved_access(c), "short": "Paved road"}
 	if zone_spec(kind).is_empty():
-		return {"label": kind, "met": true}
+		return {"label": kind, "met": true, "short": kind}
 	var within: int = int(need.get("within", 6))
 	var wanted: int = int(need.get("count", 1))
 	var name: String = str(zone_spec(kind).get("short", kind)).to_lower()
 	var label: String = "%s nearby" % name.capitalize() if wanted <= 1 else "%d %s nearby" % [wanted, name]
-	return {"label": label, "met": _nearby(c, kind, within) >= wanted}
+	return {"label": label, "met": _nearby(c, kind, within) >= wanted, "short": name.capitalize() if wanted <= 1 else "%d %s" % [wanted, name]}
 
 
 # The next level's needs for a lot, each {label, met}. Empty at the top level.
@@ -440,6 +526,39 @@ func next_needs(c: Vector2i) -> Array[Dictionary]:
 	for need: Dictionary in level_spec(zone, level + 1).get("needs", []):
 		result.append(need_status(c, need))
 	return result
+
+
+# The first thing holding a lot back, as a short label ("" when nothing is): its road first, then
+# its next level's unmet needs.
+func problem(c: Vector2i) -> String:
+	if not lots.has(c) or not built(lots[c]):
+		return ""
+	if not has_access(c):
+		return "No road"
+	for need: Dictionary in next_needs(c):
+		if not bool(need["met"]):
+			return str(need.get("short", need["label"]))
+	return ""
+
+
+# How fast a lot works toward its next level, and why: {factor, notes: [{label, good}]}.
+func pace(c: Vector2i) -> Dictionary:
+	var rules: Dictionary = pace_spec()
+	var factor: float = 1.0
+	var notes: Array[Dictionary] = []
+	if not lots.has(c):
+		return {"factor": factor, "notes": notes}
+	var zone: String = str(lots[c]["zone"])
+	if zone == "housing" and _nearby(c, "industrial", 1) > 0:
+		factor *= float(rules.get("noisyNeighbour", 0.5))
+		notes.append({"label": "Industry next door: slower", "good": false})
+	if zone != "civic" and _nearby(c, "civic", int(rules.get("civicWithin", 3))) > 0:
+		factor *= float(rules.get("civicNearby", 1.25))
+		notes.append({"label": "Civic nearby: faster", "good": true})
+	if paved_access(c):
+		factor *= float(rules.get("pavedRoad", 1.25))
+		notes.append({"label": "Paved road: faster", "good": true})
+	return {"factor": factor, "notes": notes}
 
 
 func needs_met(c: Vector2i, zone: String, level: int) -> bool:
@@ -463,6 +582,7 @@ func tick(dt: float) -> void:
 		_people_now = int(stats()["people"])
 		_level_up(level_clock)
 		level_clock = 0.0
+		_check_title()
 	grow_clock += dt
 	if grow_clock >= float(specs.get("growSeconds", 3.5)):
 		grow_clock = 0.0
@@ -496,7 +616,7 @@ func _level_up(dt: float) -> void:
 		if level >= max_level(zone):
 			continue
 		if needs_met(c, zone, level + 1):
-			lot["progress"] = float(lot["progress"]) + dt
+			lot["progress"] = float(lot["progress"]) + dt * float(pace(c)["factor"])
 			if float(lot["progress"]) >= float(level_spec(zone, level + 1).get("seconds", 60.0)):
 				lot["level"] = level + 1
 				lot["progress"] = 0.0
@@ -504,6 +624,20 @@ func _level_up(dt: float) -> void:
 				revision += 1
 		else:
 			lot["progress"] = maxf(float(lot["progress"]) - dt * 0.5, 0.0)
+
+
+# A new title the first time the town reaches it, with its reward. A save from before titles
+# existed takes the town's current title quietly.
+func _check_title() -> void:
+	var tier: int = tier_for(maxi(_people_now, 0))
+	if best_tier < 0:
+		best_tier = tier
+		return
+	if tier <= best_tier:
+		return
+	best_tier = tier
+	var entry: Dictionary = titles()[tier]
+	events.append({"kind": "title", "tier": tier, "name": str(entry.get("name", "")), "reward": entry.get("reward", {})})
 
 
 # Zoned cells with a road and no lot yet, grouped by zone.
@@ -568,7 +702,7 @@ func income_now() -> Dictionary:
 	var total: Dictionary = {}
 	for c: Vector2i in lots:
 		var lot: Dictionary = lots[c]
-		if not built(lot) or not can_build(c):
+		if not built(lot) or not can_build(c) or not has_access(c):
 			continue
 		var income: Dictionary = level_spec(str(lot["zone"]), int(lot["level"])).get("income", {})
 		for resource: String in income:
@@ -612,13 +746,17 @@ func to_dict() -> Dictionary:
 	var road_data: Array = []
 	for c: Vector2i in roads:
 		road_data.append(_key(c))
+	var paved_data: Array = []
+	for c: Vector2i in paved:
+		paved_data.append(_key(c))
 	var lot_data: Dictionary = {}
 	for c: Vector2i in lots:
 		var lot: Dictionary = lots[c]
 		lot_data[_key(c)] = {"zone": lot["zone"], "level": lot["level"], "build": lot["build"],
 			"progress": lot["progress"], "variant": lot["variant"], "age": lot["age"]}
 	return {"version": VERSION, "elapsed": elapsed, "grow": grow_clock, "income": income_clock,
-		"zones": zone_data, "roads": road_data, "lots": lot_data, "rng": str(rng.state)}
+		"zones": zone_data, "roads": road_data, "paved": paved_data, "lots": lot_data, "rng": str(rng.state),
+		"tier": best_tier}
 
 
 # Loads a save. Anything malformed is refused whole, leaving the town as it was.
@@ -631,8 +769,10 @@ func from_dict(data: Variant) -> bool:
 	var zone_data: Variant = data.get("zones", {})
 	var road_data: Variant = data.get("roads", [])
 	var lot_data: Variant = data.get("lots", {})
-	if not zone_data is Dictionary or not road_data is Array or not lot_data is Dictionary:
+	var paved_data: Variant = data.get("paved", [])
+	if not zone_data is Dictionary or not road_data is Array or not lot_data is Dictionary or not paved_data is Array:
 		return false
+	var new_paved: Dictionary = {}
 	for key: Variant in zone_data:
 		var c: Variant = _cell_from(key)
 		if c == null or zone_spec(str(zone_data[key])).is_empty():
@@ -644,6 +784,12 @@ func from_dict(data: Variant) -> bool:
 			return false
 		new_roads[c] = true
 		new_zones.erase(c)
+	for key: Variant in paved_data:
+		var c: Variant = _cell_from(key)
+		if c == null:
+			return false
+		if new_roads.has(c):
+			new_paved[c] = true
 	for key: Variant in lot_data:
 		var c: Variant = _cell_from(key)
 		var raw: Variant = lot_data[key]
@@ -659,7 +805,10 @@ func from_dict(data: Variant) -> bool:
 			"variant": absi(int(raw.get("variant", 0))), "age": float(raw.get("age", 0.0))}
 	zones = new_zones
 	roads = new_roads
+	paved = new_paved
 	lots = new_lots
+	var tier: Variant = data.get("tier", null)
+	best_tier = clampi(int(tier), 0, titles().size() - 1) if (tier is int or tier is float) and is_finite(float(tier)) else -1
 	elapsed = maxf(float(data.get("elapsed", 0.0)), 0.0)
 	grow_clock = maxf(float(data.get("grow", 0.0)), 0.0)
 	income_clock = maxf(float(data.get("income", 0.0)), 0.0)

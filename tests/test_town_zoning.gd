@@ -30,6 +30,7 @@ func _run() -> void:
 	_land_checks()
 	_growth_checks()
 	_save_checks()
+	_depth_checks()
 	await _scene_checks()
 	print("test_town_zoning: %d checks, %d failures" % [checks, failures.size()])
 	if failures.is_empty():
@@ -206,6 +207,77 @@ func _growth_checks() -> void:
 	check(town.roads.has(lot_cell) and not town.zones.has(lot_cell), "a road replaces a zone")
 
 
+# Paving, neighbours, cut-off lots and town titles.
+func _depth_checks() -> void:
+	var town = _town()
+	check(int(town.pave_cost().get("stone", 0)) > 0, "paving costs Stone")
+	check(not town.pave_reason(Vector2i(0, 9)).is_empty(), "only a road can be paved")
+	var sides: Array[Vector2i] = _south_strip(town, 4)
+	check(town.pave(Vector2i(0, 9)).is_empty() and town.paved.has(Vector2i(0, 9)), "a road is paved")
+	check(not town.pave(Vector2i(0, 9)).is_empty(), "a paved road is not paved twice")
+	# Paved access, and the finest homes want it.
+	var needs_paving: bool = false
+	for need: Dictionary in town.level_spec("housing", 3)["needs"]:
+		needs_paving = needs_paving or need["kind"] == "paved"
+	check(needs_paving, "the finest homes want a paved road")
+	town.paint_zone(Vector2i(-1, 9), "housing")
+	town.lots[Vector2i(-1, 9)] = {"zone": "housing", "level": 1, "build": 0.0, "progress": 0.0, "variant": 0, "age": 0.0}
+	town.revision += 1
+	check(town.paved_access(Vector2i(-1, 9)), "a lot beside a paved road has paved access")
+	check(not town.paved_access(Vector2i(-1, 11)), "a lot beside a dirt road does not")
+	var quick: Dictionary = town.pace(Vector2i(-1, 9))
+	check(float(quick["factor"]) > 1.0, "a paved road speeds a lot along (%s)" % quick)
+	# Industry next door slows a home; the card says why.
+	town.paint_zone(Vector2i(-2, 9), "industrial")
+	town.lots[Vector2i(-2, 9)] = {"zone": "industrial", "level": 1, "build": 0.0, "progress": 0.0, "variant": 0, "age": 0.0}
+	town.revision += 1
+	var noisy: Dictionary = town.pace(Vector2i(-1, 9))
+	check(float(noisy["factor"]) < float(quick["factor"]), "industry next door slows a home")
+	check((noisy["notes"] as Array).any(func(n: Dictionary) -> bool: return not bool(n["good"])), "the slowdown is explained")
+	# Problems: the first unmet need, as a short label.
+	town.village_food = 0.0
+	check(not town.problem(Vector2i(-1, 9)).is_empty(), "a held-back home names what it needs")
+	# Cut off: a lot whose road is broken sends nothing until it is joined up again.
+	var income_before: Dictionary = town.income_now()
+	check(int(income_before.get("gold", 0)) > 0, "a connected home pays rent")
+	town.erase(Vector2i(0, 9))
+	check(town.problem(Vector2i(-1, 10)) == "" or not town.lots.has(Vector2i(-1, 10)), "an empty cell has no problem")
+	check(town.problem(Vector2i(-1, 9)) == "No road", "a lot cut off says so")
+	check(int(town.income_now().get("gold", 0)) == 0, "a cut-off home sends nothing")
+	check(int(town.stats()["cut_off"]) >= 1, "cut-off lots are counted")
+	check(not town.paved.has(Vector2i(0, 9)), "erasing a road takes its paving")
+	town.paint_road(Vector2i(0, 9))
+	check(int(town.income_now().get("gold", 0)) > 0, "joined up again, it pays")
+	# The needs cache follows the town.
+	var farms_before: int = town._nearby(Vector2i(-1, 9), "farming", 6)
+	town.paint_zone(Vector2i(1, 9), "farming")
+	town.lots[Vector2i(1, 9)] = {"zone": "farming", "level": 1, "build": 0.0, "progress": 0.0, "variant": 0, "age": 0.0}
+	town.revision += 1
+	check(town._nearby(Vector2i(-1, 9), "farming", 6) == farms_before + 1, "nearby counts refresh when the town changes")
+	# Titles: one event per new title, with its reward, never twice; old saves take theirs quietly.
+	var titled = _town()
+	_south_strip(titled, 4)
+	for step in 4:
+		for side: int in [-1, 1]:
+			var c := Vector2i(side, 9 + step)
+			titled.paint_zone(c, "housing")
+			titled.lots[c] = {"zone": "housing", "level": 1, "build": 0.0, "progress": 0.0, "variant": 0, "age": 0.0}
+	titled.revision += 1
+	check(titled.title() != "Outskirts", "32 townsfolk earn a title (%s)" % titled.title())
+	titled.tick(0.6)
+	var titles: Array = titled.take_events().filter(func(e: Dictionary) -> bool: return e["kind"] == "title")
+	check(titles.size() == 1 and not (titles[0]["reward"] as Dictionary).is_empty(), "a new title arrives once, with a reward (%s)" % [titles])
+	titled.tick(0.6)
+	check(not titled.take_events().any(func(e: Dictionary) -> bool: return e["kind"] == "title"), "a title is not won twice")
+	var saved: Dictionary = titled.to_dict()
+	saved.erase("tier")
+	var legacy = _town()
+	check(legacy.from_dict(saved), "a save from before titles loads")
+	legacy.tick(0.6)
+	check(not legacy.take_events().any(func(e: Dictionary) -> bool: return e["kind"] == "title"), "an old save takes its title quietly")
+	check(legacy.best_tier == titled.best_tier, "and remembers it")
+
+
 func _save_checks() -> void:
 	var town = _town()
 	_south_strip(town, 3)
@@ -226,12 +298,19 @@ func _save_checks() -> void:
 	check(not junk.from_dict({"version": 1, "zones": {"1,1": "palace"}}), "unknown zones are refused")
 	check(not junk.from_dict({"version": 1, "lots": {"1,1": {"zone": "housing", "level": NAN}}}), "non-finite lot numbers are refused")
 	check(junk.zones.size() == 1, "a refused save leaves the town as it was")
+	var paved = _town()
+	_south_strip(paved, 2)
+	paved.pave(Vector2i(0, 9))
+	var paved_copy = _town()
+	check(paved_copy.from_dict(JSON.parse_string(JSON.stringify(paved.to_dict()))) and paved_copy.paved.has(Vector2i(0, 9)), "paving survives a save")
+	check(not junk.from_dict({"version": 1, "paved": "0,9"}), "malformed paving is refused")
 
 
 func _scene_checks() -> void:
 	root.size = Vector2i(1280, 800)   # headless windows are tiny; the HUD lays out for a real one
 	var scene: PackedScene = load("res://scenes/game.tscn")
 	var game = scene.instantiate()
+	game.no_save = true   # never read or write the player's town save
 	root.add_child(game)
 	await process_frame
 	await process_frame
@@ -279,10 +358,46 @@ func _scene_checks() -> void:
 	game._town_advance(0.5)
 	for resource: String in ["gold", "food", "wood", "stone"]:
 		check(float(game.sim.resources.get(resource, 0.0)) <= game.sim.storage_cap(resource) + 0.01, "town income respects %s storage" % resource)
-	# The info card opens for a lot.
+	# The info card opens for a lot, in glyphs the web build's default font can draw.
 	var lot_cell: Vector2i = game.town.lots.keys()[0]
 	game.town_inspect(lot_cell)
 	check(game.panel == "town_lot", "tapping a lot opens its card")
+	var missing: Array[String] = []
+	for node: Node in game.side_content.find_children("*", "Label", true, false):
+		for ch: String in (node as Label).text:
+			if ch.unicode_at(0) > 32 and not ThemeDB.fallback_font.has_char(ch.unicode_at(0)) and ch not in missing:
+				missing.append(ch)
+	for node: Node in game._town_root.find_children("*", "Label3D", true, false):
+		for ch: String in (node as Label3D).text:
+			if ch.unicode_at(0) > 32 and not ThemeDB.fallback_font.has_char(ch.unicode_at(0)) and ch not in missing:
+				missing.append(ch)
+	check(missing.is_empty(), "town text uses only glyphs the default font has (%s)" % "".join(PackedStringArray(missing)))
+	game._close_panel()
+	# A road run: planned with its cost first, laid on release as far as Wood allows.
+	game.town_set_tool("road")
+	game.sim.resources["wood"] = 10.0
+	game.town_plan(Vector2i(2, 9), Vector2i(2, 14))
+	check(game._town_plan.size() == 6, "a run covers every cell from end to end")
+	check(game._town_ghost.visible and game._town_ghost_label.text.contains("Wood"), "the run shows its cost (%s)" % game._town_ghost_label.text)
+	check(game.town_plan_line(Vector2i(0, 0), Vector2i(3, -2)) == [Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(3, -1), Vector2i(3, -2)], "runs go the long way first, then across")
+	var laid: int = game.town_commit_plan()
+	check(laid == 2 and float(game.sim.resources["wood"]) < 4.0, "a run stops when the Wood runs out (%d laid)" % laid)
+	check(not game._town_ghost.visible, "the plan clears once laid")
+	# Paving.
+	game.town_set_tool("pave")
+	game.sim.resources["stone"] = 100.0
+	check(game.town_paint_cell(Vector2i(0, 9)) and game.town.paved.has(Vector2i(0, 9)), "the Pave tool paves a road")
+	check(float(game.sim.resources["stone"]) < 100.0, "paving costs Stone")
+	game._town_sync()
+	check(game.town_road_mesh_ok(), "paved roads draw")
+	# Badges: with the tools out, lots held back say what they need.
+	game.town.village_food = 0.0
+	game._town_refresh_badges()
+	var held: int = 0
+	for c: Vector2i in game.town.lots:
+		if not game.town.problem(c).is_empty():
+			held += 1
+	check(held == 0 or not game.town_badge_texts().is_empty(), "held-back lots show badges")
 	game.town_close()
 	check(not game.town_active(), "the town tools close")
 	check(game.sim.buildings.size() == buildings_before and game.sim.revision == village_revision, "the village's own buildings are untouched")

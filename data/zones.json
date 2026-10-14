@@ -10,8 +10,18 @@
     "name": "Road",
     "color": "a68a62",
     "cost": {"wood": 4},
+    "paveCost": {"stone": 2},
     "blurb": "Zones only grow beside a road that leads back to the manor or an outpost."
   },
+  "pace": {"noisyNeighbour": 0.5, "civicNearby": 1.25, "civicWithin": 3, "pavedRoad": 1.25},
+  "titles": [
+    {"name": "Outskirts", "people": 0},
+    {"name": "Hamlet", "people": 10, "reward": {"gold": 40}},
+    {"name": "Village", "people": 30, "reward": {"gold": 100}},
+    {"name": "Market Town", "people": 60, "reward": {"gold": 180, "stone": 20}},
+    {"name": "Town", "people": 100, "reward": {"gold": 300, "stone": 40}},
+    {"name": "Borough", "people": 160, "reward": {"gold": 450, "stone": 60}}
+  ],
   "order": ["housing", "farming", "industrial", "civic"],
   "zones": {
     "housing": {
@@ -24,7 +34,7 @@
         {"name": "Cottages", "assets": ["cottage_t2", "cottage_t3"], "residents": 8, "income": {"gold": 4}, "seconds": 40,
          "needs": [{"kind": "farming", "within": 6}, {"kind": "food", "amount": 20}, {"kind": "safety"}]},
         {"name": "Townhouses", "assets": ["cottage_t4", "longhouse_t3", "cottage_t5"], "residents": 14, "income": {"gold": 7}, "seconds": 80,
-         "needs": [{"kind": "civic", "within": 6}, {"kind": "industrial", "within": 8}, {"kind": "safety"}]}
+         "needs": [{"kind": "civic", "within": 6}, {"kind": "industrial", "within": 8}, {"kind": "safety"}, {"kind": "paved"}]}
       ]
     },
     "farming": {
@@ -63,7 +73,7 @@
         {"name": "Chapels", "assets": ["chapel_t2", "schoolroom_t2", "market_t2"], "jobs": 4, "income": {"gold": 2}, "seconds": 50,
          "needs": [{"kind": "housing", "within": 6, "count": 3}]},
         {"name": "Halls", "assets": ["chapel_t4", "bell-tower_t3", "market_t4"], "jobs": 6, "income": {"gold": 5}, "seconds": 90,
-         "needs": [{"kind": "people", "amount": 50}, {"kind": "farming", "within": 10}]}
+         "needs": [{"kind": "people", "amount": 50}, {"kind": "farming", "within": 10}, {"kind": "paved"}]}
       ]
     }
   }

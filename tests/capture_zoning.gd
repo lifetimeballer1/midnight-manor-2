@@ -73,6 +73,7 @@ func _run() -> void:
 	game._enter_village()
 	game.sim.resources["wood"] = 3000.0
 	game.sim.resources["food"] = 400.0
+	game.sim.resources["stone"] = 400.0
 	await process_frame
 
 	# Fixture: a main street along the south side, a lane out to the far edge, and zones beside them.
@@ -93,26 +94,43 @@ func _run() -> void:
 	paint("industrial", [Vector2i(5, 11), Vector2i(5, 12), Vector2i(3, 12), Vector2i(5, 9), Vector2i(6, 9)])
 	paint("civic", [Vector2i(3, 9), Vector2i(4, 9), Vector2i(2, 11), Vector2i(3, 11)])
 	game.town.village_food = 400.0
+	# The main street is paved; the lane stays dirt.
+	paint("pave", street)
 
-	# 1. The tools out over freshly painted zones, before anything grows.
+	# 1. The tools out over freshly painted zones, before anything grows, with a road run planned.
 	frame(-2.0, 38.0, 46.0, 38.0, 46.0)
 	await create_timer(0.8).timeout
-	game._town_place_cursor(Vector2i(1, 12))
+	game.town_set_tool("road")
+	game.town_plan(Vector2i(-1, 12), Vector2i(2, 12))
+	game._town_place_cursor(Vector2i(2, 12))
 	await capture("zoning_1_paint.png")
+	game._town_clear_plan()
+	game.town_set_tool("housing")
 
 	# 2. The town grown (accelerated fixture time), tools out.
 	grow(600.0)
 	await create_timer(0.6).timeout
 	print("TOWN ", game.town.stats())
 	frame(-2.0, 40.0, 40.0, 38.0, 46.0)
+	game.town.village_food = 0.0   # so some homes show what holds them back
+	game._town_refresh_badges()
 	await create_timer(0.5).timeout
 	await capture("zoning_2_grown_tools.png")
+	game.town.village_food = 400.0
 
 	# 3. The same town as you'd see it playing, tools away.
 	game.town_close()
 	frame(-4.0, 42.0, 30.0, 30.0, 40.0)
 	await create_timer(1.5).timeout
+	game.town.income_clock = float(game.town.specs["incomeSeconds"]) - 0.1
+	game._town_advance(0.5)
+	await create_timer(0.7).timeout
 	await capture("zoning_3_town.png")
+	# A new title, as it lands.
+	await create_timer(2.5).timeout
+	game._town_event({"kind": "title", "tier": 3, "name": "Market Town", "reward": {}})
+	await create_timer(0.5).timeout
+	await capture("zoning_6_title.png")
 
 	# 4. A lot's card.
 	var card_cell := Vector2i(-3, 9)

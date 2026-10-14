@@ -66,7 +66,9 @@ overrun outposts. See `docs/REALM.md`; `test_realm`, `test_realm_life` and `test
 Tap **Town** in the bottom bar to zone the manor's land outside the village: lay roads from the
 village edge (or an outpost), paint Homes, Farms, Industry and Civic beside them, and the town
 builds itself when there is demand, levelling lots up into finer buildings as their needs are met.
-Lots send Gold, Food, Wood and Stone to the manor. Art per level lives in `data/zones.json`.
+Lots send Gold, Food, Wood and Stone to the manor. Pave roads with Stone to speed the lots beside
+them, keep homes away from industry, and watch the town earn its titles (Hamlet, Village, Market
+Town...). Art per level lives in `data/zones.json`.
 See `docs/TOWN_ZONING.md`; `test_town_zoning` covers it.
 
 ## Project layout
