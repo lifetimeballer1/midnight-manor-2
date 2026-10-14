@@ -135,7 +135,8 @@ Reports: `docs/export_verification.json`, `docs/godot_verification.json`, `docs/
 
 New regression suites: `test_overhaul_foundation`, `test_village_needs`,
 `test_frontier_battles`, `test_campaign_actions` (same console command format above).
-`test_wall_rows` covers same-level row boundaries, all-or-nothing costs, confirmation
+`test_defenses` covers the walls-and-defenses presentation layer (joined runs, manned towers, firing,
+hit, damage and collapse animation). `test_wall_rows` covers same-level row boundaries, all-or-nothing costs, confirmation
 and cancellation. Its optional native `--capture-dir=<existing absolute directory>`
 captures portrait and desktop confirmation panels using an isolated, no-save fixture.
 Optional native QA captures use `--capture-dir=<existing absolute directory>` with
