@@ -198,6 +198,7 @@ func _fit_dress(b: Dictionary, view: Dictionary) -> void:
 		"moon-dial": _fit_moonstone(view)
 		"bell-tower": _fit_belfry(view)
 		"dawn-gate": _fit_dawn_gate(view, plot)
+		"sunken-chapel": _fit_votives(view)
 		"stone_quarry": _fit_quarry_stone(view)
 		"forge": _fit_forge_fire(view)
 		"market": _fit_market_wares(view, plot, tier)
@@ -1129,6 +1130,39 @@ func _fit_dawn_gate(view: Dictionary, plot: float) -> void:
 	for side: float in [-1.0, 1.0]:
 		flame = _fit_brazier(holder, Vector3(side * 1.05, 0.08, front), 0.6, Color(1.0, 0.68, 0.3))
 	_fit_light(view, flame - Vector3(1.05, 0, 0), Color(1.0, 0.72, 0.42), 4.2)
+	# A pale processional road runs in through the gate, edged with setts, and dawn-gold banners
+	# fly beside the braziers, so the court reads as the road east instead of an empty slab.
+	var model: Node3D = view["model"]
+	var floor_y: float = _fit_surface_y_any(model, 0.0, 0.3 / model.scale.x) * model.scale.x
+	var length: float = plot - 1.3
+	_fit_box(holder, Vector3(1.3, 0.03, length), Vector3(0, floor_y + 0.015, 0), FIT_STONE)
+	for k in 7:
+		var along: float = -length * 0.5 + length * (float(k) + 0.5) / 7.0
+		for side: float in [-1.0, 1.0]:
+			_fit_box(holder, Vector3(0.16, 0.045, 0.3), Vector3(side * 0.72, floor_y + 0.022, along), FIT_STONE_DARK)
+	for side: float in [-1.0, 1.0]:
+		_fit_banner(holder, Vector3(side * 1.45, 0.08, front - 0.2), 1.5, Color("d9a43a"))
+
+
+# Sunken Chapel: votive candles left burning among the ruins and moss creeping over the old floor,
+# so the drowned chapel still reads as kept at night.
+func _fit_votives(view: Dictionary) -> void:
+	var holder: Node3D = _fit_holder(view)
+	var model: Node3D = view["model"]
+	var factor: float = model.scale.x
+	var spots: Array[Vector2] = [Vector2(-0.35, -0.2), Vector2(0.15, -0.45), Vector2(0.55, 0.05), Vector2(-0.75, 0.45)]
+	for k in spots.size():
+		var spot: Vector2 = spots[k]
+		var ground: float = _fit_surface_y(model, spot.x / factor, spot.y / factor) * factor
+		for c in 3:
+			var at := Vector3(spot.x + 0.09 * (c - 1), ground, spot.y + 0.05 * (c % 2))
+			var tall: float = 0.08 + 0.04 * ((k + c) % 3)
+			_fit_cylinder(holder, 0.025, 0.028, tall, at + Vector3(0, tall * 0.5, 0), Color("e8dcc0"), "", 6)
+			_fit_cylinder(holder, 0.0, 0.018, 0.045, at + Vector3(0, tall + 0.022, 0), FIT_FLAME_CORE, "glow", 5)
+	for k in 5:
+		var patch := Vector2(-1.0 + 0.5 * k, 0.7 - 0.35 * (k % 3))
+		var ground: float = _fit_surface_y(model, patch.x / factor, patch.y / factor) * factor
+		_fit_box(holder, Vector3(0.34, 0.012, 0.22), Vector3(patch.x, ground + 0.006, patch.y), Color("4a6a36"), "", 0.6 * k)
 
 
 # Emberforge: the forge's red light moves onto its own glowing hearth (the model's emissive part),
