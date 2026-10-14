@@ -1,0 +1,70 @@
+{
+  "_note": "Town zoning outside the walls. Each zone level lists the art it grows into (art/catalog.json asset keys, picked per lot); swap them freely. Needs are checked before a lot moves up a level.",
+  "cellMetres": 4,
+  "growSeconds": 3.5,
+  "buildSeconds": 6,
+  "incomeSeconds": 60,
+  "safeFromWalls": 22,
+  "safeFromOutpost": 20,
+  "road": {
+    "name": "Road",
+    "color": "a68a62",
+    "cost": {"wood": 4},
+    "blurb": "Zones only grow beside a road that leads back to the manor or an outpost."
+  },
+  "order": ["housing", "farming", "industrial", "civic"],
+  "zones": {
+    "housing": {
+      "name": "Housing",
+      "short": "Homes",
+      "color": "7cc46a",
+      "blurb": "Townsfolk move in and pay Gold in rent. Homes want food, safety, and work nearby.",
+      "levels": [
+        {"name": "Hovels", "assets": ["cottage_t1"], "residents": 4, "income": {"gold": 2}, "needs": []},
+        {"name": "Cottages", "assets": ["cottage_t2", "cottage_t3"], "residents": 8, "income": {"gold": 4}, "seconds": 40,
+         "needs": [{"kind": "farming", "within": 6}, {"kind": "food", "amount": 20}, {"kind": "safety"}]},
+        {"name": "Townhouses", "assets": ["cottage_t4", "longhouse_t3", "cottage_t5"], "residents": 14, "income": {"gold": 7}, "seconds": 80,
+         "needs": [{"kind": "civic", "within": 6}, {"kind": "industrial", "within": 8}, {"kind": "safety"}]}
+      ]
+    },
+    "farming": {
+      "name": "Farming",
+      "short": "Farms",
+      "color": "e3c14b",
+      "blurb": "Fields, pastures and mills that send Food to the manor. They need hands from nearby homes.",
+      "levels": [
+        {"name": "Smallholdings", "assets": ["farm_t1", "pasture_t1", "grove_t1"], "jobs": 3, "income": {"food": 4}, "needs": []},
+        {"name": "Farmsteads", "assets": ["farm_t3", "mill_t2", "pasture_t3"], "jobs": 5, "income": {"food": 7}, "seconds": 40,
+         "needs": [{"kind": "housing", "within": 6}]},
+        {"name": "Granges", "assets": ["mill_t4", "bakery_t4", "farm_t5"], "jobs": 8, "income": {"food": 11}, "seconds": 80,
+         "needs": [{"kind": "housing", "within": 6, "count": 3}, {"kind": "industrial", "within": 8}]}
+      ]
+    },
+    "industrial": {
+      "name": "Industry",
+      "short": "Industry",
+      "color": "e07b3c",
+      "blurb": "Timber yards, workshops and forges that send Wood and Stone to the manor. Loud: homes prefer a little distance.",
+      "levels": [
+        {"name": "Yards", "assets": ["lumber_t1", "timber_yard_t1", "tannery_t1"], "jobs": 4, "income": {"wood": 3}, "needs": []},
+        {"name": "Workshops", "assets": ["sawmill_t2", "workshop_t3", "mason_yard_t2"], "jobs": 7, "income": {"wood": 5, "stone": 1}, "seconds": 45,
+         "needs": [{"kind": "housing", "within": 8}, {"kind": "people", "amount": 12}]},
+        {"name": "Forges", "assets": ["forge_t4", "smeltery_t4", "sawmill_t5"], "jobs": 10, "income": {"wood": 8, "stone": 3}, "seconds": 90,
+         "needs": [{"kind": "housing", "within": 8, "count": 3}, {"kind": "farming", "within": 8}, {"kind": "people", "amount": 30}]}
+      ]
+    },
+    "civic": {
+      "name": "Civic",
+      "short": "Civic",
+      "color": "6f9be8",
+      "blurb": "Watch posts, chapels and markets. They keep the town safe and let homes and industry grow finer.",
+      "levels": [
+        {"name": "Watch Posts", "assets": ["bellcote_t1", "scout_post_t2", "watchfire_t2"], "jobs": 2, "income": {}, "needs": [{"kind": "people", "amount": 4}]},
+        {"name": "Chapels", "assets": ["chapel_t2", "schoolroom_t2", "market_t2"], "jobs": 4, "income": {"gold": 2}, "seconds": 50,
+         "needs": [{"kind": "housing", "within": 6, "count": 3}]},
+        {"name": "Halls", "assets": ["chapel_t4", "bell-tower_t3", "market_t4"], "jobs": 6, "income": {"gold": 5}, "seconds": 90,
+         "needs": [{"kind": "people", "amount": 50}, {"kind": "farming", "within": 10}]}
+      ]
+    }
+  }
+}

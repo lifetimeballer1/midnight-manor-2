@@ -61,6 +61,14 @@ with your fighters (win loot; beat it small enough and it swears to you). Tap wi
 outpost that pushes your border out. Friendly neighbours send traders, hostile ones send scouts and
 overrun outposts. See `docs/REALM.md`; `test_realm`, `test_realm_life` and `test_realm_terrain` cover it.
 
+## The Town Outside the Walls (zoning, in development)
+
+Tap **Town** in the bottom bar to zone the manor's land outside the village: lay roads from the
+village edge (or an outpost), paint Homes, Farms, Industry and Civic beside them, and the town
+builds itself when there is demand, levelling lots up into finer buildings as their needs are met.
+Lots send Gold, Food, Wood and Stone to the manor. Art per level lives in `data/zones.json`.
+See `docs/TOWN_ZONING.md`; `test_town_zoning` covers it.
+
 ## Project layout
 
 ### Manor Studio
