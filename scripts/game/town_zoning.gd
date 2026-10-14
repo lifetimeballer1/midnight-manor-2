@@ -170,14 +170,33 @@ func land_reason(c: Vector2i) -> String:
 	var reason: String = _ground_reason(c)
 	if reason.is_empty():
 		var centre: Vector2 = cell_centre(c)
-		if realm._owner_from(_claims, centre) != "home":
-			reason = "Not the manor's land. Claim it with an outpost first."
+		var owner: String = realm._owner_from(_claims, centre)
+		if owner == "":
+			reason = "Wild land. Tap it to buy it for the town."
+		elif owner != "home":
+			reason = "%s's land. Tap it to see how to take it." % str(realm.settlement(owner).get("name", "A neighbour"))
 		else:
 			for outpost: Dictionary in realm.outposts:
 				if (outpost["pos"] as Vector2).distance_to(centre) < cell * 0.9:
 					reason = "An outpost stands here."
 	_land[c] = reason
 	return reason
+
+
+# Who holds a cell's ground: "home", a neighbour's id, or "" for wild land.
+func land_owner(c: Vector2i) -> String:
+	if realm == null:
+		return ""
+	land_reason(c)   # refreshes the claims when borders moved
+	return realm._owner_from(_claims, cell_centre(c))
+
+
+# Wild ground beside the manor's own that the town could buy (realm deeds), cell by cell.
+func buyable(c: Vector2i) -> bool:
+	if realm == null or in_village(c) or not _ground_reason(c).is_empty():
+		return false
+	land_reason(c)
+	return realm.deed_reason(cell_centre(c), _claims).is_empty()
 
 
 func _current_land_key() -> String:

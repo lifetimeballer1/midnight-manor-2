@@ -31,6 +31,7 @@ func _run() -> void:
 	_growth_checks()
 	_save_checks()
 	_depth_checks()
+	_frontier_checks()
 	await _scene_checks()
 	print("test_town_zoning: %d checks, %d failures" % [checks, failures.size()])
 	if failures.is_empty():
@@ -278,6 +279,40 @@ func _depth_checks() -> void:
 	check(legacy.best_tier == titled.best_tier, "and remembers it")
 
 
+# The town is never fenced in: wild land beside it can be bought, a neighbour's has to be taken.
+func _frontier_checks() -> void:
+	var town = _town()
+	var realm = town.realm
+	var wild := Vector2i(0, 14)   # just past the home claim, south of the village
+	check(realm.owner_at(town.cell_centre(wild).x, town.cell_centre(wild).y) == "", "the test cell is wild land")
+	check(town.land_reason(wild).begins_with("Wild land"), "wild land says it can be bought (%s)" % town.land_reason(wild))
+	check(town.buyable(wild), "wild land beside the manor's is for sale")
+	check(not town.buyable(Vector2i(0, 9)), "the manor's own land is not for sale")
+	var far := Vector2i(0, 40)
+	check(not town.buyable(far), "land far from the manor's is not for sale yet")
+	var cost: Dictionary = realm.deed_cost()
+	check(int(cost.get("gold", 0)) > 0, "land costs Gold")
+	check(realm.buy_deed(town.cell_centre(wild)), "the manor buys wild land")
+	check(town.can_build(wild), "bought land can be zoned (%s)" % town.land_reason(wild))
+	check(int(realm.deed_cost()["gold"]) > int(cost["gold"]), "each parcel costs more than the last")
+	check(town.paint_road(Vector2i(0, 13)).is_empty() and town.paint_road(wild).is_empty(), "roads run onto bought land")
+	var copy = RealmMap.new()
+	check(copy.from_dict(JSON.parse_string(JSON.stringify(realm.to_dict()))) and copy.deeds.size() == 1, "bought land survives a save")
+	var old: Dictionary = realm.to_dict()
+	old.erase("deeds")
+	var legacy = RealmMap.new()
+	check(legacy.from_dict(old) and legacy.deeds.is_empty(), "a realm save from before buying land still loads")
+	# A neighbour's land is never for sale.
+	var held: Vector2i = Vector2i(-9999, -9999)
+	for site: Dictionary in realm.settlements:
+		if not bool(site["vassal"]):
+			held = town.cell_of(site["centre"])
+			break
+	if held.x != -9999:
+		check(not town.buyable(held), "a neighbour's land cannot be bought")
+		check(town.land_reason(held).contains("take it") or not town._ground_reason(held).is_empty(), "a neighbour's land says how to take it (%s)" % town.land_reason(held))
+
+
 func _save_checks() -> void:
 	var town = _town()
 	_south_strip(town, 3)
@@ -390,6 +425,17 @@ func _scene_checks() -> void:
 	check(float(game.sim.resources["stone"]) < 100.0, "paving costs Stone")
 	game._town_sync()
 	check(game.town_road_mesh_ok(), "paved roads draw")
+	# Past the border: a tap on wild land opens the buy card; buying makes it the town's.
+	var wild := Vector2i(0, 14)
+	game.sim.resources["gold"] = 500.0
+	game.sim.resources["wood"] = 500.0
+	game.town_set_tool("housing")
+	game._town_card_cell = wild
+	game._open_panel("town_land")
+	check(game.panel == "town_land", "wild land opens a card to buy it")
+	check(game.town_buy_land(wild) and game.town.can_build(wild), "the town buys wild land from its card")
+	check(float(game.sim.resources["gold"]) < 500.0, "buying land costs Gold")
+	game._close_panel()
 	# Badges: with the tools out, lots held back say what they need.
 	game.town.village_food = 0.0
 	game._town_refresh_badges()

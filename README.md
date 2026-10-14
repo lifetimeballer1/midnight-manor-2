@@ -68,7 +68,9 @@ village edge (or an outpost), paint Homes, Farms, Industry and Civic beside them
 builds itself when there is demand, levelling lots up into finer buildings as their needs are met.
 Lots send Gold, Food, Wood and Stone to the manor. Pave roads with Stone to speed the lots beside
 them, keep homes away from industry, and watch the town earn its titles (Hamlet, Village, Market
-Town...). Art per level lives in `data/zones.json`.
+Town...). The land past the border is never locked: buy wild ground, or take a neighbour's by
+raiding them; the four reaches can be bought or won on the Frontier. Art per level lives in
+`data/zones.json`.
 See `docs/TOWN_ZONING.md`; `test_town_zoning` covers it.
 
 ## Project layout

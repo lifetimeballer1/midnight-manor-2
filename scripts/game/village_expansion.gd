@@ -174,7 +174,16 @@ func refresh(sim, plots: Dictionary) -> void:
 		(record["fog_b"] as MeshInstance3D).visible = not saver
 		var reason: String = str(sim.expansion_reason(id))
 		var ready: bool = reason.is_empty()
-		var status: String = "TAP TO CLAIM" if ready else reason
+		var status: String = reason
+		if ready:
+			# Tapping spends at once, so a reach being bought names its price first.
+			status = "TAP TO CLAIM"
+			if sim.has_method("expansion_won") and not sim.expansion_won(id):
+				var parts: PackedStringArray = []
+				var cost: Dictionary = sim.expansion_cost(id)
+				for resource: String in cost:
+					parts.append("%d %s" % [int(cost[resource]), resource.capitalize()])
+				status = "TAP TO BUY / %s" % ", ".join(parts)
 		var label_text: String = "%s\n%s" % [str(plots[id]["label"]), status]
 		if label_text == str(record["text"]):
 			continue

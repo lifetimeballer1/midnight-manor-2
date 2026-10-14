@@ -852,9 +852,19 @@ func world_bounds() -> Rect2i:
 	return bounds
 
 
+# The reaches are never locked away: the manor can buy one outright, or fight for its region on the
+# Frontier (secure it) and then pay only the cost of settling it.
+func expansion_won(id: String) -> bool:
+	if not EXPANSION_PLOTS.has(id):
+		return false
+	return chronicle.region_state(str(EXPANSION_PLOTS[id]["region"])) in ["secured", "developed"]
+
+
 func expansion_cost(id: String) -> Dictionary:
 	var claimed: int = expansions.size()
-	return {"wood": 250 + 150 * claimed, "stone": 100 + 60 * claimed}
+	if expansion_won(id):
+		return {"wood": 250 + 150 * claimed, "stone": 100 + 60 * claimed}
+	return {"wood": 300 + 150 * claimed, "stone": 100 + 60 * claimed, "gold": 120 + 80 * claimed}
 
 
 func expansion_reason(id: String) -> String:
@@ -864,18 +874,15 @@ func expansion_reason(id: String) -> String:
 		return "Already claimed."
 	if raid_active or raid_warning:
 		return "No claiming during a raid."
-	# Same act gate as the Frontier button in village_game.gd.
-	if chronicle.act < 4:
-		return "The Frontier is not open yet."
-	var region: String = str(EXPANSION_PLOTS[id]["region"])
-	if chronicle.region_state(region) not in ["secured", "developed"]:
-		return "Secure %s first." % str(chronicle.region_data(region).get("name", region))
 	var cost: Dictionary = expansion_cost(id)
 	if not _affordable(cost):
 		var parts: PackedStringArray = []
 		for resource: String in cost:
 			parts.append("%d %s" % [int(cost[resource]), resource.capitalize()])
-		return "Needs %s." % ", ".join(parts)
+		if expansion_won(id):
+			return "Needs %s." % ", ".join(parts)
+		var region: String = str(EXPANSION_PLOTS[id]["region"])
+		return "Buy for %s, or win %s to pay less." % [", ".join(parts), str(chronicle.region_data(region).get("name", region))]
 	return ""
 
 
@@ -883,9 +890,10 @@ func expand(id: String) -> bool:
 	notice = expansion_reason(id)
 	if not notice.is_empty():
 		return false
+	var bought: bool = not expansion_won(id)
 	_spend(expansion_cost(id))
 	expansions.append(id)
-	notice = "%s claimed. The ground grows." % str(EXPANSION_PLOTS[id]["label"])
+	notice = ("%s bought. The ground grows." if bought else "%s claimed. The ground grows.") % str(EXPANSION_PLOTS[id]["label"])
 	_invalidate()
 	return true
 

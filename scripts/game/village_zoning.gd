@@ -15,6 +15,10 @@ extends "res://scripts/game/village_polish.gd"
 #   * Dragging the Road (or Pave) tool plans a straight run with its cost shown before anything is
 #     spent; letting go lays it. Pave turns a road to cobbles for Stone, which speeds the lots
 #     beside it and lets the finest homes and halls rise.
+#   * The town is never fenced in: a tap on wild ground past its border offers to buy it (a parcel
+#     about the size of a few lots, each a little dearer than the last); a tap on a neighbour's land
+#     offers to take it by force (a raid that breaks them swears them, and their land, to the manor)
+#     or to win them over with gifts. With the tools out, buyable ground shows a gold grid.
 #   * With the tools out, each lot held back shows what it needs; a lot cut off from the manor
 #     shows it at any time. Income rises off the lots as it arrives, and the town's title (Hamlet,
 #     Village...) heads the zoning bar.
@@ -439,6 +443,11 @@ func _map_click(screen: Vector2) -> void:
 		if town.lots.has(c) and _town_tool != "erase":
 			town_inspect(c)
 			return
+		# Ground past the border: buy it, or see how to take it from whoever holds it.
+		if _town_tool != "erase" and _town_land_for_taking(c):
+			_town_card_cell = c
+			_open_panel("town_land")
+			return
 		town_paint_cell(c)
 		_town_place_cursor(c)
 		town_save()
@@ -645,7 +654,9 @@ func _open_panel(which: String) -> void:
 	if town == null or not which.begins_with("town_"):
 		return
 	var c: Vector2i = _town_card_cell
-	if which == "town_lot" and town.lots.has(c):
+	if which == "town_land" and _town_land_for_taking(c):
+		_town_land_card(c)
+	elif which == "town_lot" and town.lots.has(c):
 		_town_lot_card(c)
 	elif which == "town_cell" and town.zones.has(c):
 		_town_cell_card(c)
@@ -712,6 +723,74 @@ func _town_cell_card(c: Vector2i) -> void:
 		why = "Ready. Something will rise here soon."
 	ui.body(why, side_content, 12)
 	ui.command_button("Unzone", _town_unzone.bind(c), side_content)
+
+
+# Ground the town could have but does not hold yet: wild, or a neighbour's (not the river, slopes,
+# the village or the realm's edge).
+func _town_land_for_taking(c: Vector2i) -> bool:
+	if town.in_village(c) or not town._ground_reason(c).is_empty():
+		return false
+	return town.land_owner(c) != "home"
+
+
+func _town_land_card(c: Vector2i) -> void:
+	var owner: String = town.land_owner(c)
+	var centre: Vector2 = town.cell_centre(c)
+	if owner == "":
+		ui.heading("WILD LAND", side_content)
+		ui.rule(side_content)
+		ui.body("Nobody holds this ground. Buy it and the land about %d m around this spot becomes the manor's, ready to zone." % int(RealmMap.DEED_RADIUS), side_content)
+		var cost: Dictionary = realm.deed_cost()
+		var reason: String = realm.deed_reason(centre)
+		if reason.is_empty() and not sim._affordable(cost):
+			reason = "Not enough in store: " + _cost_text(cost)
+		var button: Button = ui.gold_button("Buy Land / " + _cost_text(cost), _town_buy_land.bind(c), side_content)
+		button.disabled = not reason.is_empty()
+		button.tooltip_text = reason
+		ui.body(reason if not reason.is_empty() else "Land bought so far: %d parcels. Each costs a little more than the last." % realm.deeds.size(), side_content, 12)
+		ui.body("An outpost (from the realm map, with the tools put away) claims a wider ring and can stand farther out.", side_content, 12)
+		return
+	var site: Dictionary = realm.settlement(owner)
+	ui.heading(str(site.get("name", "A neighbour")).to_upper() + "'S LAND", side_content)
+	ui.rule(side_content)
+	ui.body("%d people / %s / defence %d. Their land is not for sale: take it by force, or win them over." % [int(site.get("pop", 0)), realm.attitude(site).capitalize(), int(realm.defence_of(site))], side_content)
+	ui.body("Win raids until they are small enough to break, and they swear to the manor: all their land becomes yours to zone.", side_content, 12)
+	var fighters: Dictionary = realm_fighters()
+	var reason: String = realm.raid_reason(owner, int(fighters["count"]))
+	if reason.is_empty() and not sim._affordable(RealmMap.RAID_COST):
+		reason = "Not enough supplies: " + _cost_text(RealmMap.RAID_COST)
+	var raid_button: Button = ui.gold_button("Raid / " + _cost_text(RealmMap.RAID_COST), _realm_raid.bind(owner), side_content)
+	raid_button.disabled = not reason.is_empty()
+	raid_button.tooltip_text = reason
+	ui.body(reason if not reason.is_empty() else "%d fighters, strength %d, against defence %d." % [int(fighters["count"]), int(fighters["strength"]), int(realm.defence_of(site))], side_content, 12)
+	var gift: Button = ui.command_button("Send Gifts / " + _cost_text(RealmMap.GIFT_COST), _realm_gift.bind(owner), side_content)
+	gift.disabled = not sim._affordable(RealmMap.GIFT_COST)
+
+
+# Buys the wild land around a cell for the town. Returns true when it was bought.
+func town_buy_land(c: Vector2i) -> bool:
+	var centre: Vector2 = town.cell_centre(c)
+	var cost: Dictionary = realm.deed_cost()
+	if not realm.deed_reason(centre).is_empty() or not sim._affordable(cost):
+		_town_stroke_denied = false
+		_town_deny(realm.deed_reason(centre) if not realm.deed_reason(centre).is_empty() else "Not enough in store: " + _cost_text(cost))
+		return false
+	sim._spend(cost)
+	realm.buy_deed(centre)
+	sim.notice = "The manor buys the land around this spot. Zone it and build."
+	_play_sfx("confirm")
+	_impact_burst(_town_point(c, 0.6), UI.GOLD, 16, 1.4, true)
+	_town_grid_revision = -1
+	_town_drawn_mode = ""
+	if has_method("realm_save"):
+		call("realm_save")
+	_refresh_hud()
+	return true
+
+
+func _town_buy_land(c: Vector2i) -> void:
+	town_buy_land(c)
+	_close_panel()
 
 
 func _town_clear_lot(c: Vector2i) -> void:
@@ -1099,10 +1178,18 @@ func _town_build_grid() -> void:
 	var line := Color(1.0, 0.97, 0.88, 0.16)
 	# The Civic tool shows where the town is safe already (walls, outposts, watch posts).
 	var show_safe: bool = _town_tool == "civic"
+	var sale := Color(UI.GOLD, 0.42)
 	for dz in range(-reach, reach + 1):
 		for dx in range(-reach, reach + 1):
 			var c: Vector2i = centre + Vector2i(dx, dz)
-			if not town.can_build(c) or town.roads.has(c):
+			if not town.can_build(c):
+				# Wild ground the town could buy shows a faint gold grid.
+				if town.buyable(c):
+					_town_cell_quad(tool, c, Vector2(0.0, 0.0), Vector2(4.0, 0.14), sale, 0.0)
+					_town_cell_quad(tool, c, Vector2(0.0, 0.0), Vector2(0.14, 4.0), sale, 0.0)
+					count += 1
+				continue
+			if town.roads.has(c):
 				continue
 			if show_safe and town.safe(c):
 				_town_cell_quad(tool, c, Vector2(0.0, 0.0), Vector2(4.0, 4.0), Color(TOWN_SAFE_COLOR, 0.11), -0.008)

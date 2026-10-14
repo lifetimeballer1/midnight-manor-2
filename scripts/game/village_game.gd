@@ -2157,7 +2157,7 @@ func _expansion_goal_text() -> String:
 	if sim.chronicle.region_state(region) in ["secured", "developed"]:
 		return "Expand: %s - %s" % [label, reason]
 	var region_name: String = str(sim.chronicle.region_data(region).get("name", region))
-	return "Expand: %s - secure %s" % [label, region_name]
+	return "Expand: %s - buy it or win %s" % [label, region_name]
 
 
 # Expansion sync: slabs for claimed plots, ghosts for the rest, base edges hidden where a plot now covers them.
@@ -2206,7 +2206,7 @@ func _refresh_progressive_ui() -> void:
 	if more_tech_button != null and is_instance_valid(more_tech_button):
 		more_tech_button.visible = _research_surface_ready()
 	if more_frontier_button != null and is_instance_valid(more_frontier_button):
-		more_frontier_button.visible = sim.chronicle.act >= 4
+		more_frontier_button.visible = true   # the Frontier is open from the start: fight for it or buy
 	if more_board_button != null and is_instance_valid(more_board_button):
 		more_board_button.visible = sim.chronicle.act >= 5
 	if more_doctrine_button != null and is_instance_valid(more_doctrine_button):

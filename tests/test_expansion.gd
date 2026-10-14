@@ -70,11 +70,27 @@ func test_in_world() -> void:
 func test_locked_plots() -> void:
 	var sim = Sim.new()
 	check(sim.expansion_reason("moon") == "Unknown reach.", "unknown plot ids are refused")
-	check(sim.expansion_reason("west") == "The Frontier is not open yet.", "claiming waits for the Frontier act")
-	sim.chronicle.act = 4
-	check(sim.expansion_reason("west") == "Secure Blackwater Mouth first.", "claiming waits for the region to be secured")
-	check(not sim.expand("west") and sim.notice == "Secure Blackwater Mouth first.", "refused expand sets notice to the reason")
+	# The reaches are never locked: an unfought reach is bought outright, at a higher price.
+	sim.resources["wood"] = 0.0
+	sim.resources["stone"] = 0.0
+	sim.resources["gold"] = 0.0
+	var buy: String = "Buy for 300 Wood, 100 Stone, 120 Gold, or win Blackwater Mouth to pay less."
+	check(sim.expansion_reason("west") == buy, "an unfought reach names its buy price and the fight (%s)" % sim.expansion_reason("west"))
+	check(not sim.expand("west") and sim.notice == buy, "refused expand sets notice to the reason")
 	check(sim.expansions.is_empty(), "refused expand claims nothing")
+	var buyer = Sim.new()
+	buyer.resources["wood"] = 300.0
+	buyer.resources["stone"] = 100.0
+	buyer.resources["gold"] = 120.0
+	check(buyer.expansion_reason("west") == "", "a reach can be bought before any fighting, in Act %d" % buyer.chronicle.act)
+	check(buyer.expand("west") and buyer.notice.contains("bought"), "buying a reach claims it")
+	check(buyer.resources["wood"] == 0.0 and buyer.resources["gold"] == 0.0, "buying spends the buy price")
+	var fought = Sim.new()
+	fought.chronicle.set_region("whisperwood", "scouted")
+	fought.chronicle.set_region("whisperwood", "contested")
+	fought.chronicle.set_region("whisperwood", "secured")
+	check(fought.chronicle.region_state("whisperwood") == "secured", "a region can be fought for before Act IV")
+	check(not fought.expansion_cost("east").has("gold") and int(fought.expansion_cost("east")["wood"]) < int(Sim.new().expansion_cost("east")["wood"]), "winning the region makes the reach cheaper")
 	check(not sim.build("farm", -2, 4) and sim.notice == "Outside the village.", "building in a locked west plot is refused")
 	check(sim.build_reason("farm", 22, 4) == "Outside the village.", "building in a locked east plot is refused")
 
@@ -114,7 +130,14 @@ func test_claim_flow() -> void:
 
 
 func test_cost_scaling() -> void:
+	var bought = Sim.new()
+	check(bought.expansion_cost("east") == {"wood": 300, "stone": 100, "gold": 120}, "buying an unfought reach costs 300 Wood, 100 Stone and 120 Gold")
+	bought.expansions.append("west")
+	check(bought.expansion_cost("north") == {"wood": 450, "stone": 160, "gold": 200}, "buy prices scale too")
 	var sim = Sim.new()
+	for region: String in ["whisperwood", "starwatch-ridge", "southreach", "blackwater-mouth"]:
+		for state: String in ["scouted", "contested", "secured"]:
+			sim.chronicle.set_region(region, state)
 	check(sim.expansion_cost("east") == {"wood": 250, "stone": 100}, "first claim costs 250 Wood and 100 Stone")
 	sim.expansions.append("west")
 	check(sim.expansion_cost("north") == {"wood": 400, "stone": 160}, "second claim costs 400 Wood and 160 Stone")

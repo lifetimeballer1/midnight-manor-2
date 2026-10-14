@@ -72,6 +72,8 @@ const OUTPOST_MAX: int = 6
 const OUTPOST_COST: Dictionary = {"wood": 120, "gold": 60}
 const OUTPOST_SITE_CLEAR: float = 24.0    # never inside a settlement's own streets
 const OUTPOST_OVERRUN: float = 10.0       # a hostile claim this far past an outpost takes it
+const DEED_RADIUS: float = 14.0           # land bought for the town: this far around the spot
+const DEED_MAX: int = 40
 # Raids: the manor's fighters march out and fight a neighbour.
 const RAID_COST: Dictionary = {"food": 20, "gold": 10}
 const RAID_MIN_FIGHTERS: int = 2
@@ -105,6 +107,7 @@ var home_plots: int = 0
 var settlements: Array[Dictionary] = []  # {id, name, color, centre: Vector2, ground: float, pop, growth,
                                           #  relation, vassal, cooldown, travel}
 var outposts: Array[Dictionary] = []     # {id, pos: Vector2}
+var deeds: Array[Vector2] = []           # land the manor bought outright (wild ground beside its own)
 var raid: Dictionary = {}                # {site, strength, left, total, start: Vector2} while marching
 var events: Array[Dictionary] = []       # for the realm layer: take_events() drains them
 var bridges: Array[Dictionary] = []      # {pos: Vector2, dir: Vector2, length: float}
@@ -124,6 +127,7 @@ func generate(new_seed: int) -> void:
 	_setup_noise()
 	settlements.clear()
 	outposts.clear()
+	deeds.clear()
 	raid = {}
 	events.clear()
 	_next_outpost = 1
@@ -494,6 +498,8 @@ func claims() -> Array[Dictionary]:
 	var result: Array[Dictionary] = [{"owner": "home", "centre": Vector2.ZERO, "radius": home_radius()}]
 	for outpost: Dictionary in outposts:
 		result.append({"owner": "home", "centre": outpost["pos"], "radius": OUTPOST_RADIUS})
+	for deed: Vector2 in deeds:
+		result.append({"owner": "home", "centre": deed, "radius": DEED_RADIUS})
 	for site: Dictionary in settlements:
 		result.append({"owner": "home" if bool(site["vassal"]) else str(site["id"]), "centre": site["centre"], "radius": claim_radius(site)})
 	return result
@@ -626,6 +632,45 @@ func found_outpost(pos: Vector2) -> bool:
 	var holder: String = _owner_from(_site_claims(), pos)
 	if holder != "":
 		_shift_relation(settlement(holder), -10.0)
+	return true
+
+
+# --- Buying land ----------------------------------------------------------------------------------
+
+# Wild ground beside the manor's own can be bought outright; a neighbour's land has to be fought for
+# (or won over) instead. Each parcel costs a little more than the last.
+func deed_cost() -> Dictionary:
+	var count: int = deeds.size()
+	return {"gold": 50 + 25 * count, "wood": 40 + 20 * count}
+
+
+# Why the land at pos cannot be bought, or "". all_claims may be passed in for many lookups.
+func deed_reason(pos: Vector2, all_claims: Array[Dictionary] = []) -> String:
+	if all_claims.is_empty():
+		all_claims = claims()
+	if deeds.size() >= DEED_MAX:
+		return "The manor has bought all the land it can hold."
+	if absf(pos.x) > EDGE_DROP_FROM - 8.0 or absf(pos.y) > EDGE_DROP_FROM - 8.0:
+		return "Too far out."
+	if is_water(pos.x, pos.y):
+		return "The river runs here."
+	var owner: String = _owner_from(all_claims, pos)
+	if owner == "home":
+		return "The manor holds this land already."
+	if owner != "":
+		return "%s holds this land. Take it by force, or win them over." % str(settlement(owner).get("name", "A neighbour"))
+	for claim: Dictionary in all_claims:
+		if claim["owner"] == "home" and (claim["centre"] as Vector2).distance_to(pos) <= float(claim["radius"]) + DEED_RADIUS * 0.8:
+			return ""
+	return "Buy land next to the manor's own, step by step."
+
+
+# The caller pays deed_cost() first.
+func buy_deed(pos: Vector2) -> bool:
+	if not deed_reason(pos).is_empty():
+		return false
+	deeds.append(pos)
+	revision += 1
 	return true
 
 
@@ -883,7 +928,11 @@ func to_dict() -> Dictionary:
 		march = {"site": raid["site"], "strength": int(raid["strength"]), "fighters": int(raid["fighters"]),
 			"left": float(raid["left"]), "total": float(raid["total"]),
 			"x": (raid["start"] as Vector2).x, "z": (raid["start"] as Vector2).y}
-	return {"version": VERSION, "seed": seed_value, "elapsed": elapsed, "settlements": sites, "outposts": posts, "raid": march, "fish_clock": fish_clock}
+	var bought: Array = []
+	for deed: Vector2 in deeds:
+		bought.append({"x": deed.x, "z": deed.y})
+	return {"version": VERSION, "seed": seed_value, "elapsed": elapsed, "settlements": sites, "outposts": posts, "raid": march, "fish_clock": fish_clock,
+		"deeds": bought}
 
 
 # Regenerates the world from its seed, then restores each settlement's growth. Returns false and
@@ -922,6 +971,13 @@ func from_dict(data: Variant) -> bool:
 					var id: int = int(entry.get("id", _next_outpost))
 					outposts.append({"id": id, "pos": pos})
 					_next_outpost = maxi(_next_outpost, id + 1)
+	var bought: Variant = data.get("deeds", [])
+	if bought is Array:
+		for entry: Variant in bought:
+			if entry is Dictionary and deeds.size() < DEED_MAX:
+				var spot := Vector2(float(entry.get("x", 0.0)), float(entry.get("z", 0.0)))
+				if is_finite(spot.x) and is_finite(spot.y) and absf(spot.x) <= HALF and absf(spot.y) <= HALF:
+					deeds.append(spot)
 	var march: Variant = data.get("raid", {})
 	if march is Dictionary and not (march as Dictionary).is_empty() and not settlement(str(march.get("site", ""))).is_empty():
 		var total: float = maxf(float(march.get("total", 1.0)), 1.0)

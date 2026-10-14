@@ -291,8 +291,6 @@ func region_reason(id: String, target: String) -> String:
 		return "A region cannot fall back."
 	if wanted > current + 1:
 		return "Requires %s first." % str(states[current + 1]).capitalize()
-	if wanted >= 2 and act < 4:
-		return "Requires Act IV / Beyond the Lanterns."
 	return ""
 
 

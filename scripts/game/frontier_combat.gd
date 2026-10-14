@@ -10,7 +10,6 @@ var attempt: int = 0
 func reason(sim, region: String, crew: Array) -> String:
 	if not active.is_empty(): return "An expedition is already away."
 	if sim.chronicle.region_data(region).is_empty(): return "Unknown region."
-	if sim.chronicle.act < 4: return "Requires Act IV / Beyond the Lanterns."
 	if sim.raid_active or sim.raid_warning: return "Hold the Manor until the alarm passes."
 	if crew.is_empty() or crew.size() > 8: return "Choose one to eight defenders."
 	var seen: Dictionary = {}
@@ -162,7 +161,7 @@ func valid(data: Variant, units: Array, progression: Dictionary, roles: Dictiona
 			if not _number(result.get(field)) or float(result[field]) != floorf(float(result[field])): return false
 		if result["recovering"] > 8 or result["gold"] > 130: return false
 	if battle.is_empty(): return true
-	if int(data["attempt"]) < 1 or int(progression["act"]) < 4: return false
+	if int(data["attempt"]) < 1: return false   # expeditions run from Act I: the Frontier is open
 	if battle.get("region", "") not in ChronicleData.REGION_ORDER or battle.get("status", "") not in ["running", "won", "lost", "withdrawn"] or battle.get("target", "") not in ["scouted", "contested", "secured", "developed"] or not _number(battle.get("clock")) or battle["clock"] > 180.1:
 		return false
 	var stages: Array = ["unseen", "scouted", "contested", "secured", "developed"]

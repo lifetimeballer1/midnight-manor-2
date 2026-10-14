@@ -18,6 +18,18 @@ town builds itself. The village and its four reaches keep hand-placed building e
   road yet are dotted. The Civic tool tints the ground that is already safe.
 - On phones one finger paints and two fingers move the map; **Move** makes one finger pan.
 
+## The frontier is open: buy it or fight for it
+
+- **Past the town's border.** Tap wild ground with a zone tool and its card offers to buy it:
+  the land about 14 m around the spot becomes the manor's (50 Gold + 40 Wood, each parcel a
+  little dearer). Buyable ground shows a gold grid while the tools are out. A neighbour's land is
+  never for sale: its card offers a Raid (break them and they swear to the manor, land and all)
+  or Gifts to win them over. Outposts still claim a wider ring from the realm map.
+- **The four reaches around the village** are no longer locked behind Act IV. Each can be
+  bought outright (300 Wood, 100 Stone, 120 Gold for the first, rising), or its region won on the
+  Frontier and then settled for the old price (250 Wood, 100 Stone). Frontier expeditions are
+  open from the start. A ready reach's banner shows its price before the tap that claims it.
+
 ## How it grows
 
 - Where: cells on the manor's land (its claim around the village, outposts, sworn neighbours),

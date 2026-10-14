@@ -195,6 +195,36 @@ func _run() -> void:
 		await create_timer(1.5).timeout
 		await capture("zoning_5_outpost.png")
 
+	# 7. Past the border: wild land for sale (gold grid) and its card.
+	game._close_panel()
+	game.town_open()
+	game.town_set_tool("housing")
+	game.sim.resources["gold"] = 400.0
+	frame(2.0, 52.0, 44.0, 38.0, 46.0)
+	game._town_build_grid()
+	game._town_card_cell = Vector2i(0, 14)
+	game._open_panel("town_land")
+	await create_timer(0.8).timeout
+	await capture("zoning_7_buy_land.png")
+	# 8. A neighbour's land: not for sale, take it or win them over.
+	var nearest: Dictionary = {}
+	for site: Dictionary in game.realm.settlements:
+		if not bool(site["vassal"]) and (nearest.is_empty() or (site["centre"] as Vector2).length() < (nearest["centre"] as Vector2).length()):
+			nearest = site
+	if not nearest.is_empty():
+		var at: Vector2 = nearest["centre"]
+		frame(at.x, at.y, 60.0, 38.0, 46.0)
+		game._town_card_cell = game.town.cell_of(at + at.normalized() * -8.0)
+		game._open_panel("town_land")
+		await create_timer(1.2).timeout
+		await capture("zoning_8_neighbour_land.png")
+	game._close_panel()
+	game.town_close()
+	# 9. The reaches around the village: for sale, or cheaper once their region is won.
+	frame(0.0, 10.0, 70.0, 38.0, 46.0)
+	await create_timer(1.0).timeout
+	await capture("zoning_9_reaches.png")
+
 	print("CAPTURE DONE")
 	game.queue_free()
 	await process_frame

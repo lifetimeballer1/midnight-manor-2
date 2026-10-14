@@ -30,10 +30,10 @@ func _run() -> void:
 	if sim.get("frontier") != null:
 		var ids: Array[int] = crew(sim)
 		var food: float = sim.resources["food"]
-		check(not sim.frontier.begin(sim, "starwatch-ridge", ids), "frontier waits for its campaign act")
-		check(sim.resources["food"] == food, "blocked expedition spends nothing")
-		sim.chronicle.act = 4
+		# The Frontier is open from the start: the manor fights for its land (or buys it).
+		check(sim.chronicle.act < 4 and sim.frontier.reason(sim, "starwatch-ridge", ids).is_empty(), "the frontier is open before Act IV")
 		check(not sim.frontier.begin(sim, "unknown-region", ids), "unknown region is rejected")
+		check(sim.resources["food"] == food, "blocked expedition spends nothing")
 		check(not sim.frontier.begin(sim, "starwatch-ridge", [ids[0], ids[0]]), "duplicate crew member is rejected")
 		check(sim.frontier.begin(sim, "starwatch-ridge", ids), "eligible real defenders can enter the first frontier map")
 		check(sim.resources["food"] == food - 20.0, "expedition costs Food once")
