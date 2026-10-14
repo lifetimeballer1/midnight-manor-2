@@ -1,4 +1,4 @@
-extends "res://scripts/game/village_realm_life.gd"
+extends "res://scripts/game/village_building_fit.gd"
 
 # Feel layer: small presentation touches with no simulation effect.
 #  - A selected building gives a soft squash-and-settle bounce.
