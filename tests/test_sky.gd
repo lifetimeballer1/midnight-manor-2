@@ -129,8 +129,10 @@ func _run() -> void:
 	game._sky_alarm = 0.0
 	game.sim.raid_active = false
 
-	# Blood moon: the sky reddens while the blood raid lasts.
+	# Blood moon: the sky reddens while the blood raid lasts. The game is paused so the simulation
+	# cannot tick this empty raid to its end (which moves the moon on) between frames.
 	_set_time(game, 0.0)
+	game.paused = true
 	game.sim.paused = true
 	game.sim.moon_phase = 4
 	game.sim.raid_active = true
@@ -149,6 +151,7 @@ func _run() -> void:
 	check(absf(float(game._sky_params["moon_phase"]) - 0.5) < 0.01, "the full moon reaches the shader")
 	game.sim.raid_active = false
 	game.sim.moon_phase = 0
+	game.paused = false
 
 	# Phone budget.
 	var per_flock: int = game.BIRDS_PER_FLOCK_LOW if game._sky_is_phone() else game.BIRDS_PER_FLOCK
