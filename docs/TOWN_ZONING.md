@@ -29,6 +29,16 @@ farms, industry and civic buildings rise there on their own, free (see "Zoning t
   and pastures (later butcheries, mills, bakeries) on Farms; lumber camps, mines and timber yards
   (later sawmills, quarries, workshops) on Industry; chapels, scriptoria and schoolrooms on Civic.
   A building rises only where its whole footprint is zoned for it, nearest the Manor Hall first.
+- Zones can sit side by side; the village keeps its ways in and out. A building rises only where
+  it leaves a walkable way from the Manor Hall to its door and to its work stands, never on another
+  building's work stand, never where it would wall anyone else in, and never on a paved road.
+  Well-trodden trails are built on only when nothing else fits, so paths stay lanes.
+- Each building that rises gets a dirt path from its door (its work stands, for a workplace) to the
+  nearest path or the Hall, and the Hall keeps one path out to the village's edge (through an open
+  gate when walled). These are the living village's own trails: villagers prefer them, they wear
+  in with use, fade if nobody walks them, and can be paved. Paths are freshened one building at a
+  time, so villages zoned before this get them too.
+- If a hand-built wall or tower closes a zoned building in, a notice says so once.
 - The simulation's own rules still apply: research and story locks, the village level, the
   building limits per level. Homes rise only while few beds stand empty, so the village grows into
   them. What the current quest asks for, or what a Raise button asked for, rises first.

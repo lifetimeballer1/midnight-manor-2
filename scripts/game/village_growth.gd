@@ -14,6 +14,8 @@ extends RefCounted
 #   * What rises first follows the village's needs: homes only while few beds stand empty, a type
 #     the player asked for (a Raise button, a quest), then whatever there is least of.
 #   * Only active time counts, nothing rises during a raid, and a few rise at once at most.
+#   * Zones side by side still leave everyone a way in and out (find_spot), and each building that
+#     rises gets a dirt path to its door (lay_lanes).
 #
 # The simulation is driven only through its existing building records (_new_building), so the
 # village save keeps its format.
@@ -25,6 +27,9 @@ var grow_clock: float = 0.0
 var upgrade_clock: float = 0.0
 var wishes: Array[String] = []            # types the player asked for, raised first
 var _turn: int = 0                        # which zone gets the first look next time
+var _floods: int = 0                      # reach checks spent in this growth step
+var _cut: Dictionary = {}                 # building id -> true while it has no way in (told once)
+var _tend: int = 0                        # which grown building's paths are freshened next
 
 
 func setup(config: Dictionary, offset: Vector2i, per_cell: int) -> void:
@@ -120,16 +125,20 @@ func rising(sim) -> int:
 	return count
 
 
-# Types the current quest still asks for.
+# Types the current quest still asks for (to build, or to stand and grow a tier).
 func _quest_wants(sim) -> Array[String]:
 	var out: Array[String] = []
 	var quest: Dictionary = sim.quest_current()
 	for objective: Dictionary in quest.get("objectives", []):
-		if str(objective.get("kind", "")) != "build":
+		var kind: String = str(objective.get("kind", ""))
+		if kind not in ["build", "upgrade"]:
 			continue
 		if sim._objective_value(objective) >= sim._objective_target(objective):
 			continue
 		for type_name: Variant in objective.get("types", []):
+			# An upgrade objective asks for buildings that grow tiers on their own: zone more while too few stand.
+			if kind == "upgrade" and sim._buildings_of([str(type_name)]) >= int(objective.get("count", 1)):
+				continue
 			out.append(str(type_name))
 	return out
 
@@ -165,16 +174,20 @@ func ranked(sim, zone: String) -> Array[String]:
 	return out
 
 
-# Where a type could rise on its zone, nearest the hall first, or (-1, -1).
-func find_spot(sim, type_name: String, tiles: Dictionary) -> Vector2i:
+# Where a type could rise on its zone, nearest the hall first, or (-1, -1). A spot must keep the
+# village walkable: the new building needs a way in from the hall (and a work stand to use), and it
+# may not cut anyone else off, cover another building's work stand or sit on a paved road. Spots on a
+# well-trodden trail are taken only when nothing else fits, so the village's paths stay lanes.
+func find_spot(sim, type_name: String, tiles: Dictionary, walk: Variant = null) -> Vector2i:
 	var size: int = int(sim.building_specs[type_name].get("size", 1))
 	var hall: Dictionary = sim._hall()
 	var heart: Vector2 = sim.center(hall) if not hall.is_empty() else Vector2(10, 8)
-	var anchors: Array = tiles.keys()
-	anchors.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
-		var da: float = (Vector2(a) + Vector2.ONE * size * 0.5).distance_squared_to(heart)
-		var db: float = (Vector2(b) + Vector2.ONE * size * 0.5).distance_squared_to(heart)
-		return da < db if not is_equal_approx(da, db) else (a.y < b.y or (a.y == b.y and a.x < b.x)))
+	if walk == null:
+		walk = _walk(sim)
+		_floods = 0
+	if not sim.unlock_reason(type_name).is_empty():
+		return Vector2i(-1, -1)
+	var anchors: Array = _order(sim, tiles, size, heart, walk)
 	for anchor: Vector2i in anchors:
 		var fits: bool = true
 		for dy in size:
@@ -184,11 +197,217 @@ func find_spot(sim, type_name: String, tiles: Dictionary) -> Vector2i:
 		if not fits:
 			continue
 		var reason: String = sim.build_reason(type_name, anchor.x, anchor.y)
-		if reason.is_empty() or reason == "Not enough resources.":
+		if not reason.is_empty() and reason != "Not enough resources.":
+			if reason not in ["This footprint is occupied.", "Outside the village."]:
+				return Vector2i(-1, -1)   # locked, limited or too early: no spot will do
+			continue
+		var footprint := Rect2i(anchor, Vector2i.ONE * size)
+		if walk.is_empty():
+			return anchor                # no hall to walk from: nothing to keep open
+		if not _door_open(sim, walk, type_name, footprint, walk["reached"]) or _covers_stand(walk, footprint):
+			continue
+		if _floods >= FLOOD_BUDGET:
+			return Vector2i(-1, -1)      # try again on the next tick rather than stall a frame
+		_floods += 1
+		var after: PackedByteArray = _flood(walk, footprint)
+		if _door_open(sim, walk, type_name, footprint, after) and _keeps_everyone(walk, after):
 			return anchor
-		if reason not in ["This footprint is occupied.", "Outside the village."]:
-			return Vector2i(-1, -1)   # locked, limited or too early: no spot will do
 	return Vector2i(-1, -1)
+
+
+# Zoned anchors for a footprint size, nearest the hall first and trodden trails last; paved road is
+# left out. Kept for the rest of the growth step.
+func _order(sim, tiles: Dictionary, size: int, heart: Vector2, walk: Dictionary) -> Array:
+	var key: String = "order/%d/%d" % [size, tiles.hash()]
+	if walk.has(key):
+		return walk[key]
+	var trail: float = sim.living.faint_threshold()
+	var rank: Dictionary = {}
+	for anchor: Vector2i in tiles:
+		var penalty: float = 0.0
+		for dy in size:
+			for dx in size:
+				var cell: Dictionary = sim.living.cells.get(sim.living.key(anchor + Vector2i(dx, dy)), {})
+				if cell.get("stone", false):
+					penalty = INF
+				elif float(cell.get("wear", 0.0)) >= trail:
+					penalty = maxf(penalty, 10000.0)
+		if not is_inf(penalty):
+			rank[anchor] = penalty + (Vector2(anchor) + Vector2.ONE * size * 0.5).distance_squared_to(heart)
+	var anchors: Array = rank.keys()
+	anchors.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da: float = float(rank[a])
+		var db: float = float(rank[b])
+		return da < db if not is_equal_approx(da, db) else (a.y < b.y or (a.y == b.y and a.x < b.x)))
+	if not walk.is_empty():
+		walk[key] = anchors
+	return anchors
+
+
+# --- Ways in and out ------------------------------------------------------------------------------
+# Walking is the simulation's own friendly walk grid (_walk_friendly): building footprints block,
+# open gates and traps do not. "Reached" means walkable from the tiles around the Manor Hall.
+
+const FLOOD_BUDGET: int = 24              # full reach checks per growth step
+const STEPS: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+
+
+# The walk grid with today's reach from the hall, and what each building now relies on:
+# {rect, grid, reached, seeds, needs: [{id, any: [index], all: [index]}], stands: {index: true}}.
+# Empty when there is no standing hall to walk from.
+func _walk(sim) -> Dictionary:
+	var hall: Dictionary = sim._hall()
+	if hall.is_empty() or float(hall["hp"]) <= 0.0:
+		return {}
+	sim._refresh_walk_grids()
+	var walk: Dictionary = {"rect": sim._walk_rect, "grid": sim._walk_friendly, "seeds": PackedInt32Array()}
+	for tile: Vector2i in _ring(Rect2i(int(hall["x"]), int(hall["y"]), int(hall["size"]), int(hall["size"]))):
+		var i: int = _index(walk, tile)
+		if i >= 0 and walk["grid"][i] == 0:
+			walk["seeds"].append(i)
+	walk["reached"] = _flood(walk, Rect2i())
+	var needs: Array = []
+	var stands: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		if float(b["hp"]) <= 0.0 or str(b["type"]) in ["trap", "fire-trap"] or int(b["id"]) == int(hall["id"]):
+			continue
+		var need: Dictionary = {"any": PackedInt32Array(), "all": PackedInt32Array()}
+		for tile: Vector2i in _ring(Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"]))):
+			var i: int = _index(walk, tile)
+			if i >= 0 and walk["reached"][i] == 1:
+				need["any"].append(i)
+		for point: Vector2 in sim.stand_candidates(b):
+			var i: int = _index(walk, Vector2i(floori(point.x), floori(point.y)))
+			if i >= 0:
+				stands[i] = true
+				if walk["reached"][i] == 1:
+					need["all"].append(i)
+		if not need["any"].is_empty() or not need["all"].is_empty():
+			needs.append(need)
+	walk["needs"] = needs
+	walk["stands"] = stands
+	return walk
+
+
+func _index(walk: Dictionary, tile: Vector2i) -> int:
+	var rect: Rect2i = walk["rect"]
+	if not rect.has_point(tile):
+		return -1
+	return (tile.y - rect.position.y) * rect.size.x + (tile.x - rect.position.x)
+
+
+func _tile(walk: Dictionary, i: int) -> Vector2i:
+	var rect: Rect2i = walk["rect"]
+	return rect.position + Vector2i(i % rect.size.x, i / rect.size.x)
+
+
+func _ring(footprint: Rect2i) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for y in range(footprint.position.y - 1, footprint.end.y + 1):
+		for x in range(footprint.position.x - 1, footprint.end.x + 1):
+			if not footprint.has_point(Vector2i(x, y)):
+				out.append(Vector2i(x, y))
+	return out
+
+
+# Walkable tiles reached from the hall when `extra` (a building not yet raised) also blocks: 1 = reached.
+func _flood(walk: Dictionary, extra: Rect2i) -> PackedByteArray:
+	var rect: Rect2i = walk["rect"]
+	var grid: PackedByteArray = walk["grid"]
+	if extra.has_area():
+		grid = grid.duplicate()
+		var part: Rect2i = extra.intersection(rect)
+		for y in range(part.position.y, part.end.y):
+			for x in range(part.position.x, part.end.x):
+				grid[(y - rect.position.y) * rect.size.x + (x - rect.position.x)] = 1
+	var width: int = rect.size.x
+	var count: int = grid.size()
+	var reached := PackedByteArray()
+	reached.resize(count)
+	var queue := PackedInt32Array()
+	queue.resize(count)
+	var tail: int = 0
+	for i: int in walk["seeds"]:
+		if grid[i] == 0 and reached[i] == 0:
+			reached[i] = 1
+			queue[tail] = i
+			tail += 1
+	var head: int = 0
+	while head < tail:
+		var i: int = queue[head]
+		head += 1
+		var x: int = i % width
+		if x > 0 and grid[i - 1] == 0 and reached[i - 1] == 0:
+			reached[i - 1] = 1
+			queue[tail] = i - 1
+			tail += 1
+		if x < width - 1 and grid[i + 1] == 0 and reached[i + 1] == 0:
+			reached[i + 1] = 1
+			queue[tail] = i + 1
+			tail += 1
+		if i >= width and grid[i - width] == 0 and reached[i - width] == 0:
+			reached[i - width] = 1
+			queue[tail] = i - width
+			tail += 1
+		if i + width < count and grid[i + width] == 0 and reached[i + width] == 0:
+			reached[i + width] = 1
+			queue[tail] = i + width
+			tail += 1
+	return reached
+
+
+# A new building needs a way in from the hall and, for a workplace, its work stands open and reached.
+# A stand past the village's edge is let go (that worker works from the nearest open tile beside it).
+func _door_open(sim, walk: Dictionary, type_name: String, footprint: Rect2i, reached: PackedByteArray) -> bool:
+	var door: bool = false
+	for tile: Vector2i in _ring(footprint):
+		var i: int = _index(walk, tile)
+		if i >= 0 and reached[i] == 1:
+			door = true
+			break
+	if not door:
+		return false
+	var centre: Vector2 = Vector2(footprint.position) + Vector2.ONE * footprint.size.x * 0.5
+	var stands: int = 0
+	var open: int = 0
+	for offset: Variant in sim.workplace_specs.get(type_name, {}).get("stands", []):
+		if offset is Array and (offset as Array).size() == 2:
+			stands += 1
+			var point: Vector2 = centre + Vector2(float(offset[0]), float(offset[1]))
+			var tile := Vector2i(floori(point.x), floori(point.y))
+			var i: int = _index(walk, tile)
+			if i >= 0 and reached[i] == 1 and not footprint.has_point(tile):
+				open += 1
+			elif sim.in_world(tile):
+				return false     # its stand would sit inside a building or behind one
+	return stands == 0 or open > 0
+
+
+# True when the footprint would sit on another building's work stand.
+func _covers_stand(walk: Dictionary, footprint: Rect2i) -> bool:
+	for y in range(footprint.position.y, footprint.end.y):
+		for x in range(footprint.position.x, footprint.end.x):
+			if walk["stands"].has(_index(walk, Vector2i(x, y))):
+				return true
+	return false
+
+
+# Everyone who could walk to their building (and its work stands) still can.
+func _keeps_everyone(walk: Dictionary, after: PackedByteArray) -> bool:
+	for need: Dictionary in walk["needs"]:
+		var any: PackedInt32Array = need["any"]
+		if not any.is_empty():
+			var open: bool = false
+			for i: int in any:
+				if after[i] == 1:
+					open = true
+					break
+			if not open:
+				return false
+		for i: int in need["all"]:
+			if after[i] == 0:
+				return false
+	return true
 
 
 # Raises one building somewhere zoned for it, free. Returns {type, id, x, y} or {}.
@@ -200,10 +419,12 @@ func grow_one(sim, town) -> Dictionary:
 	if zones.is_empty():
 		return {}
 	zones.sort()
+	var walk: Dictionary = _walk(sim)
+	_floods = 0
 	for i in zones.size():
 		var zone: String = str(zones[(i + _turn) % zones.size()])
 		for type_name: String in ranked(sim, zone):
-			var spot: Vector2i = find_spot(sim, type_name, tiles[zone])
+			var spot: Vector2i = find_spot(sim, type_name, tiles[zone], walk)
 			if spot.x < 0 and spot.y < 0:
 				continue
 			_turn += i + 1
@@ -212,10 +433,127 @@ func grow_one(sim, town) -> Dictionary:
 			sim.revision += 1
 			sim._invalidate()
 			wishes.erase(type_name)
+			lay_lanes(sim, b)
 			sim.notice = "%s rises on the %s zone." % [str(sim.building_specs[type_name]["name"]), zone_name(zone)]
 			return {"type": type_name, "id": int(b["id"]), "x": spot.x, "y": spot.y}
 	return {}
 
+
+# --- Paths ----------------------------------------------------------------------------------------
+# A building that rises on a zone gets a dirt path from its door (its work stands, for a workplace)
+# to the nearest path, road or the hall, and the hall keeps one out to the village's edge or gate.
+# Paths are the living village's own trail cells, laid just past "faint" so villagers already
+# prefer them; they wear in with use, fade if nobody walks them, and can be paved as before.
+
+const LANE_WEAR: float = 1.6              # a laid path starts at this many times the faint-trail wear
+
+
+func lane_wear(sim) -> float:
+	return minf(1.0, sim.living.faint_threshold() * LANE_WEAR)
+
+
+func _on_path(sim, tile: Vector2i) -> bool:
+	var cell: Dictionary = sim.living.cells.get(sim.living.key(tile), {})
+	return cell.get("stone", false) or float(cell.get("wear", 0.0)) >= sim.living.faint_threshold()
+
+
+func _lay(sim, tiles: Array[Vector2i]) -> int:
+	var wear: float = lane_wear(sim)
+	var laid: int = 0
+	for tile: Vector2i in tiles:
+		var id: String = sim.living.key(tile)
+		var cell: Dictionary = sim.living.cells.get(id, {"wear": 0.0, "last": sim.elapsed, "stone": false})
+		if float(cell["wear"]) < wear:
+			laid += 1
+		cell["wear"] = maxf(float(cell["wear"]), wear)
+		cell["last"] = sim.elapsed
+		sim.living.cells[id] = cell
+	if laid > 0:
+		sim.living.revision += 1
+		sim.living.navigation_revision += 1
+	return laid
+
+
+# Shortest walk from any start to a tile where `done` says yes, over reached tiles. [] when none.
+func _walk_to(walk: Dictionary, starts: Array[Vector2i], done: Callable) -> Array[Vector2i]:
+	var reached: PackedByteArray = walk["reached"]
+	var width: int = (walk["rect"] as Rect2i).size.x
+	var previous: Dictionary = {}
+	var queue := PackedInt32Array()
+	for tile: Vector2i in starts:
+		var i: int = _index(walk, tile)
+		if i >= 0 and reached[i] == 1 and not previous.has(i):
+			previous[i] = -1
+			queue.append(i)
+	var head: int = 0
+	while head < queue.size():
+		var i: int = queue[head]
+		head += 1
+		if done.call(_tile(walk, i), i):
+			var path: Array[Vector2i] = []
+			while i >= 0:
+				path.append(_tile(walk, i))
+				i = int(previous[i])
+			return path
+		var x: int = i % width
+		for next: int in [i - 1 if x > 0 else -1, i + 1 if x < width - 1 else -1, i - width, i + width]:
+			if next < 0 or next >= reached.size() or reached[next] == 0 or previous.has(next):
+				continue
+			previous[next] = i
+			queue.append(next)
+	return []
+
+
+# Lays the paths a building needs. Returns how many tiles were laid fresh.
+func lay_lanes(sim, b: Dictionary) -> int:
+	var walk: Dictionary = _walk(sim)
+	if walk.is_empty():
+		return 0
+	var seeds: Dictionary = {}
+	for i: int in walk["seeds"]:
+		seeds[i] = true
+	var laid: int = 0
+	var joins: Callable = func(tile: Vector2i, i: int) -> bool: return seeds.has(i) or _on_path(sim, tile)
+	var doors: Array = []
+	for point: Vector2 in sim.stand_candidates(b):
+		doors.append([Vector2i(floori(point.x), floori(point.y))])
+	if doors.is_empty():
+		var ring: Array[Vector2i] = _ring(Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"])))
+		doors.append(ring)
+	for door: Array in doors:
+		var starts: Array[Vector2i] = []
+		starts.assign(door)
+		laid += _lay(sim, _walk_to(walk, starts, joins))
+	return laid + lay_way_out(sim, walk)
+
+
+# Keeps one path from the hall out of the village, to its edge (through an open gate when the
+# village is walled). Returns how many tiles were laid fresh.
+func lay_way_out(sim, walk: Dictionary = {}) -> int:
+	if walk.is_empty():
+		walk = _walk(sim)
+		if walk.is_empty():
+			return 0
+	var edge: Callable = func(tile: Vector2i, _i: int) -> bool:
+		for d: Vector2i in STEPS:
+			if not sim.in_world(tile + d):
+				return true
+		return false
+	var starts: Array[Vector2i] = []
+	for i: int in walk["seeds"]:
+		starts.append(_tile(walk, i))
+	# Already out along a path (or road) all the way: nothing to lay.
+	var along: Dictionary = walk.duplicate()
+	var mask: PackedByteArray = (walk["reached"] as PackedByteArray).duplicate()
+	for i in mask.size():
+		if mask[i] == 1 and not _on_path(sim, _tile(walk, i)):
+			mask[i] = 0
+	for i: int in walk["seeds"]:
+		mask[i] = 1
+	along["reached"] = mask
+	if not _walk_to(along, starts, edge).is_empty():
+		return 0
+	return _lay(sim, _walk_to(walk, starts, edge))
 
 func zone_name(zone: String) -> String:
 	return {"housing": "homes", "farming": "farm", "industrial": "industry", "civic": "civic"}.get(zone, zone)
@@ -251,6 +589,7 @@ func upgrade_one(sim) -> Dictionary:
 	best["remaining"] = float(spec_b["buildSeconds"])
 	sim.revision += 1
 	sim.notice = "%s grows to tier %d on its own." % [str(spec_b["name"]), int(best["tier"])]
+	lay_lanes(sim, best)
 	return {"type": str(best["type"]), "id": int(best["id"]), "tier": int(best["tier"])}
 
 
@@ -282,6 +621,53 @@ func hall_people_next(sim) -> int:
 	return int(spec.get("hallPeople", {}).get(str(int(hall["tier"]) + 1), -1))
 
 
+# Freshens one grown building's paths in turn, so paths stay down where people need them (and a
+# village zoned before paths were laid gets them too). Returns how many tiles were laid fresh.
+func tend_paths(sim) -> int:
+	var grown: Array[Dictionary] = []
+	for b: Dictionary in sim.buildings:
+		if grows(str(b["type"])) and float(b["hp"]) > 0.0 and float(b["remaining"]) <= 0.0:
+			grown.append(b)
+	if grown.is_empty():
+		return 0
+	_tend = posmod(_tend, grown.size())
+	var b: Dictionary = grown[_tend]
+	_tend += 1
+	return lay_lanes(sim, b)
+
+
+# Zoned buildings nobody can walk to from the hall (a hand-built wall or tower can still close one
+# in). Returns their ids.
+func cut_off(sim) -> Array[int]:
+	var out: Array[int] = []
+	var walk: Dictionary = _walk(sim)
+	if walk.is_empty():
+		return out
+	for b: Dictionary in sim.buildings:
+		if not grows(str(b["type"])) or float(b["hp"]) <= 0.0:
+			continue
+		var door: bool = false
+		for tile: Vector2i in _ring(Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"]))):
+			var i: int = _index(walk, tile)
+			if i >= 0 and walk["reached"][i] == 1:
+				door = true
+				break
+		if not door:
+			out.append(int(b["id"]))
+	return out
+
+
+# Tells the player once when a zoned building loses its way in.
+func _warn_cut_off(sim) -> void:
+	var now: Dictionary = {}
+	for id: int in cut_off(sim):
+		now[id] = true
+		if not _cut.has(id):
+			var b: Dictionary = sim.get_building(id)
+			sim.notice = "The %s is walled in. Move what blocks it so its workers can reach it." % str(sim.building_specs[b["type"]]["name"])
+	_cut = now
+
+
 # Active time only. Returns what happened: [{kind: "rose"|"upgraded", ...}].
 func tick(sim, town, dt: float) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
@@ -295,6 +681,8 @@ func tick(sim, town, dt: float) -> Array[Dictionary]:
 		if not rose.is_empty():
 			rose["kind"] = "rose"
 			out.append(rose)
+		elif not sim.raid_active and not sim.raid_warning:
+			_warn_cut_off(sim)
 	if upgrade_clock >= float(spec.get("upgradeSeconds", 24.0)):
 		upgrade_clock = 0.0
 		var up: Dictionary = hall_one(sim)
@@ -303,4 +691,6 @@ func tick(sim, town, dt: float) -> Array[Dictionary]:
 		if not up.is_empty():
 			up["kind"] = "upgraded"
 			out.append(up)
+		elif not sim.raid_active and not sim.raid_warning:
+			tend_paths(sim)
 	return out

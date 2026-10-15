@@ -494,6 +494,40 @@ func test_command_gating() -> void:
 	check(not bare.build_reason("stone_quarry", 1, 5).is_empty(), "the quarry stays behind Stoneworking research")
 
 
+# --- 12. running totals count from the mission's own act ----------------------
+
+func test_missions_count_from_their_act() -> void:
+	var sim = Sim.new()
+	sim.tick(0.05)
+	check("every-hand" not in sim.completed_quests, "the opening workplace mission is not already done by the starting crew")
+	# Harvest and raids from earlier acts never finish a later mission on the spot.
+	sim.gathered["gold"] = 5000.0
+	sim.raid_stats["defended"] = 9
+	sim.chronicle.act = 5
+	var record: Dictionary = sim._quest_record("chart-the-dark")
+	var haul: Dictionary = sim.quest_by_id("chart-the-dark")["objectives"][0]
+	check(sim._objective_value(haul) == 0.0, "gold hauled in earlier acts does not count toward a later haul")
+	sim.gathered["gold"] = 5150.0
+	check(sim._objective_value(haul) == 150.0, "gold hauled after the act opens counts")
+	sim.chronicle.act = 7
+	sim._quest_record("rue-s-terms")
+	var won: Dictionary = sim.quest_by_id("rue-s-terms")["objectives"][0]
+	check(sim._objective_value(won) == 0.0, "raids won in earlier acts do not win a later raid mission")
+	sim.raid_stats["defended"] = 10
+	check(sim._objective_value(won) == 1.0, "a raid won in the mission's own act counts")
+	var fresh = Sim.new()
+	check(fresh.restore_state(JSON.parse_string(JSON.stringify(sim.export_state()))), "missions with starting points save and load")
+	check(fresh._objective_value(fresh.quest_by_id("chart-the-dark")["objectives"][0]) == 150.0, "a mission's starting point survives reload")
+	check(record.has("baseline"), "the starting point lives in the mission record")
+	var old: Dictionary = JSON.parse_string(JSON.stringify(sim.export_state()))
+	old["quest_progress"]["chart-the-dark"].erase("baseline")
+	var older = Sim.new()
+	check(older.restore_state(old) and older._objective_value(older.quest_by_id("chart-the-dark")["objectives"][0]) == 5150.0, "records saved before starting points keep counting the whole total")
+	var bad: Dictionary = JSON.parse_string(JSON.stringify(sim.export_state()))
+	bad["quest_progress"]["chart-the-dark"]["baseline"] = {"gold-400": -5}
+	check(not Sim.new().restore_state(bad), "a negative starting point is rejected")
+
+
 func _run() -> void:
 	test_tech_tree()
 	test_prereqs_and_tiers()
@@ -510,6 +544,7 @@ func _run() -> void:
 	test_migration()
 	test_banners()
 	test_command_gating()
+	test_missions_count_from_their_act()
 	_report()
 
 

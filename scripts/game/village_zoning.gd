@@ -1061,6 +1061,8 @@ func _town_refresh_status() -> void:
 		hint = "Clear: removes zones, roads and lots."
 	else:
 		hint = "%s: %s" % [str(town.zone_spec(_town_tool).get("name", "")), str(town.zone_spec(_town_tool).get("blurb", ""))]
+		if _town_tool in town.village_zone_ids():
+			hint += " In the village, paint side by side freely: each building gets a path to its door."
 	if small and hint.length() > 70:
 		hint = hint.substr(0, hint.find(".") + 1)
 	if hint != _town_hint_label.text:

@@ -106,6 +106,11 @@ func _run() -> void:
 	await create_timer(1.2).timeout
 	await capture("village_4_grown.png")
 
+	# 4b. Close in on the paths laid to each new building and out of the village.
+	frame(2.0, 2.0, 17.0 if not phone else 22.0, 38.0, 55.0)
+	await create_timer(1.2).timeout
+	await capture("village_4b_paths.png")
+
 	# 5. The Build menu now: defences, troops and Great Works.
 	game._open_panel("build")
 	await create_timer(1.0).timeout

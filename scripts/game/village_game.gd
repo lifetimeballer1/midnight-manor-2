@@ -2834,12 +2834,13 @@ func _build_missions() -> void:
 		# Quest-called structures (grove, chapel, watchfire…) have no
 		# permanent shop card, so the mission itself offers placement.
 		if str(objective.get("kind", "")) in ["build", "construct_great_work"] and value < target:
-			var need: String = str(objective.get("type", ""))
+			var need: String = _missing_type(objective["types"])
 			if objective["kind"] == "construct_great_work": need = str(sim.chronicle.great_work_data(str(objective.get("id", ""))).get("building", ""))
 			var gate: String = sim.unlock_reason(need)
 			var raise_button := ui.command_button("Raise", _choose_build.bind(need), row, 44.0)
 			raise_button.disabled = not gate.is_empty()
-			raise_button.tooltip_text = gate if not gate.is_empty() else "Place %s" % str(sim.building_specs.get(need, {}).get("name", need))
+			var need_name: String = str(sim.building_specs.get(need, {}).get("name", need))
+			raise_button.tooltip_text = gate if not gate.is_empty() else ("Zone ground for %s" % need_name if _zone_grown(need) else "Place %s" % need_name)
 			mission_rows.back()["action"] = raise_button
 		elif objective["kind"] == "recruit" and not objective["types"].is_empty() and value < target:
 			var role: String = str(objective["types"][0])
@@ -4033,6 +4034,14 @@ func _inspect_subject(type_name: String) -> void:
 			_open_panel("building")
 			return
 	_choose_build(type_name)
+
+
+# The first type a build objective still lacks (a multi-trade objective names several).
+func _missing_type(types: Array) -> String:
+	for type_name: Variant in types:
+		if sim._buildings_of([str(type_name)]) == 0:
+			return str(type_name)
+	return str(types[0]) if not types.is_empty() else ""
 
 
 func _deliver_objective(objective: Dictionary, contract_id: String = "") -> void:
