@@ -778,7 +778,7 @@ func _town_lot_card(c: Vector2i) -> void:
 	var info: Dictionary = town.level_spec(zone, level)
 	ui.heading(str(info.get("name", spec.get("name", "Lot"))).to_upper(), side_content)
 	ui.rule(side_content)
-	var lines: Array[String] = ["%s / level %d of %d" % [str(spec.get("name", zone)), level, town.max_level(zone)]]
+	var lines: Array[String] = ["%s · level %d of %d" % [str(spec.get("name", zone)), level, town.max_level(zone)]]
 	if not town.built(lot):
 		lines.append("Under construction.")
 	var cut_off: bool = town.built(lot) and not town.has_access(c)
@@ -848,7 +848,7 @@ func _town_land_card(c: Vector2i) -> void:
 		var reason: String = realm.deed_reason(centre)
 		if reason.is_empty() and not sim._affordable(cost):
 			reason = "Not enough in store: " + _cost_text(cost)
-		var button: Button = ui.gold_button("Buy Land / " + _cost_text(cost), _town_buy_land.bind(c), side_content)
+		var button: Button = ui.gold_button("Buy Land  ·  " + _cost_text(cost), _town_buy_land.bind(c), side_content)
 		button.disabled = not reason.is_empty()
 		button.tooltip_text = reason
 		ui.body(reason if not reason.is_empty() else "Land bought so far: %d parcels. Each costs a little more than the last." % realm.deeds.size(), side_content, 12)
@@ -857,17 +857,17 @@ func _town_land_card(c: Vector2i) -> void:
 	var site: Dictionary = realm.settlement(owner)
 	ui.heading(str(site.get("name", "A neighbour")).to_upper() + "'S LAND", side_content)
 	ui.rule(side_content)
-	ui.body("%d people / %s / defence %d. Their land is not for sale: take it by force, or win them over." % [int(site.get("pop", 0)), realm.attitude(site).capitalize(), int(realm.defence_of(site))], side_content)
+	ui.body("%d people · %s · defence %d. Their land is not for sale: take it by force, or win them over." % [int(site.get("pop", 0)), realm.attitude(site).capitalize(), int(realm.defence_of(site))], side_content)
 	ui.body("Win raids until they are small enough to break, and they swear to the manor: all their land becomes yours to zone.", side_content, 12)
 	var fighters: Dictionary = realm_fighters()
 	var reason: String = realm.raid_reason(owner, int(fighters["count"]))
 	if reason.is_empty() and not sim._affordable(RealmMap.RAID_COST):
 		reason = "Not enough supplies: " + _cost_text(RealmMap.RAID_COST)
-	var raid_button: Button = ui.gold_button("Raid / " + _cost_text(RealmMap.RAID_COST), _realm_raid.bind(owner), side_content)
+	var raid_button: Button = ui.gold_button("Raid  ·  " + _cost_text(RealmMap.RAID_COST), _realm_raid.bind(owner), side_content)
 	raid_button.disabled = not reason.is_empty()
 	raid_button.tooltip_text = reason
 	ui.body(reason if not reason.is_empty() else "%d fighters, strength %d, against defence %d." % [int(fighters["count"]), int(fighters["strength"]), int(realm.defence_of(site))], side_content, 12)
-	var gift: Button = ui.command_button("Send Gifts / " + _cost_text(RealmMap.GIFT_COST), _realm_gift.bind(owner), side_content)
+	var gift: Button = ui.command_button("Send Gifts  ·  " + _cost_text(RealmMap.GIFT_COST), _realm_gift.bind(owner), side_content)
 	gift.disabled = not sim._affordable(RealmMap.GIFT_COST)
 
 
@@ -912,9 +912,9 @@ func _town_unzone(c: Vector2i) -> void:
 # --- UI -----------------------------------------------------------------------------------------
 
 func _town_build_ui() -> void:
-	_town_button = ui.command_button("Zone", town_toggle, nav, 56.0)
-	_paint_ring(_town_button, UI.SLATE, 56.0)
-	_town_button.add_theme_font_size_override("font_size", 13)
+	_town_button = ui.command_button("Zone", town_toggle, nav, 60.0)
+	_town_button.set_meta("nav_icon", "zone")
+	_paint_ring(_town_button, UI.SLATE)
 	_town_button.tooltip_text = "Zone the village and the land outside the walls"
 	nav.move_child(_town_button, more_button.get_index() + 1)
 	var dock: Node = nav.get_parent()
@@ -1009,14 +1009,11 @@ func _town_refresh_bar() -> void:
 		var button: Button = _town_tool_buttons[tool]
 		var tint: Color = _town_tool_color(tool)
 		var chosen: bool = tool == _town_tool
-		var face := StyleBoxFlat.new()
-		face.bg_color = tint.darkened(0.35) if chosen else Color(UI.WALNUT_LIGHT, 0.95)
-		face.border_color = tint.lightened(0.25) if chosen else tint.darkened(0.2)
-		face.set_border_width_all(3 if chosen else 2)
-		face.border_width_bottom = 5 if chosen else 4
-		face.set_corner_radius_all(8)
+		var face: StyleBox = ui.command_box(tint.darkened(0.6) if chosen else UI.WALNUT_LIGHT, tint.lightened(0.2) if chosen else Color(tint, 0.6))
 		face.content_margin_left = 8
 		face.content_margin_right = 8
+		if chosen:
+			face.glow = Color(tint, 0.45)
 		for state: String in ["normal", "hover", "pressed", "focus"]:
 			button.add_theme_stylebox_override(state, face)
 		button.add_theme_color_override("font_color", UI.PAPER if chosen else tint.lightened(0.35))
@@ -1037,12 +1034,12 @@ func _town_refresh_status() -> void:
 		return
 	var stats: Dictionary = town.stats()
 	var small: bool = _is_small()
-	var heading: String = ("%s  %d folk / %d jobs / %d lots" if small else "%s  %d townsfolk / %d jobs / %d lots") % [town.title().to_upper(), int(stats["people"]), int(stats["jobs"]), int(stats["lots"])]
+	var heading: String = ("%s  %d folk · %d jobs · %d lots" if small else "%s  %d townsfolk · %d jobs · %d lots") % [town.title().to_upper(), int(stats["people"]), int(stats["jobs"]), int(stats["lots"])]
 	var next: Dictionary = town.next_title()
 	if not small and not next.is_empty():
 		heading += "   (%s at %d)" % [str(next.get("name", "")), int(next.get("people", 0))]
 	if int(stats["cut_off"]) > 0:
-		heading += ("  /  %d cut off" % int(stats["cut_off"]))
+		heading += ("  ·  %d cut off" % int(stats["cut_off"]))
 	_town_stats_label.text = heading
 	var wants: Dictionary = town.demand()
 	for zone: String in _town_demand_bars:
@@ -1084,7 +1081,6 @@ func _layout_ui() -> void:
 	_town_fit_raven_note.call_deferred()
 	if _town_button != null:
 		_paint_ring(_town_button, UI.GOLD if _town_active else UI.SLATE, 44.0 if _is_small() else 56.0)
-		_town_button.add_theme_font_size_override("font_size", 12 if _is_small() else 13)
 	if _town_tools_grid != null:
 		_town_tools_grid.columns = 5 if _is_small() and not _is_landscape_phone() else 10
 		for child: Node in _town_tools_grid.get_children():

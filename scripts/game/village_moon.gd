@@ -25,7 +25,7 @@ func _process(delta: float) -> void:
 func _show_phase(phase: int) -> void:
 	if raid_hud == null or not is_instance_valid(raid_hud):
 		return
-	var suffix: String = " / %s %s" % [Rules.glyph(phase), Rules.phase_name(phase)]
+	var suffix: String = " · %s %s" % [Rules.glyph(phase), Rules.phase_name(phase)]
 	if Rules.is_blood_moon(phase):
 		suffix += " (Blood)"
 	if not raid_hud.text.ends_with(suffix):

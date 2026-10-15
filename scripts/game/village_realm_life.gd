@@ -336,7 +336,7 @@ func _realm_site_card() -> void:
 	var mood: String = realm.attitude(site)
 	ui.heading(str(site["name"]).to_upper(), side_content)
 	ui.rule(side_content)
-	ui.body("%d people / %s\nLand reaches %d m / Defence %d" % [int(site["pop"]), mood.capitalize(), int(realm.claim_radius(site)), int(realm.defence_of(site))], side_content)
+	ui.body("%d people · %s\nLand reaches %d m · Defence %d" % [int(site["pop"]), mood.capitalize(), int(realm.claim_radius(site)), int(realm.defence_of(site))], side_content)
 	if mood == "sworn":
 		ui.body("Sworn to the manor. Its land is yours, and it keeps growing under your banner.", side_content, 12)
 		return
@@ -346,13 +346,13 @@ func _realm_site_card() -> void:
 		"hostile": "Hostile. They spread faster, send scouts, and will overrun outposts in their way.",
 	}
 	ui.body(str(hint.get(mood, "")), side_content, 12)
-	var gift: Button = ui.command_button("Send Gifts / " + _cost_text(RealmMap.GIFT_COST), _realm_gift.bind(str(site["id"])), side_content)
+	var gift: Button = ui.command_button("Send Gifts  ·  " + _cost_text(RealmMap.GIFT_COST), _realm_gift.bind(str(site["id"])), side_content)
 	gift.disabled = not sim._affordable(RealmMap.GIFT_COST)
 	var fighters: Dictionary = realm_fighters()
 	var reason: String = realm.raid_reason(str(site["id"]), int(fighters["count"]))
 	if reason.is_empty() and not sim._affordable(RealmMap.RAID_COST):
 		reason = "Not enough supplies: " + _cost_text(RealmMap.RAID_COST)
-	var raid_button: Button = ui.gold_button("Raid / " + _cost_text(RealmMap.RAID_COST), _realm_raid.bind(str(site["id"])), side_content)
+	var raid_button: Button = ui.gold_button("Raid  ·  " + _cost_text(RealmMap.RAID_COST), _realm_raid.bind(str(site["id"])), side_content)
 	raid_button.disabled = not reason.is_empty()
 	raid_button.tooltip_text = reason
 	ui.body(reason if not reason.is_empty() else "%d fighters, strength %d. Your fighters still guard the village." % [int(fighters["count"]), int(fighters["strength"])], side_content, 12)
@@ -367,7 +367,7 @@ func _realm_land_card() -> void:
 	var reason: String = realm.outpost_reason(at)
 	if reason.is_empty() and not sim._affordable(RealmMap.OUTPOST_COST):
 		reason = "Not enough: " + _cost_text(RealmMap.OUTPOST_COST)
-	var button: Button = ui.gold_button("Found Outpost / " + _cost_text(RealmMap.OUTPOST_COST), _realm_found_outpost, side_content)
+	var button: Button = ui.gold_button("Found Outpost  ·  " + _cost_text(RealmMap.OUTPOST_COST), _realm_found_outpost, side_content)
 	button.disabled = not reason.is_empty()
 	button.tooltip_text = reason
 	ui.body(reason if not reason.is_empty() else "Outposts: %d of %d" % [realm.outposts.size(), RealmMap.OUTPOST_MAX], side_content, 12)
@@ -396,7 +396,7 @@ func _realm_fish_card() -> void:
 	var reason: String = realm.outpost_reason(_realm_card_point)
 	if reason.is_empty() and not sim._affordable(RealmMap.OUTPOST_COST):
 		reason = "Not enough: " + _cost_text(RealmMap.OUTPOST_COST)
-	var button: Button = ui.gold_button("Found Outpost / " + _cost_text(RealmMap.OUTPOST_COST), _realm_found_outpost, side_content)
+	var button: Button = ui.gold_button("Found Outpost  ·  " + _cost_text(RealmMap.OUTPOST_COST), _realm_found_outpost, side_content)
 	button.disabled = not reason.is_empty()
 	button.tooltip_text = reason
 	ui.body(reason if not reason.is_empty() else "Outposts: %d of %d" % [realm.outposts.size(), RealmMap.OUTPOST_MAX], side_content, 12)

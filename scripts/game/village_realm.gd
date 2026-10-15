@@ -899,7 +899,7 @@ func _realm_label(site: Dictionary) -> void:
 	var banner: Dictionary = _realm_banners.get(site["id"], {})
 	if banner.is_empty():
 		return
-	(banner["label"] as Label3D).text = "%s / %s\n%d people" % [site["name"], realm.attitude(site), int(site["pop"])]
+	(banner["label"] as Label3D).text = "%s · %s\n%d people" % [site["name"], realm.attitude(site), int(site["pop"])]
 	# A settlement sworn to the manor flies the manor's colour.
 	var colour: Color = RealmMap.HOME_COLOR if bool(site.get("vassal", false)) else site["color"]
 	var flag: StandardMaterial3D = banner["flag"]
