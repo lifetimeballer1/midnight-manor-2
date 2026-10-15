@@ -125,16 +125,20 @@ func rising(sim) -> int:
 	return count
 
 
-# Types the current quest still asks for.
+# Types the current quest still asks for (to build, or to stand and grow a tier).
 func _quest_wants(sim) -> Array[String]:
 	var out: Array[String] = []
 	var quest: Dictionary = sim.quest_current()
 	for objective: Dictionary in quest.get("objectives", []):
-		if str(objective.get("kind", "")) != "build":
+		var kind: String = str(objective.get("kind", ""))
+		if kind not in ["build", "upgrade"]:
 			continue
 		if sim._objective_value(objective) >= sim._objective_target(objective):
 			continue
 		for type_name: Variant in objective.get("types", []):
+			# An upgrade objective asks for buildings that grow tiers on their own: zone more while too few stand.
+			if kind == "upgrade" and sim._buildings_of([str(type_name)]) >= int(objective.get("count", 1)):
+				continue
 			out.append(str(type_name))
 	return out
 
