@@ -1622,6 +1622,7 @@ func _town_label(c: Vector2i, text: String) -> void:
 # glyphs the web build's default font has (no stars or ticks).
 func _town_text_node(font_size: int) -> Label3D:
 	var label := Label3D.new()
+	label.font = UI.font("strong")
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.font_size = font_size

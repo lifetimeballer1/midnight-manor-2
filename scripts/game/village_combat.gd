@@ -315,9 +315,10 @@ func _update_enemy_bars() -> void:
 		root.position = model.position + Vector3(0, BAR_HEIGHT, 0)
 		root.visible = true
 		var ratio: float = clampf(hp / max_hp, 0.0, 1.0)
-		var fill: MeshInstance3D = bar["fill"]
-		fill.scale.x = maxf(ratio, 0.001)
-		fill.position.x = -BAR_WIDTH * 0.5 * (1.0 - ratio)
+		# Billboards drop node scale and offsets, so the fill quad itself shrinks toward its left edge.
+		var fill_quad: QuadMesh = bar["fill_quad"]
+		fill_quad.size.x = maxf(BAR_WIDTH * ratio, 0.001)
+		fill_quad.center_offset.x = -BAR_WIDTH * 0.5 * (1.0 - ratio)
 	for id: Variant in _enemy_bars.keys():
 		if not alive.has(id):
 			var old: Dictionary = _enemy_bars[id]
@@ -331,23 +332,30 @@ func _update_enemy_bars() -> void:
 
 func _make_bar() -> Dictionary:
 	var root := Node3D.new()
+	# A brass rim, a dark well and the red fill, drawn in that order.
+	var rim := MeshInstance3D.new()
+	var rim_quad := QuadMesh.new()
+	rim_quad.size = Vector2(BAR_WIDTH + 0.06, 0.15)
+	rim_quad.material = _bar_material(Color(0.83, 0.7, 0.46, 0.9), 3)
+	rim.mesh = rim_quad
+	root.add_child(rim)
 	var back := MeshInstance3D.new()
 	var back_quad := QuadMesh.new()
-	back_quad.size = Vector2(BAR_WIDTH, 0.12)
-	back_quad.material = _bar_material(Color(0.06, 0.05, 0.06, 0.85))
+	back_quad.size = Vector2(BAR_WIDTH, 0.1)
+	back_quad.material = _bar_material(Color(0.07, 0.05, 0.06, 0.95), 4)
 	back.mesh = back_quad
 	root.add_child(back)
 	var fill := MeshInstance3D.new()
 	var fill_quad := QuadMesh.new()
-	fill_quad.size = Vector2(BAR_WIDTH, 0.08)
-	fill_quad.material = _bar_material(Color(0.86, 0.22, 0.2))
+	fill_quad.size = Vector2(BAR_WIDTH, 0.07)
+	fill_quad.material = _bar_material(Color(0.86, 0.22, 0.2), 5)
 	fill.mesh = fill_quad
 	root.add_child(fill)
 	actor_layer.add_child(root)
-	return {"root": root, "fill": fill}
+	return {"root": root, "fill": fill, "fill_quad": fill_quad}
 
 
-func _bar_material(colour: Color) -> StandardMaterial3D:
+func _bar_material(colour: Color, priority: int = 3) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -355,7 +363,7 @@ func _bar_material(colour: Color) -> StandardMaterial3D:
 	material.no_depth_test = true
 	material.disable_receive_shadows = true
 	material.albedo_color = colour
-	material.render_priority = 3
+	material.render_priority = priority
 	return material
 
 

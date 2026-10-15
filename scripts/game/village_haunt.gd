@@ -2,7 +2,7 @@ extends "res://scripts/game/village_raven.gd"
 ## Haunted edge layer (wilderness fog recedes with village growth).
 ##
 ## The haunt level is derived from state every poll (village level and Town Hall
-## tier), so there are no save fields. Level 4 is the wild edge: a dense violet
+## tier), so there are no save fields. Level 4 is the wild edge: a dense
 ## mist ring hugging the map and a dark, crowded dead-tree outskirts. As the
 ## manor grows the level drops, and a slow tween pushes the mist outward, fades
 ## it, thins the dead trees and lightens the outskirts. Everything is a handful of
@@ -18,12 +18,12 @@ const MIST_WIDTH: float = 7.0
 const MIST_PUSH: float = 0.35                    # ring scale at full haunt .. at none is 1 + this
 const TREES_MIN: int = 10
 const TREES_MAX: int = 44
-const OUTSKIRTS_HAUNT_GROUND: Color = Color("1b1427")
+const OUTSKIRTS_HAUNT_GROUND: Color = Color("2b2c20")   # dark peat and moss
 const OUTSKIRTS_RECEDE_GROUND: Color = Color("3d4a35")
-const TREE_HAUNT: Color = Color("0d0a12")
+const TREE_HAUNT: Color = Color("2a211a")              # wet bark, still readable at night
 const TREE_RECEDE: Color = Color("4a4a3e")
-const MIST_COLOR: Color = Color(0.5, 0.34, 0.68)
-const MIST_ALPHA: float = 0.85
+const MIST_COLOR: Color = Color(0.72, 0.74, 0.8)        # pale ground mist, lit by the sun and moon
+const MIST_ALPHA: float = 0.35
 
 var _haunt_root: Node3D = null
 var _mist: MeshInstance3D = null
@@ -200,7 +200,8 @@ func _build_mist_ring() -> void:
 	ring.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 
 	_mist_material = StandardMaterial3D.new()
-	_mist_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_mist_material.roughness = 1.0
+	_mist_material.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	_mist_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_mist_material.vertex_color_use_as_albedo = true
 	_mist_material.cull_mode = BaseMaterial3D.CULL_DISABLED
@@ -226,7 +227,7 @@ func _ring_point(d: float, side: int) -> Vector3:
 
 
 # t: 0 = manor grown (mist far out, faded, sparse trees, light ground),
-#    1 = wild edge (mist hugging the map, dense violet, crowded dark trees).
+#    1 = wild edge (mist hugging the map, dense, crowded dark trees).
 func _apply_haunt(t: float) -> void:
 	_shown_t = t
 	if _mist == null or not is_instance_valid(_mist):

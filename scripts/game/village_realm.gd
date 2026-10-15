@@ -884,11 +884,12 @@ func _realm_build_banners() -> void:
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.fixed_size = true
 		label.pixel_size = 0.0016
+		label.font = UI.font("strong")
 		label.font_size = 30
 		label.outline_size = 8
 		label.no_depth_test = true
 		label.modulate = PAPER
-		label.outline_modulate = Color(0.05, 0.06, 0.09, 0.9)
+		label.outline_modulate = WORLD_TEXT_OUTLINE
 		label.position = Vector3(0, 8.0, 0)
 		root.add_child(label)
 		_realm_banners[site["id"]] = {"root": root, "label": label, "flag": flag_material}

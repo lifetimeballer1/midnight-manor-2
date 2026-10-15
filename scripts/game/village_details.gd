@@ -197,8 +197,11 @@ func setup_warnings(game) -> void:
 	var points: Array[Vector2] = [Vector2(0.8, 8), Vector2(19.2, 8), Vector2(10, 0.8), Vector2(10, 15.2)]
 	for point in points:
 		var label := Label3D.new()
+		label.font = VillageUI.font("strong")
 		label.font_size = 38
 		label.pixel_size = 0.016
+		label.outline_size = 10
+		label.outline_modulate = Color(0.09, 0.06, 0.04, 0.9)
 		label.modulate = Color("ffaf77")
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.position = game.world_position(point, 2.2)

@@ -556,9 +556,8 @@ func _clutter_build() -> void:
 	_clutter_add(stems_baked, stem_material, stem_x, [] as Array[Color], "AutumnMushroomStems")
 	_clutter_add(caps_baked, lit, cap_x, cap_c, "AutumnMushroomCaps")
 	_clutter_add(caps_baked, _glow_material, glow_x, [] as Array[Color], "AutumnGlowCaps")
-	# Fallen branches.
-	var branch_mesh := BoxMesh.new()
-	branch_mesh.size = Vector3(0.75, 0.05, 0.06)
+	# Fallen branches: a tapered limb with a side fork and a twig, lying in the grass.
+	var branch_mesh: ArrayMesh = _branch_mesh()
 	var branch_x: Array[Transform3D] = []
 	var branch_c: Array[Color] = []
 	for index in 14:
@@ -566,8 +565,8 @@ func _clutter_build() -> void:
 		if is_inf(at.x):
 			continue
 		var basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).scaled(Vector3(rng.randf_range(0.7, 1.6), 1.0, 1.0))
-		branch_x.append(Transform3D(basis, at + Vector3(0.0, 0.025, 0.0)))
-		branch_c.append(Color("4a3524").darkened(rng.randf_range(0.0, 0.3)).srgb_to_linear())
+		branch_x.append(Transform3D(basis, at + Vector3(0.0, 0.02, 0.0)))
+		branch_c.append(Color("7a5d42").darkened(rng.randf_range(0.0, 0.25)).srgb_to_linear())
 	_clutter_add(branch_mesh, lit, branch_x, branch_c, "AutumnBranches")
 	# Acorns and pine cones: tiny specks under the trees.
 	var acorn_mesh := SphereMesh.new()
@@ -618,6 +617,34 @@ func _clutter_build() -> void:
 	for entry: Dictionary in _clutter_sets:
 		total += (entry["xforms"] as Array).size()
 	_terrain_stats["clutter"] = {"sets": _clutter_sets.size(), "instances": total, "glow": glow_x.size()}
+
+
+# One fallen limb, about 0.75 long on x: a main stick that tapers and kinks, a fork and a short twig.
+func _branch_mesh() -> ArrayMesh:
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# [from, to, radius at from, radius at to]
+	var parts: Array = [
+		[Vector3(-0.38, 0.02, 0.0), Vector3(-0.02, 0.025, 0.03), 0.032, 0.025],
+		[Vector3(-0.02, 0.025, 0.03), Vector3(0.37, 0.02, -0.02), 0.025, 0.012],
+		[Vector3(-0.06, 0.024, 0.025), Vector3(0.16, 0.03, 0.19), 0.017, 0.008],
+		[Vector3(0.18, 0.022, 0.0), Vector3(0.27, 0.05, -0.1), 0.011, 0.006],
+	]
+	for part: Array in parts:
+		var from: Vector3 = part[0]
+		var to: Vector3 = part[1]
+		var length: float = from.distance_to(to)
+		var stick := CylinderMesh.new()
+		stick.bottom_radius = part[2]
+		stick.top_radius = part[3]
+		stick.height = length
+		stick.radial_segments = 5
+		stick.rings = 1
+		var up: Vector3 = (to - from).normalized()
+		var side: Vector3 = up.cross(Vector3.UP if absf(up.y) < 0.9 else Vector3.RIGHT).normalized()
+		var basis := Basis(side, up, side.cross(up))
+		tool.append_from(stick, 0, Transform3D(basis, (from + to) * 0.5))
+	return tool.commit()
 
 
 # Anything the player builds or paves over disappears (zero scale); it returns if the ground is cleared again.
