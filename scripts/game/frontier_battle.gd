@@ -214,7 +214,7 @@ func _process(dt: float) -> void:
 func _sync() -> void:
 	if sim.frontier.active.is_empty(): return
 	var battle: Dictionary = sim.frontier.active
-	status.text = "%s / %d defenders / %d enemies / %.0fs" % ["PAUSED" if paused or not focused else str(battle["status"]).to_upper(), sim.frontier.alive(battle["army"]), sim.frontier.alive(battle["enemies"]), battle["clock"]]
+	status.text = "%s · %d defenders · %d enemies · %.0fs" % ["PAUSED" if paused or not focused else str(battle["status"]).to_upper(), sim.frontier.alive(battle["army"]), sim.frontier.alive(battle["enemies"]), battle["clock"]]
 	back.disabled = battle["status"] == "running"
 	if last_status == "running" and str(battle["status"]) != "running":
 		_celebrate(str(battle["status"]) == "won")

@@ -183,7 +183,7 @@ func refresh(sim, plots: Dictionary) -> void:
 				var cost: Dictionary = sim.expansion_cost(id)
 				for resource: String in cost:
 					parts.append("%d %s" % [int(cost[resource]), resource.capitalize()])
-				status = "TAP TO BUY / %s" % ", ".join(parts)
+				status = "Tap to buy · %s" % ", ".join(parts)
 		var label_text: String = "%s\n%s" % [str(plots[id]["label"]), status]
 		if label_text == str(record["text"]):
 			continue
@@ -260,7 +260,7 @@ func _make_banner(id: String) -> Dictionary:
 	var panel := PanelContainer.new()
 	panel.name = "Banner_" + id
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style: StyleBoxFlat = null
+	var style: StyleBox = null
 	if ui_kit != null:
 		style = ui_kit.panel_box()
 		panel.add_theme_stylebox_override("panel", style)
@@ -287,10 +287,11 @@ func _make_banner(id: String) -> Dictionary:
 
 # Gold edge when the plot is claimable, iron when it is still locked.
 func _paint_banner_border(record: Dictionary) -> void:
-	var style: StyleBoxFlat = record.get("style")
+	var style: StyleBox = record.get("style")
 	if style == null:
 		return
-	style.border_color = GOLD if bool(record.get("ready", false)) else BRASS_DIM
+	style.set("rim", GOLD if bool(record.get("ready", false)) else BRASS_DIM)
+	style.emit_changed()
 
 
 # Warm the claimed grass with the rain tint, same as the base slab. A slab that is unveiling keeps its tween.

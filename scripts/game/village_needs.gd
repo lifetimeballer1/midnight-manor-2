@@ -37,7 +37,7 @@ func summary(sim) -> String:
 		status = "More homes needed"
 	elif float(sim.resources.get("food", 0.0)) < float(sim.world_specs["townMeal"]["foodPerVillager"]) * sim.units.size():
 		status = "Food running low"
-	return "%s / %d morale / %d of %d beds" % [status, int(morale), sim.units.size(), sim.beds()]
+	return "%s · %d morale · %d of %d beds" % [status, int(morale), sim.units.size(), sim.beds()]
 
 
 func state() -> Dictionary:

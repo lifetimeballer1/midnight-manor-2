@@ -198,6 +198,9 @@ var collect_glow: bool = false
 var repair_all_button: Button
 var repair_glow: bool = false
 var nav_compact: bool = false
+var nav_sideways: bool = false
+var resource_stack_box: VBoxContainer = null
+var nav_plate: StyleBox = null
 var inspect_collect: Button
 var inspect_upgrade: Button
 var path_button: Button
@@ -1679,7 +1682,7 @@ func _update_actors(delta: float) -> void:
 		if b["hp"] <= 0:
 			label_text = "RUINS / REPAIR"
 		elif b["remaining"] > 0:
-			label_text = "Building / %.0fs" % ceilf(b["remaining"])
+			label_text = "Building · %.0fs" % ceilf(b["remaining"])
 		elif b["reserve"] >= 150 or int(b["id"]) == selected_building:
 			var resource: String = str(sim.building_specs[b["type"]].get("production", ""))
 			label_text = ("+%d %s" % [int(b["reserve"]), resource.capitalize()]) if not resource.is_empty() and resource != "<null>" else ""
@@ -1770,32 +1773,84 @@ func _paint_primary(node: Button, accent: Color) -> void:
 	node.add_theme_color_override("font_color", UI.PAPER)
 
 
-func _paint_ring(node: Button, accent: Color, d: float) -> void:
-	# Floating hero disc: AA-safe radius (not d/2), soft lift shadow.
-	var r: int = clampi(int(d * 0.5) - 10, 8, int(d * 0.5) - 1)
-	node.custom_minimum_size = Vector2(d, d)
-	# Round discs stay round: the small ones sit centred beside the big ones instead of stretching tall.
-	node.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+func _paint_ring(node: Button, accent: Color, _d: float = 0.0) -> void:
+	# Command-bar slot: a clipped plate with a drawn icon over a carved label. Every slot is the
+	# same size, so the bar reads as one instrument; colour alone says which slot is special.
+	var small: bool = nav_compact
+	var spread: bool = small and not nav_sideways   # portrait phones share the width between slots
+	# Repaints are requested every HUD refresh; rebuild the faces only when something changed.
+	var painted: String = "%s/%s/%s" % [accent.to_html(), small, spread]
+	if str(node.get_meta("nav_painted", "")) == painted:
+		return
+	node.set_meta("nav_painted", painted)
+	node.set_meta("nav_accent", accent)
+	# A sideways phone is short: its slots are lower and narrower so the village keeps the screen.
+	var sideways: bool = small and nav_sideways
+	node.custom_minimum_size = Vector2(0.0 if spread else (64.0 if sideways else (80.0 if small else 88.0)), 48.0 if sideways else (60.0 if small else 66.0))
+	node.size_flags_horizontal = Control.SIZE_EXPAND_FILL if spread else Control.SIZE_FILL
+	node.size_flags_vertical = Control.SIZE_SHRINK_END
 	node.focus_mode = Control.FOCUS_NONE
-	node.add_theme_font_size_override("font_size", 19 if d >= 72.0 else 15)
-	node.add_theme_color_override("font_color", UI.PAPER)
-	node.add_theme_color_override("font_hover_color", UI.PAPER)
-	for state in ["normal", "hover", "pressed"]:
-		var box := StyleBoxFlat.new()
-		var fill_col: Color = accent.darkened(0.62)
-		if state == "hover":
-			fill_col = accent.darkened(0.42)
-		elif state == "pressed":
-			fill_col = accent.darkened(0.76)
-		box.bg_color = Color(fill_col, 0.97)
-		box.border_color = accent.lightened(0.15) if state != "normal" else accent
-		box.set_border_width_all(2)
-		box.set_corner_radius_all(r)
-		box.shadow_size = 6 if d >= 72.0 else 3
-		box.shadow_color = Color(0, 0, 0, 0.35)
-		box.shadow_offset = Vector2(0, 2)
-		box.set_content_margin_all(4)
-		node.add_theme_stylebox_override(state, box)
+	node.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+	node.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	node.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	node.clip_text = true
+	node.add_theme_constant_override("icon_max_width", 18 if sideways else (22 if small else 24))
+	node.add_theme_constant_override("h_separation", 3)
+	node.add_theme_font_override("font", UI.font("caps" if small else "display"))
+	node.add_theme_font_size_override("font_size", 9 if sideways else (10 if small else 12))
+	var state: String = "normal"
+	if accent == UI.BLOOD:
+		state = "danger"
+	elif accent == UI.READY:
+		state = "ready"
+	elif accent == UI.GOLD:
+		state = "gold" if node == nav_shop else "active"
+	ui.paint_command(node, state)
+	for face: String in ["normal", "hover", "pressed"]:
+		var box: StyleBox = node.get_theme_stylebox(face)
+		box.content_margin_left = 2
+		box.content_margin_right = 2
+		box.content_margin_top = (5 if sideways else 8) + (1 if face == "pressed" else 0)
+		box.content_margin_bottom = (4 if sideways else 6) - (1 if face == "pressed" else 0)
+	node.add_theme_stylebox_override("disabled", ui.command_box(UI.DISABLED, Color(UI.IRON_EDGE, 0.7), 0))
+	var faded: StyleBox = node.get_theme_stylebox("disabled")
+	faded.content_margin_left = 2
+	faded.content_margin_right = 2
+	faded.content_margin_top = 5 if sideways else 8
+	faded.content_margin_bottom = 4 if sideways else 6
+	var glyph: String = str(node.get_meta("nav_icon", ""))
+	if not glyph.is_empty():
+		node.icon = UI.icon(glyph, 24)
+	if is_instance_valid(nav):
+		nav.queue_redraw()
+
+
+func _nav_glyph(node: Button, glyph: String) -> void:
+	if str(node.get_meta("nav_icon", "")) != glyph:
+		node.set_meta("nav_icon", glyph)
+		node.icon = UI.icon(glyph, 24)
+
+
+func _repaint_nav(node: Button) -> void:
+	_paint_ring(node, node.get_meta("nav_accent", UI.SLATE))
+
+
+# The command bar's backing plate, drawn behind whichever slots are showing.
+func _draw_nav_plate() -> void:
+	var span := Rect2()
+	var any: bool = false
+	for child in nav.get_children():
+		if child is Button and (child as Button).visible:
+			var r := Rect2((child as Control).position, (child as Control).size)
+			span = r if not any else span.merge(r)
+			any = true
+	if not any:
+		return
+	if nav_plate == null:
+		nav_plate = ui.frame(Color(UI.INK, 0.9), UI.BRASS_SOFT, 10.0, 8.0, 0.0)
+		nav_plate.inner = Color(UI.BRASS, 0.14)
+		nav_plate.studs = true
+	nav.draw_style_box(nav_plate, span.grow(7.0))
 
 
 func _action_button(text: String, action: Callable, parent: Node) -> Button:
@@ -1808,7 +1863,7 @@ func _action_button(text: String, action: Callable, parent: Node) -> Button:
 func _build_more_sheet(root_control: Control) -> void:
 	# All secondary actions live here now; selection callbacks read
 	# selected_building live, so reparenting changes nothing.
-	more_sheet.add_theme_stylebox_override("panel", ui.style(UI.NAVY, UI.EDGE))
+	more_sheet.add_theme_stylebox_override("panel", ui.sheet_box())
 	root_control.add_child(more_sheet)
 	var mv := VBoxContainer.new()
 	mv.add_theme_constant_override("separation", 8)
@@ -1821,11 +1876,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	more_box = mv
 	ui.heading("ACTIONS", mv)
 	ui.rule(mv)
-	var command_head := Label.new()
-	command_head.text = "COMMAND"
-	command_head.add_theme_font_size_override("font_size", 12)
-	command_head.add_theme_color_override("font_color", UI.BRASS_SOFT)
-	mv.add_child(command_head)
+	ui.kicker("Command", mv)
 	var command_grid := GridContainer.new()
 	command_grid.columns = 3
 	command_grid.add_theme_constant_override("h_separation", 8)
@@ -1838,11 +1889,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	move_button = _action_button("Move", _move_selected, command_grid)
 	repair_button = _action_button("Repair", _repair_selected, command_grid)
 	workers_button = _action_button("People", _open_workers, command_grid)
-	var campaign_head := Label.new()
-	campaign_head.text = "CAMPAIGN"
-	campaign_head.add_theme_font_size_override("font_size", 12)
-	campaign_head.add_theme_color_override("font_color", UI.BRASS_SOFT)
-	mv.add_child(campaign_head)
+	ui.kicker("Campaign", mv)
 	var campaign_grid := GridContainer.new()
 	campaign_grid.columns = 3
 	campaign_grid.add_theme_constant_override("h_separation", 8)
@@ -1854,11 +1901,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	more_board_button = _action_button("Manor Board", _open_panel.bind("board"), campaign_grid)
 	more_doctrine_button = _action_button("Doctrine", _open_panel.bind("doctrine"), campaign_grid)
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
-	var system_head := Label.new()
-	system_head.text = "VIEW & SYSTEM"
-	system_head.add_theme_font_size_override("font_size", 12)
-	system_head.add_theme_color_override("font_color", UI.BRASS_SOFT)
-	mv.add_child(system_head)
+	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
 	system_grid.add_theme_constant_override("h_separation", 8)
@@ -1900,7 +1943,7 @@ func _ui() -> void:
 	canvas.add_child(root_control)
 	root_control.theme = ui.theme()
 	expansion.attach_banners(root_control, ui)
-	for label in [hud, raid_hud, quest_label, research_label]:
+	for label in [raid_hud, quest_label, research_label]:
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root_control.add_child(left_dock)
 	left_dock.add_theme_stylebox_override("panel", ui.panel_box())
@@ -1911,24 +1954,43 @@ func _ui() -> void:
 	left_dock.add_child(left_content)
 	title_label = Label.new()
 	title_label.text = "MIDNIGHT MANOR II"
-	title_label.add_theme_font_size_override("font_size", 13)
+	title_label.add_theme_font_override("font", UI.font("display"))
+	title_label.add_theme_font_size_override("font_size", 12)
 	title_label.add_theme_color_override("font_color", UI.BRASS)
 	left_content.add_child(title_label)
 	ui.rule(left_content)
+	# Header: the act seal, then souls and level over the experience gauge.
 	var crest_row := HBoxContainer.new()
-	crest_row.add_theme_constant_override("separation", 6)
+	crest_row.add_theme_constant_override("separation", 10)
 	left_content.add_child(crest_row)
-	crest_label = ui.crest("I", crest_row, "gold", 15)
+	crest_label = ui.seal("I", crest_row, 38.0)
 	crest_label.tooltip_text = "Settlement crest and act"
-	crest_row.add_child(UI.ResourceIcon.make("souls", 16.0))
+	var crest_column := VBoxContainer.new()
+	crest_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	crest_column.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	crest_column.add_theme_constant_override("separation", 4)
+	crest_row.add_child(crest_column)
+	var souls_row := HBoxContainer.new()
+	souls_row.add_theme_constant_override("separation", 5)
+	crest_column.add_child(souls_row)
+	souls_row.add_child(UI.ResourceIcon.make("souls", 15.0))
 	pop_label = Label.new()
-	pop_label.add_theme_font_size_override("font_size", 13)
+	pop_label.add_theme_font_override("font", UI.font("strong"))
+	pop_label.add_theme_font_size_override("font_size", 14)
 	pop_label.add_theme_color_override("font_color", UI.PAPER)
-	crest_row.add_child(pop_label)
-	hud.add_theme_font_size_override("font_size", 14)
-	left_content.add_child(hud)
+	pop_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	souls_row.add_child(pop_label)
+	hud.add_theme_font_override("font", UI.font("strong"))
+	hud.add_theme_font_size_override("font_size", 13)
+	hud.add_theme_color_override("font_color", UI.GOLD)
+	hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	# Neither line may widen the dock: on a narrow phone it must leave room for the resources.
+	for line: Label in [pop_label, hud]:
+		line.clip_text = true
+		line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	souls_row.add_child(hud)
+	level_bar = ui.bar(0, 1, crest_column)
 	needs_label = ui.body(sim.needs.summary(sim), left_content, 12)
-	level_bar = ui.bar(0, 1, left_content)
 	quest_label.add_theme_color_override("font_color", GOLD)
 	left_content.add_child(quest_label)
 	path_button = ui.command_button("Chronicle", _open_panel.bind("quests"), left_content, 28.0)
@@ -1949,6 +2011,7 @@ func _ui() -> void:
 	root_control.add_child(resource_stack)
 	resource_stack.add_theme_stylebox_override("panel", ui.panel_box())
 	var stack := VBoxContainer.new()
+	resource_stack_box = stack
 	stack.add_theme_constant_override("separation", 4)
 	resource_stack.add_child(stack)
 	for resource: String in ["wood", "food", "gold", "lumber", "stone"]:
@@ -2023,35 +2086,40 @@ func _ui() -> void:
 	root_control.add_child(combat_banner)
 	nav = HBoxContainer.new()
 	nav.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	nav.add_theme_constant_override("separation", 12)
+	nav.add_theme_constant_override("separation", 6)
+	nav.alignment = BoxContainer.ALIGNMENT_CENTER
+	nav.draw.connect(_draw_nav_plate)
+	nav.sort_children.connect(nav.queue_redraw)
 	dock.add_child(nav)
-	nav_attack = ui.command_button("Horn", _test_raid, nav, 84.0)
-	_paint_ring(nav_attack, UI.BLOOD, 84.0)
+	nav_attack = ui.command_button("Horn", _test_raid, nav, 60.0)
+	nav_attack.set_meta("nav_icon", "horn")
+	_paint_ring(nav_attack, UI.BLOOD)
+	nav_attack.tooltip_text = "Sound the horn: call the next raid now"
 	var spacer_left := Control.new()
 	spacer_left.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	spacer_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spacer_left.visible = false
 	nav.add_child(spacer_left)
-	more_button = ui.command_button("More", _toggle_more, nav, 56.0)
-	_paint_ring(more_button, UI.SLATE, 56.0)
-	more_button.add_theme_font_size_override("font_size", 13)
+	more_button = ui.command_button("More", _toggle_more, nav, 60.0)
+	more_button.set_meta("nav_icon", "more")
+	_paint_ring(more_button, UI.SLATE)
 	more_button.tooltip_text = "More actions"
-	collect_all_button = ui.command_button("Collect", _collect_all, nav, 56.0)
-	_paint_ring(collect_all_button, UI.SLATE, 56.0)
-	collect_all_button.add_theme_font_size_override("font_size", 13)
+	collect_all_button = ui.command_button("Collect", _collect_all, nav, 60.0)
+	collect_all_button.set_meta("nav_icon", "collect")
+	_paint_ring(collect_all_button, UI.SLATE)
 	collect_all_button.tooltip_text = "Collect from every workplace"
-	repair_all_button = ui.command_button("Repair", _repair_all, nav, 56.0)
-	_paint_ring(repair_all_button, UI.SLATE, 56.0)
-	repair_all_button.add_theme_font_size_override("font_size", 13)
-	repair_all_button.add_theme_color_override("font_disabled_color", Color(UI.PAPER, 0.4))
+	repair_all_button = ui.command_button("Repair", _repair_all, nav, 60.0)
+	repair_all_button.set_meta("nav_icon", "repair")
+	_paint_ring(repair_all_button, UI.SLATE)
 	repair_all_button.tooltip_text = "Repair every damaged structure"
 	repair_all_button.mouse_entered.connect(_show_repair_hint)
 	repair_all_button.mouse_exited.connect(_hide_repair_hint)
 	var spacer_right := Control.new()
 	spacer_right.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	spacer_right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spacer_right.visible = false
 	nav.add_child(spacer_right)
-	nav_shop = ui.command_button("Build", _shop_pressed, nav, 84.0)
-	_paint_ring(nav_shop, UI.GOLD, 84.0)
+	nav_shop = ui.command_button("Build", _shop_pressed, nav, 60.0)
+	nav_shop.set_meta("nav_icon", "build")
+	_paint_ring(nav_shop, UI.GOLD)
 	nav_shop.tooltip_text = "Raise new structures"
 	_build_more_sheet(root_control)
 	repair_hint.add_theme_stylebox_override("panel", ui.panel_box())
@@ -2064,6 +2132,7 @@ func _ui() -> void:
 	repair_hint.add_child(repair_hint_label)
 	root_control.add_child(repair_hint)
 	root_control.add_child(sidebar)
+	sidebar.add_theme_stylebox_override("panel", ui.sheet_box())
 	alarm_pulse.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	alarm_pulse.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	alarm_pulse.color = Color(0.5, 0.05, 0.08, 0.0)
@@ -2081,7 +2150,11 @@ func _ui() -> void:
 	grip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	sheet_header.add_child(grip)
 	sheet_close_button = ui.command_button("Close", _close_panel, sheet_header, 44.0)
-	sheet_close_button.custom_minimum_size = Vector2(96, 44)
+	sheet_close_button.custom_minimum_size = Vector2(92, 44)
+	sheet_close_button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	sheet_close_button.icon = UI.icon("close", 14)
+	sheet_close_button.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	sheet_close_button.add_theme_constant_override("icon_max_width", 14)
 	sheet_close_button.add_theme_font_size_override("font_size", 14)
 	sheet_close_button.tooltip_text = "Close this menu"
 	side_scroll = ScrollContainer.new()
@@ -2117,7 +2190,7 @@ func _ui() -> void:
 	reset_dialog.ok_button_text = "Start New Village"
 	reset_dialog.confirmed.connect(_confirm_new_game)
 	reset_dialog.canceled.connect(_cancel_new_game)
-	welcome.add_theme_stylebox_override("panel", ui.panel_box())
+	welcome.add_theme_stylebox_override("panel", ui.sheet_box())
 	var intro := VBoxContainer.new()
 	intro.add_theme_constant_override("separation", 8)
 	intro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -2134,7 +2207,7 @@ func _ui() -> void:
 	welcome_help = ui.body("", intro)
 	_refresh_input_copy()
 	ui.body("Your current Chronicle objective stays visible while you play. Builds never spend resources until you confirm.", intro, 12)
-	ui.body("Local saves / no offline progress", intro, 12)
+	ui.body("Saved on this device. No progress while closed.", intro, 12)
 	var enter_button := ui.gold_button("Continue Village" if sim.elapsed > 0.0 else "Enter Village", _enter_village, intro, 48.0)
 	enter_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mentor_button = ui.command_button("Mentor: On" if mentor_enabled else "Mentor: Off", _toggle_mentor, intro)
@@ -2163,7 +2236,7 @@ func _refresh_input_copy() -> void:
 	if touch_mode:
 		welcome_help.text = "One finger: tap to select or drag to pan.\nTwo fingers: pinch to zoom, move to pan, twist to orbit.\nSelect a fighter, then tap open ground to give orders."
 	else:
-		welcome_help.text = "Left-drag to pan / wheel to zoom / right-drag or Q-E to orbit.\nClick buildings or villagers to select them.\nSelect a fighter, then click open ground to give orders."
+		welcome_help.text = "Left-drag to pan, wheel to zoom, right-drag or Q and E to orbit.\nClick buildings or villagers to select them.\nSelect a fighter, then click open ground to give orders."
 
 
 func _research_surface_ready() -> bool:
@@ -2176,7 +2249,7 @@ func _objective_summary(compact: bool = false) -> String:
 	var goal: String = _expansion_goal_text()
 	if goal.is_empty():
 		return core
-	return "%s  /  %s" % [core, goal] if compact else "%s\n%s" % [core, goal]
+	return "%s\n%s" % [core, goal]
 
 
 # The next expansion goal: a ready plot first, then the plot whose Frontier region is furthest along.
@@ -2237,8 +2310,8 @@ func _quest_summary(compact: bool = false) -> String:
 		if value < target_value:
 			var step: String = str(objective.get("text", objective.get("kind", "Next objective")))
 			if compact:
-				return "%s  %d/%d" % [step, int(minf(value, target_value)), int(target_value)]
-			return "%s\n%s  %d/%d" % [str(quest["name"]), step, int(minf(value, target_value)), int(target_value)]
+				return "%s  ·  %d/%d" % [step, int(minf(value, target_value)), int(target_value)]
+			return "%s\n%s  ·  %d/%d" % [str(quest["name"]), step, int(minf(value, target_value)), int(target_value)]
 	return str(quest["name"])
 
 
@@ -2328,8 +2401,20 @@ func _layout_ui() -> void:
 	crest_label.tooltip_text = "Act %s - %s" % [str(sim.chronicle.act_data(sim.chronicle.act).get("numeral", "I")), str(sim.chronicle.act_data(sim.chronicle.act).get("name", "Unwritten"))]
 	pop_label.text = "%d/%d souls" % [sim.units.size(), sim.beds()]
 	title_label.visible = not small
-	for label in [hud, raid_hud, quest_label, research_label]:
+	for label in [raid_hud, quest_label, research_label]:
 		label.add_theme_font_size_override("font_size", 12 if small else 14)
+	# Sideways the screen is short: the status card keeps souls, level, the next step and the horn
+	# timer, and the morale line and expansion goal wait for the upright view or their menus.
+	needs_label.visible = not landscape
+	toast_label.add_theme_font_size_override("font_size", 11 if landscape else 12)
+	toast_label.custom_minimum_size.y = 18 if landscape else 24
+	resource_stack_box.add_theme_constant_override("separation", 1 if landscape else 4)
+	for resource: String in resource_rows:
+		var value: Label = resource_rows[resource]
+		value.add_theme_font_size_override("font_size", 13 if landscape else 15)
+		var mark: Control = value.get_parent().get_child(0) as Control
+		if mark != null:
+			mark.custom_minimum_size = Vector2.ONE * (18.0 if landscape else 22.0)
 	# Portrait phones: collapse the left dock to title + HUD + raid so the
 	# world dominates; Path/Research stay one tap away in the bottom nav.
 	var compact_dock: bool = small
@@ -2341,21 +2426,15 @@ func _layout_ui() -> void:
 	research_label.visible = not compact_dock and _research_surface_ready()
 	if compact_dock:
 		research_list.hide()
-	# Five bottom buttons fit phones only with tighter spacing and smaller hero discs.
-	if small != nav_compact:
+	# Phones share the bar's width between the slots; wider screens give each slot a fixed width.
+	if small != nav_compact or landscape != nav_sideways:
 		nav_compact = small
-		nav.add_theme_constant_override("separation", 6 if small else 12)
-		# Spacers hide on phones; centre the buttons instead of piling them left.
-		nav.alignment = BoxContainer.ALIGNMENT_CENTER if small else BoxContainer.ALIGNMENT_BEGIN
-		_paint_ring(nav_attack, UI.BLOOD, 64.0 if small else 84.0)
-		_paint_ring(nav_shop, UI.GOLD, 64.0 if small else 84.0)
-		for button: Button in [more_button, collect_all_button, repair_all_button]:
-			_paint_ring(button, UI.SLATE, 44.0 if small else 56.0)
+		nav_sideways = landscape
 		for child in nav.get_children():
 			if child is Button:
-				child.add_theme_font_size_override("font_size", 12 if small else 13)
+				_repaint_nav(child)
 			else:
-				child.visible = not small
+				child.visible = false
 	var bar_h: float = maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y)
 	bottom.offset_left = safe
 	bottom.offset_right = -safe
@@ -2375,7 +2454,7 @@ func _layout_ui() -> void:
 		dock_width = maxf(0.0, gutter - stack_width - safe * 0.75)
 		if landscape:
 			# Sideways the screen is wide but short: keep the dock to a corner so the village shows.
-			dock_width = minf(dock_width, 330.0)
+			dock_width = minf(dock_width, 270.0)
 	left_dock.size = Vector2(dock_width, 0)
 	left_dock.position = Vector2(safe, safe)
 	resource_stack.size = Vector2(stack_width, 0)
@@ -2396,23 +2475,35 @@ func _layout_ui() -> void:
 	banner_panel.position = Vector2((size.x - banner_w) * 0.5, safe if landscape else maxf(8.0, bar_h + safe * 2.0 + 120.0))
 	if landscape:
 		banner_panel.position.x = clampf(banner_panel.position.x, left_dock.position.x + left_dock.size.x + safe, maxf(safe, resource_stack.position.x - safe - banner_w))
+	_fit_welcome()
+	if welcome.visible:
+		_fit_welcome.call_deferred()   # wrapped text reports its height a frame after a width change
+	combat_banner.size = Vector2(minf(390.0, size.x - safe * 2.0), 58.0)
+	combat_banner.position = Vector2((size.x - combat_banner.size.x) * 0.5, maxf(96.0, size.y * 0.18))
+	_fit_sheet()
+	_fit_sheet.call_deferred()
+	_camera_update()
+
+
+func _fit_welcome() -> void:
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	var small: bool = _is_small()
+	var landscape: bool = _is_landscape_phone()
+	var safe: float = 16.0 if small else UI.SAFE_MARGIN
+	var bar_h: float = maxf(UI.BOTTOM_BAR_H, bottom.get_combined_minimum_size().y)
 	# The welcome card scrolls when the screen is too short for it, so its buttons are never pushed off.
 	var welcome_w: float = minf(480, size.x - 36)
 	var welcome_pad: float = welcome.get_theme_stylebox("panel").get_minimum_size().y if welcome.has_theme_stylebox("panel") else 24.0
 	welcome_intro.custom_minimum_size.x = welcome_w - 40.0
-	var welcome_h: float = minf(welcome_intro.get_combined_minimum_size().y + welcome_pad, size.y - safe * 2.0)
+	# The card stays above the command bar, scrolling when that leaves too little room.
+	var welcome_h: float = minf(welcome_intro.get_combined_minimum_size().y + welcome_pad, size.y - bar_h - safe * 3.0)
 	welcome.size = Vector2(welcome_w, welcome_h)
 	welcome_scroll.custom_minimum_size.y = welcome_h - welcome_pad
 	var welcome_y: float = maxf(110, size.y * 0.28)
 	if small and not landscape:
 		# On a phone the card sits centred between the HUD and the command bar.
 		welcome_y = maxf(safe, (size.y - bar_h - safe - welcome_h) * 0.5 + 40.0)
-	welcome.position = Vector2((size.x - welcome.size.x) / 2, maxf(safe, minf(welcome_y, size.y - safe - welcome_h)))
-	combat_banner.size = Vector2(minf(390.0, size.x - safe * 2.0), 58.0)
-	combat_banner.position = Vector2((size.x - combat_banner.size.x) * 0.5, maxf(96.0, size.y * 0.18))
-	_fit_sheet()
-	_fit_sheet.call_deferred()
-	_camera_update()
+	welcome.position = Vector2((size.x - welcome.size.x) / 2, maxf(safe, minf(welcome_y, size.y - bar_h - safe * 2.0 - welcome_h)))
 
 
 func _shrink_dock() -> void:
@@ -2437,6 +2528,8 @@ func _sheet_is_context() -> bool:
 func _fit_sheet() -> void:
 	if sidebar == null or more_sheet == null or side_content == null:
 		return
+	if sidebar.visible:
+		_lift_sheet_title()
 	var vp: Vector2 = get_viewport().get_visible_rect().size
 	var small: bool = _is_small()
 	var landscape: bool = _is_landscape_phone()
@@ -2544,6 +2637,38 @@ func _clear_sidebar() -> void:
 	for child in side_content.get_children():
 		side_content.remove_child(child)
 		child.queue_free()
+	_drop_sheet_title()
+
+
+# A sheet's title rides in the header beside Close instead of under it, so the first thing
+# in the sheet is its name and the content starts one row higher.
+func _lift_sheet_title() -> void:
+	if sheet_header == null or side_content.get_child_count() == 0:
+		return
+	var first: Node = side_content.get_child(0)
+	if not (first is Label and first.has_meta("heading")):
+		return
+	side_content.remove_child(first)
+	_drop_sheet_title()
+	var title := first as Label
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	title.set_meta("lifted", true)
+	title.add_theme_font_size_override("font_size", 18)
+	sheet_header.add_child(title)
+	sheet_header.move_child(title, 0)
+	sheet_header.get_child(1).visible = false   # the spacer
+
+
+func _drop_sheet_title() -> void:
+	if sheet_header == null:
+		return
+	for child in sheet_header.get_children():
+		if child.has_meta("lifted"):
+			sheet_header.remove_child(child)
+			child.queue_free()
+		elif not child is Button:
+			child.visible = true
 
 
 func _open_panel(which: String) -> void:
@@ -2564,20 +2689,20 @@ func _open_panel(which: String) -> void:
 			roster_count = sim.units.size()
 			_label("PEOPLE & WORKERS", side_content, true)
 			ui.rule(side_content)
-			_label("%d people / %d beds\nHire a role, then select a villager to assign work or train." % [sim.units.size(), sim.beds()], side_content)
+			_label("%d people · %d beds\nHire a role, then select a villager to assign work or train." % [sim.units.size(), sim.beds()], side_content)
 			for role in sim.playable_roles():
 				var reason: String = sim.recruit_reason(role)
-				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + " / " + _cost_text(sim.troop_specs[role]["recruitCost"]), _hire.bind(role), side_content)
+				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + "  ·  " + _cost_text(sim.troop_specs[role]["recruitCost"]), _hire.bind(role), side_content)
 				button.disabled = not reason.is_empty()
 				button.tooltip_text = reason
 				hire_buttons[role] = button
 			_label("Your villagers", side_content, true)
 			for u: Dictionary in sim.units:
 				var post: Dictionary = sim.get_building(int(u["workplace"]))
-				var suffix: String = sim.building_specs[post["type"]]["name"] if not post.is_empty() else "Jobless / select to assign"
+				var suffix: String = sim.building_specs[post["type"]]["name"] if not post.is_empty() else "Jobless, select to assign"
 				if sim.troop_specs[u["type"]]["role"] == "combat":
 					suffix = "Defender"
-				_button("%s Lv%d / %s" % [str(u["type"]).capitalize(), u["level"], suffix], _select_unit.bind(int(u["id"])), side_content)
+				_button("%s Lv%d · %s" % [str(u["type"]).capitalize(), u["level"], suffix], _select_unit.bind(int(u["id"])), side_content)
 		"quests":
 			_build_missions()
 		"tech":
@@ -2593,7 +2718,7 @@ func _open_panel(which: String) -> void:
 		"wall_row_upgrade":
 			ui.heading("UPGRADE WALL ROW", side_content)
 			ui.rule(side_content)
-			wall_row_details = ui.body("%d matching walls / Level %d to %d\nTotal / %s\n\nOnly connected walls of the same type and level are included. Every highlighted wall upgrades together, or none do." % [wall_row_preview["ids"].size(), wall_row_preview["tier"], int(wall_row_preview["tier"]) + 1, _cost_text(wall_row_preview["cost"])], side_content)
+			wall_row_details = ui.body("%d matching walls · Level %d to %d\nTotal: %s\n\nOnly connected walls of the same type and level are included. Every highlighted wall upgrades together, or none do." % [wall_row_preview["ids"].size(), wall_row_preview["tier"], int(wall_row_preview["tier"]) + 1, _cost_text(wall_row_preview["cost"])], side_content)
 			ui.body("Village paused while you decide.", side_content, 12)
 			wall_row_confirm_button = ui.gold_button("Confirm Row Upgrade", _confirm_wall_row_upgrade, side_content, 44.0)
 			wall_row_cancel_button = ui.command_button("Cancel", _open_panel.bind("building"), side_content, 44.0)
@@ -2640,7 +2765,7 @@ func _build_raid_report() -> void:
 	_label("Attackers: %s (%d/3)" % [_raid_stars(int(report["stars"])), report["stars"]], side_content, true)
 	ui.rule(side_content)
 	var loot: Dictionary = report["loot"]
-	raid_report_details = _label("Wave %d / %.0fs\n%d%% destruction / %d of %d buildings\nManor Hall: %s\n\nResources stolen\n%d Wood\n%d Food\n%d Gold" % [report["wave"], report["seconds"], report["destruction"], report["destroyed"], report["total"], "fell" if report["hall_lost"] else "standing", loot["wood"], loot["food"], loot["gold"]], side_content)
+	raid_report_details = _label("Wave %d · %.0fs\n%d%% destruction · %d of %d buildings\nManor Hall: %s\n\nResources stolen\n%d Wood\n%d Food\n%d Gold" % [report["wave"], report["seconds"], report["destruction"], report["destroyed"], report["total"], "fell" if report["hall_lost"] else "standing", loot["wood"], loot["food"], loot["gold"]], side_content)
 	_label("One star for the Hall, one for 50% destruction, one for 100%. Walls and traps do not count. Theft is capped at 20% of stocks held when the raid began.", side_content)
 	ui.gold_button("Return to Village", _close_panel, side_content)
 
@@ -2778,7 +2903,7 @@ func _build_tech_tree() -> void:
 		tech_branch = str(chronicle.branches()[0]) if not chronicle.branches().is_empty() else ""
 	ui.heading("THE MANOR CHART", side_content)
 	ui.rule(side_content)
-	tech_summary = ui.body("Insight %d / %d / tier %d. Research pauses during an alarm." % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"]), chronicle.current_tier()], side_content)
+	tech_summary = ui.body("Insight %d / %d · tier %d. Research pauses during an alarm." % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"]), chronicle.current_tier()], side_content)
 	var tabs := GridContainer.new()
 	tabs.columns = 2
 	tabs.add_theme_constant_override("h_separation", 6)
@@ -2825,7 +2950,7 @@ func _build_tech_tree() -> void:
 func _tech_node_row(id: String, chart: VBoxContainer) -> Control:
 	var chronicle = sim.chronicle
 	var node: Dictionary = chronicle.node(id)
-	var row := ui.inset_row(chart)
+	var row := ui.inset_row(chart, true)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 1)
 	row.add_child(column)
@@ -2844,7 +2969,7 @@ func _tech_node_row(id: String, chart: VBoxContainer) -> Control:
 	if state == "SEALED" and reason.is_empty():
 		state = "READY"
 		tone = "ready"
-	var stamp: Label = ui.crest(state, head, tone, 11)
+	var stamp: Label = ui.crest(state, head, "parchment" if tone == "iron" else tone, 11)
 	var title := Label.new()
 	title.text = str(node.get("name", id))
 	title.add_theme_font_size_override("font_size", 15)
@@ -2864,9 +2989,9 @@ func _tech_node_row(id: String, chart: VBoxContainer) -> Control:
 		var names := PackedStringArray()
 		for need: Variant in prereqs:
 			names.append(str(chronicle.node(str(need)).get("name", need)))
-		line.text = "%safter %s\n%s\n%s / %d Insight / %ds" % [unlock_text, " + ".join(names), str(node.get("behavior", "")), _cost_text(node.get("cost", {})), int(node.get("insight", 0)), int(node.get("seconds", 0))]
+		line.text = "%safter %s\n%s\n%s · %d Insight · %ds" % [unlock_text, " + ".join(names), str(node.get("behavior", "")), _cost_text(node.get("cost", {})), int(node.get("insight", 0)), int(node.get("seconds", 0))]
 	else:
-		line.text = "%s%s\n%s / %d Insight / %ds" % [unlock_text, str(node.get("behavior", "")), _cost_text(node.get("cost", {})), int(node.get("insight", 0)), int(node.get("seconds", 0))]
+		line.text = "%s%s\n%s · %d Insight · %ds" % [unlock_text, str(node.get("behavior", "")), _cost_text(node.get("cost", {})), int(node.get("insight", 0)), int(node.get("seconds", 0))]
 	column.add_child(line)
 	var locked := Label.new()
 	locked.text = reason
@@ -2907,7 +3032,7 @@ func _build_frontier() -> void:
 		var head := HBoxContainer.new()
 		head.add_theme_constant_override("separation", 6)
 		column.add_child(head)
-		ui.crest(chronicle.region_state(region_id).substr(0, 3).to_upper(), head, "gold" if chronicle.region_state(region_id) == "developed" else "iron", 11)
+		ui.crest(chronicle.region_state(region_id).to_upper(), head, "gold" if chronicle.region_state(region_id) == "developed" else "iron", 11)
 		var title := Label.new()
 		title.text = str(data.get("name", region_id))
 		title.add_theme_font_size_override("font_size", 15)
@@ -2936,7 +3061,7 @@ func _build_frontier() -> void:
 		action.tooltip_text = chronicle.region_reason(region_id, next)
 		action.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		if chronicle.region_state(region_id) == "secured":
-			ui.command_button("Develop / 120 Wood + 40 Stone", _advance_region.bind(region_id, "developed"), column)
+			ui.command_button("Develop  ·  120 Wood + 40 Stone", _advance_region.bind(region_id, "developed"), column)
 	ui.heading("FACTIONS", side_content)
 	for entry: Dictionary in sim.world_specs.get("enemyFactions", []):
 		var known: bool = sim.wave >= int(entry.get("minWave", 1))
@@ -2945,7 +3070,7 @@ func _build_frontier() -> void:
 		side_content.add_child(frow)
 		ui.crest(str(entry.get("id", "").substr(0, 2).to_upper()), frow, "danger" if known else "iron", 11)
 		var flabel := Label.new()
-		flabel.text = "%s / wave %d - %s" % [str(entry.get("name", "")), int(entry.get("minWave", 1)), str(entry.get("lore", ""))]
+		flabel.text = "%s · wave %d · %s" % [str(entry.get("name", "")), int(entry.get("minWave", 1)), str(entry.get("lore", ""))]
 		flabel.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		flabel.add_theme_font_size_override("font_size", 12)
 		flabel.add_theme_color_override("font_color", UI.PAPER if known else UI.EDGE)
@@ -2980,7 +3105,7 @@ func _build_board() -> void:
 		row.add_child(column)
 		var head := HBoxContainer.new()
 		column.add_child(head)
-		ui.crest(str(offer["slot"]).substr(0, 3).to_upper(), head, "iron", 11)
+		ui.crest(str(offer["slot"]).to_upper(), head, "iron", 11)
 		var title := Label.new()
 		title.text = str(template["name"])
 		title.add_theme_font_size_override("font_size", 15)
@@ -2992,9 +3117,9 @@ func _build_board() -> void:
 		var progress := Label.new()
 		var reward: Dictionary = chronicle.board_reward(id)
 		if contract.is_empty():
-			progress.text = "%s / reward %s + %d Insight" % [str(objective.get("kind", "")), _cost_text(reward.get("resources", {})), int(reward.get("insight", 0))]
+			progress.text = "%s · reward %s + %d Insight" % [str(objective.get("kind", "")), _cost_text(reward.get("resources", {})), int(reward.get("insight", 0))]
 		else:
-			progress.text = "On the board / %d of %d" % [int(contract["progress"]), int(chronicle.board_target(id))]
+			progress.text = "On the board · %d of %d" % [int(contract["progress"]), int(chronicle.board_target(id))]
 		progress.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		progress.add_theme_font_size_override("font_size", 12)
 		progress.add_theme_color_override("font_color", UI.PAPER)
@@ -3100,7 +3225,7 @@ func _build_catalog() -> void:
 			if category == "Roads":
 				build_category_order.append(category)
 				_label("ROADS", side_content, true)
-				_button("Pave established dirt / 8 Stone", _toggle_pave, side_content)
+				_button("Pave established dirt  ·  8 Stone", _toggle_pave, side_content)
 			continue
 		build_category_order.append(category)
 		_label(category.to_upper(), side_content, true)
@@ -3122,9 +3247,9 @@ func _build_catalog() -> void:
 			elif owned >= cap:
 				lock = "Village limit reached."
 			var state: int = ui.card_state_of(not lock.is_empty(), 1.0 if owned > 0 else 0.0)
-			var caption := "%s\n%s / %d owned" % [str(spec["name"]), _cost_text(sim.building_cost(type_name)), owned]
+			var caption := "%s\n%s · %d owned" % [str(spec["name"]), _cost_text(sim.building_cost(type_name)), owned]
 			if state == UI.CardState.LOCKED:
-				caption += " / LOCKED"
+				caption += " · Locked"
 			if thumbnail_asset(type_name) != "%s_t1" % type_name:
 				caption += "\nreuses the %s model" % thumbnail_asset(type_name)
 			var card: Button = ui.button(caption, _choose_build.bind(type_name), side_content, 52.0)
@@ -3200,7 +3325,7 @@ func _build_inspector() -> void:
 	output.add_child(ocol)
 	ui.body("ON-SITE RESERVE", ocol, 12)
 	var produced: Variant = sim.building_specs[b["type"]].get("production")
-	ui.body(str(sim.building_specs[b["type"]].get("name", "")) + (" / no output" if produced == null else " / %s" % str(produced).capitalize()), ocol, 13)
+	ui.body(str(sim.building_specs[b["type"]].get("name", "")) + (" · no output" if produced == null else " · %s" % str(produced).capitalize()), ocol, 13)
 	inspect_reserve = ui.bar(0, 1, ocol)
 	var crew := ui.inset_row(side_content)
 	var crew_row := HBoxContainer.new()
@@ -3223,11 +3348,11 @@ func _build_inspector() -> void:
 	inspect_upgrade.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	if sim.upgrade_reason(selected_building).is_empty() and not _zone_grown(str(b["type"])):
 		ui.paint_command(inspect_upgrade, "gold")
-	ui.body("Move and Repair live under More / ··· .", side_content)
+	ui.body("Move and Repair are under More.", side_content)
 	if _zone_grown(str(b["type"])):
 		_label("Grows a tier on its own as the village grows.", side_content)
 	else:
-		_label("Upgrade / %s." % _cost_text(sim.building_cost(b["type"], int(b["tier"]) + 1)), side_content)
+		_label("Upgrade: %s." % _cost_text(sim.building_cost(b["type"], int(b["tier"]) + 1)), side_content)
 	_label("Matching workers", side_content, true)
 	for u: Dictionary in sim.units:
 		if workplace != "" and str(u["type"]) == workplace:
@@ -3247,7 +3372,7 @@ func _unit_inspector() -> void:
 	var u: Dictionary = sim.get_unit(selected_unit)
 	if u.is_empty():
 		return
-	_label("%s / Level %d" % [str(u["type"]).capitalize(), u["level"]], side_content, true)
+	_label("%s · Level %d" % [str(u["type"]).capitalize(), u["level"]], side_content, true)
 	ui.rule(side_content)
 	inspect_text = _label("", side_content)
 	_label("%s open ground to move. Orders keep carried goods and assignments." % _input_verb(), side_content)
@@ -3256,8 +3381,8 @@ func _unit_inspector() -> void:
 	var training_cost: Dictionary = sim.troop_specs[u["type"]]["levelCost"].duplicate()
 	for resource in training_cost:
 		training_cost[resource] = float(training_cost[resource]) * int(u["level"])
-	_button("Train / " + _cost_text(training_cost), _train_selected, side_content).disabled = int(u["level"]) >= 25
-	ui.command_button("Prestige / reset to Lv1, keep honors", _prestige_selected, side_content).disabled = int(u["level"]) < 25
+	_button("Train  ·  " + _cost_text(training_cost), _train_selected, side_content).disabled = int(u["level"]) >= 25
+	ui.command_button("Prestige: reset to Lv 1, keep honors", _prestige_selected, side_content).disabled = int(u["level"]) < 25
 	for b: Dictionary in sim.buildings:
 		if str(sim.building_specs[b["type"]].get("workplace", "")) == str(u["type"]) and b["hp"] > 0 and b["remaining"] <= 0:
 			_button("Assign to %s #%d" % [sim.building_specs[b["type"]]["name"], b["id"]], _assign.bind(selected_unit, int(b["id"])), side_content)
@@ -3270,7 +3395,7 @@ func _refresh_inspector() -> void:
 	if panel == "building" and inspect_text != null:
 		var shown: Dictionary = sim.get_building(selected_building)
 		if not shown.is_empty():
-			inspect_text.text = "Tier %d / HP %d of %d\nOn-site reserve %d / %d\nCollect whenever you need it." % [shown["tier"], shown["hp"], shown["max_hp"], shown["reserve"], sim.reserve_cap(shown)]
+			inspect_text.text = "Tier %d · HP %d of %d\nOn-site reserve %d / %d\nCollect whenever you need it." % [shown["tier"], shown["hp"], shown["max_hp"], shown["reserve"], sim.reserve_cap(shown)]
 			if inspect_collect != null and is_instance_valid(inspect_collect):
 				inspect_collect.disabled = float(shown.get("reserve", 0.0)) < 1 or float(shown.get("hp", 0.0)) <= 0 or float(shown.get("remaining", 0.0)) > 0
 				inspect_collect.tooltip_text = "Bank the on-site reserve of %s" % str(sim.building_specs[shown["type"]]["name"])
@@ -3409,7 +3534,7 @@ func _build_expedition() -> void:
 	for unit: Dictionary in sim.units:
 		if unit["hp"] <= 0.0 or sim.troop_specs[unit["type"]]["role"] != "combat": continue
 		var choice := CheckButton.new()
-		choice.text = "%s Lv%d / %.0f HP" % [str(unit["type"]).capitalize(), unit["level"], unit["hp"]]
+		choice.text = "%s Lv%d · %.0f HP" % [str(unit["type"]).capitalize(), unit["level"], unit["hp"]]
 		choice.custom_minimum_size.y = 44.0
 		choice.button_pressed = int(unit["id"]) in expedition_crew
 		choice.toggled.connect(_choose_crew.bind(int(unit["id"])))
@@ -3557,7 +3682,7 @@ func _choose_build(type_name: String) -> void:
 	_close_panel()
 	placement_box.show()
 	_fit_sheet.call_deferred()   # size the card to its text, above the command bar
-	placement_label.text = "Place %s / %s the map" % [str(sim.building_specs[type_name]["name"]), _input_verb().to_lower()]
+	placement_label.text = "Place %s · %s the map" % [str(sim.building_specs[type_name]["name"]), _input_verb().to_lower()]
 	confirm_button.disabled = true
 	confirm_button.text = "Confirm Build"
 
@@ -3580,7 +3705,7 @@ func _toggle_pave() -> void:
 	_close_panel()
 	placement_box.show()
 	_fit_sheet.call_deferred()   # size the card to its text, above the command bar
-	placement_label.text = "Pave stone road / %s a worn dirt trail" % _input_verb().to_lower()
+	placement_label.text = "Pave stone road · %s a worn dirt trail" % _input_verb().to_lower()
 	confirm_button.disabled = true
 	confirm_button.text = "Confirm Pave"
 
@@ -3656,14 +3781,14 @@ func _preview() -> void:
 	var detail: String = _cost_text({"stone": int(sim.living.config["stone"]["pave_cost"])})
 	if not paving:
 		if moving_id >= 0:
-			detail = "Move here / no cost"
+			detail = "Move here, no cost"
 		elif _is_wall_row_mode() and row_count > 1:
 			headline += " row ×%d" % row_count
 			detail = _cost_text(_cost_times(sim.building_cost(build_type), row_count))
 		else:
 			detail = _cost_text(sim.building_cost(build_type))
 	var coord: String = "tile %d, %d" % [preview_tile.x, preview_tile.y] if preview_tile.x >= 0 else "choose a tile"
-	placement_label.text = "%s  /  %s\n%s" % [headline, coord, reason if not reason.is_empty() else detail]
+	placement_label.text = "%s  ·  %s\n%s" % [headline, coord, reason if not reason.is_empty() else detail]
 	var signature: String = "%s/%s/%s/%s" % ["pave" if paving else build_type, str(tiles), preview_tile, reason]
 	if signature == ghost_signature:
 		return
@@ -3765,10 +3890,12 @@ func _refresh_shop() -> void:
 	var b: Dictionary = sim.get_building(selected_building)
 	if b.is_empty():
 		nav_shop.text = "Build"
+		_nav_glyph(nav_shop, "build")
 		nav_shop.disabled = false
 		nav_shop.tooltip_text = "Raise new structures"
 		return
 	nav_shop.text = "Upgrade"
+	_nav_glyph(nav_shop, "upgrade")
 	var reason: String = sim.upgrade_reason(selected_building)
 	if _zone_grown(str(b["type"])):
 		reason = "Grows a tier on its own as the village grows."
@@ -4043,7 +4170,6 @@ func _refresh_hud() -> void:
 			collect_glow = bankable
 			# Repaint at the current nav size so the phone disc and label match their neighbours.
 			_paint_ring(collect_all_button, UI.READY if bankable else UI.SLATE, 44.0 if nav_compact else 56.0)
-			collect_all_button.add_theme_font_size_override("font_size", 12 if nav_compact else 13)
 	var repair_wood: int = 0
 	for b: Dictionary in sim.buildings:
 		if float(b.get("hp", 0.0)) < float(b.get("max_hp", 0.0)) and float(b.get("remaining", 0.0)) <= 0.0:
@@ -4058,7 +4184,7 @@ func _refresh_hud() -> void:
 		if repairable != repair_glow:
 			repair_glow = repairable
 			_paint_ring(repair_all_button, UI.READY if repairable else UI.SLATE, 56.0)
-	hud.text = "Level %d    %d XP" % [sim.village_level(), sim.xp]
+	hud.text = "Level %d  ·  %d XP" % [sim.village_level(), sim.xp]
 	needs_label.text = sim.needs.summary(sim)
 	needs_label.add_theme_color_override("font_color", UI.PAPER if sim.needs.hunger == 0.0 else UI.READY)
 	var lower := 0
@@ -4078,14 +4204,14 @@ func _refresh_hud() -> void:
 	quest_label.text = _objective_summary()
 	if sim.raid_active:
 		var score: Dictionary = sim.home_raid.summary()
-		raid_hud.text = "Raid %d / %d/3 stars / %d%% / %s / %d raiders" % [sim.wave, score.get("stars", 0), score.get("destruction", 0), sim.raid_faction_name(), sim.enemies.size()]
-		raid_hud.tooltip_text = "Attackers: %s / %s\nLoot taken: %s" % [_raid_stars(int(score.get("stars", 0))), sim.raid_direction(), _cost_text(score.get("loot", {}))]
+		raid_hud.text = "Raid %d · %d/3 stars · %d%% · %s · %d raiders" % [sim.wave, score.get("stars", 0), score.get("destruction", 0), sim.raid_faction_name(), sim.enemies.size()]
+		raid_hud.tooltip_text = "Attackers: %s · %s\nLoot taken: %s" % [_raid_stars(int(score.get("stars", 0))), sim.raid_direction(), _cost_text(score.get("loot", {}))]
 		music.set_mood("danger")
 	elif sim.raid_warning:
-		raid_hud.text = "HORNS / %s / %.0fs" % [sim.raid_direction(), maxf(0.0, sim.next_raid_at - sim.elapsed)]
+		raid_hud.text = "Horns · %s · %.0fs" % [sim.raid_direction(), maxf(0.0, sim.next_raid_at - sim.elapsed)]
 		music.set_mood("tension")
 	else:
-		raid_hud.text = "Quiet / next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
+		raid_hud.text = "Quiet · next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
 		music.set_mood("night" if night else "day")
 	# One horn tick on the rising edge of an alarm; the music mood already
 	# carries the sustained danger, so this never repeats while held.
@@ -4101,8 +4227,8 @@ func _refresh_hud() -> void:
 	alarm_latched = alarm
 	music.set_calm(sim.paused)
 	if _is_small():
-		hud.text = "Lv%d" % sim.village_level()
-		quest_label.text = _objective_summary(true)
+		hud.text = "Lv %d" % sim.village_level()
+		quest_label.text = _quest_summary(true) if _is_landscape_phone() else _objective_summary(true)
 		if not sim.raid_active and not sim.raid_warning:
 			raid_hud.text = "Horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
 	_refresh_research()
@@ -4110,11 +4236,11 @@ func _refresh_hud() -> void:
 	if sim.raid_active or sim.raid_warning:
 		research_label.text = "Research waits until the alarm passes."
 	elif not sim.living.active.is_empty():
-		research_label.text = "Working / %s  %.0fs" % [str(sim.living.config["research"]["nodes"][sim.living.active]["name"]), sim.living.remaining]
+		research_label.text = "Working · %s  %.0fs" % [str(sim.living.config["research"]["nodes"][sim.living.active]["name"]), sim.living.remaining]
 	else:
 		research_label.text = "Insight %d / %d" % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"])]
-	message.text = ("PAUSED / " if sim.paused else "") + sim.notice
-	toast_label.text = "• " + ("PAUSED / " if sim.paused else "") + sim.notice
+	message.text = ("PAUSED · " if sim.paused else "") + UI.tidy(sim.notice)
+	toast_label.text = ("Paused · " if sim.paused else "") + UI.tidy(sim.notice)
 	toast_label.tooltip_text = sim.notice
 	repair_all_button.visible = repairable or sim.chronicle.act >= 3
 	_refresh_progressive_ui()
@@ -4141,7 +4267,7 @@ func _refresh_research() -> void:
 			state = "%.0fs LEFT" % sim.living.remaining
 		var reason: String = sim.living.research_reason(sim, key)
 		if state == "READY" and not reason.is_empty(): state = "LOCKED"
-		button.text = "%s\n%s / %d Insight" % [str(node["name"]), state, int(node["insight"])]
+		button.text = "%s\n%s · %d Insight" % [str(node["name"]), state, int(node["insight"])]
 		button.disabled = state != "READY" or not reason.is_empty()
 		button.tooltip_text = _research_cost(node) + "\n" + str(node["description"]) + ("\n" + reason if not reason.is_empty() else "")
 	for id: Variant in research_sheet_buttons:
@@ -4160,7 +4286,7 @@ func _refresh_research() -> void:
 		var reason: String = sim.living.research_reason(sim, key)
 		if state == "READY" and not reason.is_empty():
 			state = "LOCKED"
-		button.text = "%s\n%s / %d Insight" % [str(node["name"]), state, int(node["insight"])]
+		button.text = "%s\n%s · %d Insight" % [str(node["name"]), state, int(node["insight"])]
 		button.disabled = state != "READY"
 		button.tooltip_text = str(node["description"]) if reason.is_empty() else reason
 
@@ -4178,12 +4304,12 @@ func _refresh_progression_panels() -> void:
 			var contract: Dictionary = sim.chronicle.board_contract(id)
 			if contract.is_empty(): continue
 			var ready: bool = float(contract["progress"]) >= sim.chronicle.board_target(id)
-			view["progress"].text = "On the board / %d of %d" % [int(contract["progress"]), int(sim.chronicle.board_target(id))]
+			view["progress"].text = "On the board · %d of %d" % [int(contract["progress"]), int(sim.chronicle.board_target(id))]
 			view["action"].text = "Claim" if ready else "In hand"
 			view["action"].disabled = not ready
 			ui.paint_command(view["action"], "gold" if ready else "normal")
 	if panel == "needs" and is_instance_valid(needs_summary):
-		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% / hunger %d%%" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger)]
+		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% · hunger %d%%" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger)]
 	if panel == "mentor" and is_instance_valid(mentor_hint):
 		mentor_hint.text = _mentor_advice()
 	if panel == "quests":
@@ -4201,14 +4327,14 @@ func _refresh_progression_panels() -> void:
 				if objective["kind"] == "recruit": row["action"].disabled = not sim.recruit_reason(str(objective["types"][0])).is_empty()
 	if panel != "tech":
 		return
-	tech_summary.text = "Insight %d / %d / tier %d. Research pauses during an alarm." % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"]), sim.chronicle.current_tier()]
+	tech_summary.text = "Insight %d / %d · tier %d. Research pauses during an alarm." % [int(sim.living.insight), int(sim.living.config["research"]["insight_cap"]), sim.chronicle.current_tier()]
 	for id: String in tech_node_buttons:
 		var row: Dictionary = tech_node_buttons[id]
 		var reason: String = sim.living.research_reason(sim, id)
 		var done: bool = id in sim.living.discoveries
 		var active: bool = sim.living.active == id
 		row["stamp"].text = "STAMPED" if done else ("%.0fs" % sim.living.remaining if active else ("READY" if reason.is_empty() else "SEALED"))
-		row["stamp"].add_theme_color_override("font_color", ui.crest_color("gold" if done else ("ready" if active or reason.is_empty() else "iron")))
+		row["stamp"].add_theme_color_override("font_color", ui.crest_color("gold" if done else ("ready" if active or reason.is_empty() else "parchment")))
 		row["reason"].text = reason
 		row["reason"].visible = not reason.is_empty() and not done and not active
 		row["action"].visible = not done and not active
