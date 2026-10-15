@@ -79,6 +79,7 @@ var expansions: Array[String] = []
 const KITE_TRIGGER: float = 1.5
 const KITE_RELEASE_RATIO: float = 0.7
 const KITE_THINK: float = 0.6
+const APPROACH_THINK: float = 1.0
 # Mission objectives that read a running total (harvest, deliveries, raids won, prestige, kills,
 # expeditions). Each mission counts them from when its act opened, so work from earlier acts never
 # finishes a later mission on the spot. The starting point lives in the mission's save record.
@@ -1035,6 +1036,86 @@ func _refresh_walk_grids() -> void:
 				_walk_enemy[index] = 1
 				if not friendly_open:
 					_walk_friendly[index] = 1
+	_label_friendly_areas()
+
+
+# Connected open ground for defenders, one label per walled-off area, rebuilt with the walk
+# grids. A fighter only chases a raider in its own area; one it cannot reach is met at the
+# nearest ground it can.
+var _friendly_area: PackedInt32Array = PackedInt32Array()
+var _area_stamp := Vector2i(-1, -1)
+
+
+func _label_friendly_areas() -> void:
+	var width: int = _walk_rect.size.x
+	var height: int = _walk_rect.size.y
+	_friendly_area.resize(_walk_friendly.size())
+	_friendly_area.fill(-1)
+	var label: int = 0
+	for seed in _walk_friendly.size():
+		if _walk_friendly[seed] != 0 or _friendly_area[seed] >= 0:
+			continue
+		_friendly_area[seed] = label
+		var queue: PackedInt32Array = PackedInt32Array([seed])
+		var head: int = 0
+		while head < queue.size():
+			var current: int = queue[head]
+			head += 1
+			var cx: int = current % width
+			var cy: int = current / width
+			for direction in DIRECTIONS:
+				var nx: int = cx + direction.x
+				var ny: int = cy + direction.y
+				if nx < 0 or ny < 0 or nx >= width or ny >= height:
+					continue
+				var next: int = ny * width + nx
+				if _walk_friendly[next] == 0 and _friendly_area[next] < 0:
+					_friendly_area[next] = label
+					queue.append(next)
+		label += 1
+
+
+# The defenders' area a point belongs to, or -1 off the land. A fighter caught inside a
+# footprint takes the area of the open ground beside it, the way its route would leave.
+func friendly_area(point: Vector2) -> int:
+	# Checked once a tick (or after a building change), not per call: fighters ask per raider.
+	if _area_stamp != Vector2i(tick_count, path_revision) or _friendly_area.size() != _walk_friendly.size():
+		_area_stamp = Vector2i(tick_count, path_revision)
+		_refresh_walk_grids()
+	var tile := Vector2i(floori(point.x), floori(point.y))
+	if not _walk_rect.has_point(tile):
+		return -1
+	var width: int = _walk_rect.size.x
+	var index: int = (tile.y - _walk_rect.position.y) * width + (tile.x - _walk_rect.position.x)
+	if _friendly_area[index] >= 0 or not in_world(tile):
+		return _friendly_area[index]
+	for direction in DIRECTIONS:
+		var next: Vector2i = tile + direction
+		if _walk_rect.has_point(next):
+			var area: int = _friendly_area[(next.y - _walk_rect.position.y) * width + (next.x - _walk_rect.position.x)]
+			if area >= 0:
+				return area
+	return -1
+
+
+# The open ground in the fighter's own area nearest to a raider it cannot reach: the wall or
+# gap it should stand at so archers get their shot and the melee meet a breach.
+func _approach_point(u: Dictionary, target: Vector2) -> Vector2:
+	var area: int = friendly_area(position_of(u))
+	if area < 0:
+		return Vector2(-1, -1)
+	var width: int = _walk_rect.size.x
+	var best := Vector2(-1, -1)
+	var best_distance: float = INF
+	for index in _friendly_area.size():
+		if _friendly_area[index] != area:
+			continue
+		var point := Vector2(_walk_rect.position.x + index % width, _walk_rect.position.y + index / width) + Vector2.ONE * 0.5
+		var distance: float = point.distance_squared_to(target)
+		if distance < best_distance:
+			best_distance = distance
+			best = point
+	return best
 
 
 func route(start: Vector2i, goal: Vector2i, enemy: bool = false) -> Array[Vector2i]:
@@ -1664,7 +1745,24 @@ func _threat_base_rank(enemy: Dictionary, hall: Dictionary) -> float:
 	return rank
 
 
+# Who a fighter goes for. A raider already within its reach comes first (the most dangerous
+# one), so nobody watches an attacker swing at them while staring at a threat across the
+# village. Otherwise the most dangerous raider it can actually get to, and only when none can
+# be reached (walled off), the most dangerous one overall, to be met at the nearest ground.
 func _threat_enemy(u: Dictionary) -> Dictionary:
+	var here: Vector2 = position_of(u)
+	var reach: float = _stat(u, "range")
+	var in_reach: Dictionary = _ranked_enemy(u, func(enemy: Dictionary) -> bool:
+		return here.distance_to(position_of(enemy)) <= reach)
+	if not in_reach.is_empty() or u["hold"]:
+		return in_reach if not in_reach.is_empty() else _ranked_enemy(u, Callable())
+	var area: int = friendly_area(here)
+	var reachable: Dictionary = _ranked_enemy(u, func(enemy: Dictionary) -> bool:
+		return area >= 0 and friendly_area(position_of(enemy)) == area)
+	return reachable if not reachable.is_empty() else _ranked_enemy(u, Callable())
+
+
+func _ranked_enemy(u: Dictionary, accept: Callable) -> Dictionary:
 	var best: Dictionary = {}
 	var best_rank: float = -INF
 	var here: Vector2 = position_of(u)
@@ -1676,7 +1774,7 @@ func _threat_enemy(u: Dictionary) -> Dictionary:
 			if enemy["hp"] > 0:
 				threat_ranks[int(enemy["id"])] = _threat_base_rank(enemy, hall)
 	for enemy in enemies:
-		if enemy["hp"] <= 0:
+		if enemy["hp"] <= 0 or (accept.is_valid() and not accept.call(enemy)):
 			continue
 		var rank: float = float(threat_ranks.get(int(enemy["id"]), -INF)) - 0.35 * here.distance_to(position_of(enemy))
 		if rank > best_rank:
@@ -1793,8 +1891,20 @@ func _fighter(u: Dictionary, dt: float) -> void:
 			else:
 				_hit(position_of(enemy), "home")
 		return
-	if not u["hold"]:
-		_walk(u, position_of(enemy), dt)
+	if u["hold"]:
+		return
+	if _walk(u, position_of(enemy), dt) or u["phase"] == "walk":
+		return
+	# No way through to this raider (a wall between): stand at the nearest open ground instead
+	# of freezing where they are. Re-chosen every so often as the raider moves.
+	var goal := Vector2(float(u.get("ax", -1.0)), float(u.get("ay", -1.0)))
+	if goal.x < 0 or u["think"] <= 0:
+		goal = _approach_point(u, position_of(enemy))
+		u["ax"] = goal.x
+		u["ay"] = goal.y
+		u["think"] = APPROACH_THINK
+	if goal.x >= 0 and here.distance_to(goal) > 0.1:
+		_walk(u, goal, dt)
 
 
 func start_raid() -> bool:
@@ -1870,6 +1980,7 @@ func _spawn_raid() -> void:
 			1: point = Vector2(bounds.end.x - 0.5, 4.5 + index)
 			2: point = Vector2(5.5 + index, bounds.position.y + 0.5)
 			3: point = Vector2(6.5 + index, bounds.end.y - 0.5)
+		point = _entry_point(point)
 		# Hostiles stay "raider" in the save schema; the role drives their stats.
 		var role: String = str(roles[index % roles.size()])
 		var stats: Dictionary = _role_stats(role)
@@ -1878,6 +1989,37 @@ func _spawn_raid() -> void:
 			"x": point.x, "y": point.y, "hp": hp, "max_hp": hp, "phase": "walk", "cooldown": 0.0})
 	raid_stats["seconds_held"] = 0.0
 	notice = "Wave %d / %s / hold the Manor!" % [wave, str(faction.get("name", "Raiders"))]
+
+
+# Where a raider steps onto the land. The spawn lines follow the claimed land's bounding box,
+# and with only the North or South Reach held its corners hang over nothing: a raider placed
+# there could never walk in, and the defenders could never reach it, so the raid froze. Such a
+# point moves to the nearest open tile on the edge of the land.
+func _entry_point(point: Vector2) -> Vector2:
+	var tile := Vector2i(floori(point.x), floori(point.y))
+	if in_world(tile) and not _blocked(tile, true):
+		return point
+	_refresh_walk_grids()
+	var width: int = _walk_rect.size.x
+	var best := point
+	var best_distance: float = INF
+	for index in _walk_enemy.size():
+		if _walk_enemy[index] != 0:
+			continue
+		var cell := Vector2i(_walk_rect.position.x + index % width, _walk_rect.position.y + index / width)
+		var edge: bool = false
+		for direction in DIRECTIONS:
+			if not in_world(cell + direction):
+				edge = true
+				break
+		if not edge:
+			continue
+		var centre := Vector2(cell) + Vector2.ONE * 0.5
+		var distance: float = centre.distance_squared_to(point)
+		if distance < best_distance:
+			best_distance = distance
+			best = centre
+	return best
 
 
 func _building_distance(point: Vector2, b: Dictionary) -> float:
@@ -1947,6 +2089,12 @@ func _raid_tick(dt: float) -> void:
 			continue
 		enemy["cooldown"] = maxf(0, float(enemy["cooldown"]) - dt)
 		enemy["phase"] = "idle"
+		if not in_world(tile_of(enemy)):
+			# A raider saved off the land by an older build steps back on at the nearest edge.
+			var entry: Vector2 = _entry_point(position_of(enemy))
+			enemy["x"] = entry.x
+			enemy["y"] = entry.y
+			paths.erase(int(enemy["id"]))
 		var reach: float = float(_role_stats(str(enemy.get("role", "raider"))).get("range", 1.1))
 		var opponent: Dictionary = {}
 		for u in units:
