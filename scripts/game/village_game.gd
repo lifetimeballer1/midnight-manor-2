@@ -1981,6 +1981,10 @@ func _ui() -> void:
 	hud.add_theme_font_size_override("font_size", 13)
 	hud.add_theme_color_override("font_color", UI.GOLD)
 	hud.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	# Neither line may widen the dock: on a narrow phone it must leave room for the resources.
+	for line: Label in [pop_label, hud]:
+		line.clip_text = true
+		line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	souls_row.add_child(hud)
 	level_bar = ui.bar(0, 1, crest_column)
 	needs_label = ui.body(sim.needs.summary(sim), left_content, 12)
