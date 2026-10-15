@@ -12,6 +12,7 @@ var music = ManorScore.new()
 var details = Details.new()
 const NAVY := Color("152334")
 const GOLD := Color("d4b275")
+const WORLD_TEXT_OUTLINE := Color(0.09, 0.06, 0.04, 0.9)   # warm dark rim for floating world text
 const PAPER := Color("f2e7cc")
 const TILE: float = 2.0
 const MAP_ORIGIN := Vector3(-20, 0, -16)
@@ -1406,9 +1407,11 @@ func _rebuild_buildings() -> void:
 			model.rotation.z = deg_to_rad(lean_rng.randf_range(-2.5, 2.5))
 		var label := Label3D.new()
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.font = UI.font("strong")
 		label.font_size = 30
 		label.pixel_size = 0.012
-		label.outline_size = 7
+		label.outline_size = 8
+		label.outline_modulate = WORLD_TEXT_OUTLINE
 		label.modulate = GOLD
 		label.position.y = float(dims[1]) * factor + 0.5
 		root_node.add_child(label)
@@ -4570,10 +4573,11 @@ func _spawn_collect_pop(event: Dictionary) -> void:
 	label.text = "+%d %s" % [amount, resource.capitalize()]
 	label.modulate = GOLD
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.font = UI.font("strong")
 	label.font_size = 42
 	label.pixel_size = 0.014
 	label.outline_size = 10
-	label.outline_modulate = Color(0.09, 0.06, 0.03, 0.85)
+	label.outline_modulate = WORLD_TEXT_OUTLINE
 	label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 3.5 + float(stack) * step)
 	label.scale = Vector3.ONE * 0.55
 	add_child(label)
@@ -4615,8 +4619,12 @@ func _consume_events() -> void:
 				hit_label.text = "-%d" % int(event.get("amount", 0))
 				hit_label.modulate = Color("ff8b78") if bool(event.get("friendly", false)) else Color("f6d58a")
 				hit_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				hit_label.font = UI.font("strong")
 				hit_label.font_size = 28
 				hit_label.pixel_size = 0.012
+				hit_label.outline_size = 8
+				hit_label.outline_modulate = WORLD_TEXT_OUTLINE
+				hit_label.no_depth_test = true
 				hit_label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 2.0)
 				add_child(hit_label)
 				effect_nodes.append(hit_label)
@@ -4632,8 +4640,12 @@ func _consume_events() -> void:
 			down_label.text = "DOWN"
 			down_label.modulate = Color("ff8b78") if bool(event.get("friendly", false)) else Color("f6d58a")
 			down_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			down_label.font = UI.font("caps")
 			down_label.font_size = 34
 			down_label.pixel_size = 0.012
+			down_label.outline_size = 9
+			down_label.outline_modulate = WORLD_TEXT_OUTLINE
+			down_label.no_depth_test = true
 			down_label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 2.0)
 			add_child(down_label)
 			effect_nodes.append(down_label)

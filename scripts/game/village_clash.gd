@@ -353,10 +353,11 @@ func _damage_number(tile: Vector2, amount: float, friendly: bool) -> void:
 		return
 	var label := Label3D.new()
 	label.text = str(int(roundf(amount)))
+	label.font = UI.font("strong")
 	label.font_size = 44
 	label.pixel_size = 0.011
 	label.outline_size = 12
-	label.outline_modulate = Color(0.05, 0.03, 0.06, 0.9)
+	label.outline_modulate = WORLD_TEXT_OUTLINE
 	label.modulate = NUMBER_FOE if friendly else NUMBER_HOME
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true

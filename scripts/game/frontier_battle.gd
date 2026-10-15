@@ -95,8 +95,11 @@ func _ready() -> void:
 			var health := Label3D.new()
 			health.position.y = 2.2
 			health.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			health.font = VillageUI.font("strong")
 			health.font_size = 28
 			health.pixel_size = 0.01
+			health.outline_size = 8
+			health.outline_modulate = Color(0.09, 0.06, 0.04, 0.9)
 			health.modulate = Color("da978d") if enemy else Color("c0d1a7")
 			model.add_child(health)
 			actors.append({"body": body, "model": model, "health": health, "player": model.find_child("AnimationPlayer", true, false), "clip": ""})

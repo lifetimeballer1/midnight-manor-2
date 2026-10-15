@@ -2,7 +2,7 @@ extends RefCounted
 
 # Expansion plots (WP-B): the unexplored land the player can see and aim at, and the
 # unveiling when a plot is claimed. A locked plot is real slab land built by the same
-# builder as a claimed one, tinted dark and cool, under a soft fog, with survey stakes,
+# builder as a claimed one, dimmed, under a soft fog, with survey stakes,
 # a dashed brass claim line, a beacon and a label. Claiming lifts the fog, warms the
 # land, sweeps a line of light outward and clears the stakes. Everything here is
 # presentation. It reads sim state through the expansion contract in
@@ -17,20 +17,20 @@ const VIOLET_LOCK := Color("7d8fd6")
 const BRASS_DIM := Color("8a7048")
 const CLAIM_BRASS_READY := Color("806c45")   # the ready claim line at about half of GOLD_HOT: muted brass, not bright gold
 const LOCKED_TEXT := Color("c9c4e6")
-const FOG := Color(0.5, 0.58, 0.74)
+const FOG := Color(0.68, 0.71, 0.8)
 const GRASS := Color("4d6038")
 const SOIL := Color("4a3a2a")
 const LIP := Color("6f8553")
 const SKIRT := Color("243529")
-# Locked land: about 45% brightness of the claimed colours, cool blue-grey.
-const LOCKED_GRASS := Color(0.26, 0.31, 0.36)
-const LOCKED_SOIL := Color(0.13, 0.13, 0.17)
-const LOCKED_LIP := Color(0.3, 0.34, 0.42)
-const LOCKED_SKIRT := Color(0.09, 0.11, 0.15)
-const LOCKED_TREE := Color(0.24, 0.28, 0.37)    # silhouettes on locked land, dark under the fog
+# Locked land: the same autumn meadow, dimmed and a touch cooler, so it reads as land for sale, not swamp.
+const LOCKED_GRASS := Color(0.6, 0.6, 0.54)
+const LOCKED_SOIL := Color(0.2, 0.17, 0.15)
+const LOCKED_LIP := Color(0.44, 0.45, 0.4)
+const LOCKED_SKIRT := Color(0.13, 0.12, 0.12)
+const LOCKED_TREE := Color(0.62, 0.62, 0.6)     # silhouettes on locked land: their own colours, dimmed
 const POST_COLOUR := Color("3a3440")
 # Two fog layers: each is faint on its own, and they drift in opposite directions.
-const FOG_ALPHA: float = 0.22
+const FOG_ALPHA: float = 0.15
 const FOG_HEIGHT_LOW: float = 0.4
 const FOG_HEIGHT_HIGH: float = 1.0
 const FOG_EDGE_CLEAR: float = 0.2                 # fog strength at the village edge, as a share of the outer edge
@@ -137,7 +137,7 @@ func plot_at(point: Vector2, plots: Dictionary, claimed: Array) -> String:
 
 
 # Brings the nodes in line with sim state. A claimed plot has its slab; a locked plot has the same slab
-# dark and cool, plus its ghost props. animate_id names the plot claimed this frame, which unveils.
+# dimmed, plus its ghost props. animate_id names the plot claimed this frame, which unveils.
 # saver_on (battery saver) silences the fog wisps; lite (battery saver or low power) trims the sparks.
 func sync(sim, plots: Dictionary, animate_id: String, saver_on: bool, lite: bool, burst: Callable) -> void:
 	if host == null:
@@ -728,14 +728,14 @@ func _silhouette_mesh(kind: int) -> Mesh:
 		KIND_ROUND:
 			ball.radius = 0.8
 			ball.height = 1.6
-			ball.radial_segments = 7
-			ball.rings = 4
+			ball.radial_segments = 10
+			ball.rings = 6
 			lift = 0.85
 		KIND_SHRUB:
 			ball.radius = 0.42
 			ball.height = 0.5
-			ball.radial_segments = 6
-			ball.rings = 3
+			ball.radial_segments = 8
+			ball.rings = 4
 			lift = 0.22
 		_:
 			ball.radius = 0.28
