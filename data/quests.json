@@ -4,7 +4,7 @@
     "name": "A Second Field",
     "act": 1,
     "giver": "Maro the mason",
-    "text": "One farm feeds a few. Two farms feed a future. Raise a second Wheat Farm.",
+    "text": "One farm feeds a few. Two farms feed a future. Zone farm ground and a second Wheat Farm rises there on its own.",
     "objectives": [
       {
         "id": "two-farms",
@@ -28,7 +28,7 @@
     "name": "Still Water",
     "act": 1,
     "giver": "Wren Waterwise",
-    "text": "Fish shine like fallen stars in the dark. Dig a Stillwater Pond.",
+    "text": "Fish shine like fallen stars in the dark. Zone farm ground for a Stillwater Pond and the village digs it free.",
     "objectives": [
       {
         "id": "one-pond",
@@ -52,7 +52,7 @@
     "name": "First Cast",
     "act": 1,
     "giver": "Old Bell",
-    "text": "A pond without a fisher is just a puddle. Recruit a Fisherman from the People panel.",
+    "text": "A pond without a fisher is just a puddle. Hire a Fisherman from the People panel, or let the next newcomer take the pond.",
     "objectives": [
       {
         "id": "one-fisher",
@@ -76,7 +76,7 @@
     "name": "A Roof for the Night",
     "act": 1,
     "giver": "Pella Second-Lantern",
-    "text": "Cold nights make short tempers. Build a Moonlit Cottage so new blood has a bed.",
+    "text": "Cold nights make short tempers. Zone homes so a Moonlit Cottage rises and new blood has a bed.",
     "objectives": [
       {
         "id": "one-cottage",
@@ -100,13 +100,13 @@
     "name": "A Place for Every Hand",
     "act": 1,
     "giver": "Issa the chart-keeper",
-    "text": "Idle hands, empty bellies. Assign 2 villagers to workplaces from the People panel.",
+    "text": "Idle hands, empty bellies. Put 4 villagers to work at workplaces. Newcomers take open jobs, and the People panel sets the rest.",
     "objectives": [
       {
         "id": "two-assigned",
         "kind": "assign",
-        "text": "Villagers at a workplace: 2",
-        "count": 2
+        "text": "Villagers at a workplace: 4",
+        "count": 4
       }
     ],
     "xp": 80,
@@ -116,7 +116,7 @@
       "gold": 30
     },
     "unlocks": [],
-    "flavor": "Two hands at proper work beat ten idle. The Moonwarden chart says so, and so does supper.",
+    "flavor": "Four hands at proper work beat ten idle. The Moonwarden chart says so, and so does supper.",
     "log": "Issa chalked the first true page: every hand at proper work, every belly fed. The Moonwarden chart says so."
   },
   {
@@ -127,7 +127,7 @@
     "introduces": [
       "grove"
     ],
-    "text": "Tomm has been grafting under the moon since before you were born. Raise a Moonberry Grove and the larder stops being a worry.",
+    "text": "Tomm has been grafting under the moon since before you were born. Zone farm ground for a Moonberry Grove and the larder stops being a worry.",
     "objectives": [
       {
         "id": "one-grove",
@@ -155,12 +155,12 @@
     "name": "The Moon Dial",
     "act": 1,
     "giver": "Issa the chart-keeper",
-    "text": "Issa has a dial cut from Moonstone and no clear sky to set it against. Bank 200 gold and the Orrery's first stone goes up.",
+    "text": "Issa has a dial cut from Moonstone and no clear sky to set it against. Haul 200 gold from the mine and the Orrery's first stone goes up: a Moon Dial can then rise on civic ground.",
     "objectives": [
       {
         "id": "gold-200",
         "kind": "gather",
-        "text": "Gold banked: 200",
+        "text": "Gold hauled: 200",
         "resource": "gold",
         "amount": 200
       }
@@ -205,12 +205,12 @@
     "name": "Clearing the East Field",
     "act": 2,
     "giver": "Fen the wayfinder",
-    "text": "The treeline retreats axe-stroke by axe-stroke. Fell and haul 100 wood to clear the east rows.",
+    "text": "The treeline retreats axe-stroke by axe-stroke. Fell and haul 100 more wood to clear the east rows.",
     "objectives": [
       {
         "id": "wood-100",
         "kind": "gather",
-        "text": "Wood banked: 100",
+        "text": "Wood hauled: 100",
         "resource": "wood",
         "amount": 100
       }
@@ -229,7 +229,7 @@
     "name": "A Full Crew",
     "act": 2,
     "giver": "Maro the mason",
-    "text": "Twelve souls under one moon. Reach 12 villagers and the frontier is truly yours.",
+    "text": "Twelve souls under one moon, and the Manor Hall rises a tier on its own to hold them. Reach 12 villagers.",
     "objectives": [
       {
         "id": "pop-12",
@@ -256,7 +256,7 @@
     "introduces": [
       "chapel"
     ],
-    "text": "Moonstone dust in the old well mortar. The Mooncleric says it is borrowed light, never a miracle - but a village that has been hungry deserves one. Bank 150 food and raise the Moonchapel.",
+    "text": "Moonstone dust in the old well mortar. The Mooncleric says it is borrowed light, never a miracle - but a village that has been hungry deserves one. Haul 150 food and zone civic ground for the Moonchapel.",
     "objectives": [
       {
         "id": "one-chapel",
@@ -268,7 +268,7 @@
       {
         "id": "food-150",
         "kind": "gather",
-        "text": "Food banked: 150",
+        "text": "Food hauled: 150",
         "resource": "food",
         "amount": 150
       }
@@ -292,7 +292,7 @@
     "name": "The Store Yard",
     "act": 2,
     "giver": "Maro the mason",
-    "text": "A village that cannot store a harvest watches it rot. Raise a Storehouse and bank 120 lumber-scale wood into it.",
+    "text": "A village that cannot store a harvest watches it rot. Once two homes stand, a Storehouse rises on homes ground. Haul 120 wood to fill it.",
     "objectives": [
       {
         "id": "one-store",
@@ -304,7 +304,7 @@
       {
         "id": "wood-120",
         "kind": "gather",
-        "text": "Wood banked: 120",
+        "text": "Wood hauled: 120",
         "resource": "wood",
         "amount": 120
       }
@@ -438,7 +438,7 @@
     "introduces": [
       "squire"
     ],
-    "text": "Six faces on the roster and none of them trained. Hire two fresh defenders and a Squire to stand behind them.",
+    "text": "Six faces on the roster and none of them trained. Bring the roster to two Warriors and hire a Squire to stand behind them.",
     "objectives": [
       {
         "id": "two-warriors",
@@ -542,20 +542,20 @@
     "name": "Hold The Timber Line",
     "act": 3,
     "giver": "Rue the turncloak",
-    "text": "Two timber yards feeding the wall. Keep both working, keep both standing, and give the Thornband a second thing to think about.",
+    "text": "Keep the Timber Yards working while the wall takes the hits. Haul 200 wood and hold through a second Thornband horn.",
     "objectives": [
       {
         "id": "timber-200",
-        "kind": "maintain_resource",
-        "text": "Wood gathered: 200",
+        "kind": "gather",
+        "text": "Wood hauled: 200",
         "resource": "wood",
         "amount": 200
       },
       {
         "id": "survive",
         "kind": "survive_raid",
-        "text": "Survive the Thornband raid: 1",
-        "count": 1
+        "text": "Horns held this act: 2",
+        "count": 2
       }
     ],
     "xp": 230,
@@ -802,7 +802,7 @@
     "introduces": [
       "bellcote"
     ],
-    "text": "The chapel bell cannot be heard from the wall. Raise a Bellcote and Rue will have warning before the horn.",
+    "text": "The chapel bell cannot be heard from the wall. Zone civic ground for a Bellcote and Rue will have warning before the horn.",
     "objectives": [
       {
         "id": "one-bellcote",
@@ -822,21 +822,21 @@
     "unlocks": [
       "bellcote"
     ],
-    "flavor": "She has been asking for this since the first raid. She will not forget that you built it.",
+    "flavor": "She has been asking for this since the first raid. She will not forget that you raised it.",
     "log": "The bell carries to the wall now. The horn is no longer the first warning."
   },
   {
     "id": "act3-close",
-    "name": "The First Horn",
+    "name": "The Road Is Shut",
     "act": 3,
     "giver": "Rue the turncloak",
-    "text": "Walls, a door, towers, fire and a roster that knows its own names. The Thornband know the road is shut. Sit through one more horn and the manor is a fortress.",
+    "text": "Walls, a door, towers, fire and a roster that knows its own names. Hold through a third horn this act and the Thornband will know the road is shut.",
     "objectives": [
       {
-        "id": "hold-out",
-        "kind": "defend_for_time",
-        "text": "Hold through the horn: 240s",
-        "seconds": 240
+        "id": "hold",
+        "kind": "survive_raid",
+        "text": "Horns held this act: 3",
+        "count": 3
       }
     ],
     "xp": 300,
@@ -896,9 +896,16 @@
       {
         "id": "deliver-supplies",
         "kind": "deliver_resources",
-        "text": "Supplies delivered: 40 wood, 30 food",
+        "text": "Wood delivered: 40",
         "resource": "wood",
         "amount": 40
+      },
+      {
+        "id": "supply-food",
+        "kind": "deliver_resources",
+        "text": "Food delivered: 30",
+        "resource": "food",
+        "amount": 30
       },
       {
         "id": "secure-ridge",
@@ -942,12 +949,12 @@
     "name": "Chart the Dark",
     "act": 5,
     "giver": "Issa the chart-keeper",
-    "text": "Issa's moon-chart has a blank page where the deep gold sleeps. Haul 400 gold so the ink has something true to mark.",
+    "text": "Issa's moon-chart has a blank page where the deep gold sleeps. Haul 400 more gold so the ink has something true to mark.",
     "objectives": [
       {
         "id": "gold-400",
         "kind": "gather",
-        "text": "Gold banked: 400",
+        "text": "Gold hauled: 400",
         "resource": "gold",
         "amount": 400
       }
@@ -985,7 +992,7 @@
       "bakery",
       "longhouse"
     ],
-    "text": "Sarella wants every trade in one place: forge, armory, workshop, tannery, smokehouse and mill, each with a master on the floor.",
+    "text": "Sarella wants every trade at work: buy an Emberforge and a Wardarmory, and zone farm and industry ground until a Tinker Workshop, Hide Tannery, Smokehouse Butchery and Gristmill rise, each with a master on the floor.",
     "flavor": "'A trade without a master is a rumour,' she says. 'Put six of them under one roof and we stop being a camp.'",
     "log": "Six trades, six masters, one ledger. The manor has a market value of its own now.",
     "objectives": [
@@ -1057,14 +1064,15 @@
     "name": "Tomm's Flocks",
     "act": 5,
     "giver": "Tomm the herder",
-    "text": "Tomm the herder has watched three generations lamb under this moon. Raise the Night Pasture to tier 2 and prove the village keeps flocks, not just fences.",
+    "text": "Tomm the herder has watched three generations lamb under this moon. Keep three Night Pastures on farm ground and let them grow to tier 2: prove the village keeps flocks, not just fences.",
     "objectives": [
       {
         "id": "pasture-2",
         "kind": "upgrade",
-        "text": "Night Pasture at tier 2",
+        "text": "Night Pastures at tier 2: 3",
         "type": "pasture",
-        "level": 2
+        "level": 2,
+        "count": 3
       }
     ],
     "xp": 130,
@@ -1079,20 +1087,20 @@
       "berry-basket"
     ],
     "flavor": "Wren's grandfather counts lambs the way Issa counts stars. He has never once been wrong.",
-    "log": "Tomm walked the new pasture rails and nodded once. Flocks, not fences - the village is learning."
+    "log": "Tomm walked the pasture rails and nodded once. Flocks, not fences - the village is learning."
   },
   {
     "id": "open-doors",
     "name": "Open Doors",
     "act": 5,
     "giver": "Old Bell",
-    "text": "Ten souls under one moon and more on the road. Grow the village to 10 villagers and throw the doors wide.",
+    "text": "Twenty-four souls under one moon and more on the road. Grow the village to 24 villagers and the Manor Hall rises to its full height.",
     "objectives": [
       {
         "id": "pop-10",
         "kind": "population",
-        "text": "Villagers: 10",
-        "count": 10
+        "text": "Villagers: 24",
+        "count": 24
       }
     ],
     "xp": 0,
@@ -1103,8 +1111,8 @@
       "food": 40
     },
     "unlocks": [],
-    "flavor": "She rang the roll herself, all ten names, and the echo came back with an eleventh.",
-    "log": "Old Bell chalked ten names inside the hall door. The school can take apprentices now - beds for dozens."
+    "flavor": "She rang the roll herself, all twenty-four names, and the echo came back with one more.",
+    "log": "Old Bell chalked twenty-four names inside the hall door. The Manor Hall stands at its full height now, with beds for dozens."
   },
   {
     "id": "sarella-s-standard",
@@ -1154,7 +1162,7 @@
       "market",
       "haggler"
     ],
-    "text": "Trade needs a floor and a set of scales. Raise the Wild Market and put a Haggler on it.",
+    "text": "Trade needs a floor and a set of scales. Zone civic ground for the Wild Market and put a Haggler on it.",
     "objectives": [
       {
         "id": "one-market",
@@ -1195,7 +1203,7 @@
       "frostgrove",
       "woodward"
     ],
-    "text": "Fen's chalk map finally opens west of the treeline, where the frostwood stands white. Raise a Frostwood Grove and post a Woodward on it.",
+    "text": "Fen's chalk map finally opens west of the treeline, where the frostwood stands white. Zone industry ground for a Frostwood Grove and post a Woodward on it.",
     "objectives": [
       {
         "id": "one-frost",
@@ -1214,7 +1222,7 @@
       {
         "id": "frost-150",
         "kind": "gather",
-        "text": "Frostwood banked: 150",
+        "text": "Frostwood hauled: 150",
         "resource": "frostwood",
         "amount": 150
       }
@@ -1239,7 +1247,7 @@
     "introduces": [
       "smeltery"
     ],
-    "text": "Maro has chalked a new foundation by the cold piles: raise an Ember Smeltery and pour 10 plate for the armor racks.",
+    "text": "Maro has chalked a new foundation by the cold piles. Once the Frostwood Grove grows to tier 2, zone industry ground for an Ember Smeltery and pour 10 plate for the armor racks.",
     "objectives": [
       {
         "id": "one-smelter",
@@ -1251,7 +1259,7 @@
       {
         "id": "plate-10",
         "kind": "gather",
-        "text": "Plate banked: 10",
+        "text": "Plate hauled: 10",
         "resource": "plate",
         "amount": 10
       }
@@ -1275,7 +1283,7 @@
       "deephole",
       "diver"
     ],
-    "text": "Wren has been sounding the pond's black middle since she was small. Raise the Stillwater Pond to tier 3 and sink the first Deephole with a Diver posted on it.",
+    "text": "Wren has been sounding the pond's black middle since she was small. Let the Stillwater Pond grow to tier 3, then zone farm ground for the first Deephole with a Diver posted on it.",
     "objectives": [
       {
         "id": "pond-3",
@@ -1319,7 +1327,7 @@
       "emberglass",
       "sapper"
     ],
-    "text": "Pella dreamed of lanterns burning inside the rock. Raise the Moonstone Mine to tier 3 and cut the first Emberglass shaft with a Sapper posted on it.",
+    "text": "Pella dreamed of lanterns burning inside the rock. Let the Moonstone Mine grow to tier 3, then zone industry ground for the first Emberglass shaft with a Sapper posted on it.",
     "objectives": [
       {
         "id": "mine-3",
@@ -1360,12 +1368,12 @@
     "name": "Rue's Terms",
     "act": 7,
     "giver": "Rue the turncloak",
-    "text": "Sapper-Captain Rue walked out of the treeline with empty hands and a full ledger. Win a raid without losing a single building and the siege-craft is yours.",
+    "text": "Sapper-Captain Rue walked out of the treeline with empty hands and a full ledger. Win one more raid and the siege-craft is yours. Win it without losing a building and she will owe you.",
     "objectives": [
       {
         "id": "win-one",
-        "kind": "defeat",
-        "text": "Raids won: 1",
+        "kind": "survive_raid",
+        "text": "Raids won this act: 1",
         "count": 1
       }
     ],
@@ -1397,13 +1405,13 @@
     "name": "Voices in the Dark",
     "act": 7,
     "giver": "Old Bell",
-    "text": "The chapel holds four empty stalls and a bell nobody rings. Set 4 villagers to their workplaces and let the choir find its voice.",
+    "text": "Old Bell wants the whole village at its work before the choir sings. Have 20 villagers at their workplaces and let the choir find its voice.",
     "objectives": [
       {
         "id": "four-assigned",
         "kind": "assign",
-        "text": "Villagers at a workplace: 4",
-        "count": 4
+        "text": "Villagers at a workplace: 20",
+        "count": 20
       }
     ],
     "xp": 140,
@@ -1414,16 +1422,16 @@
       "chorister",
       "choir-robe"
     ],
-    "flavor": "She remembers when the chapel sang every night. Four posted hands, she says, and the dark answers back in harmony.",
-    "log": "Four stalls filled, four voices raised. The choir sang the offices and the whole village stood still to listen."
+    "flavor": "She remembers when the chapel sang every night. Twenty posted hands, she says, and the dark answers back in harmony.",
+    "log": "Twenty hands at their work, the stalls filled, voices raised. The choir sang the offices and the whole village stood still to listen."
   },
   {
     "id": "tam-s-school",
-    "name": "Tam School",
+    "name": "Tam's School",
     "act": 7,
     "giver": "Master Tam",
     "introduces": [],
-    "text": "Master Tam keeps a school with no benches and three empty stools. Recruit 3 Apprentices and give the young ones a trade worth keeping.",
+    "text": "Master Tam keeps a school with no benches and three empty stools. Once Education is researched, recruit 3 Apprentices and give the young ones a trade worth keeping.",
     "objectives": [
       {
         "id": "three-apprentices",
@@ -1448,7 +1456,9 @@
     "name": "The Bell Remembers",
     "act": 8,
     "giver": "Old Bell",
-	"introduces": ["bell-tower"],
+    "introduces": [
+      "bell-tower"
+    ],
     "text": "Old Bell has hung the great bell herself and chalked three new ropes. Ring a level-25 veteran back to a recruit with all honors kept - prestige one troop at the Bell Tower - and let the village hear what remembering sounds like.",
     "objectives": [
       {
@@ -1481,7 +1491,7 @@
       "sunken-chapel",
       "tidecaller"
     ],
-    "text": "Wren has sounded every dark foot of the Deephole and come up smiling. Raise the Deephole to tier 2 and sink the Sunken Chapel - the water has kept something for us, and it is time to ask for it back.",
+    "text": "Wren has sounded every dark foot of the Deephole and come up smiling. Let the Deephole grow to tier 2 and, once the Moonchapel stands at tier 3, zone civic ground for the Sunken Chapel - the water has kept something for us, and it is time to ask for it back.",
     "objectives": [
       {
         "id": "deephole-2",
@@ -1523,7 +1533,9 @@
     "name": "Dawn of the Manner",
     "act": 8,
     "giver": "Issa the chart-keeper",
-	"introduces": ["dawn-gate"],
+    "introduces": [
+      "dawn-gate"
+    ],
     "text": "Issa charted it, Tomm fenced it, Maro laid it stone by stone, Sarella fired it, Fen found the road, Wren blessed the water, Pella lit it, Rue warned it, Tam taught it, Old Bell rang it, and the Pale Envoy watched it all. Raise the Dawn Gate and let it stand - and hold a major assault while the masons finish.",
     "objectives": [
       {
@@ -1605,7 +1617,7 @@
       "whisper-grove",
       "heartwarden"
     ],
-    "text": "Tomm follows the paired cuts through Whisperwood. Raise one Whisper Grove behind the old Moonberry Grove, and leave the unmarked trees standing.",
+    "text": "Tomm follows the paired cuts through Whisperwood. Once the old Moonberry Grove has grown to tier 2, zone industry ground for one Whisper Grove, and leave the unmarked trees standing.",
     "objectives": [
       {
         "id": "one-whisper",
@@ -1643,7 +1655,7 @@
       "blackwater-weir",
       "mudlark"
     ],
-    "text": "The Mooncleric ties a white thread to the first river post. Raise one Blackwater Weir behind the old pond, and leave a passage for the returning boats.",
+    "text": "The Mooncleric ties a white thread to the first river post. Zone farm ground for one Blackwater Weir near the old pond, and leave a passage for the returning boats.",
     "objectives": [
       {
         "id": "one-weir",
@@ -1677,19 +1689,19 @@
     "name": "The Grey Banner",
     "act": 10,
     "giver": "Pale Envoy",
-    "text": "Raise a second signal post and hang the grey banner. What is left of the frontier will know the difference.",
+    "text": "Raise Watchtowers along the line, four in all, haul 300 gold for the cloth, and hang the grey banner. What is left of the frontier will know the difference.",
     "objectives": [
       {
         "id": "two-towers",
         "kind": "build",
-        "text": "Watchtowers: 2",
+        "text": "Watchtowers: 4",
         "type": "tower",
-        "count": 2
+        "count": 4
       },
       {
         "id": "gold-300b",
-        "kind": "maintain_resource",
-        "text": "Gold gathered: 300",
+        "kind": "gather",
+        "text": "Gold hauled: 300",
         "resource": "gold",
         "amount": 300
       }

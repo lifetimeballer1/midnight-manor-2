@@ -79,6 +79,10 @@ var expansions: Array[String] = []
 const KITE_TRIGGER: float = 1.5
 const KITE_RELEASE_RATIO: float = 0.7
 const KITE_THINK: float = 0.6
+# Mission objectives that read a running total (harvest, deliveries, raids won, prestige, kills,
+# expeditions). Each mission counts them from when its act opened, so work from earlier acts never
+# finishes a later mission on the spot. The starting point lives in the mission's save record.
+const SINCE_ACT_KINDS: Array[String] = ["gather", "deliver_resources", "survive_raid", "defeat", "prestige_unit", "prestige", "kill_enemy", "complete_expedition"]
 # Guard Posts hold defenders without giving them a profession, so Organized
 # Watch can fill them on its own.
 const GUARD_POSTS: Array[String] = ["watchfire", "bastion", "gate", "tower", "archer_tower", "ballista", "oathstone"]
@@ -656,6 +660,29 @@ func beds() -> int:
 		if b["hp"] > 0 and b["remaining"] <= 0 and not housing.is_empty():
 			total += int(housing[mini(int(b["tier"]) - 1, housing.size() - 1)])
 	return total
+
+
+# The profession a newcomer takes: the trade of a finished workplace with room in its crew (an
+# empty one first), so new villagers go straight to work. Farmer when every job is filled.
+func open_job_role() -> String:
+	var best: String = ""
+	var best_crew: int = 2
+	for b in buildings:
+		if b["hp"] <= 0 or b["remaining"] > 0:
+			continue
+		var role: String = str(building_specs[b["type"]].get("workplace", ""))
+		if role.is_empty() or not troop_specs.has(role):
+			continue
+		var crew: int = 0
+		for u in units:
+			if int(u["workplace"]) == int(b["id"]):
+				crew += 1
+		if crew < best_crew:
+			best = role
+			best_crew = crew
+			if crew == 0:
+				break
+	return best if not best.is_empty() else "farmer"
 
 
 func recruit_reason(role: String) -> String:
@@ -1443,9 +1470,10 @@ func tick(dt: float) -> void:
 		if birth_timer >= 60:
 			birth_timer = 0
 			resources["food"] -= 20
-			_add_unit("farmer")
+			var trade: String = open_job_role()
+			_add_unit(trade)
 			_auto_assign()
-			notice = "Warm beds and full bellies / a new villager joins."
+			notice = "Warm beds and full bellies / a new %s joins and takes up work." % str(troop_specs[trade].get("name", trade)).to_lower()
 
 
 func _gate_tick() -> void:
@@ -2065,12 +2093,27 @@ func quest_by_id(id: String) -> Dictionary:
 
 func _quest_record(id: String) -> Dictionary:
 	if not quest_progress.has(id):
-		quest_progress[id] = {"optional": {}, "raid_started": false, "started_at": elapsed}
+		quest_progress[id] = {"optional": {}, "raid_started": false, "started_at": elapsed, "baseline": {}}
 		# A mission introduces its own content while it is the current mission,
 		# so objectives can ask for what the mission itself introduces.
 		var quest: Dictionary = quest_by_id(id)
 		chronicle.grant_many(quest.get("introduces", []), "story:" + id + "/introduces")
+		for objective: Dictionary in quest.get("objectives", []):
+			if str(objective["kind"]) in SINCE_ACT_KINDS:
+				objective.erase("from")
+				quest_progress[id]["baseline"][str(objective.get("id", ""))] = _objective_value(objective)
+		_apply_baselines(quest)
 	return quest_progress[id]
+
+
+# Puts each mission's saved starting points on its objectives. Records saved before baselines
+# existed have none, and their objectives keep counting the whole total, as they always did.
+func _apply_baselines(quest: Dictionary) -> void:
+	var baseline: Variant = quest_progress.get(str(quest["id"]), {}).get("baseline", {})
+	for objective: Dictionary in quest.get("objectives", []):
+		objective.erase("from")
+		if baseline is Dictionary and baseline.has(str(objective.get("id", ""))):
+			objective["from"] = float(baseline[str(objective.get("id", ""))])
 
 
 func _quest_tick() -> void:
@@ -2166,6 +2209,10 @@ func _units_of(types: Array) -> int:
 
 
 func _objective_value(objective: Dictionary) -> float:
+	return maxf(0.0, _objective_total(objective) - float(objective.get("from", 0.0)))
+
+
+func _objective_total(objective: Dictionary) -> float:
 	var kinds: Array = objective.get("types", [])
 	var resource: String = str(objective.get("resource", ""))
 	match str(objective["kind"]):
@@ -2341,6 +2388,8 @@ func restore_state(state: Dictionary) -> bool:
 	gathered = data["gathered"].duplicate(true)
 	completed_quests.assign(data["completed_quests"])
 	quest_progress = data.get("quest_progress", {}).duplicate(true)
+	for quest: Dictionary in quests:
+		_apply_baselines(quest)
 	optional_won = data.get("optional_won", {}).duplicate()
 	raid_stats = data.get("raid_stats", {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0,
 		"defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0,
@@ -2496,6 +2545,12 @@ func _validate_state(state: Dictionary) -> bool:
 				return false
 			if not _number(record.get("started_at", 0)):
 				return false
+			var baseline: Variant = record.get("baseline", {})
+			if not baseline is Dictionary or baseline.size() > 16:
+				return false
+			for objective_id: Variant in baseline:
+				if not _number(baseline[objective_id]):
+					return false
 		if not state.get("raid_stats") is Dictionary:
 			return false
 		var stats: Dictionary = state["raid_stats"]
