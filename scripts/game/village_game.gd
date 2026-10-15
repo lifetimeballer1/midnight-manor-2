@@ -199,6 +199,7 @@ var repair_all_button: Button
 var repair_glow: bool = false
 var nav_compact: bool = false
 var nav_sideways: bool = false
+var resource_stack_box: VBoxContainer = null
 var nav_plate: StyleBox = null
 var inspect_collect: Button
 var inspect_upgrade: Button
@@ -1783,7 +1784,9 @@ func _paint_ring(node: Button, accent: Color, _d: float = 0.0) -> void:
 		return
 	node.set_meta("nav_painted", painted)
 	node.set_meta("nav_accent", accent)
-	node.custom_minimum_size = Vector2(0.0 if spread else (80.0 if small else 88.0), 60.0 if small else 66.0)
+	# A sideways phone is short: its slots are lower and narrower so the village keeps the screen.
+	var sideways: bool = small and nav_sideways
+	node.custom_minimum_size = Vector2(0.0 if spread else (64.0 if sideways else (80.0 if small else 88.0)), 48.0 if sideways else (60.0 if small else 66.0))
 	node.size_flags_horizontal = Control.SIZE_EXPAND_FILL if spread else Control.SIZE_FILL
 	node.size_flags_vertical = Control.SIZE_SHRINK_END
 	node.focus_mode = Control.FOCUS_NONE
@@ -1791,10 +1794,10 @@ func _paint_ring(node: Button, accent: Color, _d: float = 0.0) -> void:
 	node.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	node.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	node.clip_text = true
-	node.add_theme_constant_override("icon_max_width", 22 if small else 24)
+	node.add_theme_constant_override("icon_max_width", 18 if sideways else (22 if small else 24))
 	node.add_theme_constant_override("h_separation", 3)
 	node.add_theme_font_override("font", UI.font("caps" if small else "display"))
-	node.add_theme_font_size_override("font_size", 10 if small else 12)
+	node.add_theme_font_size_override("font_size", 9 if sideways else (10 if small else 12))
 	var state: String = "normal"
 	if accent == UI.BLOOD:
 		state = "danger"
@@ -1807,14 +1810,14 @@ func _paint_ring(node: Button, accent: Color, _d: float = 0.0) -> void:
 		var box: StyleBox = node.get_theme_stylebox(face)
 		box.content_margin_left = 2
 		box.content_margin_right = 2
-		box.content_margin_top = 8 if face != "pressed" else 9
-		box.content_margin_bottom = 6 if face != "pressed" else 5
+		box.content_margin_top = (5 if sideways else 8) + (1 if face == "pressed" else 0)
+		box.content_margin_bottom = (4 if sideways else 6) - (1 if face == "pressed" else 0)
 	node.add_theme_stylebox_override("disabled", ui.command_box(UI.DISABLED, Color(UI.IRON_EDGE, 0.7), 0))
 	var faded: StyleBox = node.get_theme_stylebox("disabled")
 	faded.content_margin_left = 2
 	faded.content_margin_right = 2
-	faded.content_margin_top = 8
-	faded.content_margin_bottom = 6
+	faded.content_margin_top = 5 if sideways else 8
+	faded.content_margin_bottom = 4 if sideways else 6
 	var glyph: String = str(node.get_meta("nav_icon", ""))
 	if not glyph.is_empty():
 		node.icon = UI.icon(glyph, 24)
@@ -2008,6 +2011,7 @@ func _ui() -> void:
 	root_control.add_child(resource_stack)
 	resource_stack.add_theme_stylebox_override("panel", ui.panel_box())
 	var stack := VBoxContainer.new()
+	resource_stack_box = stack
 	stack.add_theme_constant_override("separation", 4)
 	resource_stack.add_child(stack)
 	for resource: String in ["wood", "food", "gold", "lumber", "stone"]:
@@ -2399,6 +2403,18 @@ func _layout_ui() -> void:
 	title_label.visible = not small
 	for label in [raid_hud, quest_label, research_label]:
 		label.add_theme_font_size_override("font_size", 12 if small else 14)
+	# Sideways the screen is short: the status card keeps souls, level, the next step and the horn
+	# timer, and the morale line and expansion goal wait for the upright view or their menus.
+	needs_label.visible = not landscape
+	toast_label.add_theme_font_size_override("font_size", 11 if landscape else 12)
+	toast_label.custom_minimum_size.y = 18 if landscape else 24
+	resource_stack_box.add_theme_constant_override("separation", 1 if landscape else 4)
+	for resource: String in resource_rows:
+		var value: Label = resource_rows[resource]
+		value.add_theme_font_size_override("font_size", 13 if landscape else 15)
+		var mark: Control = value.get_parent().get_child(0) as Control
+		if mark != null:
+			mark.custom_minimum_size = Vector2.ONE * (18.0 if landscape else 22.0)
 	# Portrait phones: collapse the left dock to title + HUD + raid so the
 	# world dominates; Path/Research stay one tap away in the bottom nav.
 	var compact_dock: bool = small
@@ -2438,7 +2454,7 @@ func _layout_ui() -> void:
 		dock_width = maxf(0.0, gutter - stack_width - safe * 0.75)
 		if landscape:
 			# Sideways the screen is wide but short: keep the dock to a corner so the village shows.
-			dock_width = minf(dock_width, 330.0)
+			dock_width = minf(dock_width, 270.0)
 	left_dock.size = Vector2(dock_width, 0)
 	left_dock.position = Vector2(safe, safe)
 	resource_stack.size = Vector2(stack_width, 0)
@@ -4212,7 +4228,7 @@ func _refresh_hud() -> void:
 	music.set_calm(sim.paused)
 	if _is_small():
 		hud.text = "Lv %d" % sim.village_level()
-		quest_label.text = _objective_summary(true)
+		quest_label.text = _quest_summary(true) if _is_landscape_phone() else _objective_summary(true)
 		if not sim.raid_active and not sim.raid_warning:
 			raid_hud.text = "Horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
 	_refresh_research()
