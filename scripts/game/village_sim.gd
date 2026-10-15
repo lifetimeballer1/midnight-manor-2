@@ -658,6 +658,29 @@ func beds() -> int:
 	return total
 
 
+# The profession a newcomer takes: the trade of a finished workplace with room in its crew (an
+# empty one first), so new villagers go straight to work. Farmer when every job is filled.
+func open_job_role() -> String:
+	var best: String = ""
+	var best_crew: int = 2
+	for b in buildings:
+		if b["hp"] <= 0 or b["remaining"] > 0:
+			continue
+		var role: String = str(building_specs[b["type"]].get("workplace", ""))
+		if role.is_empty() or not troop_specs.has(role):
+			continue
+		var crew: int = 0
+		for u in units:
+			if int(u["workplace"]) == int(b["id"]):
+				crew += 1
+		if crew < best_crew:
+			best = role
+			best_crew = crew
+			if crew == 0:
+				break
+	return best if not best.is_empty() else "farmer"
+
+
 func recruit_reason(role: String) -> String:
 	if not troop_specs.has(role):
 		return "Unknown role."
@@ -1443,9 +1466,10 @@ func tick(dt: float) -> void:
 		if birth_timer >= 60:
 			birth_timer = 0
 			resources["food"] -= 20
-			_add_unit("farmer")
+			var trade: String = open_job_role()
+			_add_unit(trade)
 			_auto_assign()
-			notice = "Warm beds and full bellies / a new villager joins."
+			notice = "Warm beds and full bellies / a new %s joins and takes up work." % str(troop_specs[trade].get("name", trade)).to_lower()
 
 
 func _gate_tick() -> void:
