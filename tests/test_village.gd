@@ -218,6 +218,11 @@ func _run() -> void:
 	check("moon-orchard" in sim.completed_quests, "the Act I mission closes on its own objective")
 	check(sim.chronicle.act == 2, "campaign advances to Act II when Act I is finished")
 	check(sim.chronicle.act_name(2) == "II / A Village Worth Keeping", "act naming is readable in the UI")
+	# Act II's haul counts wood cut after the act opens, not what Act I already hauled.
+	check("east-field" not in sim.completed_quests, "earlier harvest does not finish the Act II wood haul")
+	building(sim, "lumber")["reserve"] = 100
+	sim.collect(int(building(sim, "lumber")["id"]))
+	step(sim, 0.2)
 	var act2_ids: Array[String] = ["new-blood", "east-field", "full-crew"]
 	var resolved2: int = 0
 	for quest_id in act2_ids:
