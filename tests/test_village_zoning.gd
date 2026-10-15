@@ -173,7 +173,117 @@ func _run() -> void:
 	check(game.town_overlay_ok(), "zone overlay draws with village zones")
 	game.town_close()
 
+	_ways_in_and_out(game)
+
 	print("test_village_zoning: %d checks, %d failures" % [checks, failures.size()])
 	if failures.is_empty():
 		print("PASS test_village_zoning")
 	quit(0 if failures.is_empty() else 1)
+
+
+# Packed zones keep their ways in and out: every open village cell zoned, everything that fits grown,
+# then nobody is walled in, work stands stay open, paths lead to each new building and out of the
+# village, paved road is never built over, and the workers really reach their work.
+func _ways_in_and_out(game) -> void:
+	var growth = game.growth
+	var sim = game.sim
+	var town = game.town
+	game.paused = true
+	sim.xp = 100000
+	for resource: String in sim.resources:
+		sim.resources[resource] = 99999.0
+	sim.next_raid_at = 1.0e9
+	var taken: Dictionary = game._village_taken()
+	var open: Array[Vector2i] = []
+	for cy in range(-4, 4):
+		for cx in range(-5, 5):
+			var c := Vector2i(cx, cy)
+			if not taken.has(c) and growth.cell_reason(sim, c).is_empty():
+				open.append(c)
+	# A stretch of paved road through the middle of the zones.
+	var road: Vector2i = growth.cell_tiles(open[open.size() / 2])[0]
+	sim.living.cells[sim.living.key(road)] = {"wear": 1.0, "last": sim.elapsed, "stone": true}
+	game.town_open()
+	for c: Vector2i in open:
+		game.town_set_tool("housing" if c.x <= -3 else ("farming" if c.x <= 1 else "industrial"))
+		game.town_paint_cell(c)
+	game.town_close()
+	var start: int = sim.buildings.size()
+	var worst: int = 0
+	for i in 120:
+		for b: Dictionary in sim.buildings:
+			b["remaining"] = 0.0
+		var before: int = Time.get_ticks_msec()
+		var rose: Dictionary = growth.grow_one(sim, town)
+		worst = maxi(worst, Time.get_ticks_msec() - before)
+		if rose.is_empty():
+			break
+	for b: Dictionary in sim.buildings:
+		b["remaining"] = 0.0
+	sim.revision += 1
+	print("ways in and out: %d buildings grew, slowest step %d ms" % [sim.buildings.size() - start, worst])
+	check(sim.buildings.size() - start >= 10, "packed zones still fill up (%d grew)" % [sim.buildings.size() - start])
+	check(growth.cut_off(sim).is_empty(), "no zoned building is walled in (%s)" % [growth.cut_off(sim)])
+	check(sim.building_at(road.x, road.y).is_empty(), "nothing rises on a paved road")
+
+	# Work stands: inside the village, each grown workplace's stands are open and reached, and every
+	# grown building has a path at its door.
+	var walk: Dictionary = growth._walk(sim)
+	var blocked_stands: Array[String] = []
+	var pathless: Array[String] = []
+	for b: Dictionary in sim.buildings.slice(start):
+		for point: Vector2 in sim.stand_candidates(b):
+			var tile := Vector2i(floori(point.x), floori(point.y))
+			if sim.in_world(tile) and walk["reached"][growth._index(walk, tile)] == 0:
+				blocked_stands.append("%s@%d,%d" % [b["type"], tile.x, tile.y])
+		var door: bool = false
+		for tile: Vector2i in growth._ring(Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"]))):
+			if growth._on_path(sim, tile):
+				door = true
+		if not door:
+			pathless.append(str(b["type"]))
+	check(blocked_stands.is_empty(), "grown workplaces keep their work stands open (%s)" % [blocked_stands])
+	check(pathless.is_empty(), "a path reaches every building that grew (%s)" % [pathless])
+	check(growth.lay_way_out(sim) == 0, "a path already leads from the hall out of the village")
+
+	# The workers really get to work: one of each trade per grown workplace, then let the day run.
+	var crew: Dictionary = {}
+	for b: Dictionary in sim.buildings.slice(start):
+		var trade: String = str(sim.building_specs[b["type"]].get("workplace", ""))
+		if trade.is_empty() or sim.stand_candidates(b).is_empty() or not sim.troop_specs.has(trade):
+			continue
+		sim._add_unit(trade)
+		var u: Dictionary = sim.units[sim.units.size() - 1]
+		if sim.assign(int(u["id"]), int(b["id"])):
+			crew[int(u["id"])] = str(b["type"])
+	var worked: Dictionary = {}
+	sim.paused = false
+	for step in 900:
+		sim.next_raid_at = 1.0e9
+		sim.tick(0.1)
+		for u: Dictionary in sim.units:
+			if crew.has(int(u["id"])) and str(u["phase"]) == "work":
+				worked[int(u["id"])] = true
+	var idle: Array[String] = []
+	for id: int in crew:
+		if not worked.has(id):
+			idle.append(str(crew[id]))
+	print("ways in and out: %d workers posted, %d reached work" % [crew.size(), worked.size()])
+	check(crew.size() >= 5, "workers were posted to grown workplaces (%d)" % crew.size())
+	check(idle.is_empty(), "every worker reaches a grown workplace (%d of %d; stuck at %s)" % [crew.size() - idle.size(), crew.size(), idle])
+
+	# A hand-built wall that closes a zoned building in is called out once.
+	var target: Dictionary = sim.buildings[sim.buildings.size() - 1]
+	var walled: int = 0
+	for tile: Vector2i in growth._ring(Rect2i(int(target["x"]), int(target["y"]), int(target["size"]), int(target["size"]))):
+		if sim.in_world(tile) and sim.building_at(tile.x, tile.y).is_empty():
+			sim.buildings.append(sim._new_building("wall", tile.x, tile.y, false))
+			walled += 1
+	sim.revision += 1
+	sim._invalidate()
+	sim.notice = ""
+	growth._warn_cut_off(sim)
+	check(int(target["id"]) in growth.cut_off(sim) and "walled in" in sim.notice, "a walled-in zoned building is called out (%s)" % sim.notice)
+	sim.notice = ""
+	growth._warn_cut_off(sim)
+	check(sim.notice.is_empty(), "and only once")

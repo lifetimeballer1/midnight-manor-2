@@ -25,6 +25,7 @@ func _run() -> void:
 		test_shortage_and_recovery()
 		test_housing()
 		test_persistence()
+		test_newcomers_take_open_jobs()
 	print("VILLAGE_NEEDS ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)
 
@@ -108,3 +109,36 @@ func test_persistence() -> void:
 	bad.erase("needs")
 	check(not restored.restore_state(bad), "new-version saves cannot silently lose their needs section")
 	check(restored.needs.hunger == 0.0, "rejected saves leave the current village unchanged")
+
+
+# A villager born into warm beds takes up the trade of a workplace with room, and goes to work.
+func test_newcomers_take_open_jobs() -> void:
+	var sim = Sim.new()
+	for b: Dictionary in sim.buildings:
+		b["remaining"] = 0.0
+	sim._auto_assign()
+	var open_role: String = sim.open_job_role()
+	var open_place: int = -1
+	for b: Dictionary in sim.buildings:
+		var crew: int = 0
+		for u: Dictionary in sim.units:
+			if int(u["workplace"]) == int(b["id"]):
+				crew += 1
+		if str(sim.building_specs[b["type"]].get("workplace", "")) == open_role and crew < 2:
+			open_place = int(b["id"])
+	check(open_role != "farmer" and open_place >= 0, "the starting village has an open job (%s)" % open_role)
+	sim.buildings.append(sim._new_building("cottage", 4, 12, false))
+	sim.resources["food"] = 500.0
+	var before: int = sim.units.size()
+	for i in 1300:
+		sim.tick(0.05)
+	check(sim.units.size() == before + 1, "a villager is born into the free beds")
+	var newcomer: Dictionary = sim.units.back()
+	var place: Dictionary = sim.get_building(int(newcomer["workplace"]))
+	check(str(newcomer["type"]) == open_role and not place.is_empty() and str(sim.building_specs[place["type"]].get("workplace", "")) == open_role, "the newcomer is a %s and goes straight to work (%s at %d)" % [open_role, newcomer["type"], int(newcomer["workplace"])])
+	for b: Dictionary in sim.buildings:
+		if str(sim.building_specs[b["type"]].get("workplace", "")) != "":
+			for n in 2:
+				sim._add_unit(str(sim.building_specs[b["type"]]["workplace"]))
+	sim._auto_assign()
+	check(sim.open_job_role() == "farmer", "with every crew full, newcomers are farmers as before")
