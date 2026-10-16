@@ -676,25 +676,81 @@ func beds() -> int:
 
 # The profession a newcomer takes: the trade of a finished workplace with room in its crew (an
 # empty one first), so new villagers go straight to work. Farmer when every job is filled.
+# The trade a newcomer takes up: an open place at the workplace the village most needs filled.
+# Empty crews come first; then work that answers a shortage (stone for stalled sites, food when the
+# next meals are at risk, bread when the larder has none); farmer when every crew is full.
 func open_job_role() -> String:
+	var wants: Dictionary = job_wants()
 	var best: String = ""
-	var best_crew: int = 2
+	var best_score: float = INF
 	for b in buildings:
 		if b["hp"] <= 0 or b["remaining"] > 0:
 			continue
 		var role: String = str(building_specs[b["type"]].get("workplace", ""))
 		if role.is_empty() or not troop_specs.has(role):
 			continue
-		var crew: int = 0
-		for u in units:
-			if int(u["workplace"]) == int(b["id"]):
-				crew += 1
-		if crew < best_crew:
+		var crew: int = crew_of(b)
+		if crew >= 2:
+			continue
+		var score: float = crew * 10.0 - _job_urgency(b, wants)
+		if score < best_score:
 			best = role
-			best_crew = crew
-			if crew == 0:
-				break
+			best_score = score
 	return best if not best.is_empty() else "farmer"
+
+
+func crew_of(b: Dictionary) -> int:
+	var crew: int = 0
+	for u in units:
+		if int(u["workplace"]) == int(b["id"]) and float(u["hp"]) > 0.0:
+			crew += 1
+	return crew
+
+
+# How badly the village wants more of each resource right now, for open_job_role.
+func job_wants() -> Dictionary:
+	var wants: Dictionary = {}
+	for b: Dictionary in buildings:
+		if float(b["remaining"]) <= 0.0 or float(b["hp"]) <= 0.0:
+			continue
+		var need: Dictionary = materials.needed(b)
+		for resource: String in need:
+			if float(resources.get(resource, 0.0)) < float(need[resource]):
+				wants[resource] = 5.0
+	if float(resources.get("food", 0.0)) < needs.demand(self) * 2.0:
+		wants["food"] = float(wants.get("food", 0.0)) + 3.0
+	if float(resources.get("bread", 0.0)) < float(units.size()):
+		wants["bread"] = float(wants.get("bread", 0.0)) + 2.0
+	return wants
+
+
+func _job_urgency(b: Dictionary, wants: Dictionary) -> float:
+	var spec: Dictionary = building_specs[b["type"]]
+	var best: float = float(wants.get(str(spec.get("production", "")), 0.0))
+	for recipe: Dictionary in spec.get("refine", []):
+		for resource: String in recipe.get("out", {}):
+			best = maxf(best, float(wants.get(resource, 0.0)))
+	return best
+
+
+# One line for the people panel: workplace places filled, and villagers with no work.
+func jobs_summary() -> String:
+	var places: int = 0
+	var filled: int = 0
+	for b: Dictionary in buildings:
+		if float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+			continue
+		var role: String = str(building_specs[b["type"]].get("workplace", ""))
+		if role.is_empty() or not troop_specs.has(role) or str(troop_specs[role].get("role", "")) == "combat":
+			continue
+		places += 2
+		filled += mini(2, crew_of(b))
+	var idle: int = 0
+	for u: Dictionary in units:
+		var kind: String = str(troop_specs[u["type"]].get("role", ""))
+		if float(u["hp"]) > 0.0 and kind not in ["combat", "builder"] and int(u["workplace"]) < 0:
+			idle += 1
+	return "Jobs %d/%d filled · %d idle" % [filled, places, idle]
 
 
 func recruit_reason(role: String) -> String:

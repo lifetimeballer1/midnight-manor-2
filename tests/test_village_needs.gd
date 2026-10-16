@@ -26,6 +26,7 @@ func _run() -> void:
 		test_housing()
 		test_persistence()
 		test_newcomers_take_open_jobs()
+		test_newcomers_answer_shortages()
 	print("VILLAGE_NEEDS ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)
 
@@ -142,3 +143,30 @@ func test_newcomers_take_open_jobs() -> void:
 				sim._add_unit(str(sim.building_specs[b["type"]]["workplace"]))
 	sim._auto_assign()
 	check(sim.open_job_role() == "farmer", "with every crew full, newcomers are farmers as before")
+
+
+func test_newcomers_answer_shortages() -> void:
+	var sim = Sim.new()
+	for b: Dictionary in sim.buildings:
+		b["remaining"] = 0.0
+	sim._auto_assign()
+	var quarry: Dictionary = sim._new_building("stone_quarry", 14, 2, false)
+	sim.buildings.append(quarry)
+	var lumber: Dictionary = sim._new_building("lumber", 17, 2, false)
+	sim.buildings.append(lumber)
+	sim.resources["food"] = 500.0
+	sim.resources["bread"] = 50.0
+	sim.living.discoveries.append("stoneworking")
+	sim.resources["stone"] = 0.0
+	var site: Dictionary = sim._new_building("cottage", 12, 9, true)
+	site["tier"] = 2
+	sim.materials.open_site(sim, site, 2)
+	sim.buildings.append(site)
+	check(sim.job_wants().has("stone"), "a site stuck for stone makes the village want stone")
+	check(sim.open_job_role() == "miner" and str(sim.building_specs["stone_quarry"]["workplace"]) == "miner", "a newcomer goes to the empty quarry while builders wait for stone")
+	sim.resources["stone"] = 500.0
+	sim.resources["food"] = 0.0
+	var role: String = sim.open_job_role()
+	check(role in ["farmer", "fisherman", "shepherd", "forager", "butcher", "diver", "mudlark", "miner", "lumberjack"], "with the larder empty a newcomer still takes an open job (%s)" % role)
+	check(sim.jobs_summary().begins_with("Jobs ") and sim.jobs_summary().contains("idle"), "the people panel counts filled jobs and idle villagers")
+

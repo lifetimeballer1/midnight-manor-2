@@ -3348,6 +3348,8 @@ func _build_inspector() -> void:
 	var produced: Variant = sim.building_specs[b["type"]].get("production")
 	ui.body(str(sim.building_specs[b["type"]].get("name", "")) + (" · no output" if produced == null else " · %s" % str(produced).capitalize()), ocol, 13)
 	inspect_reserve = ui.bar(0, 1, ocol)
+	if produced != null and sim.crew_of(b) == 0 and float(b["remaining"]) <= 0.0:
+		ui.body("No workers yet · a crew adds 25% output", ocol, 12)
 	var perk: String = sim.perks.describe(sim, b)
 	if not perk.is_empty():
 		ui.body(perk, ocol, 12)
@@ -4341,7 +4343,7 @@ func _refresh_progression_panels() -> void:
 			view["action"].disabled = not ready
 			ui.paint_command(view["action"], "gold" if ready else "normal")
 	if panel == "needs" and is_instance_valid(needs_summary):
-		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% · hunger %d%%" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger)]
+		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% · hunger %d%%\n%s" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger), sim.jobs_summary()]
 	if panel == "mentor" and is_instance_valid(mentor_hint):
 		mentor_hint.text = _mentor_advice()
 	if panel == "quests":
