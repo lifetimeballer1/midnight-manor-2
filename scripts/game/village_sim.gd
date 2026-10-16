@@ -18,6 +18,11 @@ var home_raid = HomeRaid.new()
 var chronicle = Chronicle.new()
 var perks = Perks.new()
 var materials = Materials.new()
+# Farm estates: a connected patch of farm zone is one farm. village_growth.gd fills this in from the
+# zone on its own clock: house building id -> {tiles, fields: Array[Vector2i], name}. Derived, not saved.
+var estates: Dictionary = {}
+const ESTATE_TILES_PER_HAND: int = 4
+const ESTATE_MAX_HANDS: int = 8
 var navigation_revision: int = 0
 const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
@@ -620,7 +625,7 @@ func repair(id: int) -> bool:
 
 func reserve_cap(b: Dictionary) -> float:
 	var harvest: Dictionary = building_specs[b["type"]].get("harvest", {})
-	return float(harvest.get("capacity", 0)) + float(harvest.get("perTier", 0)) * (int(b["tier"]) - 1)
+	return (float(harvest.get("capacity", 0)) + float(harvest.get("perTier", 0)) * (int(b["tier"]) - 1)) * estate_scale(b)
 
 
 func storage_cap(resource: String) -> float:
@@ -690,13 +695,31 @@ func open_job_role() -> String:
 		if role.is_empty() or not troop_specs.has(role):
 			continue
 		var crew: int = crew_of(b)
-		if crew >= 2:
+		var cap: int = crew_cap(b)
+		if crew >= cap:
 			continue
-		var score: float = crew * 10.0 - _job_urgency(b, wants)
+		var score: float = float(crew) / float(cap) * 20.0 - _job_urgency(b, wants)
 		if score < best_score:
 			best = role
 			best_score = score
 	return best if not best.is_empty() else "farmer"
+
+
+# How many may work here: two, or one per ESTATE_TILES_PER_HAND tiles on a farm estate.
+func crew_cap(b: Dictionary) -> int:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	if estate.is_empty():
+		return 2
+	return clampi(ceili(float(estate["tiles"]) / ESTATE_TILES_PER_HAND), 2, ESTATE_MAX_HANDS)
+
+
+# How much bigger than a lone farm this building's land is (1 for anything not an estate).
+func estate_scale(b: Dictionary) -> float:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	if estate.is_empty():
+		return 1.0
+	var own: float = float(int(b["size"]) * int(b["size"]))
+	return maxf(1.0, float(estate["tiles"]) / own)
 
 
 func crew_of(b: Dictionary) -> int:
@@ -743,8 +766,8 @@ func jobs_summary() -> String:
 		var role: String = str(building_specs[b["type"]].get("workplace", ""))
 		if role.is_empty() or not troop_specs.has(role) or str(troop_specs[role].get("role", "")) == "combat":
 			continue
-		places += 2
-		filled += mini(2, crew_of(b))
+		places += crew_cap(b)
+		filled += mini(crew_cap(b), crew_of(b))
 	var idle: int = 0
 	for u: Dictionary in units:
 		var kind: String = str(troop_specs[u["type"]].get("role", ""))
@@ -810,7 +833,7 @@ func assign(unit_id: int, building_id: int) -> bool:
 	for other in units:
 		if int(other["id"]) != unit_id and int(other["workplace"]) == building_id:
 			count += 1
-	if count >= 2:
+	if count >= crew_cap(b):
 		notice = "This workplace crew is full."
 		return false
 	u["workplace"] = building_id
@@ -1426,6 +1449,9 @@ func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 	if b.is_empty():
 		return Vector2(-1, -1)
 	var start := tile_of(u)
+	var field: Vector2 = _field_stand(u, b, start)
+	if field.x >= 0:
+		return field
 	var crew: String = ""
 	for other: Dictionary in units:
 		if int(other["workplace"]) == int(b["id"]):
@@ -1457,6 +1483,33 @@ func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 	var resolved: Vector2 = _resolve_stand(u, b, taken)
 	stand_cache[key] = resolved
 	return resolved
+
+
+# On a farm estate the crew work the rows: each hand takes a field tile, and moves on to another
+# every FIELD_SHIFT seconds of play. (-1, -1) when b is not an estate or no field is reachable.
+const FIELD_SHIFT: float = 20.0
+
+func _field_stand(u: Dictionary, b: Dictionary, start: Vector2i) -> Vector2:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	var fields: Array = estate.get("fields", [])
+	if fields.is_empty():
+		return Vector2(-1, -1)
+	var shift: int = floori(elapsed / FIELD_SHIFT)
+	var key: String = "field|%d|%d|%d|%d,%d|%d" % [int(b["id"]), int(u["id"]), shift, start.x, start.y, revision]
+	if stand_cache.has(key):
+		return stand_cache[key]
+	if stand_cache.size() > 4000:
+		stand_cache.clear()
+	var pick: int = posmod(int(u["id"]) * 7 + shift * 3, fields.size())
+	var out := Vector2(-1, -1)
+	for i in mini(fields.size(), 4):
+		var tile: Vector2i = fields[(pick + i * 5) % fields.size()]
+		var point := Vector2(tile) + Vector2(0.5, 0.5)
+		if _walkable(start, point):
+			out = point
+			break
+	stand_cache[key] = out
+	return out
 
 
 func facing_target(u: Dictionary) -> Vector2:
@@ -1597,11 +1650,16 @@ func tick(dt: float) -> void:
 				chronicle.queue_banner("Old Bell", chronicle.great_work_data(work)["name"] + " stands in the village.")
 		var spec: Dictionary = building_specs[b["type"]]
 		if spec.get("production") != null:
-			var posted: bool = false
+			var posted: int = 0
 			for u in units:
 				if int(u["workplace"]) == int(b["id"]) and u["hp"] > 0 and u["order"].is_empty() and not u["hold"] and not raid_active and not raid_warning:
-					posted = true
-			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * (1.25 if posted else 1.0)
+					posted += 1
+			# A lone workplace: any posted crew adds 25%. A farm estate grows with its land, and
+			# reaches its full +25% only with one hand for every few tiles (crew_cap).
+			var hands: float = 1.25 if posted > 0 else 1.0
+			if estates.has(int(b["id"])):
+				hands = 1.0 + 0.25 * minf(1.0, float(posted) / float(crew_cap(b)))
+			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * hands * estate_scale(b)
 			rate *= needs.production_multiplier()
 			# Well fed (bread at the last meal): townMeal.wellFed gathering bonus.
 			rate *= 1.0 + needs.fed_bonus(self, "gather")

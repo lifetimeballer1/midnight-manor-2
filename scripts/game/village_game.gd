@@ -3311,6 +3311,11 @@ func _build_catalog() -> void:
 		build_cards[type_name] = card
 
 
+# Extra rows on a building's card from later layers (village_zoning.gd adds farm estates).
+func _inspector_extra(_b: Dictionary) -> void:
+	pass
+
+
 func _begin_research(id: String) -> void:
 	sim.living.research(sim, id)
 	if panel == "tech":
@@ -3364,7 +3369,8 @@ func _build_inspector() -> void:
 		if workplace != "" and str(u["type"]) == workplace and int(u["workplace"]) == selected_building:
 			posted += 1
 			ui.portrait_medallion(str(u["type"]), crew_row, 26.0)
-	ui.crest("%d/2" % posted, crew_row, "ready" if posted > 0 else "iron", 12)
+	ui.crest("%d/%d" % [posted, sim.crew_cap(b)], crew_row, "ready" if posted > 0 else "iron", 12)
+	_inspector_extra(b)
 	var act_row := HBoxContainer.new()
 	act_row.add_theme_constant_override("separation", 8)
 	side_content.add_child(act_row)
