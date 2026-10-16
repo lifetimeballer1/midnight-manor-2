@@ -103,7 +103,9 @@ var selected_unit: int = -1
 var build_type: String = ""
 var moving_id: int = -1
 var paving: bool = false
-var preview_tile := Vector2i(-1, -1)
+# Bought west and north reaches have negative coordinates, so "no tile" needs a value no reach reaches.
+const NO_TILE := Vector2i(-100000, -100000)
+var preview_tile := NO_TILE
 var ghost_signature: String = ""
 var view_revision: int = -1
 var tick_accumulator: float = 0.0
@@ -132,7 +134,7 @@ var pinch_active: bool = false
 var pinch_angle: float = 0.0
 var pinch_yaw: float = 0.0
 var touch_mode: bool = false
-var placement_anchor := Vector2i(-1, -1)
+var placement_anchor := NO_TILE
 var placement_row: Array[Vector2i] = []
 var actor_accumulator: float = 0.0
 var detail_accumulator: float = 0.0
@@ -3679,8 +3681,8 @@ func _choose_build(type_name: String) -> void:
 	paving = false
 	selected_building = -1
 	selected_unit = -1
-	preview_tile = Vector2i(-1, -1)
-	placement_anchor = Vector2i(-1, -1)
+	preview_tile = NO_TILE
+	placement_anchor = NO_TILE
 	placement_row.clear()
 	more_sheet.hide()
 	_close_panel()
@@ -3702,8 +3704,8 @@ func _toggle_pave() -> void:
 	moving_id = -1
 	selected_building = -1
 	selected_unit = -1
-	preview_tile = Vector2i(-1, -1)
-	placement_anchor = Vector2i(-1, -1)
+	preview_tile = NO_TILE
+	placement_anchor = NO_TILE
 	placement_row.clear()
 	more_sheet.hide()
 	_close_panel()
@@ -3724,7 +3726,7 @@ func _is_wall_row_mode() -> bool:
 
 func _wall_row_tiles(a: Vector2i, b: Vector2i) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
-	if a.x < 0 or b.x < 0:
+	if a == NO_TILE or b == NO_TILE:
 		return out
 	var dx: int = b.x - a.x
 	var dy: int = b.y - a.y
@@ -3750,13 +3752,13 @@ func _placement_tiles() -> Array[Vector2i]:
 	if _is_wall_row_mode() and not placement_row.is_empty():
 		return placement_row
 	var out: Array[Vector2i] = []
-	if preview_tile.x >= 0:
+	if preview_tile != NO_TILE:
 		out.append(preview_tile)
 	return out
 
 
 func _placement_reason() -> String:
-	if preview_tile.x < 0:
+	if preview_tile == NO_TILE:
 		return "%s a tile on the map" % _input_verb()
 	if paving:
 		return sim.living.pave_reason(sim, preview_tile)
@@ -3791,7 +3793,7 @@ func _preview() -> void:
 			detail = _cost_text(_cost_times(sim.building_cost(build_type), row_count))
 		else:
 			detail = _cost_text(sim.building_cost(build_type))
-	var coord: String = "tile %d, %d" % [preview_tile.x, preview_tile.y] if preview_tile.x >= 0 else "choose a tile"
+	var coord: String = "tile %d, %d" % [preview_tile.x, preview_tile.y] if preview_tile != NO_TILE else "choose a tile"
 	placement_label.text = "%s  ·  %s\n%s" % [headline, coord, reason if not reason.is_empty() else detail]
 	var signature: String = "%s/%s/%s/%s" % ["pave" if paving else build_type, str(tiles), preview_tile, reason]
 	if signature == ghost_signature:
@@ -3800,7 +3802,7 @@ func _preview() -> void:
 	for child in ghost_layer.get_children():
 		ghost_layer.remove_child(child)
 		child.queue_free()
-	if preview_tile.x < 0:
+	if preview_tile == NO_TILE:
 		return
 	if _is_wall_row_mode() and row_count > 1:
 		for tile: Vector2i in tiles:
@@ -3826,8 +3828,8 @@ func _confirm_placement() -> void:
 		success = sim.build(build_type, preview_tile.x, preview_tile.y)
 	if success:
 		if build_type in ["wall", "stonewall", "gate"] and moving_id < 0:
-			preview_tile = Vector2i(-1, -1)
-			placement_anchor = Vector2i(-1, -1)
+			preview_tile = NO_TILE
+			placement_anchor = NO_TILE
 			placement_row.clear()
 			ghost_signature = ""
 			confirm_button.disabled = true
@@ -3844,8 +3846,8 @@ func _cancel_placement() -> void:
 	build_type = ""
 	paving = false
 	moving_id = -1
-	preview_tile = Vector2i(-1, -1)
-	placement_anchor = Vector2i(-1, -1)
+	preview_tile = NO_TILE
+	placement_anchor = NO_TILE
 	placement_row.clear()
 	ghost_signature = ""
 	confirm_button.text = "Confirm Build"
@@ -5019,7 +5021,7 @@ func _drag_map(pointer: Vector2) -> void:
 		var tile := Vector2i(floori(point.x), floori(point.y))
 		preview_tile = tile
 		if _is_wall_row_mode():
-			if placement_anchor.x < 0:
+			if placement_anchor == NO_TILE:
 				var start_point: Vector2 = pick_ground(press_point)
 				placement_anchor = Vector2i(floori(start_point.x), floori(start_point.y))
 			placement_row = _wall_row_tiles(placement_anchor, tile)
