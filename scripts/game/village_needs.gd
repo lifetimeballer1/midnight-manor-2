@@ -52,6 +52,31 @@ func tick(sim, dt: float) -> void:
 	if fed == "feast":
 		target = minf(100.0, target + FEAST_MORALE)
 	morale = move_toward(morale, target, dt * 0.2)
+	var spoil: float = spoiling(sim)
+	if spoil > 0.0:
+		sim.resources["food"] = maxf(0.0, float(sim.resources["food"]) - spoil / 60.0 * dt)
+
+
+# Food that keeps: the base store plus the keeper buildings (townMeal.spoilage.keepers: the Manor
+# Hall, a Grand Granary). Food held above it, in Storehouses, slowly spoils.
+func keeps(sim) -> float:
+	var rules: Dictionary = sim.world_specs["townMeal"].get("spoilage", {})
+	var amount: float = float(sim.world_specs.get("storageBase", {}).get("food", 0))
+	var keepers: Array = rules.get("keepers", ["hall"])
+	for b: Dictionary in sim.buildings:
+		if str(b["type"]) in keepers and float(b["hp"]) > 0.0 and float(b["remaining"]) <= 0.0:
+			var spec: Dictionary = sim.building_specs[b["type"]]
+			amount += float(spec.get("storage", {}).get("food", 0)) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"])
+	return amount
+
+
+# Food lost each minute while the stores hold more than keeps.
+func spoiling(sim) -> float:
+	var rules: Dictionary = sim.world_specs["townMeal"].get("spoilage", {})
+	var excess: float = float(sim.resources.get("food", 0.0)) - keeps(sim)
+	if excess <= 0.0:
+		return 0.0
+	return excess * float(rules.get("perMinute", 0.0))
 
 
 func _eat(sim, meal: Dictionary) -> void:
@@ -150,7 +175,11 @@ func summary(sim) -> String:
 		status = "Well fed"
 	elif float(sim.resources.get("food", 0.0)) < demand(sim) and float(sim.resources.get("bread", 0.0)) < float(sim.units.size()):
 		status = "Food running low"
-	return "%s · %d morale · %d of %d beds" % [status, int(morale), sim.units.size(), sim.beds()]
+	var line: String = "%s · %d morale · %d of %d beds" % [status, int(morale), sim.units.size(), sim.beds()]
+	var spoil: float = spoiling(sim)
+	if spoil >= 1.0:
+		line += " · %d Food spoiling a minute (a Granary keeps it)" % roundi(spoil)
+	return line
 
 
 func state() -> Dictionary:

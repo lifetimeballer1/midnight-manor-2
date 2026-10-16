@@ -6,5 +6,7 @@
 	"new_moon_enemy_multiplier": 0.75,
 	"blood_moon_enemy_multiplier": 1.25,
 	"blood_moon_loot_multiplier": 2.0,
-	"blood_moon_tint": [0.62, 0.1, 0.1]
+	"blood_moon_tint": [0.62, 0.1, 0.1],
+	"harvest_swing": 0.2,
+	"harvest_types": ["farm", "pasture", "grove", "pond"]
 }

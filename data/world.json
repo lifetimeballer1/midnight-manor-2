@@ -102,6 +102,7 @@
     "secondsPerDay": 180,
     "foodPerVillager": 5,
     "breadPerVillager": 1,
+    "spoilage": {"_note": "Food above what keeps (the base store, the Manor Hall and any Grand Granary) spoils by perMinute of the excess each minute. Storehouses hold more food but do not keep it. Bread and flour keep.", "perMinute": 0.01, "keepers": ["hall", "grand-granary"]},
     "supply": {
   "stages": [
     {

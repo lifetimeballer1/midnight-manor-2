@@ -11,6 +11,7 @@ const HomeRaid = preload("res://scripts/game/home_raid.gd")
 const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
 const Perks = preload("res://scripts/game/village_perks.gd")
 const Materials = preload("res://scripts/game/village_materials.gd")
+const Aftermath = preload("res://scripts/game/village_aftermath.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
@@ -18,6 +19,7 @@ var home_raid = HomeRaid.new()
 var chronicle = Chronicle.new()
 var perks = Perks.new()
 var materials = Materials.new()
+var aftermath = Aftermath.new()
 # Farm estates: a connected patch of farm zone is one farm. village_growth.gd fills this in from the
 # zone on its own clock: house building id -> {tiles, fields: Array[Vector2i], name}. Derived, not saved.
 var estates: Dictionary = {}
@@ -719,7 +721,7 @@ func estate_scale(b: Dictionary) -> float:
 	if estate.is_empty():
 		return 1.0
 	var own: float = float(int(b["size"]) * int(b["size"]))
-	return maxf(1.0, float(estate["tiles"]) / own)
+	return maxf(1.0, float(aftermath.growing_tiles(self, int(b["id"]))) / own)
 
 
 func crew_of(b: Dictionary) -> int:
@@ -1627,6 +1629,7 @@ func tick(dt: float) -> void:
 	elapsed += dt
 	needs.tick(self, dt)
 	perks.tick(self, dt)
+	aftermath.tick(self, dt)
 	_gate_tick()
 	job_timer += dt
 	if job_timer >= 5:
@@ -1665,6 +1668,10 @@ func tick(dt: float) -> void:
 			rate *= 1.0 + needs.fed_bonus(self, "gather")
 			# Tinker Workshop: a staffed workshop nearby speeds the work.
 			rate *= perks.gather_for(b)
+			# Crops swell under the Full Moon and thin under the New Moon (data/moon.json). The moon
+			# turns with the raids, so the opening days before the first raid keep their plain yield.
+			if wave > 0:
+				rate *= MoonRules.harvest_multiplier(moon_phase, str(b["type"]))
 			# Moon Orchards / Full Granaries: food production, not a flat buff.
 			if str(spec.get("production", "")) == "food":
 				rate *= 1.0 + chronicle.bonus("growth")
@@ -1860,6 +1867,8 @@ func _builder_tick(u: Dictionary, dt: float) -> void:
 		u["site"] = -1
 		if float(u["carry"]) >= 1:
 			_return_haul(u, dt)
+		elif not aftermath.rubble.is_empty():
+			_salvage(u, dt)
 		else:
 			_clear_facing(u)
 		return
@@ -1893,6 +1902,32 @@ func _builder_tick(u: Dictionary, dt: float) -> void:
 	if _walk(u, _edge_goal(u, site), dt):
 		u["phase"] = "work"
 		u["on_site"] = true
+
+
+# With no site to work, a builder carries rubble from fallen stone buildings back to the stores.
+func _salvage(u: Dictionary, dt: float) -> void:
+	var pile: Dictionary = aftermath.nearest_rubble(position_of(u))
+	if pile.is_empty():
+		return
+	var at := Vector2(float(pile["x"]), float(pile["y"]))
+	u["fx"] = at.x
+	u["fy"] = at.y
+	# Stand on the pile when it lies on open ground, else beside it (a rebuilt wall may cover it).
+	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
+	var spot := Vector2(-1, -1)
+	var centre := Vector2i(floori(at.x), floori(at.y))
+	for step: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)]:
+		var tile: Vector2i = centre + step
+		if in_world(tile) and (tile == start or not _cached_route(start, tile, false).is_empty()):
+			spot = Vector2(tile) + Vector2.ONE * 0.5
+			break
+	if spot.x < 0.0:
+		aftermath.salvage(pile, int(pile["stone"]))   # nobody can reach it: the stone is lost
+		return
+	if position_of(u).distance_to(at) <= 1.6 or _walk(u, spot, dt):
+		u["carry"] = float(aftermath.salvage(pile, materials.haul(self, u)))
+		u["carry_resource"] = "stone"
+		u["phase"] = "work"
 
 
 # Bring back materials a site no longer needs.
@@ -2181,6 +2216,7 @@ func _spawn_raid() -> void:
 	raid_active = true
 	wave += 1
 	home_raid.begin(self)
+	aftermath.begin_raid()
 	var faction: Dictionary = _active_faction()
 	var roles: Array = faction.get("roles", ["raider"])
 	var count: int = mini(int(world_specs["homeRaids"].get("maxCount", 8)), wave + 1)
@@ -2371,10 +2407,12 @@ func _raid_tick(dt: float) -> void:
 					if str(objective["type"]) == "gate":
 						raid_stats["gates_lost"] = int(raid_stats["gates_lost"]) + 1
 					_ruin(center(objective))
+					aftermath.fell(self, objective)
 					revision += 1
 					_invalidate()
 		else:
 			_walk(enemy, goal, dt, true)
+			aftermath.trample(self, tile_of(enemy))
 	for index in range(enemies.size() - 1, -1, -1):
 		if enemies[index]["hp"] <= 0:
 			_fall(position_of(enemies[index]), "foe")
@@ -2400,11 +2438,13 @@ func _finish_raid(victory: bool) -> void:
 	_invalidate()
 	scripted_raid = ""
 	next_raid_at = elapsed + (240 if victory else 360)
+	# The fallen come round beside the Chapel (or another healer) when one stands, else by the Hall.
+	var recovery: Vector2 = aftermath.recovery_spot(self)
 	for u in units:
 		if u["hp"] <= 0:
 			u["hp"] = float(u["max_hp"]) * 0.5
-			u["x"] = 8.0
-			u["y"] = 10.8
+			u["x"] = 8.0 if recovery.x < 0.0 else recovery.x
+			u["y"] = 10.8 if recovery.x < 0.0 else recovery.y
 			u["phase"] = "idle"
 	if victory:
 		raid_stats["defended"] = int(raid_stats["defended"]) + 1
@@ -2425,6 +2465,9 @@ func _finish_raid(victory: bool) -> void:
 		_reward({"gold": (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase)})
 	else:
 		notice = "Defense breached / attackers earned %d stars. Repair and rise again." % home_raid.last["stars"]
+	var marks: String = aftermath.raid_summary()
+	if not marks.is_empty():
+		notice += " " + marks
 	raid_stats["seconds_held"] = maxf(held, 0.0)
 	events.append({"kind": "raid_result", "victory": victory})
 	moon_phase = MoonRules.next_phase(moon_phase)
@@ -2667,7 +2710,7 @@ func export_state() -> Dictionary:
 		for u in (group as Array):
 			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
 				(u as Dictionary).erase(transient)
-	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
+	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
 		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
@@ -2775,6 +2818,7 @@ func restore_state(state: Dictionary) -> bool:
 	living.restore(data.get("living", Living.new().state()))
 	chronicle.restore(data["chronicle"])
 	needs.restore(data["needs"])
+	aftermath.restore(data.get("aftermath"))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))
 	navigation_revision = living.navigation_revision
@@ -2796,6 +2840,8 @@ func _validate_state(state: Dictionary) -> bool:
 	var claimed: Array = state.get("expansions", [])
 	if state.has("moon_phase") and not _integer(state["moon_phase"]): return false
 	if int(state["version"]) >= 4 and not needs.valid(state.get("needs"), float(world_specs["townMeal"]["secondsPerDay"])):
+		return false
+	if not aftermath.valid(state.get("aftermath")):
 		return false
 	if (int(state["version"]) >= 2 or state.has("living")) and not _living_valid(state.get("living"), claimed):
 		return false

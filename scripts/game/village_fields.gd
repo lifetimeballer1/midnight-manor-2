@@ -23,6 +23,8 @@ const HAY := Color("c9a24a")
 const WOOL := Color("e8e2d2")
 const HEDGE := Color("355a2c")
 const FENCE := Color("8a6a46")
+const MUD := Color("4a3a28")
+const RUBBLE := Color("6f6c66")
 const SIDES: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 
 var _signature: int = -1
@@ -75,6 +77,8 @@ func sync(sim, host, delta: float) -> void:
 		if b.is_empty():
 			continue
 		parts.append([id, str(b["type"]), stage_of(sim, id), (sim.estates[id]["fields"] as Array).size(), sim.estates[id]["fields"].hash()])
+	parts.append(sim.aftermath.trampled.size())
+	parts.append(sim.aftermath.rubble.hash())
 	var signature: int = hash(parts)
 	if signature == _signature:
 		return
@@ -109,6 +113,14 @@ func _rebuild(sim, host) -> void:
 			var bed: Color = (GROUND.get(crop, GROUND["farm"]) as Color).darkened(0.06 * wave)
 			placed.append(_box(Vector3(tile_size, 0.04, tile_size), Vector3(centre.x, ground + 0.02, centre.z), bed))
 			var mark: int = posmod(tile.x * 7 + tile.y * 13, 11)
+			if sim.aftermath.trampled.has(tile):
+				# Trodden flat by raiders: churned earth and broken stalks until a farmhand replants it.
+				placed.append(_box(Vector3(tile_size * 0.94, 0.045, tile_size * 0.94), Vector3(centre.x, ground + 0.025, centre.z), MUD.darkened(0.05 * wave)))
+				for k in 3:
+					var turn: float = float(mark + k * 3) * 0.7
+					var stalk := Transform3D(Basis(Vector3.UP, turn).scaled(Vector3(tile_size * 0.5, 0.03, 0.12)), Vector3(centre.x + (float(k) - 1.0) * 0.5, ground + 0.06, centre.z + float((mark + k) % 3 - 1) * 0.45))
+					placed.append([stalk, palette[3]])
+				continue
 			match crop:
 				"farm":
 					# Long furrows: rows run on from tile to tile, swelling and dipping like a real field.
@@ -180,6 +192,16 @@ func _rebuild(sim, host) -> void:
 				else:
 					var hedge := Vector3(tile_size * 1.08, 0.44 + 0.1 * wave, 0.4) if flat else Vector3(0.4, 0.44 + 0.1 * wave, tile_size * 1.08)
 					round.append(_box(hedge, Vector3(centre.x, ground + 0.22, centre.z) + edge, HEDGE.darkened(0.1 * wave)))
+	# Rubble where stone buildings fell, waiting for builders to carry it off.
+	for pile: Dictionary in sim.aftermath.rubble:
+		var at: Vector3 = host.world_position(Vector2(float(pile["x"]), float(pile["y"])))
+		var ground: float = host._town_ground_y(at.x, at.z)
+		var stones: int = clampi(int(pile["stone"]) / 3 + 2, 3, 9)
+		for k in stones:
+			var turn: float = float(k) * 2.39996
+			var reach: float = (0.2 + 0.12 * float(k)) * tile_size * 0.5
+			var size: float = (0.5 - 0.03 * float(k)) * tile_size * 0.5
+			round.append(_box(Vector3(size * 1.3, size * 0.8, size), Vector3(at.x + cos(turn) * reach, ground + size * 0.35, at.z + sin(turn) * reach), RUBBLE.darkened(0.06 * float(k % 3))))
 	multimesh.instance_count = placed.size()
 	for i in placed.size():
 		multimesh.set_instance_transform(i, placed[i][0])

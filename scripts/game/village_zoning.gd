@@ -1983,6 +1983,12 @@ func _inspector_extra(b: Dictionary) -> void:
 	row.add_child(col)
 	ui.body("%s %s · %d tiles of land" % [str(sim.building_specs[b["type"]]["name"]), str(estate["name"]), int(estate["tiles"])], col, 13)
 	ui.body("Paint more farm zone beside it to grow the estate. One farmhand per four tiles.", col, 12)
+	var trodden: int = sim.aftermath.trampled_on(sim, int(b["id"]))
+	if trodden > 0:
+		ui.body("%d %s trampled by raiders; its farmhands are replanting." % [trodden, "tile" if trodden == 1 else "tiles"], col, 12)
+	var moon: String = Sim.MoonRules.harvest_text(sim.moon_phase) if sim.wave > 0 else ""
+	if not moon.is_empty():
+		ui.body(moon, col, 12)
 	var crops := HBoxContainer.new()
 	crops.add_theme_constant_override("separation", 6)
 	col.add_child(crops)
