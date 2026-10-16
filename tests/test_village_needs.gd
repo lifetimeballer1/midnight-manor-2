@@ -40,7 +40,7 @@ func test_meals(sim) -> void:
 	advance(sim, 179)
 	check(sim.resources["food"] == 100.0, "meals wait for their active-time interval")
 	advance(sim, 1)
-	check(sim.resources["food"] == 75.0, "five villagers consume five Food each at the authored town meal")
+	check(sim.resources["food"] == 65.0, "five Food a portion at the authored town meal; the two fighters eat a double portion")
 	check(sim.needs.hunger == 0.0 and sim.needs.morale == 70.0, "a fed, housed starting village stays stable")
 	check(sim.needs.production_multiplier() == 1.0, "healthy village preserves the original production rate")
 

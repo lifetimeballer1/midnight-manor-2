@@ -1547,6 +1547,8 @@ func tick(dt: float) -> void:
 					posted = true
 			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * (1.25 if posted else 1.0)
 			rate *= needs.production_multiplier()
+			# Well fed (bread at the last meal): townMeal.wellFed gathering bonus.
+			rate *= 1.0 + needs.fed_bonus(self, "gather")
 			# Tinker Workshop: a staffed workshop nearby speeds the work.
 			rate *= perks.gather_for(b)
 			# Moon Orchards / Full Granaries: food production, not a flat buff.
@@ -1559,7 +1561,7 @@ func tick(dt: float) -> void:
 		u["cooldown"] = maxf(0, float(u["cooldown"]) - dt)
 		if not raid_active and not raid_warning and u["hp"] > 0 and u["hp"] < u["max_hp"]:
 			# Village Medicine / Field Medicine: recovery between horns.
-			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal")) * perks.heal_at(self, position_of(u)) * dt)
+			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal") + needs.fed_bonus(self, "heal")) * perks.heal_at(self, position_of(u)) * dt)
 		_unit_tick(u, dt)
 	_raid_tick(dt)
 	_automation_tick(dt)
@@ -1572,7 +1574,7 @@ func tick(dt: float) -> void:
 	for resource in pending_rewards.keys():
 		pending_rewards[resource] -= _bank(resource, float(pending_rewards[resource]))
 	if not raid_active and not raid_warning and units.size() < beds() and float(resources.get("food", 0)) >= 30:
-		birth_timer += dt
+		birth_timer += dt * needs.growth_multiplier(self)
 		if birth_timer >= 60:
 			birth_timer = 0
 			resources["food"] -= 20
@@ -2391,7 +2393,7 @@ func _quest_tick() -> void:
 			continue
 		completed_quests.append(id)
 		# Scriptorium: staffed scribes record more from every mission.
-		xp += int(round(float(quest.get("xp", 0)) * (1.0 + perks.total("xp"))))
+		xp += int(round(float(quest.get("xp", 0)) * (1.0 + perks.total("xp") + needs.fed_bonus(self, "xp"))))
 		living.insight = minf(float(living.config["research"]["insight_cap"]), living.insight + float(quest.get("insight", 0)))
 		chronicle.reputation += int(quest.get("reputation", 0))
 		_reward(quest.get("rewards", {}))
