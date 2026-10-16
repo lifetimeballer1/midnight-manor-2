@@ -21,6 +21,12 @@ func stone_known(sim) -> bool:
 	return "stoneworking" in sim.living.discoveries
 
 
+# Stone goes on a bill only once a Stone Quarry stands to supply it; before that it is paid in Wood,
+# so a site never waits on stone the village has no way to get.
+func stone_supplied(sim) -> bool:
+	return stone_known(sim) and sim._has_completed_building("stone_quarry", 1)
+
+
 # Lumber is asked for once the village has a working Sawmill; before that it is paid in Wood.
 func lumber_known(sim) -> bool:
 	return sim._has_completed_building("sawmill", 1)
@@ -42,7 +48,7 @@ func bill_for(sim, type_name: String, tier: int) -> Dictionary:
 		elif lumber > 0.0:
 			wood += lumber * float(config.get("woodPerStone", 2))
 	if stone > 0.0:
-		if stone_known(sim):
+		if stone_supplied(sim):
 			bill["stone"] = ceili(stone)
 		else:
 			wood += stone * float(config.get("woodPerStone", 2))
@@ -103,10 +109,45 @@ func progress(sim, b: Dictionary, dt: float) -> float:
 	if n <= 0:
 		return 0.0
 	var speed: float = 1.0 + float(crew.get("extraHands", 0.6)) * float(n - 1)
+	return clampf(dt * speed, 0.0, work_left(b))
+
+
+# Seconds of work this site can do with what has been delivered so far.
+func work_left(b: Dictionary) -> float:
+	# A fully stocked site may finish outright: the share sum below can leave a float sliver
+	# of work that never gets done, which held builders on a site that looked finished.
+	if not has_bill(b) or needed(b).is_empty():
+		return float(b["remaining"])
 	var total: float = maxf(0.001, float(b.get("work", b["remaining"])))
-	var done: float = total - float(b["remaining"])
-	var allowed: float = total * delivered_share(b)
-	return clampf(dt * speed, 0.0, maxf(0.0, allowed - done))
+	return maxf(0.0, total * delivered_share(b) - (total - float(b["remaining"])))
+
+
+# Whether builders can move this site on now: work is covered by delivered materials, or the stores
+# hold something it still needs.
+func workable(sim, b: Dictionary) -> bool:
+	if work_left(b) > 0.001:
+		return true
+	var need: Dictionary = needed(b)
+	for resource: String in need:
+		if float(sim.resources.get(resource, 0.0)) >= 1.0:
+			return true
+	return false
+
+
+# A bill that still asks for stone or lumber the village cannot produce and does not hold is
+# switched to Wood (woodPerStone each), so older sites and lost quarries or sawmills never stall it.
+func settle_bill(sim, b: Dictionary) -> void:
+	var need: Dictionary = needed(b)
+	for resource: String in ["stone", "lumber"]:
+		if not need.has(resource) or float(sim.resources.get(resource, 0.0)) >= 1.0:
+			continue
+		if (stone_supplied(sim) if resource == "stone" else lumber_known(sim)):
+			continue
+		var short: int = int(need[resource])
+		b["bill"][resource] = int(b["bill"][resource]) - short
+		if int(b["bill"][resource]) <= 0:
+			b["bill"].erase(resource)
+		b["bill"]["wood"] = int(b["bill"].get("wood", 0)) + short * int(config.get("woodPerStone", 2))
 
 
 # The first material this site is waiting for that the stores cannot supply, as "12 Stone", or "".

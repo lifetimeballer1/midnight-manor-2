@@ -1898,6 +1898,15 @@ func _builder_tick(u: Dictionary, dt: float) -> void:
 	for resource: String in need:
 		if float(resources.get(resource, 0.0)) >= 1.0:
 			fetchable = true
+	# Nothing to fetch and nothing delivered left to work: gather rubble stone meanwhile, or wait.
+	if not fetchable and materials.has_bill(site) and materials.work_left(site) <= 0.001:
+		if not aftermath.rubble.is_empty():
+			_salvage(u, dt)
+			return
+		_face_job(u, site)
+		if _walk(u, _edge_goal(u, site), dt):
+			u["on_site"] = true
+		return
 	if fetchable:
 		_clear_facing(u)
 		if _walk(u, _edge_goal(u, _hall()), dt):
@@ -1954,7 +1963,12 @@ func _return_haul(u: Dictionary, dt: float) -> void:
 func _builder_site(u: Dictionary) -> Dictionary:
 	var current: Dictionary = get_building(int(u.get("site", -1)))
 	if not current.is_empty() and float(current["remaining"]) > 0.0 and float(current["hp"]) > 0.0:
-		return current
+		if materials.has_bill(current):
+			materials.settle_bill(self, current)
+		# Stay while the site can move on (or this load is for it); a stalled site lets them go.
+		if not materials.has_bill(current) or materials.workable(self, current) \
+				or (float(u["carry"]) >= 1 and materials.needed(current).has(str(u["carry_resource"]))):
+			return current
 	var crews: Dictionary = {}
 	for other: Dictionary in units:
 		if other != u and float(other["hp"]) > 0.0 and int(other.get("site", -1)) >= 0:
@@ -1967,6 +1981,10 @@ func _builder_site(u: Dictionary) -> Dictionary:
 		var score: float = float(crews.get(int(b["id"]), 0)) * 1000.0 + position_of(u).distance_to(center(b))
 		if not materials.has_bill(b):
 			score += 100000.0
+		else:
+			materials.settle_bill(self, b)
+			if not materials.workable(self, b):
+				score += 1000000.0   # waiting on materials: only when nothing else can be worked
 		if score < best_score:
 			best_score = score
 			best = b

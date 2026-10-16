@@ -22,6 +22,7 @@ func _run() -> void:
 	test_bills()
 	test_builders_haul_and_build()
 	test_stall_and_hands()
+	test_builders_leave_a_stalled_site()
 	test_bought_sites_keep_timer()
 	test_repairs()
 	test_saves()
@@ -68,8 +69,10 @@ func test_bills() -> void:
 	var early: Dictionary = sim.materials.bill_for(sim, "cottage", 2)
 	check(not early.has("stone") and int(early.get("wood", 0)) > 40, "before Stoneworking the stone share is paid in extra Wood")
 	sim.living.discoveries.append("stoneworking")
+	check(not sim.materials.bill_for(sim, "cottage", 2).has("stone"), "stone waits for a Stone Quarry to supply it")
+	sim.buildings.append(sim._new_building("stone_quarry", 2, 2, false))
 	var later: Dictionary = sim.materials.bill_for(sim, "cottage", 2)
-	check(int(later.get("stone", 0)) == 16, "after Stoneworking a tier 2 cottage asks 4 Stone per tile")
+	check(int(later.get("stone", 0)) == 16, "with a quarry after Stoneworking a tier 2 cottage asks 4 Stone per tile")
 	var top: Dictionary = sim.materials.bill_for(sim, "farm", 3)
 	check(not top.has("lumber"), "lumber waits for a Sawmill")
 	var mill: Dictionary = sim._new_building("sawmill", 14, 2, false)
@@ -106,6 +109,7 @@ func test_builders_haul_and_build() -> void:
 func test_stall_and_hands() -> void:
 	var sim = fresh()
 	sim.living.discoveries.append("stoneworking")
+	sim.buildings.append(sim._new_building("stone_quarry", 2, 2, false))
 	sim.resources["stone"] = 0.0
 	var b: Dictionary = site(sim, "cottage", 12, 3, 2)
 	check(sim.materials.shortage(sim, b) == "16 Stone", "the site names the material it is stuck on")
@@ -128,6 +132,33 @@ func test_stall_and_hands() -> void:
 	check(is_equal_approx(sim.materials.progress(sim, b, 1.0), 1.6), "a second builder on site adds 60%")
 	b["stock"]["stone"] = 16
 	check(sim.materials.needed(b).is_empty() and sim.materials.shortage(sim, b) == "", "a fully stocked site needs nothing")
+
+
+# Builders stuck working: a site waiting on stone the stores lack must not hold its builder while
+# another site can be built, and a stone bill with no quarry to fill it falls back to Wood.
+func test_builders_leave_a_stalled_site() -> void:
+	var sim = fresh()
+	sim.living.discoveries.append("stoneworking")
+	var quarry: Dictionary = sim._new_building("stone_quarry", 2, 2, false)
+	sim.buildings.append(quarry)
+	sim.resources["stone"] = 0.0
+	sim.resources["wood"] = 500.0
+	var stalled: Dictionary = site(sim, "cottage", 12, 3, 2)
+	stalled["stock"] = {"wood": int(stalled["bill"]["wood"])}
+	stalled["remaining"] = float(stalled["work"]) * (1.0 - sim.materials.delivered_share(stalled))
+	check(not sim.materials.workable(sim, stalled), "a site worked up to its delivered share with no stone in store is stalled")
+	var open: Dictionary = site(sim, "cottage", 14, 6)
+	var crew: Array[Dictionary] = builders(sim)
+	crew[0]["site"] = int(stalled["id"])
+	run(sim, 240.0, func() -> bool: return float(open["remaining"]) <= 0.0)
+	check(float(open["remaining"]) <= 0.0, "the builder leaves the stalled site and finishes the one it can build")
+	check(int(crew[0]["site"]) != int(open["id"]) or float(open["remaining"]) <= 0.0, "no builder stays parked on the finished site")
+	check(str(crew[0]["phase"]) != "work" or int(crew[0]["site"]) != int(stalled["id"]), "a builder waiting on stone is not shown working")
+	sim.buildings.erase(quarry)
+	sim._invalidate()
+	run(sim, 240.0, func() -> bool: return float(stalled["remaining"]) <= 0.0)
+	check(not stalled.has("bill") or not (stalled["bill"] as Dictionary).has("stone"), "with no quarry left, the stone still owed is paid in Wood")
+	check(float(stalled["remaining"]) <= 0.0, "the once-stalled site is finished from Wood")
 
 
 func test_bought_sites_keep_timer() -> void:
