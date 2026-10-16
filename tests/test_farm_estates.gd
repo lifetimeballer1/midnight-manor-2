@@ -26,6 +26,7 @@ func check(value: bool, text: String) -> void:
 func _run() -> void:
 	test_one_farm_per_patch()
 	test_fold_and_switch()
+	test_new_land_shares_out()
 	print("FARM_ESTATES ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)
 
@@ -205,3 +206,47 @@ func test_fold_and_switch() -> void:
 		if x["type"] == "farm":
 			plain = x
 	check(not growth.crop_reason(lone, int(plain["id"]), "pasture").is_empty(), "a lone farm off the zone is not an estate")
+
+
+# A farm zone over a whole bought reach is shared between several farms, none bigger than a Grange's
+# limit, so one farmhouse never works hundreds of tiles.
+func test_new_land_shares_out() -> void:
+	var parts: Array = setup()
+	var sim = parts[0]
+	var growth = parts[1]
+	var town = parts[2]
+	for r: String in ["wood", "stone", "gold"]:
+		sim.resources[r] = 99999.0
+	check(sim.expand("south"), "the south reach is bought")
+	var rect: Rect2i = sim.EXPANSION_PLOTS["south"]["rect"]
+	for y in range(rect.position.y, rect.end.y, 2):
+		for x in range(rect.position.x, rect.end.x, 2):
+			var c: Vector2i = growth.tile_cell(Vector2i(x, y))
+			if growth.cell_reason(sim, c).is_empty():
+				town.village[c] = "farming"
+	for i in 30:
+		for b: Dictionary in sim.buildings:
+			b["remaining"] = 0.0
+			sim.materials.close_site(b)
+		growth.grow_one(sim, town)
+	for b: Dictionary in sim.buildings:
+		b["remaining"] = 0.0
+		sim.materials.close_site(b)
+	growth.refresh_estates(sim, town)
+	var limit: int = growth.estate_max_cells() * 4
+	var on_reach: int = 0
+	var biggest: int = 0
+	for id: int in sim.estates:
+		var house: Dictionary = sim.get_building(id)
+		if rect.has_point(Vector2i(int(house["x"]), int(house["y"]))):
+			on_reach += 1
+		biggest = maxi(biggest, int(sim.estates[id]["tiles"]))
+	check(on_reach >= 4, "a reach-wide farm zone holds several farms (%d)" % on_reach)
+	check(biggest <= limit, "no estate is bigger than %d tiles (biggest %d)" % [limit, biggest])
+	for id: int in sim.estates:
+		check(sim.estate_scale(sim.get_building(id)) <= limit / 4.0, "an estate works at most like %d small farms" % (limit / 4))
+		break
+	# Settled estates stay as they are on the next look.
+	var before: int = sim.estates.size()
+	var folds: Array[Dictionary] = growth.refresh_estates(sim, town)
+	check(folds.is_empty() and sim.estates.size() == before, "a settled set of estates stays as it is")

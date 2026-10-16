@@ -513,17 +513,136 @@ func _in_patch(b: Dictionary, patch: Dictionary) -> bool:
 	return patch.has(Vector2i(int(b["x"]), int(b["y"])))
 
 
-# Farm-zone tiles on patches with no crop house yet.
+# Most zone cells one estate takes (estates.maxCells); a bigger patch holds several farms.
+func estate_max_cells() -> int:
+	return maxi(1, int(spec.get("estates", {}).get("maxCells", 12)))
+
+
+func _cell_tiles_in_world(sim, cells: Array) -> Dictionary:
+	var out: Dictionary = {}
+	for c: Vector2i in cells:
+		for tile: Vector2i in cell_tiles(c):
+			if sim.in_world(tile):
+				out[tile] = true
+	return out
+
+
+# How the farm zone is shared out. Each crop house takes the patch cells nearest it, up to
+# estates.maxCells (houses grow their land together, the oldest first on a tie). Two neighbouring
+# houses whose land fits in one estate fold into the older. Farm zone no house reaches is cut into
+# open plots, each no bigger than an estate, where a new farmhouse may rise.
+# {houses: {id: Array[Vector2i] cells}, open: [Array[Vector2i] cells], folds: [[b, house]]}.
+func estate_regions(sim, town) -> Dictionary:
+	var limit: int = estate_max_cells()
+	var houses: Dictionary = {}
+	var open: Array = []
+	var folds: Array = []
+	for patch: Dictionary in estate_patches(sim, town):
+		var tiles: Dictionary = patch["tiles"]
+		var cells: Dictionary = {}
+		for tile: Vector2i in tiles:
+			cells[tile_cell(tile)] = true
+		var here: Array[Dictionary] = []
+		for b: Dictionary in sim.buildings:
+			if is_crop(str(b["type"])) and _in_patch(b, tiles):
+				here.append(b)
+		here.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["id"]) < int(b["id"]))
+		# Grow every house's land together, a ring at a time.
+		var owner: Dictionary = {}
+		var land: Dictionary = {}
+		var queue: Array = []
+		for b: Dictionary in here:
+			var c: Vector2i = tile_cell(Vector2i(int(b["x"]), int(b["y"])))
+			if owner.has(c):
+				# Two houses on one cell: the older keeps it, the other folds into it.
+				folds.append([b, sim.get_building(int(owner[c]))])
+				continue
+			owner[c] = int(b["id"])
+			land[int(b["id"])] = [c]
+			queue.append(c)
+		var head: int = 0
+		while head < queue.size():
+			var c: Vector2i = queue[head]
+			head += 1
+			var id: int = int(owner[c])
+			for step: Vector2i in STEPS:
+				var n: Vector2i = c + step
+				if not cells.has(n) or owner.has(n) or (land[id] as Array).size() >= limit:
+					continue
+				owner[n] = id
+				land[id].append(n)
+				queue.append(n)
+		# Neighbouring houses whose land together fits one estate become one farm.
+		var folded: Dictionary = {}
+		for b: Dictionary in folds:
+			folded[int(b[0]["id"])] = true
+		for a: Dictionary in here:
+			var aid: int = int(a["id"])
+			if folded.has(aid) or not land.has(aid):
+				continue
+			for b: Dictionary in here:
+				var bid: int = int(b["id"])
+				if bid <= aid or folded.has(bid) or not land.has(bid):
+					continue
+				if (land[aid] as Array).size() + (land[bid] as Array).size() > limit or not _touching(land[aid], land[bid]):
+					continue
+				for c: Vector2i in land[bid]:
+					owner[c] = aid
+					if c not in land[aid]:
+						land[aid].append(c)
+				land.erase(bid)
+				folded[bid] = true
+				folds.append([b, a])
+		for id: int in land:
+			if not folded.has(id):
+				houses[id] = land[id]
+		# The rest of the patch: open plots no bigger than an estate, of even size.
+		var rest: Array[Vector2i] = []
+		for c: Vector2i in cells:
+			if not owner.has(c):
+				rest.append(c)
+		rest.sort()
+		var left: Dictionary = {}
+		for c: Vector2i in rest:
+			left[c] = true
+		for start: Vector2i in rest:
+			if not left.has(start):
+				continue
+			var group: Array[Vector2i] = []
+			var wave: Array[Vector2i] = [start]
+			left.erase(start)
+			var at: int = 0
+			while at < wave.size():
+				var c: Vector2i = wave[at]
+				at += 1
+				group.append(c)
+				for step: Vector2i in STEPS:
+					if left.has(c + step):
+						left.erase(c + step)
+						wave.append(c + step)
+			var pieces: int = ceili(float(group.size()) / limit)
+			var each: int = ceili(float(group.size()) / pieces)
+			for i in pieces:
+				open.append(group.slice(i * each, mini(group.size(), (i + 1) * each)))
+	return {"houses": houses, "open": open, "folds": folds}
+
+
+func _touching(a: Array, b: Array) -> bool:
+	var set: Dictionary = {}
+	for c: Vector2i in a:
+		set[c] = true
+	for c: Vector2i in b:
+		for step: Vector2i in STEPS:
+			if set.has(c + step):
+				return true
+	return false
+
+
+# Farm-zone tiles where a new farmhouse may rise: the open plots no house's land reaches.
 func _unfarmed_tiles(sim, town) -> Dictionary:
 	var out: Dictionary = {}
-	for patch: Dictionary in estate_patches(sim, town):
-		var farmed: bool = false
-		for b: Dictionary in sim.buildings:
-			if is_crop(str(b["type"])) and _in_patch(b, patch["tiles"]):
-				farmed = true
-				break
-		if not farmed:
-			out.merge(patch["tiles"])
+	for cells: Array in estate_regions(sim, town)["open"]:
+		out.merge(_cell_tiles_in_world(sim, cells))
 	return out
 
 
@@ -540,30 +659,26 @@ func estate_name(tiles: int) -> String:
 func refresh_estates(sim, town) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var found: Dictionary = {}
-	for patch: Dictionary in estate_patches(sim, town):
-		var tiles: Dictionary = patch["tiles"]
-		var house: Dictionary = {}
-		var extra: Array[Dictionary] = []
-		for b: Dictionary in sim.buildings:
-			if not is_crop(str(b["type"])) or not _in_patch(b, tiles):
-				continue
-			if house.is_empty():
-				house = b
-			else:
-				extra.append(b)
+	var regions: Dictionary = estate_regions(sim, town)
+	for pair: Array in regions["folds"]:
+		var b: Dictionary = pair[0]
+		var house: Dictionary = pair[1]
+		if house.is_empty() or sim.get_building(int(b["id"])).is_empty():
+			continue
+		out.append({"kind": "folded", "id": int(b["id"]), "into": int(house["id"])})
+		_fold(sim, b, house)
+	var taken: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		for dy in int(b["size"]):
+			for dx in int(b["size"]):
+				taken[Vector2i(int(b["x"]) + dx, int(b["y"]) + dy)] = true
+	var trail: float = sim.living.faint_threshold()
+	for id: int in regions["houses"]:
+		var house: Dictionary = sim.get_building(id)
 		if house.is_empty():
 			continue
-		for b: Dictionary in extra:
-			out.append({"kind": "folded", "id": int(b["id"]), "into": int(house["id"])})
-			_fold(sim, b, house)
-		var taken: Dictionary = {}
-		for b: Dictionary in sim.buildings:
-			for dy in int(b["size"]):
-				for dx in int(b["size"]):
-					taken[Vector2i(int(b["x"]) + dx, int(b["y"]) + dy)] = true
-		var trail: float = sim.living.faint_threshold()
 		var fields: Array[Vector2i] = []
-		for tile: Vector2i in tiles:
+		for tile: Vector2i in _cell_tiles_in_world(sim, regions["houses"][id]):
 			if taken.has(tile):
 				continue
 			var cell: Dictionary = sim.living.cells.get(sim.living.key(tile), {})
@@ -572,7 +687,7 @@ func refresh_estates(sim, town) -> Array[Dictionary]:
 			fields.append(tile)
 		fields.sort()
 		var size: int = fields.size() + int(house["size"]) * int(house["size"])
-		found[int(house["id"])] = {"tiles": size, "fields": fields, "name": estate_name(size)}
+		found[id] = {"tiles": size, "fields": fields, "name": estate_name(size)}
 	sim.estates = found
 	_estate_sig = _estate_signature(sim, town)
 	return out

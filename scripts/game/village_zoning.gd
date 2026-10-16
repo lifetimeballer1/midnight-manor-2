@@ -1191,7 +1191,10 @@ func _town_build_nodes() -> void:
 func _town_sync() -> void:
 	if town == null:
 		return
-	var mode: String = "%s/%s/%d" % [str(_town_active), _town_tool if _town_active else "", sim.revision if not town.village.is_empty() else 0]
+	var fields: int = 0
+	for id: int in sim.estates:
+		fields += (sim.estates[id]["fields"] as Array).size() * 31 + id
+	var mode: String = "%s/%s/%d/%d" % [str(_town_active), _town_tool if _town_active else "", sim.revision if not town.village.is_empty() else 0, fields]
 	if town.revision == _town_drawn_revision and mode == _town_drawn_mode:
 		return
 	var roads_changed: bool = town.revision != _town_drawn_revision
@@ -1253,6 +1256,10 @@ func _town_build_overlay() -> void:
 	# Zoned village ground: the same wash, faint under buildings that stand on it already.
 	if not town.village.is_empty():
 		var taken: Dictionary = _village_taken()
+		# Farm estate fields count as built on: their crops, hedges and water show the zone already.
+		for id: int in sim.estates:
+			for tile: Vector2i in sim.estates[id]["fields"]:
+				taken[growth.tile_cell(tile)] = true
 		for c: Vector2i in town.village:
 			var zone: String = str(town.village[c])
 			var built: bool = taken.has(c)
@@ -1946,6 +1953,21 @@ func town_road_mesh_ok() -> bool:
 
 func town_overlay_ok() -> bool:
 	return _town_overlay.mesh != null or town.zones.size() == town.lots.size()
+
+
+# Zoned village ground on claimed land is kept clear of the wild trees and rocks it came with.
+func _reach_reserved_tiles() -> Dictionary:
+	var out: Dictionary = {}
+	if town == null or growth == null:
+		return out
+	for c: Vector2i in town.village:
+		for tile: Vector2i in growth.cell_tiles(c):
+			out[tile] = true
+	return out
+
+
+func _reach_signature() -> int:
+	return town.village.hash() if town != null else 0
 
 
 # --- Farm estates on the building card ----------------------------------------------------------

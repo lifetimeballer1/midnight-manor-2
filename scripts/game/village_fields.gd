@@ -5,19 +5,25 @@ extends MultiMeshInstance3D
 # play time, each estate a little out of step with the others. One multimesh, rebuilt only when the
 # estates or a stage change.
 
-const ROWS: int = 4
+const ROWS: int = 5
 const STAGE_SECONDS: float = 30.0
 # Stages: 0 freshly worked, 1 sprouting, 2 ripe, 3 harvested.
 const HEIGHTS: Array[float] = [0.06, 0.18, 0.32, 0.08]
 const PALETTES: Dictionary = {
-	"farm": [Color("7a5a3c"), Color("7fb04e"), Color("e0b84e"), Color("8f7a48")],
-	"pasture": [Color("5f8f42"), Color("6ea84a"), Color("7fbb52"), Color("93a85a")],
+	"farm": [Color("7a5a3c"), Color("6f9e45"), Color("c4973a"), Color("7f6a3a")],
+	"pasture": [Color("557f3c"), Color("5f9142"), Color("6a9c48"), Color("7d9150")],
 	"grove": [Color("587f3a"), Color("6a9a44"), Color("c7a2ad"), Color("4f8a3c")],
 	"pond": [Color("5d7f48"), Color("6f9350"), Color("82a05a"), Color("98a06a")],
 }
-const GROUND: Dictionary = {"farm": Color("5b4430"), "pasture": Color("4f7d38"), "grove": Color("4a6f33"), "pond": Color("3e5a3a")}
-const WATER := Color("2c5560")
+const GROUND: Dictionary = {"farm": Color("5b4430"), "pasture": Color("44692f"), "grove": Color("4a6f33"), "pond": Color("3e5a3a")}
+const WATER := Color("2b4b4f")
 const BARK := Color("5a4430")
+const FURROW := Color("4a3626")
+const HAY := Color("c9a24a")
+const WOOL := Color("e8e2d2")
+const HEDGE := Color("355a2c")
+const FENCE := Color("8a6a46")
+const SIDES: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 
 var _signature: int = -1
 var _blobs: MultiMeshInstance3D = null       # rounded shapes: orchard canopies, grass tufts, reeds
@@ -92,45 +98,88 @@ func _rebuild(sim, host) -> void:
 		var palette: Array = PALETTES.get(crop, PALETTES["farm"])
 		var stage: int = stage_of(sim, id)
 		var colour: Color = palette[stage]
+		var field: Dictionary = {}
 		for tile: Vector2i in sim.estates[id]["fields"]:
+			field[tile] = true
+		var house := Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"]))
+		for tile: Vector2i in field:
 			var centre: Vector3 = host.world_position(Vector2(tile) + Vector2(0.5, 0.5))
 			var ground: float = host._town_ground_y(centre.x, centre.z)
-			var bed: Color = GROUND.get(crop, GROUND["farm"])
-			placed.append(_box(Vector3(tile_size * 0.98, 0.04, tile_size * 0.98), Vector3(centre.x, ground + 0.02, centre.z), bed))
-			var jitter: float = float((tile.x * 7 + tile.y * 13) % 5) * 0.04
+			var wave: float = _wave(centre.x, centre.z)
+			var bed: Color = (GROUND.get(crop, GROUND["farm"]) as Color).darkened(0.06 * wave)
+			placed.append(_box(Vector3(tile_size, 0.04, tile_size), Vector3(centre.x, ground + 0.02, centre.z), bed))
+			var mark: int = posmod(tile.x * 7 + tile.y * 13, 11)
 			match crop:
 				"farm":
-					# Furrows of wheat across the tile.
-					# Each furrow is a few clumps of uneven height, so a field reads as a crop, not planks.
+					# Long furrows: rows run on from tile to tile, swelling and dipping like a real field.
 					for row in ROWS:
 						var z: float = centre.z + (float(row) - (ROWS - 1) * 0.5) * tile_size / ROWS
-						for seg in 3:
-							var wobble: int = (tile.x * 31 + tile.y * 17 + row * 7 + seg * 13) % 7
-							var height: float = HEIGHTS[stage] * (0.75 + 0.08 * wobble + jitter)
-							var shade: Color = colour.darkened(0.035 * float(wobble % 4)).lightened(0.03 * float(seg))
-							var x: float = centre.x + (float(seg) - 1.0) * tile_size * 0.3
-							placed.append(_box(Vector3(tile_size * 0.27, height, tile_size / ROWS * 0.5), Vector3(x, ground + 0.04 + height * 0.5, z + (float(wobble) - 3.0) * 0.012), shade))
+						if stage == 0:
+							placed.append(_box(Vector3(tile_size, 0.05, tile_size / ROWS * 0.45), Vector3(centre.x, ground + 0.045, z), FURROW.darkened(0.05 * float(row % 2))))
+							continue
+						var height: float = HEIGHTS[stage] * (0.65 + 0.6 * _wave(centre.x * 1.7, z * 1.3))
+						var shade: Color = colour.darkened(0.08).lerp(colour.lightened(0.08), _wave(centre.x * 0.6 + 3.0, z * 0.9))
+						placed.append(_box(Vector3(tile_size, height, tile_size / ROWS * 0.5), Vector3(centre.x, ground + 0.04 + height * 0.5, z), shade))
+					if stage == 3 and mark == 0:
+						round.append(_box(Vector3(0.95, 0.75, 0.95), Vector3(centre.x, ground + 0.36, centre.z), HAY))
+						round.append(_box(Vector3(0.7, 0.4, 0.7), Vector3(centre.x, ground + 0.7, centre.z), HAY.lightened(0.08)))
 				"pasture":
-					# Grass tufts on open grazing.
-					for k in 4:
-						var off := Vector2(float((tile.x * 5 + k * 11) % 7) - 3.0, float((tile.y * 3 + k * 7) % 7) - 3.0) * tile_size * 0.11
-						var height: float = HEIGHTS[stage] * 0.8 + 0.12
-						round.append(_box(Vector3(0.42, height, 0.42), Vector3(centre.x + off.x, ground + 0.04 + height * 0.35, centre.z + off.y), colour.darkened(0.05 * k)))
+					# Tufts on open grazing, and the flock.
+					for k in 3:
+						var off := Vector2(float(posmod(tile.x * 5 + k * 11, 7)) - 3.0, float(posmod(tile.y * 3 + k * 7, 7)) - 3.0) * tile_size * 0.11
+						var height: float = HEIGHTS[stage] * 0.6 + 0.1
+						round.append(_box(Vector3(0.36, height, 0.36), Vector3(centre.x + off.x, ground + 0.04 + height * 0.35, centre.z + off.y), colour.darkened(0.05 * k)))
+					if mark % 4 == 1:
+						var turn: float = float(mark) * 0.9
+						var facing := Vector3(cos(turn), 0.0, sin(turn))
+						var at := Vector3(centre.x, ground + 0.42, centre.z) + Vector3(facing.z, 0, -facing.x) * 0.3
+						round.append(_box(Vector3(0.62, 0.48, 0.62) + facing.abs() * 0.3, at, WOOL.darkened(0.04 * float(mark % 3))))
+						round.append(_box(Vector3(0.26, 0.26, 0.26), at + facing * 0.5 + Vector3(0, 0.06, 0), Color("2f2a28")))
+						for leg: Vector3 in [facing * 0.22, -facing * 0.22]:
+							placed.append(_box(Vector3(0.08, 0.26, 0.08), at + leg + Vector3(0, -0.28, 0), Color("2f2a28")))
 				"grove":
-					# Two fruit trees a tile; they blossom when ripe.
+					# Fruit trees in rows; they blossom when ripe, and windfalls lie under them after picking.
 					for k in 2:
 						var off := Vector2(-0.45 + 0.9 * k, 0.25 - 0.5 * k) * tile_size * 0.5
-						var crown: float = 0.4 + HEIGHTS[stage] * 0.9
-						var trunk: float = 0.25 + crown * 0.4
-						placed.append(_box(Vector3(0.12, trunk, 0.12), Vector3(centre.x + off.x, ground + 0.04 + trunk * 0.5, centre.z + off.y), BARK))
-						round.append(_box(Vector3(crown, crown * 0.85, crown), Vector3(centre.x + off.x, ground + 0.04 + trunk + crown * 0.3, centre.z + off.y), colour.darkened(0.06 * k)))
+						var crown: float = 0.55 + HEIGHTS[stage] * 0.9
+						var trunk: float = 0.3 + crown * 0.4
+						placed.append(_box(Vector3(0.14, trunk, 0.14), Vector3(centre.x + off.x, ground + 0.04 + trunk * 0.5, centre.z + off.y), BARK))
+						var leaf: Color = (palette[1] as Color).darkened(0.08 * k + 0.06 * wave)
+						round.append(_box(Vector3(crown, crown * 0.85, crown), Vector3(centre.x + off.x, ground + 0.04 + trunk + crown * 0.3, centre.z + off.y), leaf))
+						if stage == 2:
+							for petal in 3:
+								var p := Vector3(cos(petal * 2.1 + k), 0.0, sin(petal * 2.1 + k)) * crown * 0.38
+								round.append(_box(Vector3.ONE * crown * 0.32, Vector3(centre.x + off.x, ground + 0.04 + trunk + crown * 0.55, centre.z + off.y) + p, colour.lightened(0.05 * petal)))
 				"pond":
-					# Shallow water with reeds along its edge.
-					placed.append(_box(Vector3(tile_size * 0.8, 0.02, tile_size * 0.8), Vector3(centre.x, ground + 0.05, centre.z), WATER))
-					for k in 3:
-						var height: float = HEIGHTS[stage] * 1.4 + 0.25
-						var x: float = centre.x + (float(k) - 1.0) * tile_size * 0.3
-						round.append(_box(Vector3(0.14, height, 0.14), Vector3(x, ground + 0.05 + height * 0.5, centre.z - tile_size * 0.42), colour.darkened(0.05 * k)))
+					# One sheet of water across the estate; reeds and lily pads only near the banks.
+					placed.append(_box(Vector3(tile_size, 0.02, tile_size), Vector3(centre.x, ground + 0.05, centre.z), WATER.lightened(0.05 * wave)))
+					if mark % 5 == 2:
+						round.append(_box(Vector3(0.45, 0.03, 0.45), Vector3(centre.x + 0.3, ground + 0.07, centre.z - 0.2), Color("4f7a3a")))
+					for step: Vector2i in SIDES:
+						if field.has(tile + step) or house.has_point(tile + step):
+							continue
+						var edge := Vector3(float(step.x), 0.0, float(step.y)) * tile_size * 0.4
+						var along := Vector3(float(step.y), 0.0, float(step.x)) * tile_size * 0.3
+						for k in 3:
+							var height: float = HEIGHTS[stage] * 1.4 + 0.3 + 0.1 * float((mark + k) % 3)
+							round.append(_box(Vector3(0.14, height, 0.14), Vector3(centre.x, ground + 0.05 + height * 0.5, centre.z) + edge + along * (float(k) - 1.0), palette[stage].darkened(0.05 * k)))
+			# Hedges round wheat and orchards, rail fences round pasture, along the estate's outer edge.
+			if crop == "pond":
+				continue
+			for step: Vector2i in SIDES:
+				if field.has(tile + step) or house.has_point(tile + step):
+					continue
+				var edge := Vector3(float(step.x), 0.0, float(step.y)) * tile_size * 0.47
+				var flat: bool = step.x == 0      # the edge runs along x
+				if crop == "pasture":
+					var rail := Vector3(tile_size, 0.07, 0.07) if flat else Vector3(0.07, 0.07, tile_size)
+					placed.append(_box(rail, Vector3(centre.x, ground + 0.44, centre.z) + edge, FENCE))
+					placed.append(_box(rail, Vector3(centre.x, ground + 0.24, centre.z) + edge, FENCE.darkened(0.12)))
+					var corner := Vector3(tile_size * 0.5, 0.0, 0.0) if flat else Vector3(0.0, 0.0, tile_size * 0.5)
+					placed.append(_box(Vector3(0.12, 0.6, 0.12), Vector3(centre.x, ground + 0.3, centre.z) + edge - corner, FENCE.darkened(0.25)))
+				else:
+					var hedge := Vector3(tile_size * 1.08, 0.44 + 0.1 * wave, 0.4) if flat else Vector3(0.4, 0.44 + 0.1 * wave, tile_size * 1.08)
+					round.append(_box(hedge, Vector3(centre.x, ground + 0.22, centre.z) + edge, HEDGE.darkened(0.1 * wave)))
 	multimesh.instance_count = placed.size()
 	for i in placed.size():
 		multimesh.set_instance_transform(i, placed[i][0])
@@ -139,6 +188,11 @@ func _rebuild(sim, host) -> void:
 	for i in round.size():
 		_blobs.multimesh.set_instance_transform(i, round[i][0])
 		_blobs.multimesh.set_instance_color(i, round[i][1])
+
+
+# A smooth 0..1 swell over the ground, so neighbouring rows and tiles shade into one another.
+func _wave(x: float, z: float) -> float:
+	return 0.5 + 0.25 * sin(x * 0.37 + z * 0.11) + 0.25 * cos(z * 0.29 - x * 0.07)
 
 
 func _box(size: Vector3, at: Vector3, colour: Color) -> Array:
