@@ -2,6 +2,10 @@ extends RefCounted
 
 const ChronicleData = preload("res://scripts/game/chronicle.gd")
 const COST := {"food": 20, "gold": 10}
+# Bakery rations: each fighter can march on RATIONS_EACH rations instead of the Food, and fed
+# fighters hit RATION_DAMAGE harder on the march.
+const RATIONS_EACH: int = 2
+const RATION_DAMAGE: float = 0.1
 var active: Dictionary = {}
 var last_result: Dictionary = {}
 var attempt: int = 0
@@ -19,16 +23,27 @@ func reason(sim, region: String, crew: Array) -> String:
 		if unit.is_empty() or unit["hp"] <= 0.0 or sim.troop_specs[unit["type"]]["role"] != "combat":
 			return "Only living defenders can join the expedition."
 		seen[id] = true
-	return "" if sim._affordable(COST) else "Requires 20 Food and 10 Gold."
+	return "" if sim._affordable(cost(sim, crew)) else "Requires 20 Food (or %d rations) and 10 Gold." % (RATIONS_EACH * crew.size())
+
+
+# What this crew costs to send: rations from the stores when there are enough for everyone,
+# otherwise the old Food price.
+func cost(sim, crew: Array) -> Dictionary:
+	var rations: int = RATIONS_EACH * crew.size()
+	if rations > 0 and float(sim.resources.get("rations", 0.0)) >= rations:
+		return {"rations": rations, "gold": int(COST["gold"])}
+	return COST.duplicate()
 
 
 func begin(sim, region: String, crew: Array) -> bool:
 	sim.notice = reason(sim, region, crew)
 	if not sim.notice.is_empty(): return false
+	var price: Dictionary = cost(sim, crew)
+	var fed: float = 1.0 + RATION_DAMAGE if price.has("rations") else 1.0
 	var army: Array[Dictionary] = []
 	for id: int in crew:
 		var unit: Dictionary = sim.get_unit(id)
-		army.append(_body(id, str(unit["type"]), 3.0, 4.0 + army.size(), float(unit["hp"]), float(unit["max_hp"]), sim._stat(unit, "damage"), sim._stat(unit, "range"), sim._stat(unit, "speed")))
+		army.append(_body(id, str(unit["type"]), 3.0, 4.0 + army.size(), float(unit["hp"]), float(unit["max_hp"]), sim._stat(unit, "damage") * fed, sim._stat(unit, "range"), sim._stat(unit, "speed")))
 	var index: int = sim.chronicle.region_order().find(region)
 	var stage: int = sim.chronicle.region_index(region)
 	var difficulty: int = mini(2, stage)
@@ -42,9 +57,9 @@ func begin(sim, region: String, crew: Array) -> bool:
 		var stats: Dictionary = sim._role_stats(role)
 		var hp: float = 45.0 * (1.0 + index * 0.2 + difficulty * 0.3) * float(stats.get("hp", 1.0))
 		enemies.append(_body(slot, role, 16.0, 3.0 + slot * 1.2, hp, hp, 6.0 * (1.0 + index * 0.1 + stage * 0.2) * float(stats.get("damage", 1.0)), float(stats.get("range", 1.1)), float(stats.get("speed", 1.0))))
-	sim._spend(COST)
+	sim._spend(price)
 	attempt += 1
-	active = {"region": region, "target": str(sim.chronicle.region_states()[stage + 1 if stage < 3 else stage]), "status": "running", "clock": 0.0, "army": army, "enemies": enemies}
+	active = {"region": region, "target": str(sim.chronicle.region_states()[stage + 1 if stage < 3 else stage]), "status": "running", "clock": 0.0, "army": army, "enemies": enemies, "rationed": price.has("rations")}
 	sim.notice = "Expedition away. The home village waits safely."
 	return true
 

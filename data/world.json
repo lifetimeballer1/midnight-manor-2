@@ -95,13 +95,17 @@
     "frostwood": 600,
     "plate": 600,
     "rations": 800,
-    "feast-supplies": 400
+    "feast-supplies": 400,
+    "hides": 300,
+    "leather": 200,
+    "arms": 200
   },
   "spawnBuffer": 2,
   "townMeal": {
     "secondsPerDay": 180,
     "foodPerVillager": 5,
     "breadPerVillager": 1,
+    "spoilage": {"_note": "Food above what keeps (the base store, the Manor Hall and any Grand Granary) spoils by perMinute of the excess each minute. Storehouses hold more food but do not keep it. Bread and flour keep.", "perMinute": 0.01, "keepers": ["hall", "grand-granary"]},
     "supply": {
   "stages": [
     {

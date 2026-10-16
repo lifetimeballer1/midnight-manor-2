@@ -9,11 +9,24 @@ const Needs = preload("res://scripts/game/village_needs.gd")
 const Frontier = preload("res://scripts/game/frontier_combat.gd")
 const HomeRaid = preload("res://scripts/game/home_raid.gd")
 const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
+const Perks = preload("res://scripts/game/village_perks.gd")
+const Materials = preload("res://scripts/game/village_materials.gd")
+const Aftermath = preload("res://scripts/game/village_aftermath.gd")
+const Gear = preload("res://scripts/game/village_gear.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
 var home_raid = HomeRaid.new()
 var chronicle = Chronicle.new()
+var perks = Perks.new()
+var materials = Materials.new()
+var aftermath = Aftermath.new()
+var gear = Gear.new()
+# Farm estates: a connected patch of farm zone is one farm. village_growth.gd fills this in from the
+# zone on its own clock: house building id -> {tiles, fields: Array[Vector2i], name}. Derived, not saved.
+var estates: Dictionary = {}
+const ESTATE_TILES_PER_HAND: int = 4
+const ESTATE_MAX_HANDS: int = 8
 var navigation_revision: int = 0
 const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
@@ -594,22 +607,29 @@ func repair(id: int) -> bool:
 	if b.is_empty() or b["remaining"] > 0:
 		return false
 	# Tool Standardization: the same wall costs less timber to put back up.
-	var per_wood: float = 15.0 / (1.0 - minf(0.6, chronicle.bonus("repair")))
-	var wood: int = mini(int(resources["wood"]), ceili((float(b["max_hp"]) - float(b["hp"])) / per_wood))
-	if wood <= 0:
-		notice = "No repair needed, or not enough Wood."
+	var per_unit: float = float(materials.config.get("repair", {}).get("hpPerUnit", 15.0)) / (1.0 - minf(0.6, chronicle.bonus("repair")))
+	# Stone-built types take Stone as well once Stoneworking is known (data/materials.json).
+	var restored: float = materials.affordable_hp(self, b, float(b["max_hp"]) - float(b["hp"]), per_unit)
+	var cost: Dictionary = materials.repair_cost(self, b, restored, per_unit)
+	if restored <= 0.0 or cost.is_empty() or not _affordable(cost):
+		var missing: String = "Stone" if materials.stone_built(str(b["type"])) and materials.stone_known(self) else "Wood"
+		notice = "No repair needed, or not enough %s." % missing
 		return false
-	resources["wood"] -= wood
-	b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + wood * per_wood)
+	_spend(cost)
+	b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + restored)
 	revision += 1
 	_invalidate()
-	notice = "Repaired / %d Wood." % wood
+	var paid: Array[String] = []
+	for resource: String in ["wood", "stone"]:
+		if int(cost.get(resource, 0)) > 0:
+			paid.append("%d %s" % [int(cost[resource]), resource.capitalize()])
+	notice = "Repaired / %s." % ", ".join(PackedStringArray(paid))
 	return true
 
 
 func reserve_cap(b: Dictionary) -> float:
 	var harvest: Dictionary = building_specs[b["type"]].get("harvest", {})
-	return float(harvest.get("capacity", 0)) + float(harvest.get("perTier", 0)) * (int(b["tier"]) - 1)
+	return (float(harvest.get("capacity", 0)) + float(harvest.get("perTier", 0)) * (int(b["tier"]) - 1)) * estate_scale(b)
 
 
 func storage_cap(resource: String) -> float:
@@ -665,25 +685,99 @@ func beds() -> int:
 
 # The profession a newcomer takes: the trade of a finished workplace with room in its crew (an
 # empty one first), so new villagers go straight to work. Farmer when every job is filled.
+# The trade a newcomer takes up: an open place at the workplace the village most needs filled.
+# Empty crews come first; then work that answers a shortage (stone for stalled sites, food when the
+# next meals are at risk, bread when the larder has none); farmer when every crew is full.
 func open_job_role() -> String:
+	var wants: Dictionary = job_wants()
 	var best: String = ""
-	var best_crew: int = 2
+	var best_score: float = INF
 	for b in buildings:
 		if b["hp"] <= 0 or b["remaining"] > 0:
 			continue
 		var role: String = str(building_specs[b["type"]].get("workplace", ""))
 		if role.is_empty() or not troop_specs.has(role):
 			continue
-		var crew: int = 0
-		for u in units:
-			if int(u["workplace"]) == int(b["id"]):
-				crew += 1
-		if crew < best_crew:
+		var crew: int = crew_of(b)
+		var cap: int = crew_cap(b)
+		if crew >= cap:
+			continue
+		var score: float = float(crew) / float(cap) * 20.0 - _job_urgency(b, wants)
+		if score < best_score:
 			best = role
-			best_crew = crew
-			if crew == 0:
-				break
+			best_score = score
 	return best if not best.is_empty() else "farmer"
+
+
+# How many may work here: two, or one per ESTATE_TILES_PER_HAND tiles on a farm estate.
+func crew_cap(b: Dictionary) -> int:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	if estate.is_empty():
+		return 2
+	return clampi(ceili(float(estate["tiles"]) / ESTATE_TILES_PER_HAND), 2, ESTATE_MAX_HANDS)
+
+
+# How much bigger than a lone farm this building's land is (1 for anything not an estate).
+func estate_scale(b: Dictionary) -> float:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	if estate.is_empty():
+		return 1.0
+	var own: float = float(int(b["size"]) * int(b["size"]))
+	return maxf(1.0, float(aftermath.growing_tiles(self, int(b["id"]))) / own)
+
+
+func crew_of(b: Dictionary) -> int:
+	var crew: int = 0
+	for u in units:
+		if int(u["workplace"]) == int(b["id"]) and float(u["hp"]) > 0.0:
+			crew += 1
+	return crew
+
+
+# How badly the village wants more of each resource right now, for open_job_role.
+func job_wants() -> Dictionary:
+	var wants: Dictionary = {}
+	for b: Dictionary in buildings:
+		if float(b["remaining"]) <= 0.0 or float(b["hp"]) <= 0.0:
+			continue
+		var need: Dictionary = materials.needed(b)
+		for resource: String in need:
+			if float(resources.get(resource, 0.0)) < float(need[resource]):
+				wants[resource] = 5.0
+	if float(resources.get("food", 0.0)) < needs.demand(self) * 2.0:
+		wants["food"] = float(wants.get("food", 0.0)) + 3.0
+	if float(resources.get("bread", 0.0)) < float(units.size()):
+		wants["bread"] = float(wants.get("bread", 0.0)) + 2.0
+	return wants
+
+
+func _job_urgency(b: Dictionary, wants: Dictionary) -> float:
+	var spec: Dictionary = building_specs[b["type"]]
+	var best: float = float(wants.get(str(spec.get("production", "")), 0.0))
+	for recipe: Dictionary in spec.get("refine", []):
+		for resource: String in recipe.get("out", {}):
+			best = maxf(best, float(wants.get(resource, 0.0)))
+	return best
+
+
+# One line for the people panel: workplace places filled, and villagers with no work.
+func jobs_summary() -> String:
+	var places: int = 0
+	var filled: int = 0
+	for b: Dictionary in buildings:
+		if float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+			continue
+		var role: String = str(building_specs[b["type"]].get("workplace", ""))
+		if role.is_empty() or not troop_specs.has(role) or str(troop_specs[role].get("role", "")) == "combat":
+			continue
+		places += crew_cap(b)
+		filled += mini(crew_cap(b), crew_of(b))
+	var idle: int = 0
+	for u: Dictionary in units:
+		var kind: String = str(troop_specs[u["type"]].get("role", ""))
+		if float(u["hp"]) > 0.0 and kind not in ["combat", "builder"] and int(u["workplace"]) < 0:
+			idle += 1
+	return "Jobs %d/%d filled · %d idle" % [filled, places, idle]
 
 
 func recruit_reason(role: String) -> String:
@@ -701,14 +795,17 @@ func recruit_reason(role: String) -> String:
 				found = true
 		if not found:
 			return "Finish a Barracks first."
-	return "" if _affordable(troop_specs[role]["recruitCost"]) else "Not enough resources to hire."
+	if not _affordable(troop_specs[role]["recruitCost"]):
+		return "Not enough resources to hire."
+	# Veterans also need forged arms or cured leather (data/gear.json).
+	return gear.gear_reason(self, role)
 
 
 func recruit(role: String) -> bool:
 	notice = recruit_reason(role)
 	if not notice.is_empty():
 		return false
-	_spend(troop_specs[role]["recruitCost"])
+	_spend(gear.hire_cost(self, role))
 	_add_unit(role)
 	_auto_assign()
 	notice = "A %s joins the village." % troop_specs[role]["name"]
@@ -743,7 +840,7 @@ func assign(unit_id: int, building_id: int) -> bool:
 	for other in units:
 		if int(other["id"]) != unit_id and int(other["workplace"]) == building_id:
 			count += 1
-	if count >= 2:
+	if count >= crew_cap(b):
 		notice = "This workplace crew is full."
 		return false
 	u["workplace"] = building_id
@@ -806,7 +903,14 @@ func train(id: int) -> bool:
 func _stat(u: Dictionary, stat: String) -> float:
 	var spec: Dictionary = troop_specs[u["type"]]
 	var honor: float = 1.0 + minf(5.0, float(u.get("prestige", 0))) * 0.1 if stat in ["hp", "damage"] else 1.0
-	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor
+	# Emberforge: staffed forges sharpen every fighter's blade.
+	var forged: float = 1.0 + perks.total("damage") if stat == "damage" and str(spec.get("role", "")) == "combat" else 1.0
+	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor * forged
+
+
+# How much a gatherer brings back per trip. Hide Tannery: staffed tanneries add sturdier sacks.
+func carry_of(u: Dictionary) -> int:
+	return int(troop_specs[u["type"]]["carry"]) + int(perks.total("carry"))
 
 
 func deliver(resource: String, amount: int) -> bool:
@@ -1352,6 +1456,9 @@ func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 	if b.is_empty():
 		return Vector2(-1, -1)
 	var start := tile_of(u)
+	var field: Vector2 = _field_stand(u, b, start)
+	if field.x >= 0:
+		return field
 	var crew: String = ""
 	for other: Dictionary in units:
 		if int(other["workplace"]) == int(b["id"]):
@@ -1383,6 +1490,33 @@ func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 	var resolved: Vector2 = _resolve_stand(u, b, taken)
 	stand_cache[key] = resolved
 	return resolved
+
+
+# On a farm estate the crew work the rows: each hand takes a field tile, and moves on to another
+# every FIELD_SHIFT seconds of play. (-1, -1) when b is not an estate or no field is reachable.
+const FIELD_SHIFT: float = 20.0
+
+func _field_stand(u: Dictionary, b: Dictionary, start: Vector2i) -> Vector2:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	var fields: Array = estate.get("fields", [])
+	if fields.is_empty():
+		return Vector2(-1, -1)
+	var shift: int = floori(elapsed / FIELD_SHIFT)
+	var key: String = "field|%d|%d|%d|%d,%d|%d" % [int(b["id"]), int(u["id"]), shift, start.x, start.y, revision]
+	if stand_cache.has(key):
+		return stand_cache[key]
+	if stand_cache.size() > 4000:
+		stand_cache.clear()
+	var pick: int = posmod(int(u["id"]) * 7 + shift * 3, fields.size())
+	var out := Vector2(-1, -1)
+	for i in mini(fields.size(), 4):
+		var tile: Vector2i = fields[(pick + i * 5) % fields.size()]
+		var point := Vector2(tile) + Vector2(0.5, 0.5)
+		if _walkable(start, point):
+			out = point
+			break
+	stand_cache[key] = out
+	return out
 
 
 func facing_target(u: Dictionary) -> Vector2:
@@ -1499,6 +1633,9 @@ func tick(dt: float) -> void:
 	tick_count += 1
 	elapsed += dt
 	needs.tick(self, dt)
+	perks.tick(self, dt)
+	aftermath.tick(self, dt)
+	gear.tick(self, dt)
 	_gate_tick()
 	job_timer += dt
 	if job_timer >= 5:
@@ -1510,7 +1647,11 @@ func tick(dt: float) -> void:
 			continue
 		if b["remaining"] > 0:
 			if not raid_active and not raid_warning:
-				b["remaining"] = maxf(0, float(b["remaining"]) - dt)
+				# Zone-grown sites need builders and delivered materials (village_materials.gd).
+				# Mason Yard: staffed yards nearby speed the work.
+				b["remaining"] = maxf(0, float(b["remaining"]) - materials.progress(self, b, dt) * perks.build_for(b))
+				if float(b["remaining"]) <= 0.0:
+					materials.close_site(b)
 			continue
 		for work: String in chronicle.great_works_config():
 			if chronicle.great_work_data(work)["building"] == b["type"] and work not in chronicle.great_works:
@@ -1518,12 +1659,25 @@ func tick(dt: float) -> void:
 				chronicle.queue_banner("Old Bell", chronicle.great_work_data(work)["name"] + " stands in the village.")
 		var spec: Dictionary = building_specs[b["type"]]
 		if spec.get("production") != null:
-			var posted: bool = false
+			var posted: int = 0
 			for u in units:
 				if int(u["workplace"]) == int(b["id"]) and u["hp"] > 0 and u["order"].is_empty() and not u["hold"] and not raid_active and not raid_warning:
-					posted = true
-			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * (1.25 if posted else 1.0)
+					posted += 1
+			# A lone workplace: any posted crew adds 25%. A farm estate grows with its land, and
+			# reaches its full +25% only with one hand for every few tiles (crew_cap).
+			var hands: float = 1.25 if posted > 0 else 1.0
+			if estates.has(int(b["id"])):
+				hands = 1.0 + 0.25 * minf(1.0, float(posted) / float(crew_cap(b)))
+			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * hands * estate_scale(b)
 			rate *= needs.production_multiplier()
+			# Well fed (bread at the last meal): townMeal.wellFed gathering bonus.
+			rate *= 1.0 + needs.fed_bonus(self, "gather")
+			# Tinker Workshop: a staffed workshop nearby speeds the work.
+			rate *= perks.gather_for(b)
+			# Crops swell under the Full Moon and thin under the New Moon (data/moon.json). The moon
+			# turns with the raids, so the opening days before the first raid keep their plain yield.
+			if wave > 0:
+				rate *= MoonRules.harvest_multiplier(moon_phase, str(b["type"]))
 			# Moon Orchards / Full Granaries: food production, not a flat buff.
 			if str(spec.get("production", "")) == "food":
 				rate *= 1.0 + chronicle.bonus("growth")
@@ -1534,7 +1688,7 @@ func tick(dt: float) -> void:
 		u["cooldown"] = maxf(0, float(u["cooldown"]) - dt)
 		if not raid_active and not raid_warning and u["hp"] > 0 and u["hp"] < u["max_hp"]:
 			# Village Medicine / Field Medicine: recovery between horns.
-			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal")) * dt)
+			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal") + needs.fed_bonus(self, "heal")) * perks.heal_at(self, position_of(u)) * dt)
 		_unit_tick(u, dt)
 	_raid_tick(dt)
 	_automation_tick(dt)
@@ -1547,7 +1701,7 @@ func tick(dt: float) -> void:
 	for resource in pending_rewards.keys():
 		pending_rewards[resource] -= _bank(resource, float(pending_rewards[resource]))
 	if not raid_active and not raid_warning and units.size() < beds() and float(resources.get("food", 0)) >= 30:
-		birth_timer += dt
+		birth_timer += dt * needs.growth_multiplier(self)
 		if birth_timer >= 60:
 			birth_timer = 0
 			resources["food"] -= 20
@@ -1661,6 +1815,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		u["phase"] = "death"
 		return
 	u["phase"] = "idle"
+	u["on_site"] = false
 	u["think"] = maxf(0.0, float(u.get("think", 0.0)) - dt)
 	if not u["order"].is_empty():
 		if u["hold"] and troop_specs[u["type"]]["role"] == "combat":
@@ -1679,13 +1834,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		_walk(u, _cached_edge_goal(u, _hall()), dt)
 		return
 	if role == "builder":
-		for b in buildings:
-			if b["remaining"] > 0 and b["hp"] > 0:
-				_face_job(u, b)
-				if _walk(u, _edge_goal(u, b), dt):
-					u["phase"] = "work"
-				return
-		_clear_facing(u)
+		_builder_tick(u, dt)
 		return
 	if float(u["carry"]) >= 1:
 		_clear_facing(u)
@@ -1707,13 +1856,119 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 	if _walk(u, stand, dt):
 		u["phase"] = "work"
 		u["cooldown"] += dt
-		if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(troop_specs[u["type"]]["carry"]):
-			var amount: int = mini(floori(float(workplace["reserve"])), int(troop_specs[u["type"]]["carry"]))
+		if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(carry_of(u)):
+			var amount: int = mini(floori(float(workplace["reserve"])), carry_of(u))
 			if amount > 0:
 				workplace["reserve"] -= amount
 				u["carry"] = amount
 				u["carry_resource"] = str(building_specs[workplace["type"]]["production"])
 				u["cooldown"] = 0
+
+
+# Builders pick a site, fetch what its bill still needs from the central stores, carry it over and
+# work there. Sites bought from the Build menu have no bill: builders simply work at them.
+func _builder_tick(u: Dictionary, dt: float) -> void:
+	var site: Dictionary = _builder_site(u)
+	if site.is_empty():
+		u["site"] = -1
+		if float(u["carry"]) >= 1:
+			_return_haul(u, dt)
+		elif not aftermath.rubble.is_empty():
+			_salvage(u, dt)
+		else:
+			_clear_facing(u)
+		return
+	u["site"] = int(site["id"])
+	var need: Dictionary = materials.needed(site)
+	if float(u["carry"]) >= 1:
+		if not need.has(str(u["carry_resource"])):
+			_return_haul(u, dt)
+			return
+		_face_job(u, site)
+		if _walk(u, _edge_goal(u, site), dt):
+			var used: int = materials.drop_off(site, str(u["carry_resource"]), int(u["carry"]))
+			u["carry"] = float(u["carry"]) - used
+			if float(u["carry"]) < 1:
+				u["carry"] = 0.0
+				u["carry_resource"] = ""
+		return
+	var fetchable: bool = false
+	for resource: String in need:
+		if float(resources.get(resource, 0.0)) >= 1.0:
+			fetchable = true
+	if fetchable:
+		_clear_facing(u)
+		if _walk(u, _edge_goal(u, _hall()), dt):
+			var load: Dictionary = materials.pick_up(self, site, materials.haul(self, u))
+			if not load.is_empty():
+				u["carry"] = float(load["amount"])
+				u["carry_resource"] = str(load["resource"])
+		return
+	_face_job(u, site)
+	if _walk(u, _edge_goal(u, site), dt):
+		u["phase"] = "work"
+		u["on_site"] = true
+
+
+# With no site to work, a builder carries rubble from fallen stone buildings back to the stores.
+func _salvage(u: Dictionary, dt: float) -> void:
+	var pile: Dictionary = aftermath.nearest_rubble(position_of(u))
+	if pile.is_empty():
+		return
+	var at := Vector2(float(pile["x"]), float(pile["y"]))
+	u["fx"] = at.x
+	u["fy"] = at.y
+	# Stand on the pile when it lies on open ground, else beside it (a rebuilt wall may cover it).
+	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
+	var spot := Vector2(-1, -1)
+	var centre := Vector2i(floori(at.x), floori(at.y))
+	for step: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)]:
+		var tile: Vector2i = centre + step
+		if in_world(tile) and (tile == start or not _cached_route(start, tile, false).is_empty()):
+			spot = Vector2(tile) + Vector2.ONE * 0.5
+			break
+	if spot.x < 0.0:
+		aftermath.salvage(pile, int(pile["stone"]))   # nobody can reach it: the stone is lost
+		return
+	if position_of(u).distance_to(at) <= 1.6 or _walk(u, spot, dt):
+		u["carry"] = float(aftermath.salvage(pile, materials.haul(self, u)))
+		u["carry_resource"] = "stone"
+		u["phase"] = "work"
+
+
+# Bring back materials a site no longer needs.
+func _return_haul(u: Dictionary, dt: float) -> void:
+	_clear_facing(u)
+	if _walk(u, _edge_goal(u, _hall()), dt):
+		var accepted: int = _bank(str(u["carry_resource"]), float(u["carry"]))
+		u["carry"] = float(u["carry"]) - accepted
+		if float(u["carry"]) < 1:
+			u["carry"] = 0.0
+			u["carry_resource"] = ""
+
+
+# The site this builder works: their current one while it still stands unfinished, else the
+# billed site with the fewest builders on it (nearest first), else any unfinished site.
+func _builder_site(u: Dictionary) -> Dictionary:
+	var current: Dictionary = get_building(int(u.get("site", -1)))
+	if not current.is_empty() and float(current["remaining"]) > 0.0 and float(current["hp"]) > 0.0:
+		return current
+	var crews: Dictionary = {}
+	for other: Dictionary in units:
+		if other != u and float(other["hp"]) > 0.0 and int(other.get("site", -1)) >= 0:
+			crews[int(other["site"])] = int(crews.get(int(other["site"]), 0)) + 1
+	var best: Dictionary = {}
+	var best_score: float = INF
+	for b: Dictionary in buildings:
+		if float(b["remaining"]) <= 0.0 or float(b["hp"]) <= 0.0:
+			continue
+		var score: float = float(crews.get(int(b["id"]), 0)) * 1000.0 + position_of(u).distance_to(center(b))
+		if not materials.has_bill(b):
+			score += 100000.0
+		if score < best_score:
+			best_score = score
+			best = b
+	return best
 
 
 func _nearest_enemy(point: Vector2) -> Dictionary:
@@ -1967,6 +2222,7 @@ func _spawn_raid() -> void:
 	raid_active = true
 	wave += 1
 	home_raid.begin(self)
+	aftermath.begin_raid()
 	var faction: Dictionary = _active_faction()
 	var roles: Array = faction.get("roles", ["raider"])
 	var count: int = mini(int(world_specs["homeRaids"].get("maxCount", 8)), wave + 1)
@@ -2157,10 +2413,12 @@ func _raid_tick(dt: float) -> void:
 					if str(objective["type"]) == "gate":
 						raid_stats["gates_lost"] = int(raid_stats["gates_lost"]) + 1
 					_ruin(center(objective))
+					aftermath.fell(self, objective)
 					revision += 1
 					_invalidate()
 		else:
 			_walk(enemy, goal, dt, true)
+			aftermath.trample(self, tile_of(enemy))
 	for index in range(enemies.size() - 1, -1, -1):
 		if enemies[index]["hp"] <= 0:
 			_fall(position_of(enemies[index]), "foe")
@@ -2186,25 +2444,36 @@ func _finish_raid(victory: bool) -> void:
 	_invalidate()
 	scripted_raid = ""
 	next_raid_at = elapsed + (240 if victory else 360)
+	# The fallen come round beside the Chapel (or another healer) when one stands, else by the Hall.
+	var recovery: Vector2 = aftermath.recovery_spot(self)
 	for u in units:
 		if u["hp"] <= 0:
 			u["hp"] = float(u["max_hp"]) * 0.5
-			u["x"] = 8.0
-			u["y"] = 10.8
+			u["x"] = 8.0 if recovery.x < 0.0 else recovery.x
+			u["y"] = 10.8 if recovery.x < 0.0 else recovery.y
 			u["phase"] = "idle"
 	if victory:
 		raid_stats["defended"] = int(raid_stats["defended"]) + 1
 		# Organized Watch research repairs the damage instead of leaving it.
 		if chronicle.effect("command:auto-repair"):
+			# The masons still spend materials: as much of each repair as the stores cover.
+			var per_unit: float = float(materials.config.get("repair", {}).get("hpPerUnit", 15.0)) / (1.0 - minf(0.6, chronicle.bonus("repair")))
 			for b: Dictionary in buildings:
 				if float(b["hp"]) > 0.0 and float(b["remaining"]) <= 0.0:
-					b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + float(b["max_hp"]) * 0.35)
+					var want: float = minf(float(b["max_hp"]) - float(b["hp"]), float(b["max_hp"]) * 0.35)
+					var restored: float = materials.affordable_hp(self, b, want, per_unit)
+					if restored > 0.0:
+						_spend(materials.repair_cost(self, b, restored, per_unit))
+						b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + restored)
 			notice = "The Manor stands / masons put the damage back."
 		else:
 			notice = "The Manor stands / salvage and recovery."
 		_reward({"gold": (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase)})
 	else:
 		notice = "Defense breached / attackers earned %d stars. Repair and rise again." % home_raid.last["stars"]
+	var marks: String = aftermath.raid_summary()
+	if not marks.is_empty():
+		notice += " " + marks
 	raid_stats["seconds_held"] = maxf(held, 0.0)
 	events.append({"kind": "raid_result", "victory": victory})
 	moon_phase = MoonRules.next_phase(moon_phase)
@@ -2286,7 +2555,8 @@ func _quest_tick() -> void:
 		if not complete:
 			continue
 		completed_quests.append(id)
-		xp += int(quest.get("xp", 0))
+		# Scriptorium: staffed scribes record more from every mission.
+		xp += int(round(float(quest.get("xp", 0)) * (1.0 + perks.total("xp") + needs.fed_bonus(self, "xp"))))
 		living.insight = minf(float(living.config["research"]["insight_cap"]), living.insight + float(quest.get("insight", 0)))
 		chronicle.reputation += int(quest.get("reputation", 0))
 		_reward(quest.get("rewards", {}))
@@ -2446,7 +2716,7 @@ func export_state() -> Dictionary:
 		for u in (group as Array):
 			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
 				(u as Dictionary).erase(transient)
-	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
+	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
 		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
@@ -2554,6 +2824,7 @@ func restore_state(state: Dictionary) -> bool:
 	living.restore(data.get("living", Living.new().state()))
 	chronicle.restore(data["chronicle"])
 	needs.restore(data["needs"])
+	aftermath.restore(data.get("aftermath"))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))
 	navigation_revision = living.navigation_revision
@@ -2575,6 +2846,8 @@ func _validate_state(state: Dictionary) -> bool:
 	var claimed: Array = state.get("expansions", [])
 	if state.has("moon_phase") and not _integer(state["moon_phase"]): return false
 	if int(state["version"]) >= 4 and not needs.valid(state.get("needs"), float(world_specs["townMeal"]["secondsPerDay"])):
+		return false
+	if not aftermath.valid(state.get("aftermath")):
 		return false
 	if (int(state["version"]) >= 2 or state.has("living")) and not _living_valid(state.get("living"), claimed):
 		return false
@@ -2613,6 +2886,8 @@ func _validate_state(state: Dictionary) -> bool:
 			if not _number(b.get(key)):
 				return false
 		var spec: Dictionary = building_specs[b["type"]]
+		if not materials.valid_site(b):
+			return false
 		for key in ["id", "size", "tier"]:
 			if not _integer(b[key]):
 				return false

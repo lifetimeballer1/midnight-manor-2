@@ -105,7 +105,8 @@ func _standing(sim, zone: String) -> int:
 	var types: Array[String] = zone_types(zone)
 	for b: Dictionary in sim.buildings:
 		if str(b["type"]) in types and float(b["hp"]) > 0.0:
-			count += 1
+			# A farm estate counts as the small farms its land would once have held.
+			count += maxi(1, floori(sim.estate_scale(b)))
 	return count
 
 
@@ -160,6 +161,8 @@ func ranked(sim, zone: String) -> Array[String]:
 	for i in types.size():
 		var type_name: String = types[i]
 		var score: float = float(_owned(sim, type_name)) * 10.0 + float(i)
+		if is_crop(type_name):
+			score = float(i)   # a new estate starts as the first crop that may rise; the card changes it
 		if not (sim.building_specs[type_name].get("housing", []) as Array).is_empty():
 			if spare >= int(spec.get("bedsSpare", 3)) and type_name not in wanted:
 				continue
@@ -424,11 +427,19 @@ func grow_one(sim, town) -> Dictionary:
 	for i in zones.size():
 		var zone: String = str(zones[(i + _turn) % zones.size()])
 		for type_name: String in ranked(sim, zone):
-			var spot: Vector2i = find_spot(sim, type_name, tiles[zone], walk)
+			# A farm estate has one crop house; the crop rises only on a patch that has none yet.
+			var ground: Dictionary = tiles[zone]
+			if is_crop(type_name):
+				ground = _unfarmed_tiles(sim, town)
+				if ground.is_empty():
+					continue
+			var spot: Vector2i = find_spot(sim, type_name, ground, walk)
 			if spot.x < 0 and spot.y < 0:
 				continue
 			_turn += i + 1
 			var b: Dictionary = sim._new_building(type_name, spot.x, spot.y, true)
+			# Free to place, but it rises from materials the builders carry over.
+			sim.materials.open_site(sim, b, 1)
 			sim.buildings.append(b)
 			sim.revision += 1
 			sim._invalidate()
@@ -437,6 +448,322 @@ func grow_one(sim, town) -> Dictionary:
 			sim.notice = "%s rises on the %s zone." % [str(sim.building_specs[type_name]["name"]), zone_name(zone)]
 			return {"type": type_name, "id": int(b["id"]), "x": spot.x, "y": spot.y}
 	return {}
+
+
+# --- Farm estates ---------------------------------------------------------------------------------
+# A connected patch of farm zone (cells touching side by side) is one estate: one crop house (the
+# first of estates.crops to rise there) and fields over the rest of the patch. Mills, bakeries and the
+# like still rise on farm zone as their own buildings. Older villages that grew several small crop
+# buildings on one patch fold them into the first one, crews and stores included.
+
+const ESTATE_SECONDS: float = 2.0
+var estate_clock: float = ESTATE_SECONDS
+var _estate_sig: int = -1
+
+
+func crops() -> Array[String]:
+	var out: Array[String] = []
+	for type_name: Variant in spec.get("estates", {}).get("crops", ["farm", "pasture", "grove", "pond"]):
+		out.append(str(type_name))
+	return out
+
+
+func is_crop(type_name: String) -> bool:
+	return type_name in crops()
+
+
+func _estate_signature(sim, town) -> int:
+	return hash([town.village.hash(), sim.revision])
+
+
+# Connected farm-zone patches: [{tiles: {Vector2i: true}, cells: int}].
+func estate_patches(sim, town) -> Array:
+	var farm_cells: Dictionary = {}
+	for c: Vector2i in town.village:
+		if str(town.village[c]) == "farming":
+			farm_cells[c] = true
+	var seen: Dictionary = {}
+	var out: Array = []
+	var cells: Array = farm_cells.keys()
+	cells.sort()
+	for start: Vector2i in cells:
+		if seen.has(start):
+			continue
+		var patch: Dictionary = {}
+		var count: int = 0
+		var queue: Array[Vector2i] = [start]
+		seen[start] = true
+		while not queue.is_empty():
+			var c: Vector2i = queue.pop_back()
+			count += 1
+			for tile: Vector2i in cell_tiles(c):
+				if sim.in_world(tile):
+					patch[tile] = true
+			for step: Vector2i in STEPS:
+				var n: Vector2i = c + step
+				if farm_cells.has(n) and not seen.has(n):
+					seen[n] = true
+					queue.append(n)
+		if not patch.is_empty():
+			out.append({"tiles": patch, "cells": count})
+	return out
+
+
+func _in_patch(b: Dictionary, patch: Dictionary) -> bool:
+	return patch.has(Vector2i(int(b["x"]), int(b["y"])))
+
+
+# Most zone cells one estate takes (estates.maxCells); a bigger patch holds several farms.
+func estate_max_cells() -> int:
+	return maxi(1, int(spec.get("estates", {}).get("maxCells", 12)))
+
+
+func _cell_tiles_in_world(sim, cells: Array) -> Dictionary:
+	var out: Dictionary = {}
+	for c: Vector2i in cells:
+		for tile: Vector2i in cell_tiles(c):
+			if sim.in_world(tile):
+				out[tile] = true
+	return out
+
+
+# How the farm zone is shared out. Each crop house takes the patch cells nearest it, up to
+# estates.maxCells (houses grow their land together, the oldest first on a tie). Two neighbouring
+# houses whose land fits in one estate fold into the older. Farm zone no house reaches is cut into
+# open plots, each no bigger than an estate, where a new farmhouse may rise.
+# {houses: {id: Array[Vector2i] cells}, open: [Array[Vector2i] cells], folds: [[b, house]]}.
+func estate_regions(sim, town) -> Dictionary:
+	var limit: int = estate_max_cells()
+	var houses: Dictionary = {}
+	var open: Array = []
+	var folds: Array = []
+	for patch: Dictionary in estate_patches(sim, town):
+		var tiles: Dictionary = patch["tiles"]
+		var cells: Dictionary = {}
+		for tile: Vector2i in tiles:
+			cells[tile_cell(tile)] = true
+		var here: Array[Dictionary] = []
+		for b: Dictionary in sim.buildings:
+			if is_crop(str(b["type"])) and _in_patch(b, tiles):
+				here.append(b)
+		here.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["id"]) < int(b["id"]))
+		# Grow every house's land together, a ring at a time.
+		var owner: Dictionary = {}
+		var land: Dictionary = {}
+		var queue: Array = []
+		for b: Dictionary in here:
+			var c: Vector2i = tile_cell(Vector2i(int(b["x"]), int(b["y"])))
+			if owner.has(c):
+				# Two houses on one cell: the older keeps it, the other folds into it.
+				folds.append([b, sim.get_building(int(owner[c]))])
+				continue
+			owner[c] = int(b["id"])
+			land[int(b["id"])] = [c]
+			queue.append(c)
+		var head: int = 0
+		while head < queue.size():
+			var c: Vector2i = queue[head]
+			head += 1
+			var id: int = int(owner[c])
+			for step: Vector2i in STEPS:
+				var n: Vector2i = c + step
+				if not cells.has(n) or owner.has(n) or (land[id] as Array).size() >= limit:
+					continue
+				owner[n] = id
+				land[id].append(n)
+				queue.append(n)
+		# Neighbouring houses whose land together fits one estate become one farm.
+		var folded: Dictionary = {}
+		for b: Dictionary in folds:
+			folded[int(b[0]["id"])] = true
+		for a: Dictionary in here:
+			var aid: int = int(a["id"])
+			if folded.has(aid) or not land.has(aid):
+				continue
+			for b: Dictionary in here:
+				var bid: int = int(b["id"])
+				if bid <= aid or folded.has(bid) or not land.has(bid):
+					continue
+				if (land[aid] as Array).size() + (land[bid] as Array).size() > limit or not _touching(land[aid], land[bid]):
+					continue
+				for c: Vector2i in land[bid]:
+					owner[c] = aid
+					if c not in land[aid]:
+						land[aid].append(c)
+				land.erase(bid)
+				folded[bid] = true
+				folds.append([b, a])
+		for id: int in land:
+			if not folded.has(id):
+				houses[id] = land[id]
+		# The rest of the patch: open plots no bigger than an estate, of even size.
+		var rest: Array[Vector2i] = []
+		for c: Vector2i in cells:
+			if not owner.has(c):
+				rest.append(c)
+		rest.sort()
+		var left: Dictionary = {}
+		for c: Vector2i in rest:
+			left[c] = true
+		for start: Vector2i in rest:
+			if not left.has(start):
+				continue
+			var group: Array[Vector2i] = []
+			var wave: Array[Vector2i] = [start]
+			left.erase(start)
+			var at: int = 0
+			while at < wave.size():
+				var c: Vector2i = wave[at]
+				at += 1
+				group.append(c)
+				for step: Vector2i in STEPS:
+					if left.has(c + step):
+						left.erase(c + step)
+						wave.append(c + step)
+			var pieces: int = ceili(float(group.size()) / limit)
+			var each: int = ceili(float(group.size()) / pieces)
+			for i in pieces:
+				open.append(group.slice(i * each, mini(group.size(), (i + 1) * each)))
+	return {"houses": houses, "open": open, "folds": folds}
+
+
+func _touching(a: Array, b: Array) -> bool:
+	var set: Dictionary = {}
+	for c: Vector2i in a:
+		set[c] = true
+	for c: Vector2i in b:
+		for step: Vector2i in STEPS:
+			if set.has(c + step):
+				return true
+	return false
+
+
+# Farm-zone tiles where a new farmhouse may rise: the open plots no house's land reaches.
+func _unfarmed_tiles(sim, town) -> Dictionary:
+	var out: Dictionary = {}
+	for cells: Array in estate_regions(sim, town)["open"]:
+		out.merge(_cell_tiles_in_world(sim, cells))
+	return out
+
+
+func estate_name(tiles: int) -> String:
+	var name: String = ""
+	for size: Variant in spec.get("estates", {}).get("sizes", []):
+		if size is Dictionary and tiles >= int(size.get("tiles", 0)):
+			name = str(size.get("name", ""))
+	return name
+
+
+# Rebuilds sim.estates from the zone. Returns [{kind: "folded", id, into}] for small crop buildings
+# that were folded into their patch's estate.
+func refresh_estates(sim, town) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var found: Dictionary = {}
+	var regions: Dictionary = estate_regions(sim, town)
+	for pair: Array in regions["folds"]:
+		var b: Dictionary = pair[0]
+		var house: Dictionary = pair[1]
+		if house.is_empty() or sim.get_building(int(b["id"])).is_empty():
+			continue
+		out.append({"kind": "folded", "id": int(b["id"]), "into": int(house["id"])})
+		_fold(sim, b, house)
+	var taken: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		for dy in int(b["size"]):
+			for dx in int(b["size"]):
+				taken[Vector2i(int(b["x"]) + dx, int(b["y"]) + dy)] = true
+	var trail: float = sim.living.faint_threshold()
+	for id: int in regions["houses"]:
+		var house: Dictionary = sim.get_building(id)
+		if house.is_empty():
+			continue
+		var fields: Array[Vector2i] = []
+		for tile: Vector2i in _cell_tiles_in_world(sim, regions["houses"][id]):
+			if taken.has(tile):
+				continue
+			var cell: Dictionary = sim.living.cells.get(sim.living.key(tile), {})
+			if cell.get("stone", false) or float(cell.get("wear", 0.0)) >= trail:
+				continue
+			fields.append(tile)
+		fields.sort()
+		var size: int = fields.size() + int(house["size"]) * int(house["size"])
+		found[id] = {"tiles": size, "fields": fields, "name": estate_name(size)}
+	sim.estates = found
+	_estate_sig = _estate_signature(sim, town)
+	return out
+
+
+# Folds a small crop building into its estate's house: its stores and crew move over, and it goes.
+func _fold(sim, b: Dictionary, house: Dictionary) -> void:
+	house["reserve"] = float(house["reserve"]) + float(b["reserve"])
+	var role: String = str(sim.building_specs[house["type"]].get("workplace", ""))
+	for u: Dictionary in sim.units:
+		if int(u["workplace"]) == int(b["id"]):
+			u["workplace"] = -1
+			u["post"] = -1
+			u["slot"] = 0
+			u["sx"] = -1.0
+			u["sy"] = -1.0
+			if not role.is_empty() and sim.troop_specs.has(role):
+				u["type"] = role
+				u["workplace"] = int(house["id"])
+		if int(u.get("site", -1)) == int(b["id"]):
+			u["site"] = -1
+	sim.buildings.erase(b)
+	sim.revision += 1
+	sim._invalidate()
+	sim.stand_cache.clear()
+
+
+# Why an estate cannot switch to this crop, or "" when it can.
+func crop_reason(sim, id: int, type_name: String) -> String:
+	var b: Dictionary = sim.get_building(id)
+	if b.is_empty() or not sim.estates.has(id):
+		return "Only a farm estate can change its crop."
+	if not is_crop(type_name) or not sim.building_specs.has(type_name):
+		return "Unknown crop."
+	if str(b["type"]) == type_name:
+		return "Already grown here."
+	if sim.raid_active or sim.raid_warning:
+		return "Hold the Manor until the alarm passes."
+	if float(b["remaining"]) > 0.0 or float(b["hp"]) <= 0.0:
+		return "Finish or repair the farm first."
+	if int(sim.building_specs[type_name]["size"]) != int(b["size"]):
+		return "That crop needs a different plot."
+	# The simulation's own build rules (locks, prerequisites, limits), with this farm's plot treated as
+	# empty: lift the house aside for the check and put it straight back.
+	var x: int = int(b["x"])
+	b["x"] = -100000
+	var reason: String = sim.build_reason(type_name, x, int(b["y"]))
+	b["x"] = x
+	return "" if reason.is_empty() or reason == "Not enough resources." else reason
+
+
+# Turns an estate over to another crop: the farmhouse is rebuilt for it (a tier 1 site with its
+# materials bill), and its crew retrain for the new work.
+func switch_crop(sim, id: int, type_name: String) -> bool:
+	var reason: String = crop_reason(sim, id, type_name)
+	if not reason.is_empty():
+		sim.notice = reason
+		return false
+	var b: Dictionary = sim.get_building(id)
+	var spec_b: Dictionary = sim.building_specs[type_name]
+	b["type"] = type_name
+	b["tier"] = 1
+	b["max_hp"] = float(spec_b["tiers"][0]["hp"])
+	b["hp"] = float(b["max_hp"])
+	b["reserve"] = 0.0
+	b["remaining"] = float(spec_b["buildSeconds"])
+	sim.materials.open_site(sim, b, 1)
+	var role: String = str(spec_b.get("workplace", ""))
+	for u: Dictionary in sim.units:
+		if int(u["workplace"]) == id and not role.is_empty() and sim.troop_specs.has(role):
+			u["type"] = role
+	sim.revision += 1
+	sim._invalidate()
+	sim.stand_cache.clear()
+	sim.notice = "The estate turns to %s." % str(spec_b["name"])
+	return true
 
 
 # --- Paths ----------------------------------------------------------------------------------------
@@ -587,6 +914,7 @@ func upgrade_one(sim) -> Dictionary:
 	best["max_hp"] = float(spec_b["tiers"][int(best["tier"]) - 1]["hp"])
 	best["hp"] = float(best["max_hp"])
 	best["remaining"] = float(spec_b["buildSeconds"])
+	sim.materials.open_site(sim, best, int(best["tier"]))
 	sim.revision += 1
 	sim.notice = "%s grows to tier %d on its own." % [str(spec_b["name"]), int(best["tier"])]
 	lay_lanes(sim, best)
@@ -675,6 +1003,11 @@ func tick(sim, town, dt: float) -> Array[Dictionary]:
 		return out
 	grow_clock += dt
 	upgrade_clock += dt
+	estate_clock += dt
+	if estate_clock >= ESTATE_SECONDS or _estate_signature(sim, town) != _estate_sig:
+		estate_clock = 0.0
+		for event: Dictionary in refresh_estates(sim, town):
+			out.append(event)
 	if grow_clock >= float(spec.get("growSeconds", 5.0)):
 		grow_clock = 0.0
 		var rose: Dictionary = grow_one(sim, town)

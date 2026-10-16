@@ -1687,7 +1687,7 @@ func _update_actors(delta: float) -> void:
 		if b["hp"] <= 0:
 			label_text = "RUINS / REPAIR"
 		elif b["remaining"] > 0:
-			label_text = "Building · %.0fs" % ceilf(b["remaining"])
+			label_text = _site_label(b)
 		elif b["reserve"] >= 150 or int(b["id"]) == selected_building:
 			var resource: String = str(sim.building_specs[b["type"]].get("production", ""))
 			label_text = ("+%d %s" % [int(b["reserve"]), resource.capitalize()]) if not resource.is_empty() and resource != "<null>" else ""
@@ -1695,6 +1695,21 @@ func _update_actors(delta: float) -> void:
 			label.text = label_text
 			view["label_text"] = label_text
 	_update_marker()
+
+
+# A construction's floating label. Zone-grown sites show what they wait for: missing materials,
+# builders, or how far along the work is.
+func _site_label(b: Dictionary) -> String:
+	if not sim.materials.has_bill(b):
+		return "Building · %.0fs" % ceilf(b["remaining"])
+	var short: String = sim.materials.shortage(sim, b)
+	if not short.is_empty():
+		return "Needs %s" % short
+	var total: float = maxf(0.001, float(b.get("work", b["remaining"])))
+	var done: int = clampi(roundi(100.0 * (1.0 - float(b["remaining"]) / total)), 0, 99)
+	if sim.materials.hands(sim, b) <= 0:
+		return ("Fetching materials · %d%%" if not sim.materials.needed(b).is_empty() else "Waiting for builders · %d%%") % done
+	return "Building · %d%%" % done
 
 
 func _setup_marker() -> void:
@@ -2697,7 +2712,7 @@ func _open_panel(which: String) -> void:
 			_label("%d people · %d beds\nHire a role, then select a villager to assign work or train." % [sim.units.size(), sim.beds()], side_content)
 			for role in sim.playable_roles():
 				var reason: String = sim.recruit_reason(role)
-				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + "  ·  " + _cost_text(sim.troop_specs[role]["recruitCost"]), _hire.bind(role), side_content)
+				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + "  ·  " + _cost_text(sim.troop_specs[role]["recruitCost"]) + _gear_text(role), _hire.bind(role), side_content)
 				button.disabled = not reason.is_empty()
 				button.tooltip_text = reason
 				hire_buttons[role] = button
@@ -2773,6 +2788,12 @@ func _build_raid_report() -> void:
 	raid_report_details = _label("Wave %d · %.0fs\n%d%% destruction · %d of %d buildings\nManor Hall: %s\n\nResources stolen\n%d Wood\n%d Food\n%d Gold" % [report["wave"], report["seconds"], report["destruction"], report["destroyed"], report["total"], "fell" if report["hall_lost"] else "standing", loot["wood"], loot["food"], loot["gold"]], side_content)
 	_label("One star for the Hall, one for 50% destruction, one for 100%. Walls and traps do not count. Theft is capped at 20% of stocks held when the raid began.", side_content)
 	ui.gold_button("Return to Village", _close_panel, side_content)
+
+
+# The forged gear a veteran role needs, on its own line so the people sheet stays narrow.
+func _gear_text(role: String) -> String:
+	var gear: Dictionary = sim.gear.config.get("hire", {}).get(role, {})
+	return "" if gear.is_empty() else "\n+ " + _cost_text(gear)
 
 
 func _cost_text(cost: Dictionary, multiline: bool = false) -> String:
@@ -3296,6 +3317,11 @@ func _build_catalog() -> void:
 		build_cards[type_name] = card
 
 
+# Extra rows on a building's card from later layers (village_zoning.gd adds farm estates).
+func _inspector_extra(_b: Dictionary) -> void:
+	pass
+
+
 func _begin_research(id: String) -> void:
 	sim.living.research(sim, id)
 	if panel == "tech":
@@ -3333,6 +3359,14 @@ func _build_inspector() -> void:
 	var produced: Variant = sim.building_specs[b["type"]].get("production")
 	ui.body(str(sim.building_specs[b["type"]].get("name", "")) + (" · no output" if produced == null else " · %s" % str(produced).capitalize()), ocol, 13)
 	inspect_reserve = ui.bar(0, 1, ocol)
+	if produced != null and sim.crew_of(b) == 0 and float(b["remaining"]) <= 0.0:
+		ui.body("No workers yet · a crew adds 25% output", ocol, 12)
+	var perk: String = sim.perks.describe(sim, b)
+	if not perk.is_empty():
+		ui.body(perk, ocol, 12)
+	var gear_line: String = sim.gear.describe(sim, b)
+	if not gear_line.is_empty():
+		ui.body(gear_line, ocol, 12)
 	var crew := ui.inset_row(side_content)
 	var crew_row := HBoxContainer.new()
 	crew_row.add_theme_constant_override("separation", 6)
@@ -3344,7 +3378,8 @@ func _build_inspector() -> void:
 		if workplace != "" and str(u["type"]) == workplace and int(u["workplace"]) == selected_building:
 			posted += 1
 			ui.portrait_medallion(str(u["type"]), crew_row, 26.0)
-	ui.crest("%d/2" % posted, crew_row, "ready" if posted > 0 else "iron", 12)
+	ui.crest("%d/%d" % [posted, sim.crew_cap(b)], crew_row, "ready" if posted > 0 else "iron", 12)
+	_inspector_extra(b)
 	var act_row := HBoxContainer.new()
 	act_row.add_theme_constant_override("separation", 8)
 	side_content.add_child(act_row)
@@ -4323,7 +4358,7 @@ func _refresh_progression_panels() -> void:
 			view["action"].disabled = not ready
 			ui.paint_command(view["action"], "gold" if ready else "normal")
 	if panel == "needs" and is_instance_valid(needs_summary):
-		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% · hunger %d%%" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger)]
+		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% · hunger %d%%\n%s" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger), sim.jobs_summary()]
 	if panel == "mentor" and is_instance_valid(mentor_hint):
 		mentor_hint.text = _mentor_advice()
 	if panel == "quests":

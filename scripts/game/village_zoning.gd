@@ -39,6 +39,7 @@ extends "res://scripts/game/village_polish.gd"
 
 const Town = preload("res://scripts/game/town_zoning.gd")
 const Growth = preload("res://scripts/game/village_growth.gd")
+const Fields = preload("res://scripts/game/village_fields.gd")
 
 const TOWN_SAVE_PATH: String = "user://town-v1.json"
 const TOWN_SAVE_SECONDS: float = 10.0
@@ -71,6 +72,7 @@ const TOWN_NO_CELL := Vector2i(-9999, -9999)
 
 var town = null
 var growth = null                           # village_growth.gd: free buildings on zoned village ground
+var _fields = null                          # village_fields.gd: crop rows on farm estates
 var _zoning_move: bool = false              # a Move of a zoned building uses the ordinary placement
 var town_bar: VBoxContainer = null
 var _town_button: Button = null
@@ -131,6 +133,9 @@ func _ready() -> void:
 		town.from_dict(JSON.parse_string(FileAccess.get_file_as_string(TOWN_SAVE_PATH)))
 	growth = Growth.new()
 	growth.setup(town.village_spec(), Vector2i(roundi(-MAP_ORIGIN.x / TILE), roundi(-MAP_ORIGIN.z / TILE)), roundi(town.cell / TILE))
+	growth.refresh_estates(sim, town)
+	_fields = Fields.new()
+	add_child(_fields)
 	_town_root = Node3D.new()
 	_town_root.name = "Town"
 	add_child(_town_root)
@@ -151,6 +156,7 @@ func _process(delta: float) -> void:
 			_town_save_clock = 0.0
 			town_save()
 	_town_time += delta
+	_fields.sync(sim, self, delta)
 	_town_click_clock = maxf(_town_click_clock - delta, 0.0)
 	_town_sync()
 	_town_animate(delta, active)
@@ -252,7 +258,9 @@ func _town_event(event: Dictionary) -> void:
 			var gained: Array[String] = []
 			var income: Dictionary = event["income"]
 			for resource: String in income:
-				var banked: int = sim._bank(resource, float(income[resource]))
+				# Wild Market: staffed hagglers raise the gold the town sends.
+				var amount: float = float(income[resource]) * (1.0 + sim.perks.total("trade") if resource == "gold" else 1.0)
+				var banked: int = sim._bank(resource, amount)
 				if banked > 0:
 					gained.append("+%d %s" % [banked, resource.capitalize()])
 			if not gained.is_empty():
@@ -1183,7 +1191,10 @@ func _town_build_nodes() -> void:
 func _town_sync() -> void:
 	if town == null:
 		return
-	var mode: String = "%s/%s/%d" % [str(_town_active), _town_tool if _town_active else "", sim.revision if not town.village.is_empty() else 0]
+	var fields: int = 0
+	for id: int in sim.estates:
+		fields += (sim.estates[id]["fields"] as Array).size() * 31 + id
+	var mode: String = "%s/%s/%d/%d" % [str(_town_active), _town_tool if _town_active else "", sim.revision if not town.village.is_empty() else 0, fields]
 	if town.revision == _town_drawn_revision and mode == _town_drawn_mode:
 		return
 	var roads_changed: bool = town.revision != _town_drawn_revision
@@ -1245,6 +1256,10 @@ func _town_build_overlay() -> void:
 	# Zoned village ground: the same wash, faint under buildings that stand on it already.
 	if not town.village.is_empty():
 		var taken: Dictionary = _village_taken()
+		# Farm estate fields count as built on: their crops, hedges and water show the zone already.
+		for id: int in sim.estates:
+			for tile: Vector2i in sim.estates[id]["fields"]:
+				taken[growth.tile_cell(tile)] = true
 		for c: Vector2i in town.village:
 			var zone: String = str(town.village[c])
 			var built: bool = taken.has(c)
@@ -1938,3 +1953,61 @@ func town_road_mesh_ok() -> bool:
 
 func town_overlay_ok() -> bool:
 	return _town_overlay.mesh != null or town.zones.size() == town.lots.size()
+
+
+# Zoned village ground on claimed land is kept clear of the wild trees and rocks it came with.
+func _reach_reserved_tiles() -> Dictionary:
+	var out: Dictionary = {}
+	if town == null or growth == null:
+		return out
+	for c: Vector2i in town.village:
+		for tile: Vector2i in growth.cell_tiles(c):
+			out[tile] = true
+	return out
+
+
+func _reach_signature() -> int:
+	return town.village.hash() if town != null else 0
+
+
+# --- Farm estates on the building card ----------------------------------------------------------
+
+func _inspector_extra(b: Dictionary) -> void:
+	super(b)
+	if growth == null or not sim.estates.has(int(b["id"])):
+		return
+	var estate: Dictionary = sim.estates[int(b["id"])]
+	var row := ui.inset_row(side_content)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 4)
+	row.add_child(col)
+	ui.body("%s %s · %d tiles of land" % [str(sim.building_specs[b["type"]]["name"]), str(estate["name"]), int(estate["tiles"])], col, 13)
+	ui.body("Paint more farm zone beside it to grow the estate. One farmhand per four tiles.", col, 12)
+	var trodden: int = sim.aftermath.trampled_on(sim, int(b["id"]))
+	if trodden > 0:
+		ui.body("%d %s trampled by raiders; its farmhands are replanting." % [trodden, "tile" if trodden == 1 else "tiles"], col, 12)
+	var moon: String = Sim.MoonRules.harvest_text(sim.moon_phase) if sim.wave > 0 else ""
+	if not moon.is_empty():
+		ui.body(moon, col, 12)
+	var crops := HBoxContainer.new()
+	crops.add_theme_constant_override("separation", 6)
+	col.add_child(crops)
+	for crop: String in growth.crops():
+		if not sim.building_specs.has(crop):
+			continue
+		var label: String = {"farm": "Wheat", "pasture": "Pasture", "grove": "Orchard", "pond": "Fishpond"}.get(crop, str(sim.building_specs[crop]["name"]))
+		var button = ui.command_button(label, _switch_crop.bind(int(b["id"]), crop), crops, 34.0)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var reason: String = growth.crop_reason(sim, int(b["id"]), crop)
+		button.disabled = not reason.is_empty()
+		button.tooltip_text = "Grown here now." if crop == str(b["type"]) else ("Turn the estate to %s. The farmhouse is rebuilt from materials." % label if reason.is_empty() else reason)
+		if crop == str(b["type"]):
+			ui.paint_command(button, "gold")
+
+
+func _switch_crop(id: int, crop: String) -> void:
+	if growth.switch_crop(sim, id, crop):
+		growth.refresh_estates(sim, town)
+		_play_sfx("confirm")
+	_open_panel("building")
+	_refresh_hud()
