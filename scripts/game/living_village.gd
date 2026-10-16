@@ -127,7 +127,9 @@ func tick(sim, dt: float) -> void:
 	var hall: Dictionary = sim._hall()
 	if hall.is_empty() or hall["hp"] <= 0 or hall["remaining"] > 0:
 		return
-	insight = minf(float(config["research"]["insight_cap"]), insight + float(config["research"]["rate_per_minute"]) * dt / 60)
+	# Scriptorium: staffed scribes add to the insight the village gathers.
+	var scribes: float = 1.0 + (sim.perks.total("research") if sim.get("perks") != null else 0.0)
+	insight = minf(float(config["research"]["insight_cap"]), insight + float(config["research"]["rate_per_minute"]) * scribes * dt / 60)
 	if not active.is_empty():
 		remaining = maxf(0, remaining - dt)
 		if remaining <= 0:

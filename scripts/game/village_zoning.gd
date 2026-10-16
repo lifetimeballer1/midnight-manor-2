@@ -252,7 +252,9 @@ func _town_event(event: Dictionary) -> void:
 			var gained: Array[String] = []
 			var income: Dictionary = event["income"]
 			for resource: String in income:
-				var banked: int = sim._bank(resource, float(income[resource]))
+				# Wild Market: staffed hagglers raise the gold the town sends.
+				var amount: float = float(income[resource]) * (1.0 + sim.perks.total("trade") if resource == "gold" else 1.0)
+				var banked: int = sim._bank(resource, amount)
 				if banked > 0:
 					gained.append("+%d %s" % [banked, resource.capitalize()])
 			if not gained.is_empty():

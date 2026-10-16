@@ -3333,6 +3333,9 @@ func _build_inspector() -> void:
 	var produced: Variant = sim.building_specs[b["type"]].get("production")
 	ui.body(str(sim.building_specs[b["type"]].get("name", "")) + (" · no output" if produced == null else " · %s" % str(produced).capitalize()), ocol, 13)
 	inspect_reserve = ui.bar(0, 1, ocol)
+	var perk: String = sim.perks.describe(sim, b)
+	if not perk.is_empty():
+		ui.body(perk, ocol, 12)
 	var crew := ui.inset_row(side_content)
 	var crew_row := HBoxContainer.new()
 	crew_row.add_theme_constant_override("separation", 6)

@@ -9,11 +9,13 @@ const Needs = preload("res://scripts/game/village_needs.gd")
 const Frontier = preload("res://scripts/game/frontier_combat.gd")
 const HomeRaid = preload("res://scripts/game/home_raid.gd")
 const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
+const Perks = preload("res://scripts/game/village_perks.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
 var home_raid = HomeRaid.new()
 var chronicle = Chronicle.new()
+var perks = Perks.new()
 var navigation_revision: int = 0
 const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
@@ -806,7 +808,14 @@ func train(id: int) -> bool:
 func _stat(u: Dictionary, stat: String) -> float:
 	var spec: Dictionary = troop_specs[u["type"]]
 	var honor: float = 1.0 + minf(5.0, float(u.get("prestige", 0))) * 0.1 if stat in ["hp", "damage"] else 1.0
-	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor
+	# Emberforge: staffed forges sharpen every fighter's blade.
+	var forged: float = 1.0 + perks.total("damage") if stat == "damage" and str(spec.get("role", "")) == "combat" else 1.0
+	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor * forged
+
+
+# How much a gatherer brings back per trip. Hide Tannery: staffed tanneries add sturdier sacks.
+func carry_of(u: Dictionary) -> int:
+	return int(troop_specs[u["type"]]["carry"]) + int(perks.total("carry"))
 
 
 func deliver(resource: String, amount: int) -> bool:
@@ -1499,6 +1508,7 @@ func tick(dt: float) -> void:
 	tick_count += 1
 	elapsed += dt
 	needs.tick(self, dt)
+	perks.tick(self, dt)
 	_gate_tick()
 	job_timer += dt
 	if job_timer >= 5:
@@ -1510,7 +1520,8 @@ func tick(dt: float) -> void:
 			continue
 		if b["remaining"] > 0:
 			if not raid_active and not raid_warning:
-				b["remaining"] = maxf(0, float(b["remaining"]) - dt)
+				# Mason Yard: staffed yards nearby speed the work.
+				b["remaining"] = maxf(0, float(b["remaining"]) - dt * perks.build_for(b))
 			continue
 		for work: String in chronicle.great_works_config():
 			if chronicle.great_work_data(work)["building"] == b["type"] and work not in chronicle.great_works:
@@ -1524,6 +1535,8 @@ func tick(dt: float) -> void:
 					posted = true
 			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * (1.25 if posted else 1.0)
 			rate *= needs.production_multiplier()
+			# Tinker Workshop: a staffed workshop nearby speeds the work.
+			rate *= perks.gather_for(b)
 			# Moon Orchards / Full Granaries: food production, not a flat buff.
 			if str(spec.get("production", "")) == "food":
 				rate *= 1.0 + chronicle.bonus("growth")
@@ -1534,7 +1547,7 @@ func tick(dt: float) -> void:
 		u["cooldown"] = maxf(0, float(u["cooldown"]) - dt)
 		if not raid_active and not raid_warning and u["hp"] > 0 and u["hp"] < u["max_hp"]:
 			# Village Medicine / Field Medicine: recovery between horns.
-			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal")) * dt)
+			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal")) * perks.heal_at(self, position_of(u)) * dt)
 		_unit_tick(u, dt)
 	_raid_tick(dt)
 	_automation_tick(dt)
@@ -1707,8 +1720,8 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 	if _walk(u, stand, dt):
 		u["phase"] = "work"
 		u["cooldown"] += dt
-		if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(troop_specs[u["type"]]["carry"]):
-			var amount: int = mini(floori(float(workplace["reserve"])), int(troop_specs[u["type"]]["carry"]))
+		if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(carry_of(u)):
+			var amount: int = mini(floori(float(workplace["reserve"])), carry_of(u))
 			if amount > 0:
 				workplace["reserve"] -= amount
 				u["carry"] = amount
@@ -2286,7 +2299,8 @@ func _quest_tick() -> void:
 		if not complete:
 			continue
 		completed_quests.append(id)
-		xp += int(quest.get("xp", 0))
+		# Scriptorium: staffed scribes record more from every mission.
+		xp += int(round(float(quest.get("xp", 0)) * (1.0 + perks.total("xp"))))
 		living.insight = minf(float(living.config["research"]["insight_cap"]), living.insight + float(quest.get("insight", 0)))
 		chronicle.reputation += int(quest.get("reputation", 0))
 		_reward(quest.get("rewards", {}))
