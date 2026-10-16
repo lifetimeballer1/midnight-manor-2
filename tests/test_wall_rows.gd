@@ -133,6 +133,20 @@ func _run() -> void:
 		before = game.sim.export_state().duplicate(true)
 		game.wall_row_confirm_button.pressed.emit()
 		check(game.sim.export_state() == before, "a repeated confirmation cannot charge or upgrade twice")
+	# The West Reach has negative x; its tiles must place walls like any other owned land.
+	game._close_panel()
+	game.sim.expansions.append("west")
+	game.build_type = "wall"
+	game.moving_id = -1
+	game.placement_anchor = Vector2i(-3, 2)
+	game.preview_tile = Vector2i(-1, 2)
+	game.placement_row = game._wall_row_tiles(game.placement_anchor, game.preview_tile)
+	check(game.placement_row.size() == 3, "a wall row dragged in the West Reach covers every tile")
+	check(game._placement_reason().is_empty(), "a wall row in the owned West Reach can be placed")
+	game.placement_row.clear()
+	game.preview_tile = Vector2i(-5, 6)
+	check(game._placement_reason().is_empty(), "a single wall in the owned West Reach can be placed")
+	game.build_type = ""
 	game.free()
 	await process_frame
 	print("WALL_ROWS ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
