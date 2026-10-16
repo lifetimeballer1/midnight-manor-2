@@ -30,6 +30,7 @@ const SIDES: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1),
 var _signature: int = -1
 var _blobs: MultiMeshInstance3D = null       # rounded shapes: orchard canopies, grass tufts, reeds
 var _clock: float = 0.0
+var _ground: Dictionary = {}                 # tile -> ground height under it (the land does not move)
 
 
 func _ready() -> void:
@@ -108,7 +109,11 @@ func _rebuild(sim, host) -> void:
 		var house := Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"]))
 		for tile: Vector2i in field:
 			var centre: Vector3 = host.world_position(Vector2(tile) + Vector2(0.5, 0.5))
-			var ground: float = host._town_ground_y(centre.x, centre.z)
+			var ground: float = _ground.get(tile, NAN)
+			if is_nan(ground):
+				ground = host._town_ground_y(centre.x, centre.z)
+				if not host._realm_heights.is_empty():   # the drawn ground is up; heights are final
+					_ground[tile] = ground
 			var wave: float = _wave(centre.x, centre.z)
 			var bed: Color = (GROUND.get(crop, GROUND["farm"]) as Color).darkened(0.06 * wave)
 			placed.append(_box(Vector3(tile_size, 0.04, tile_size), Vector3(centre.x, ground + 0.02, centre.z), bed))

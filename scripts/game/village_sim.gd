@@ -74,6 +74,8 @@ var tick_count: int = 0
 var notice: String = "The Manner stands."
 var last_save_error: String = ""
 var _save_refused: bool = false
+var _saved_length: int = -1    # the text this village last saved, so the next save need not re-check it
+var _saved_hash: int = 0
 var quest_progress: Dictionary = {}
 var optional_won: Dictionary = {}
 var raid_stats: Dictionary = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0, "defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0, "expeditions": 0, "delivered": {}}
@@ -2878,6 +2880,7 @@ func _validate_state(state: Dictionary) -> bool:
 		return false
 	var ids: Dictionary = {}
 	var building_index: Dictionary = {}
+	var occupied: Dictionary = {}
 	var hall_count: int = 0
 	for b in state["buildings"]:
 		if not b is Dictionary or not building_specs.has(str(b.get("type", ""))):
@@ -2895,9 +2898,13 @@ func _validate_state(state: Dictionary) -> bool:
 			return false
 		if ids.has(int(b["id"])) or int(b["id"]) >= int(state["next_id"]) or b["hp"] > b["max_hp"]:
 			return false
-		for other: Dictionary in building_index.values():
-			if Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"])).intersects(Rect2i(int(other["x"]), int(other["y"]), int(other["size"]), int(other["size"]))):
-				return false
+		# Overlap by shared tiles (sizes are small) rather than against every other building.
+		for dy in int(b["size"]):
+			for dx in int(b["size"]):
+				var spot := Vector2i(int(b["x"]) + dx, int(b["y"]) + dy)
+				if occupied.has(spot):
+					return false
+				occupied[spot] = true
 		ids[int(b["id"])] = true
 		building_index[int(b["id"])] = b
 		hall_count += 1 if b["type"] == "hall" else 0
@@ -2940,7 +2947,9 @@ func _validate_state(state: Dictionary) -> bool:
 					var extra: Variant = u.get(key, -1.0)
 					if not (extra is int or extra is float) or not is_finite(float(extra)):
 						return false
-				if (float(u.get("sx", -1.0)) >= 0) != (float(u.get("sy", -1.0)) >= 0):
+				# A held stand is (-1, -1) when unset; stands are tile centres, so a stand in the West or
+				# North Reach has a negative coordinate and is still a real stand.
+				if (float(u.get("sx", -1.0)) == -1.0) != (float(u.get("sy", -1.0)) == -1.0):
 					return false
 				if not u.get("kite", false) is bool:
 					return false
@@ -3022,22 +3031,32 @@ func _save_fail(message: String, code: int = OK) -> bool:
 func _save_once(path: String) -> bool:
 	var tmp_path: String = path + ".tmp"
 	var bak_path: String = path + ".bak"
+	# Check the village the same way a load does, once, before anything on disk is touched.
+	var text: String = JSON.stringify(export_state())
+	var parsed: Variant = JSON.parse_string(text)
+	if not parsed is Dictionary or not _validate_state(parsed):
+		_save_refused = true
+		return _save_fail("the village state did not pass its own check; original and backup retained.")
 	var primary_exists: bool = FileAccess.file_exists(path)
 	if primary_exists:
 		var source := FileAccess.open(path, FileAccess.READ)
 		if source == null:
 			return _save_fail("existing save could not be opened; original and backup retained.", FileAccess.get_open_error())
-		var existing: Variant = JSON.parse_string(source.get_as_text())
+		var existing_text: String = source.get_as_text()
 		source.close()
-		if not (existing is Dictionary and _validate_state(existing)):
-			# Never overwrite a save we cannot read: the file and the good backup stay put.
-			_save_refused = true
-			return _save_fail("existing save unreadable; original and backup retained.")
-	# Write beside the old save, then read the copy back and check it the same way a load does.
+		# The save this village wrote last was checked before it was written; anything else (a save
+		# from before this session, or one changed on disk since) is read and checked first.
+		if existing_text.length() != _saved_length or existing_text.hash() != _saved_hash:
+			var existing: Variant = JSON.parse_string(existing_text)
+			if not (existing is Dictionary and _validate_state(existing)):
+				# Never overwrite a save we cannot read: the file and the good backup stay put.
+				_save_refused = true
+				return _save_fail("existing save unreadable; original and backup retained.")
+	# Write beside the old save, then read the copy back and make sure it is exactly what was checked.
 	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
 	if file == null:
 		return _save_fail("could not open storage.", FileAccess.get_open_error())
-	file.store_string(JSON.stringify(export_state()))
+	file.store_string(text)
 	file.flush()
 	var write_error: Error = file.get_error()
 	file.close()
@@ -3047,12 +3066,11 @@ func _save_once(path: String) -> bool:
 	var written_file := FileAccess.open(tmp_path, FileAccess.READ)
 	if written_file == null:
 		return _save_fail("could not verify the written copy.", FileAccess.get_open_error())
-	var written: Variant = JSON.parse_string(written_file.get_as_text())
+	var written: String = written_file.get_as_text()
 	written_file.close()
-	if not written is Dictionary or not _validate_state(written):
+	if written != text:
 		DirAccess.remove_absolute(tmp_path)
-		_save_refused = true
-		return _save_fail("the village state did not pass its own check; original and backup retained.")
+		return _save_fail("could not verify the written copy; original and backup retained.")
 	if primary_exists:
 		if FileAccess.file_exists(bak_path):
 			var clear_error: Error = DirAccess.remove_absolute(bak_path)
@@ -3068,6 +3086,8 @@ func _save_once(path: String) -> bool:
 		if primary_exists and not FileAccess.file_exists(path) and FileAccess.file_exists(bak_path):
 			DirAccess.rename_absolute(bak_path, path)
 		return _save_fail("previous save retained.", commit_error)
+	_saved_length = text.length()
+	_saved_hash = text.hash()
 	return true
 
 

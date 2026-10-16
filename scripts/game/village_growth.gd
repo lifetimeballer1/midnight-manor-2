@@ -456,7 +456,10 @@ func grow_one(sim, town) -> Dictionary:
 # like still rise on farm zone as their own buildings. Older villages that grew several small crop
 # buildings on one patch fold them into the first one, crews and stores included.
 
-const ESTATE_SECONDS: float = 2.0
+# Estates are rebuilt when what they depend on changes (the zone, the buildings, which tiles are worn
+# into trails); this slow clock is only a safety net. Rebuilding every two seconds cost a visible
+# hitch on phones in a big village.
+const ESTATE_SECONDS: float = 30.0
 var estate_clock: float = ESTATE_SECONDS
 var _estate_sig: int = -1
 
@@ -473,7 +476,7 @@ func is_crop(type_name: String) -> bool:
 
 
 func _estate_signature(sim, town) -> int:
-	return hash([town.village.hash(), sim.revision])
+	return hash([town.village.hash(), sim.revision, sim.living.navigation_revision, sim.expansions.size()])
 
 
 # Connected farm-zone patches: [{tiles: {Vector2i: true}, cells: int}].

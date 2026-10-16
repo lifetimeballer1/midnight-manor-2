@@ -61,6 +61,7 @@ var _grass_mesh: ArrayMesh = null
 var _slab_grass: Dictionary = {}              # plot id -> MultiMeshInstance3D of grass on claimed land
 var _reach_apron: MultiMeshInstance3D = null  # trodden earth around buildings on claimed land
 var _reach_xforms: Dictionary = {}            # MultiMesh on claimed land -> its instances' own transforms
+var _reach_hidden: Dictionary = {}            # MultiMesh on claimed land -> 1 per instance currently hidden
 var _skirt_rocks: Dictionary = {}             # base edge name -> rocks along that cliff face
 var _terrain_stats: Dictionary = {}          # placement facts recorded at build time (headless cannot read MultiMeshes back)
 
@@ -950,6 +951,14 @@ func _reach_hide(multi: MultiMesh, offset: Vector3, blocked: Dictionary, wide: b
 			own.append(multi.get_instance_transform(index))
 		_reach_xforms[multi] = own
 	var xforms: Array = _reach_xforms[multi]
+	if not _reach_hidden.has(multi):
+		var shown := PackedByteArray()
+		shown.resize(xforms.size())
+		shown.fill(0)
+		_reach_hidden[multi] = shown
+	# Only instances whose state flips are touched: setting every grass instance each time the ground
+	# mask refreshed was a steady cost in a big village.
+	var state: PackedByteArray = _reach_hidden[multi]
 	var hidden: int = 0
 	for index in xforms.size():
 		var xform: Transform3D = xforms[index]
@@ -962,8 +971,13 @@ func _reach_hide(multi: MultiMesh, offset: Vector3, blocked: Dictionary, wide: b
 					hit = true
 					break
 		if hit:
-			multi.set_instance_transform(index, Transform3D(Basis.from_scale(Vector3.ZERO), xform.origin))
 			hidden += 1
+		if state[index] == (1 if hit else 0):
+			continue
+		state[index] = 1 if hit else 0
+		if hit:
+			multi.set_instance_transform(index, Transform3D(Basis.from_scale(Vector3.ZERO), xform.origin))
 		else:
 			multi.set_instance_transform(index, xform)
+	_reach_hidden[multi] = state
 	return hidden

@@ -12,6 +12,10 @@ var remaining: float = 0
 var revision: int = 0
 var navigation_revision: int = 0
 var decay_clock: float = 0
+# Most trail cells a save may hold: one per tile of the whole claimed world (base plus every reach,
+# 40 x 36), with room to spare. Zone-grown villages lay a lane to every building, so the old 320
+# was reached by an ordinary big village and every autosave after that failed its own check.
+const MAX_CELLS: int = 1600
 # The sim answers whether a tile is in the village (base or a claimed plot).
 var tile_in_world: Callable = func(t: Vector2i) -> bool: return t.x >= 0 and t.x < 20 and t.y >= 0 and t.y < 16
 
@@ -215,7 +219,7 @@ func valid(data: Variant) -> bool:
 	for field in ["insight", "remaining"]:
 		var value: Variant = data.get(field)
 		if not (value is int or value is float) or not is_finite(float(value)) or value < 0: return false
-	if data["insight"] > float(config["research"]["insight_cap"]) or data["cells"].size() > 320: return false
+	if data["insight"] > float(config["research"]["insight_cap"]) or data["cells"].size() > MAX_CELLS: return false
 	if not data.get("active") is String: return false
 	if data["active"] != "" and not config["research"]["nodes"].has(data["active"]): return false
 	var seen: Dictionary = {}
