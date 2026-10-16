@@ -10,12 +10,14 @@ const Frontier = preload("res://scripts/game/frontier_combat.gd")
 const HomeRaid = preload("res://scripts/game/home_raid.gd")
 const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
 const Perks = preload("res://scripts/game/village_perks.gd")
+const Materials = preload("res://scripts/game/village_materials.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
 var home_raid = HomeRaid.new()
 var chronicle = Chronicle.new()
 var perks = Perks.new()
+var materials = Materials.new()
 var navigation_revision: int = 0
 const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
@@ -596,16 +598,23 @@ func repair(id: int) -> bool:
 	if b.is_empty() or b["remaining"] > 0:
 		return false
 	# Tool Standardization: the same wall costs less timber to put back up.
-	var per_wood: float = 15.0 / (1.0 - minf(0.6, chronicle.bonus("repair")))
-	var wood: int = mini(int(resources["wood"]), ceili((float(b["max_hp"]) - float(b["hp"])) / per_wood))
-	if wood <= 0:
-		notice = "No repair needed, or not enough Wood."
+	var per_unit: float = float(materials.config.get("repair", {}).get("hpPerUnit", 15.0)) / (1.0 - minf(0.6, chronicle.bonus("repair")))
+	# Stone-built types take Stone as well once Stoneworking is known (data/materials.json).
+	var restored: float = materials.affordable_hp(self, b, float(b["max_hp"]) - float(b["hp"]), per_unit)
+	var cost: Dictionary = materials.repair_cost(self, b, restored, per_unit)
+	if restored <= 0.0 or cost.is_empty() or not _affordable(cost):
+		var missing: String = "Stone" if materials.stone_built(str(b["type"])) and materials.stone_known(self) else "Wood"
+		notice = "No repair needed, or not enough %s." % missing
 		return false
-	resources["wood"] -= wood
-	b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + wood * per_wood)
+	_spend(cost)
+	b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + restored)
 	revision += 1
 	_invalidate()
-	notice = "Repaired / %d Wood." % wood
+	var paid: Array[String] = []
+	for resource: String in ["wood", "stone"]:
+		if int(cost.get(resource, 0)) > 0:
+			paid.append("%d %s" % [int(cost[resource]), resource.capitalize()])
+	notice = "Repaired / %s." % ", ".join(PackedStringArray(paid))
 	return true
 
 
@@ -1520,8 +1529,11 @@ func tick(dt: float) -> void:
 			continue
 		if b["remaining"] > 0:
 			if not raid_active and not raid_warning:
+				# Zone-grown sites need builders and delivered materials (village_materials.gd).
 				# Mason Yard: staffed yards nearby speed the work.
-				b["remaining"] = maxf(0, float(b["remaining"]) - dt * perks.build_for(b))
+				b["remaining"] = maxf(0, float(b["remaining"]) - materials.progress(self, b, dt) * perks.build_for(b))
+				if float(b["remaining"]) <= 0.0:
+					materials.close_site(b)
 			continue
 		for work: String in chronicle.great_works_config():
 			if chronicle.great_work_data(work)["building"] == b["type"] and work not in chronicle.great_works:
@@ -1674,6 +1686,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		u["phase"] = "death"
 		return
 	u["phase"] = "idle"
+	u["on_site"] = false
 	u["think"] = maxf(0.0, float(u.get("think", 0.0)) - dt)
 	if not u["order"].is_empty():
 		if u["hold"] and troop_specs[u["type"]]["role"] == "combat":
@@ -1692,13 +1705,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		_walk(u, _cached_edge_goal(u, _hall()), dt)
 		return
 	if role == "builder":
-		for b in buildings:
-			if b["remaining"] > 0 and b["hp"] > 0:
-				_face_job(u, b)
-				if _walk(u, _edge_goal(u, b), dt):
-					u["phase"] = "work"
-				return
-		_clear_facing(u)
+		_builder_tick(u, dt)
 		return
 	if float(u["carry"]) >= 1:
 		_clear_facing(u)
@@ -1727,6 +1734,84 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 				u["carry"] = amount
 				u["carry_resource"] = str(building_specs[workplace["type"]]["production"])
 				u["cooldown"] = 0
+
+
+# Builders pick a site, fetch what its bill still needs from the central stores, carry it over and
+# work there. Sites bought from the Build menu have no bill: builders simply work at them.
+func _builder_tick(u: Dictionary, dt: float) -> void:
+	var site: Dictionary = _builder_site(u)
+	if site.is_empty():
+		u["site"] = -1
+		if float(u["carry"]) >= 1:
+			_return_haul(u, dt)
+		else:
+			_clear_facing(u)
+		return
+	u["site"] = int(site["id"])
+	var need: Dictionary = materials.needed(site)
+	if float(u["carry"]) >= 1:
+		if not need.has(str(u["carry_resource"])):
+			_return_haul(u, dt)
+			return
+		_face_job(u, site)
+		if _walk(u, _edge_goal(u, site), dt):
+			var used: int = materials.drop_off(site, str(u["carry_resource"]), int(u["carry"]))
+			u["carry"] = float(u["carry"]) - used
+			if float(u["carry"]) < 1:
+				u["carry"] = 0.0
+				u["carry_resource"] = ""
+		return
+	var fetchable: bool = false
+	for resource: String in need:
+		if float(resources.get(resource, 0.0)) >= 1.0:
+			fetchable = true
+	if fetchable:
+		_clear_facing(u)
+		if _walk(u, _edge_goal(u, _hall()), dt):
+			var load: Dictionary = materials.pick_up(self, site, materials.haul(self, u))
+			if not load.is_empty():
+				u["carry"] = float(load["amount"])
+				u["carry_resource"] = str(load["resource"])
+		return
+	_face_job(u, site)
+	if _walk(u, _edge_goal(u, site), dt):
+		u["phase"] = "work"
+		u["on_site"] = true
+
+
+# Bring back materials a site no longer needs.
+func _return_haul(u: Dictionary, dt: float) -> void:
+	_clear_facing(u)
+	if _walk(u, _edge_goal(u, _hall()), dt):
+		var accepted: int = _bank(str(u["carry_resource"]), float(u["carry"]))
+		u["carry"] = float(u["carry"]) - accepted
+		if float(u["carry"]) < 1:
+			u["carry"] = 0.0
+			u["carry_resource"] = ""
+
+
+# The site this builder works: their current one while it still stands unfinished, else the
+# billed site with the fewest builders on it (nearest first), else any unfinished site.
+func _builder_site(u: Dictionary) -> Dictionary:
+	var current: Dictionary = get_building(int(u.get("site", -1)))
+	if not current.is_empty() and float(current["remaining"]) > 0.0 and float(current["hp"]) > 0.0:
+		return current
+	var crews: Dictionary = {}
+	for other: Dictionary in units:
+		if other != u and float(other["hp"]) > 0.0 and int(other.get("site", -1)) >= 0:
+			crews[int(other["site"])] = int(crews.get(int(other["site"]), 0)) + 1
+	var best: Dictionary = {}
+	var best_score: float = INF
+	for b: Dictionary in buildings:
+		if float(b["remaining"]) <= 0.0 or float(b["hp"]) <= 0.0:
+			continue
+		var score: float = float(crews.get(int(b["id"]), 0)) * 1000.0 + position_of(u).distance_to(center(b))
+		if not materials.has_bill(b):
+			score += 100000.0
+		if score < best_score:
+			best_score = score
+			best = b
+	return best
 
 
 func _nearest_enemy(point: Vector2) -> Dictionary:
@@ -2209,9 +2294,15 @@ func _finish_raid(victory: bool) -> void:
 		raid_stats["defended"] = int(raid_stats["defended"]) + 1
 		# Organized Watch research repairs the damage instead of leaving it.
 		if chronicle.effect("command:auto-repair"):
+			# The masons still spend materials: as much of each repair as the stores cover.
+			var per_unit: float = float(materials.config.get("repair", {}).get("hpPerUnit", 15.0)) / (1.0 - minf(0.6, chronicle.bonus("repair")))
 			for b: Dictionary in buildings:
 				if float(b["hp"]) > 0.0 and float(b["remaining"]) <= 0.0:
-					b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + float(b["max_hp"]) * 0.35)
+					var want: float = minf(float(b["max_hp"]) - float(b["hp"]), float(b["max_hp"]) * 0.35)
+					var restored: float = materials.affordable_hp(self, b, want, per_unit)
+					if restored > 0.0:
+						_spend(materials.repair_cost(self, b, restored, per_unit))
+						b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + restored)
 			notice = "The Manor stands / masons put the damage back."
 		else:
 			notice = "The Manor stands / salvage and recovery."
@@ -2627,6 +2718,8 @@ func _validate_state(state: Dictionary) -> bool:
 			if not _number(b.get(key)):
 				return false
 		var spec: Dictionary = building_specs[b["type"]]
+		if not materials.valid_site(b):
+			return false
 		for key in ["id", "size", "tier"]:
 			if not _integer(b[key]):
 				return false

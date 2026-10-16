@@ -429,6 +429,8 @@ func grow_one(sim, town) -> Dictionary:
 				continue
 			_turn += i + 1
 			var b: Dictionary = sim._new_building(type_name, spot.x, spot.y, true)
+			# Free to place, but it rises from materials the builders carry over.
+			sim.materials.open_site(sim, b, 1)
 			sim.buildings.append(b)
 			sim.revision += 1
 			sim._invalidate()
@@ -587,6 +589,7 @@ func upgrade_one(sim) -> Dictionary:
 	best["max_hp"] = float(spec_b["tiers"][int(best["tier"]) - 1]["hp"])
 	best["hp"] = float(best["max_hp"])
 	best["remaining"] = float(spec_b["buildSeconds"])
+	sim.materials.open_site(sim, best, int(best["tier"]))
 	sim.revision += 1
 	sim.notice = "%s grows to tier %d on its own." % [str(spec_b["name"]), int(best["tier"])]
 	lay_lanes(sim, best)

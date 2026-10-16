@@ -1687,7 +1687,7 @@ func _update_actors(delta: float) -> void:
 		if b["hp"] <= 0:
 			label_text = "RUINS / REPAIR"
 		elif b["remaining"] > 0:
-			label_text = "Building · %.0fs" % ceilf(b["remaining"])
+			label_text = _site_label(b)
 		elif b["reserve"] >= 150 or int(b["id"]) == selected_building:
 			var resource: String = str(sim.building_specs[b["type"]].get("production", ""))
 			label_text = ("+%d %s" % [int(b["reserve"]), resource.capitalize()]) if not resource.is_empty() and resource != "<null>" else ""
@@ -1695,6 +1695,21 @@ func _update_actors(delta: float) -> void:
 			label.text = label_text
 			view["label_text"] = label_text
 	_update_marker()
+
+
+# A construction's floating label. Zone-grown sites show what they wait for: missing materials,
+# builders, or how far along the work is.
+func _site_label(b: Dictionary) -> String:
+	if not sim.materials.has_bill(b):
+		return "Building · %.0fs" % ceilf(b["remaining"])
+	var short: String = sim.materials.shortage(sim, b)
+	if not short.is_empty():
+		return "Needs %s" % short
+	var total: float = maxf(0.001, float(b.get("work", b["remaining"])))
+	var done: int = clampi(roundi(100.0 * (1.0 - float(b["remaining"]) / total)), 0, 99)
+	if sim.materials.hands(sim, b) <= 0:
+		return ("Fetching materials · %d%%" if not sim.materials.needed(b).is_empty() else "Waiting for builders · %d%%") % done
+	return "Building · %d%%" % done
 
 
 func _setup_marker() -> void:
