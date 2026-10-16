@@ -1,0 +1,19 @@
+{
+  "_note": "The gear chain. Pastures (and the Butchery) give hides alongside their food; a staffed Tannery cures hides into leather; a staffed Forge beats plate and lumber into arms. Veteran troops need that gear to be hired, on top of their Food and Gold. Rates are per second for one staffed building; a farm estate's hides scale with its land like its food.",
+  "byproducts": {
+    "pasture": {"hides": 0.12},
+    "butchery": {"hides": 0.2}
+  },
+  "recipes": {
+    "tannery": [{"in": {"hides": 2}, "out": {"leather": 1}, "perSec": 0.25}],
+    "forge": [{"in": {"plate": 1, "lumber": 1}, "out": {"arms": 1}, "perSec": 0.15}]
+  },
+  "hire": {
+    "pikewoman": {"arms": 1},
+    "halberdier": {"arms": 2},
+    "warden": {"arms": 1, "leather": 1},
+    "oathsworn": {"arms": 3, "leather": 1},
+    "ranger": {"leather": 1},
+    "longbowman": {"arms": 1, "leather": 2}
+  }
+}

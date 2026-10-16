@@ -95,7 +95,10 @@
     "frostwood": 600,
     "plate": 600,
     "rations": 800,
-    "feast-supplies": 400
+    "feast-supplies": 400,
+    "hides": 300,
+    "leather": 200,
+    "arms": 200
   },
   "spawnBuffer": 2,
   "townMeal": {

@@ -12,6 +12,7 @@ const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
 const Perks = preload("res://scripts/game/village_perks.gd")
 const Materials = preload("res://scripts/game/village_materials.gd")
 const Aftermath = preload("res://scripts/game/village_aftermath.gd")
+const Gear = preload("res://scripts/game/village_gear.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
@@ -20,6 +21,7 @@ var chronicle = Chronicle.new()
 var perks = Perks.new()
 var materials = Materials.new()
 var aftermath = Aftermath.new()
+var gear = Gear.new()
 # Farm estates: a connected patch of farm zone is one farm. village_growth.gd fills this in from the
 # zone on its own clock: house building id -> {tiles, fields: Array[Vector2i], name}. Derived, not saved.
 var estates: Dictionary = {}
@@ -793,14 +795,17 @@ func recruit_reason(role: String) -> String:
 				found = true
 		if not found:
 			return "Finish a Barracks first."
-	return "" if _affordable(troop_specs[role]["recruitCost"]) else "Not enough resources to hire."
+	if not _affordable(troop_specs[role]["recruitCost"]):
+		return "Not enough resources to hire."
+	# Veterans also need forged arms or cured leather (data/gear.json).
+	return gear.gear_reason(self, role)
 
 
 func recruit(role: String) -> bool:
 	notice = recruit_reason(role)
 	if not notice.is_empty():
 		return false
-	_spend(troop_specs[role]["recruitCost"])
+	_spend(gear.hire_cost(self, role))
 	_add_unit(role)
 	_auto_assign()
 	notice = "A %s joins the village." % troop_specs[role]["name"]
@@ -1630,6 +1635,7 @@ func tick(dt: float) -> void:
 	needs.tick(self, dt)
 	perks.tick(self, dt)
 	aftermath.tick(self, dt)
+	gear.tick(self, dt)
 	_gate_tick()
 	job_timer += dt
 	if job_timer >= 5:

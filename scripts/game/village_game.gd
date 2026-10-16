@@ -2712,7 +2712,7 @@ func _open_panel(which: String) -> void:
 			_label("%d people · %d beds\nHire a role, then select a villager to assign work or train." % [sim.units.size(), sim.beds()], side_content)
 			for role in sim.playable_roles():
 				var reason: String = sim.recruit_reason(role)
-				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + "  ·  " + _cost_text(sim.troop_specs[role]["recruitCost"]), _hire.bind(role), side_content)
+				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + "  ·  " + _cost_text(sim.troop_specs[role]["recruitCost"]) + _gear_text(role), _hire.bind(role), side_content)
 				button.disabled = not reason.is_empty()
 				button.tooltip_text = reason
 				hire_buttons[role] = button
@@ -2788,6 +2788,12 @@ func _build_raid_report() -> void:
 	raid_report_details = _label("Wave %d · %.0fs\n%d%% destruction · %d of %d buildings\nManor Hall: %s\n\nResources stolen\n%d Wood\n%d Food\n%d Gold" % [report["wave"], report["seconds"], report["destruction"], report["destroyed"], report["total"], "fell" if report["hall_lost"] else "standing", loot["wood"], loot["food"], loot["gold"]], side_content)
 	_label("One star for the Hall, one for 50% destruction, one for 100%. Walls and traps do not count. Theft is capped at 20% of stocks held when the raid began.", side_content)
 	ui.gold_button("Return to Village", _close_panel, side_content)
+
+
+# The forged gear a veteran role needs, on its own line so the people sheet stays narrow.
+func _gear_text(role: String) -> String:
+	var gear: Dictionary = sim.gear.config.get("hire", {}).get(role, {})
+	return "" if gear.is_empty() else "\n+ " + _cost_text(gear)
 
 
 func _cost_text(cost: Dictionary, multiline: bool = false) -> String:
@@ -3358,6 +3364,9 @@ func _build_inspector() -> void:
 	var perk: String = sim.perks.describe(sim, b)
 	if not perk.is_empty():
 		ui.body(perk, ocol, 12)
+	var gear_line: String = sim.gear.describe(sim, b)
+	if not gear_line.is_empty():
+		ui.body(gear_line, ocol, 12)
 	var crew := ui.inset_row(side_content)
 	var crew_row := HBoxContainer.new()
 	crew_row.add_theme_constant_override("separation", 6)
