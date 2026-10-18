@@ -4561,7 +4561,7 @@ func _play_sfx(kind: String) -> void:
 func _poof(tile: Vector2i, color: Color) -> void:
 	# Juice for raise/upgrade/repair: a dust box that swells and clears.
 	# Capped with the other transient effects; decoration only.
-	if effect_nodes.size() + burst_pool.active_count() >= EFFECT_LIMIT or tile.x < 0:
+	if effect_nodes.size() + burst_pool.active_count() >= EFFECT_LIMIT or tile == NO_TILE:
 		return
 	var puff: MeshInstance3D = _box(Vector3(TILE * 0.9, 0.5, TILE * 0.9), world_position(Vector2(tile) + Vector2.ONE * 0.5, 0.35), color)
 	puff.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

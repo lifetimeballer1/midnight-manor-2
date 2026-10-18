@@ -40,8 +40,8 @@ func _run() -> void:
 	game._poof(Vector2i(7, 6), Color(0.5, 0.85, 0.5))
 	var repair_glint: Color = ((game.effect_nodes.back() as Node).get_child(2) as CPUParticles3D).color
 	check(upgrade_glint.r > upgrade_glint.g * 0.9 and repair_glint.g > repair_glint.r, "upgrade glints gold, repair glints green")
-	game._poof(Vector2i(-1, 0), Color.WHITE)
-	check(game.effect_nodes.size() == before + 2, "an off-map poof does nothing")
+	game._poof(game.NO_TILE, Color.WHITE)
+	check(game.effect_nodes.size() == before + 2, "a poof with no tile does nothing")
 	for i in 40:
 		game._poof(Vector2i(5, 12), Color.WHITE)
 	check(game.effect_nodes.size() + game.burst_pool.active_count() <= game.EFFECT_LIMIT, "poofs respect the shared effect cap")

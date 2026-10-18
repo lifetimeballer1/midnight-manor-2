@@ -150,7 +150,8 @@ func tick(sim, dt: float) -> void:
 		_replant[id] = done if not tiles.is_empty() else 0.0
 
 
-# Where fighters who fell come round: beside the strongest standing healer, or Vector2(-1, -1).
+# Where fighters who fell come round: beside the strongest standing healer, or a point no
+# tile has (the reaches lie at negative tiles, so (-1, -1) is real ground).
 func recovery_spot(sim) -> Vector2:
 	var best: Dictionary = {}
 	var best_rate: float = 0.0
@@ -162,11 +163,11 @@ func recovery_spot(sim) -> Vector2:
 			best = b
 			best_rate = rate
 	if best.is_empty():
-		return Vector2(-1, -1)
+		return Vector2(-100000.0, -100000.0)
 	for point: Vector2 in sim.stand_candidates(best) + sim.edge_candidates(best, false):
 		if sim.in_world(Vector2i(floori(point.x), floori(point.y))):
 			return point
-	return Vector2(-1, -1)
+	return Vector2(-100000.0, -100000.0)
 
 
 func state() -> Dictionary:

@@ -396,16 +396,20 @@ func _war_shot(from_tile: Vector2, tile: Vector2) -> void:
 
 # ---- playing ----------------------------------------------------------------------
 
+# A voice with no place on the map. Reach tiles can be negative, so (-1, -1) is real ground.
+const NO_VOICE_SPOT := Vector2(-100000.0, -100000.0)
+
+
 # Plays one sound: each layer of its kit on a voice of its own, a little random pitch, dimmed
 # when it happens off screen, and held to its own gap so a crowd cannot stack it into noise.
-func _voice(kind: String, tile: Vector2 = Vector2(-1.0, -1.0), db: float = 0.0, param: float = 0.0) -> void:
+func _voice(kind: String, tile: Vector2 = NO_VOICE_SPOT, db: float = 0.0, param: float = 0.0) -> void:
 	if not sound or _war_voices.is_empty() or not started or is_instance_valid(battle_view):
 		return
 	var now: int = Time.get_ticks_msec()
 	if now - int(_war_last.get(kind, -100000)) < int(WAR_GAP_MS.get(kind, DEFAULT_GAP_MS)):
 		return
 	_war_last[kind] = now
-	var level: float = float(WAR_DB.get(kind, -6.0)) + db + (_screen_db(tile) if tile.x >= 0.0 else 0.0)
+	var level: float = float(WAR_DB.get(kind, -6.0)) + db + (_screen_db(tile) if tile != NO_VOICE_SPOT else 0.0)
 	var jitter: float = 0.0 if kind in STEADY else PITCH_JITTER * 0.6
 	var played: bool = false
 	for layer: Dictionary in KITS.get(kind, []):
@@ -529,32 +533,32 @@ func _drum_step(step: int, bar: int) -> void:
 	match tier:
 		0:
 			if step == 0:
-				_voice("taiko_lo", Vector2(-1, -1), lo)
+				_voice("taiko_lo", NO_VOICE_SPOT, lo)
 		1:
 			if step == 0:
-				_voice("taiko_lo", Vector2(-1, -1), lo)
+				_voice("taiko_lo", NO_VOICE_SPOT, lo)
 			elif step == 3:
-				_voice("taiko_lo", Vector2(-1, -1), lo - 5.0)
+				_voice("taiko_lo", NO_VOICE_SPOT, lo - 5.0)
 			elif step == 5:
-				_voice("tom", Vector2(-1, -1), lo - 9.0)
+				_voice("tom", NO_VOICE_SPOT, lo - 9.0)
 		2:
 			if step == 0 or step == 3:
-				_voice("taiko_lo", Vector2(-1, -1), lo - (0.0 if step == 0 else 3.0))
+				_voice("taiko_lo", NO_VOICE_SPOT, lo - (0.0 if step == 0 else 3.0))
 			else:
-				_voice("tom", Vector2(-1, -1), lo - (6.0 if step != 5 else 3.0))
+				_voice("tom", NO_VOICE_SPOT, lo - (6.0 if step != 5 else 3.0))
 			if step == 0 and bar % 4 == 0:
-				_voice("brass", Vector2(-1, -1), 0.0, _brass_root())
+				_voice("brass", NO_VOICE_SPOT, 0.0, _brass_root())
 		_:
 			if step == 0 or step == 3:
-				_voice("taiko_lo", Vector2(-1, -1), lo - (0.0 if step == 0 else 2.0))
+				_voice("taiko_lo", NO_VOICE_SPOT, lo - (0.0 if step == 0 else 2.0))
 			else:
-				_voice("tom", Vector2(-1, -1), lo - 5.0)
+				_voice("tom", NO_VOICE_SPOT, lo - 5.0)
 			if step == 2 or step == 5:
-				_voice("rattle", Vector2(-1, -1), lo - 4.0)
+				_voice("rattle", NO_VOICE_SPOT, lo - 4.0)
 			if step == 0 and bar % 2 == 0:
-				_voice("brass", Vector2(-1, -1), 0.0, _brass_root())
+				_voice("brass", NO_VOICE_SPOT, 0.0, _brass_root())
 	if roll:
-		_voice("rattle", Vector2(-1, -1), lo - 1.0)
+		_voice("rattle", NO_VOICE_SPOT, lo - 1.0)
 
 
 func _brass_root() -> float:

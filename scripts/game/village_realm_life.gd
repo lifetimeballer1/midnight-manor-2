@@ -72,7 +72,7 @@ func _realm_event(event: Dictionary) -> void:
 		"trader":
 			_realm_send_traveller(site, "char_haggler", _realm_trader_arrives.bind(name))
 		"scout":
-			_realm_send_traveller(site, "char_scout", func() -> void: sim.notice = "A %s scout is watching the manor's border." % name)
+			_realm_send_traveller(site, "char_scout", func() -> void: sim.notice = "A scout from %s is watching the manor's border." % name)
 		"outpost_lost":
 			sim.notice = "%s overran one of the manor's outposts." % name
 		"raid_won":
@@ -100,7 +100,7 @@ func _realm_trader_arrives(name: String) -> void:
 		var banked: int = sim._bank(resource, float(RealmMap.TRADER_GIFT[resource]))
 		if banked > 0:
 			gained.append("%d %s" % [banked, resource.capitalize()])
-	sim.notice = "A %s trader arrives%s." % [name, (" with " + ", ".join(PackedStringArray(gained))) if not gained.is_empty() else ""]
+	sim.notice = "A trader from %s arrives%s." % [name, (" with " + ", ".join(PackedStringArray(gained))) if not gained.is_empty() else ""]
 
 
 # --- Travellers ---------------------------------------------------------------------------------
