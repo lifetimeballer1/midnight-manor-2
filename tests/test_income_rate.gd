@@ -1,6 +1,6 @@
 extends SceneTree
 
-# Income a minute on the HUD: the pace the sim reports must be the pace tick() actually fills
+# Income a minute on the HUD, and offline earnings: the pace the sim reports must be the pace tick() actually fills
 # workplace reserves at, full or broken workplaces count nothing, and mills count only with stock.
 const Sim = preload("res://scripts/game/village_sim.gd")
 var checks: int = 0
@@ -23,6 +23,9 @@ func _run() -> void:
 	test_income_sums_workplaces()
 	test_full_and_broken_count_nothing()
 	test_mills_need_stock()
+	test_offline_earnings()
+	test_offline_banking_respects_storage()
+	test_saved_at_round_trip()
 	print("INCOME_RATE ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)
 
@@ -121,3 +124,54 @@ func test_mills_need_stock() -> void:
 		sim.resources[need] = 1000.0
 	var want: float = float(recipe["perSec"]) * float(recipe["out"][made]) * 60.0
 	check(float(sim.income_per_minute().get(made, {}).get("Mills", 0.0)) >= want - 0.001, "a stocked mill counts %.1f %s a minute" % [want, made])
+
+
+func test_offline_earnings() -> void:
+	var sim = fresh()
+	var per_second: Dictionary = {}
+	for b: Dictionary in producers(sim):
+		var resource: String = str(sim.building_specs[b["type"]]["production"])
+		per_second[resource] = float(per_second.get(resource, 0.0)) + sim.production_rate(b)
+	var hour: Dictionary = sim.offline_earnings(3600.0)
+	for resource: String in per_second:
+		check(absf(float(hour.get(resource, 0.0)) - floorf(float(per_second[resource]) * 3600.0)) < 1.0, "an hour away pays an hour of %s" % resource)
+	var long: Dictionary = sim.offline_earnings(48.0 * 3600.0)
+	var capped: Dictionary = sim.offline_earnings(Sim.OFFLINE_CAP_SECONDS)
+	check(long == capped, "time away past the cap pays no more than the cap")
+	check(sim.offline_earnings(0.0).is_empty() and sim.offline_earnings(-50.0).is_empty(), "no time away pays nothing")
+	var town: Dictionary = sim.offline_earnings(600.0, {"gold": 6.0})
+	var plain: Dictionary = sim.offline_earnings(600.0)
+	check(absf(float(town.get("gold", 0.0)) - float(plain.get("gold", 0.0)) - 60.0) < 1.0, "the town's lots add their pace (6 a minute for 10 minutes = 60)")
+
+
+func test_offline_banking_respects_storage() -> void:
+	var sim = fresh()
+	var before: Dictionary = sim.resources.duplicate()
+	var raids: float = sim.next_raid_at
+	var units: int = sim.units.size()
+	var banked: Dictionary = sim.bank_offline({"wood": 1.0e9, "food": 5.0})
+	check(int(banked.get("wood", 0)) == int(sim.storage_cap("wood") - float(before["wood"])), "wood fills only to its storage cap")
+	check(float(sim.resources["wood"]) <= sim.storage_cap("wood"), "stores never overflow")
+	check(int(banked.get("food", 0)) == 5, "small payouts bank whole")
+	check(sim.next_raid_at == raids and sim.units.size() == units, "offline pay changes nothing but the stores")
+
+
+func test_saved_at_round_trip() -> void:
+	var sim = fresh()
+	var path: String = "user://test-income-offline.json"
+	check(sim.save_game(path), "the village saves")
+	var text: String = FileAccess.get_file_as_string(path)
+	var data: Dictionary = JSON.parse_string(text)
+	check(data.has("saved_at"), "a save carries the real time it was written")
+	data["saved_at"] = Time.get_unix_time_from_system() - 7200.0
+	var other = fresh()
+	check(other.restore_state(data), "a save with saved_at loads")
+	check(absf(other.away_seconds - 7200.0) < 5.0, "loading measures the time away (%.0f s)" % other.away_seconds)
+	data.erase("saved_at")
+	var old = fresh()
+	check(old.restore_state(data) and old.away_seconds == 0.0, "an older save without a clock pays nothing")
+	data["saved_at"] = Time.get_unix_time_from_system() + 9999.0
+	check(old.restore_state(data) and old.away_seconds == 0.0, "a clock that ran backwards pays nothing")
+	for suffix in ["", ".bak", ".tmp"]:
+		if FileAccess.file_exists(path + suffix):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(path + suffix))

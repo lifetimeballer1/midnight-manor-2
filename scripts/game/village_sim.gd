@@ -1829,6 +1829,47 @@ func income_per_minute() -> Dictionary:
 	return income
 
 
+# OFFLINE EARNINGS: while the game is closed (or in the background) the manor keeps its
+# workplaces going at today's pace for up to OFFLINE_CAP_SECONDS, and the town's lots keep
+# sending. Nothing else happens offline: no raids, births, growth, hunger or research.
+const OFFLINE_CAP_SECONDS: float = 8.0 * 3600.0
+const OFFLINE_MIN_SECONDS: float = 180.0
+var away_seconds: float = 0.0   # real seconds since the loaded save was written
+
+
+# What the manor earned in `seconds` away, per resource, before storage limits.
+# extra_per_minute adds income the simulation does not own (the town's lots).
+func offline_earnings(seconds: float, extra_per_minute: Dictionary = {}) -> Dictionary:
+	var counted: float = clampf(seconds, 0.0, OFFLINE_CAP_SECONDS)
+	var earned: Dictionary = {}
+	if counted <= 0.0:
+		return earned
+	for b: Dictionary in buildings:
+		var resource: Variant = building_specs[b["type"]].get("production")
+		if resource == null:
+			continue
+		var rate: float = production_rate(b)
+		if rate > 0.0:
+			earned[str(resource)] = float(earned.get(str(resource), 0.0)) + rate * counted
+	for resource: String in extra_per_minute:
+		earned[resource] = float(earned.get(resource, 0.0)) + float(extra_per_minute[resource]) * counted / 60.0
+	for resource: String in earned.keys():
+		earned[resource] = floorf(float(earned[resource]))
+		if float(earned[resource]) < 1.0 or not world_specs["storageBase"].has(resource):
+			earned.erase(resource)
+	return earned
+
+
+# Banks offline earnings into the stores (capped by storage). Returns what was banked.
+func bank_offline(earned: Dictionary) -> Dictionary:
+	var banked: Dictionary = {}
+	for resource: String in earned:
+		var taken: int = _bank(resource, float(earned[resource]))
+		if taken > 0:
+			banked[resource] = taken
+	return banked
+
+
 func _add_income(income: Dictionary, resource: String, source: String, amount: float) -> void:
 	if amount <= 0.0:
 		return
@@ -2856,6 +2897,12 @@ func restore_state(state: Dictionary) -> bool:
 	var data: Dictionary = _migrate(state)
 	if not _validate_state(data):
 		return false
+	# Real time since this save was written; older saves carry no clock and pay nothing.
+	var saved_at: Variant = state.get("saved_at")
+	away_seconds = 0.0
+	if saved_at is float or saved_at is int:
+		var gap: float = Time.get_unix_time_from_system() - float(saved_at)
+		away_seconds = gap if is_finite(gap) and gap > 0.0 else 0.0
 	expansions.assign(data.get("expansions", []))
 	buildings.assign(data["buildings"].duplicate(true))
 	units.assign(data["units"].duplicate(true))
@@ -3091,7 +3138,10 @@ func _save_once(path: String) -> bool:
 	var tmp_path: String = path + ".tmp"
 	var bak_path: String = path + ".bak"
 	# Check the village the same way a load does, once, before anything on disk is touched.
-	var text: String = JSON.stringify(export_state())
+	# saved_at (real clock seconds) lets the next load pay out the time the manor was away.
+	var saved: Dictionary = export_state()
+	saved["saved_at"] = Time.get_unix_time_from_system()
+	var text: String = JSON.stringify(saved)
 	var parsed: Variant = JSON.parse_string(text)
 	if not parsed is Dictionary or not _validate_state(parsed):
 		_save_refused = true

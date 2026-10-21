@@ -191,6 +191,11 @@ var income_clock_msec: int = -100000
 const INCOME_REFRESH_MSEC: int = 1000
 const INCOME_COLOR := Color("a8c98a")
 const INCOME_RISE_COLOR := Color("d8f5b0")
+var offline_card: PanelContainer = null   # "While you were away" card, built on first use
+var offline_veil: ColorRect = null
+var offline_earned: Dictionary = {}       # resource -> amount waiting on the card's Collect
+var offline_seconds: float = 0.0
+var focus_lost_unix: float = 0.0
 var resource_bars: Dictionary = {}
 var research_buttons: Dictionary = {}
 var research_sheet_buttons: Dictionary = {}
@@ -2235,7 +2240,7 @@ func _ui() -> void:
 	welcome_help = ui.body("", intro)
 	_refresh_input_copy()
 	ui.body("Your current Chronicle objective stays visible while you play. Builds never spend resources until you confirm.", intro, 12)
-	ui.body("Saved on this device. No progress while closed.", intro, 12)
+	ui.body("Saved on this device. The manor keeps earning for up to 8 hours while you are away.", intro, 12)
 	var enter_button := ui.gold_button("Continue Village" if sim.elapsed > 0.0 else "Enter Village", _enter_village, intro, 48.0)
 	enter_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mentor_button = ui.command_button("Mentor: On" if mentor_enabled else "Mentor: Off", _toggle_mentor, intro)
@@ -3513,7 +3518,7 @@ func _close_panel() -> void:
 func _pause_panel() -> void:
 	_label("QUIET HOURS", side_content, true)
 	ui.rule(side_content)
-	_label("Simulation is paused. Your village saves locally; closed time does not generate resources.", side_content)
+	_label("Simulation is paused. Your village saves locally. While the game is closed, workplaces and the town keep earning for up to 8 hours; nothing else happens.", side_content)
 	var resume_button := ui.gold_button("Resume", _close_panel, side_content, 44.0)
 	resume_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var save_button := ui.command_button("Save now", _save_now, side_content, 40.0)
@@ -3552,6 +3557,8 @@ func _enter_village() -> void:
 	_refresh_hud()
 	if not sim.frontier.active.is_empty() and not is_instance_valid(battle_view):
 		_show_frontier_battle()
+	_offer_offline(sim.away_seconds)
+	sim.away_seconds = 0.0
 
 
 func _mentor_advice() -> String:
@@ -4292,6 +4299,130 @@ func _tint_income(tint: Color, label: Label) -> void:
 		label.add_theme_color_override("font_color", tint)
 
 
+# OFFLINE EARNINGS: coming back after at least a few minutes away (closed, or in the
+# background) shows what the manor earned meanwhile, banked when the player taps Collect.
+# The village waits, paused, while the card is open.
+func _offer_offline(seconds: float) -> void:
+	if save_blocked or not is_finite(seconds) or seconds < Sim.OFFLINE_MIN_SECONDS:
+		return
+	var earned: Dictionary = sim.offline_earnings(seconds, _town_income_per_minute())
+	if earned.is_empty():
+		return
+	for resource: String in earned:
+		offline_earned[resource] = float(offline_earned.get(resource, 0.0)) + float(earned[resource])
+	offline_seconds += seconds
+	_show_offline_card()
+
+
+func _offline_open() -> bool:
+	return offline_card != null and is_instance_valid(offline_card) and offline_card.visible
+
+
+static func _away_text(seconds: float) -> String:
+	var minutes: int = int(seconds / 60.0)
+	if minutes >= 60 * 24:
+		var days: int = minutes / (60 * 24)
+		return "%d day%s" % [days, "" if days == 1 else "s"]
+	if minutes >= 60:
+		return "%d h %d min" % [minutes / 60, minutes % 60] if minutes % 60 > 0 else "%d h" % (minutes / 60)
+	return "%d min" % maxi(1, minutes)
+
+
+func _show_offline_card() -> void:
+	if offline_card == null or not is_instance_valid(offline_card):
+		offline_veil = ui.menu_backdrop(hud_root)
+		offline_card = PanelContainer.new()
+		offline_card.add_theme_stylebox_override("panel", ui.sheet_box())
+		hud_root.add_child(offline_card)
+		get_viewport().size_changed.connect(_fit_offline)
+	for child in offline_card.get_children():
+		child.queue_free()
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 8)
+	offline_card.add_child(column)
+	ui.kicker("WHILE YOU WERE AWAY", column)
+	ui.heading("The manor kept working", column)
+	ui.title_rule(column)
+	var capped: bool = offline_seconds > Sim.OFFLINE_CAP_SECONDS
+	ui.body("You were gone %s.%s" % [_away_text(offline_seconds),
+		" The workplaces stop after 8 hours, so 8 hours were counted." if capped else ""], column)
+	var full: Array[String] = []
+	for resource: String in ["wood", "food", "gold", "lumber", "stone"]:
+		if not offline_earned.has(resource):
+			continue
+		var amount: float = float(offline_earned[resource])
+		var room: float = maxf(0.0, sim.storage_cap(resource) - float(sim.resources.get(resource, 0.0)))
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		column.add_child(row)
+		row.add_child(UI.ResourceIcon.make(resource, 26.0))
+		var line := Label.new()
+		line.text = "+%s %s" % [_short_number(minf(amount, room)), resource.capitalize()]
+		line.add_theme_font_override("font", UI.font("strong"))
+		line.add_theme_font_size_override("font_size", 18)
+		line.add_theme_color_override("font_color", INCOME_COLOR if room >= 1.0 else UI.MUTED)
+		row.add_child(line)
+		if room < amount:
+			full.append(resource.capitalize())
+	if not full.is_empty():
+		ui.body("Stores full: %s. Build more storage to keep more next time." % ", ".join(PackedStringArray(full)), column, 12)
+	var collect := ui.gold_button("Collect", _collect_offline, column, 48.0)
+	collect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	offline_card.show()
+	offline_veil.show()
+	_fit_offline()
+	_fit_offline.call_deferred()   # wrapped lines settle their height after the first layout
+	_refresh_hud()
+
+
+func _fit_offline() -> void:
+	if not _offline_open():
+		return
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	var width: float = minf(420.0, size.x - 36.0)
+	var pad: float = offline_card.get_theme_stylebox("panel").get_minimum_size().x if offline_card.has_theme_stylebox("panel") else 40.0
+	for child in offline_card.get_children():
+		if child is Control and not child.is_queued_for_deletion():
+			(child as Control).custom_minimum_size.x = width - pad
+			(child as Control).size = Vector2(width - pad, 0.0)
+	offline_card.size = Vector2(width, 0.0)
+	offline_card.size = Vector2(width, offline_card.get_combined_minimum_size().y)
+	offline_card.position = ((size - offline_card.size) * 0.5).floor()
+
+
+func _collect_offline() -> void:
+	var banked: Dictionary = sim.bank_offline(offline_earned)
+	offline_earned.clear()
+	offline_seconds = 0.0
+	if is_instance_valid(offline_card):
+		offline_card.hide()
+	if is_instance_valid(offline_veil):
+		offline_veil.hide()
+	if banked.is_empty():
+		sim.notice = "Welcome back. The stores were already full."
+		_refresh_hud()
+		return
+	var parts: Array[String] = []
+	var batch: Array[Dictionary] = []
+	var from: Vector2 = Vector2.ZERO
+	for b: Dictionary in sim.buildings:
+		if str(b["type"]) == "hall":
+			from = sim.center(b)
+			break
+	for resource: String in banked:
+		parts.append("+%s %s" % [_short_number(float(banked[resource])), resource.capitalize()])
+		batch.append({"kind": "collect", "resource": resource, "amount": int(banked[resource]), "x": from.x, "y": from.y})
+	sim.notice = "Welcome back: %s." % ", ".join(PackedStringArray(parts))
+	# The collect flight and chime from the juice layer, when it is there.
+	if has_method("_launch_feedback"):
+		call("_launch_feedback", batch)
+	if has_method("_chime"):
+		call("_chime", "collect")
+	if not no_save and not save_blocked:
+		sim.save_game(save_path)
+	_refresh_hud()
+
+
 func _refresh_hud() -> void:
 	_pump_banner()
 	expansion.refresh(sim, Sim.EXPANSION_PLOTS)
@@ -4875,7 +5006,7 @@ func _process(delta: float) -> void:
 		sim.paused = true
 		return
 	_update_weather(delta)
-	sim.paused = not started or paused or panel == "wall_row_upgrade" or (not focused and capture_path.is_empty())
+	sim.paused = not started or paused or panel == "wall_row_upgrade" or _offline_open() or (not focused and capture_path.is_empty())
 	_pause_effects(sim.paused)
 	# The sky runs itself: an 8-minute cycle (long night, short day) with
 	# dawn/dusk blends. No in-game control changes it any more.
@@ -5244,8 +5375,13 @@ func _notification(what: int) -> void:
 		pinch_has_mid = false
 		if started and not no_save and not save_blocked:
 			sim.save_game(save_path)
+		focus_lost_unix = Time.get_unix_time_from_system()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		focused = true
+		# Time in the background counts as time away: the village was paused meanwhile.
+		if started and focus_lost_unix > 0.0:
+			_offer_offline(Time.get_unix_time_from_system() - focus_lost_unix)
+		focus_lost_unix = 0.0
 	elif what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if started and not no_save and not save_blocked:
 			sim.save_game(save_path)

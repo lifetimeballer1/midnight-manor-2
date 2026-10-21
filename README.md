@@ -29,7 +29,7 @@ The web build is exported **single-threaded** on purpose: threaded Godot builds 
 - **Defense:** Horn (bottom bar) starts a real wave after a warning. Warriors/archers, towers and traps defend; walls block routes. Click a selected fighter's destination to issue orders. Fallen defenders revive; ruins can be repaired.
 - **Village Path:** eleven early quests with original objectives/rewards (one-time rewards).
 - **Camera:** left/middle-drag pan, right-drag rotate/tilt, wheel zoom, Q/E orbit, R/F tilt, WASD pan, 0 recentres. Touch tap/drag hooks exist; real mobile testing still pending.
-- **Pause / Save:** pauses + save/lighting/sound. Autosaves every 5 active seconds, on focus loss and close. No offline progress.
+- **Pause / Save:** pauses + save/lighting/sound. Autosaves every 5 active seconds, on focus loss and close. Away for 3+ minutes (closed or in the background), workplaces and the town keep earning for up to 8 hours; a "While you were away" card banks it (no raids or growth offline).
 
 You start with nine buildings, five villagers, 320 Wood / 180 Food / 210 Gold. Costs, production, caps and stat curves live in `data/`. First scheduled wave at 300 active seconds.
 
