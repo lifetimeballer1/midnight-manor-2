@@ -184,6 +184,13 @@ var left_dock := PanelContainer.new()
 var left_content := VBoxContainer.new()
 var resource_stack := PanelContainer.new()
 var resource_rows: Dictionary = {}
+var income_labels: Dictionary = {}        # resource -> the "+42/min" label beside its amount
+var income_now: Dictionary = {}           # resource -> {source: amount a minute}, from _income_per_minute()
+var income_shown: Dictionary = {}         # resource -> whole amount a minute last shown, to spot a rise
+var income_clock_msec: int = -100000
+const INCOME_REFRESH_MSEC: int = 1000
+const INCOME_COLOR := Color("a8c98a")
+const INCOME_RISE_COLOR := Color("d8f5b0")
 var resource_bars: Dictionary = {}
 var research_buttons: Dictionary = {}
 var research_sheet_buttons: Dictionary = {}
@@ -2038,6 +2045,7 @@ func _ui() -> void:
 		var row := ui.resource_row(stack, "", RESOURCE_GLYPHS.get(resource, "*"), resource)
 		resource_rows[resource] = row["value"]
 		resource_bars[resource] = row["bar"]
+		income_labels[resource] = _income_label(row["value"].get_parent(), resource)
 	root_control.add_child(bottom)
 	bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	bottom.offset_left = 16
@@ -4180,6 +4188,110 @@ func _orbit_right() -> void:
 	_orbit_step(1.0)
 
 
+# INCOME A MINUTE: a small "+42/min" beside each resource on the top bar. It is today's pace
+# (workplaces, mills and the town's lots), not what was banked, so it rises the moment a new
+# workplace opens and drops when one stalls full. Tap the resource (or hover the number) to see
+# where it comes from.
+func _income_label(line: Node, resource: String) -> Label:
+	var made := Label.new()
+	made.add_theme_font_override("font", UI.font("strong"))
+	made.add_theme_font_size_override("font_size", 12)
+	made.add_theme_color_override("font_color", INCOME_COLOR)
+	made.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	line.add_child(made)
+	# The whole resource row is the tap target, so a thumb finds it on a phone.
+	var row: Control = line.get_parent() as Control
+	if row != null:
+		row.mouse_filter = Control.MOUSE_FILTER_STOP
+		row.gui_input.connect(_on_income_input.bind(resource))
+	return made
+
+
+func _income_per_minute() -> Dictionary:
+	var income: Dictionary = sim.income_per_minute()
+	var town_income: Dictionary = _town_income_per_minute()
+	for resource: String in town_income:
+		var sources: Dictionary = income.get(resource, {})
+		sources["Town lots"] = float(sources.get("Town lots", 0.0)) + float(town_income[resource])
+		income[resource] = sources
+	return income
+
+
+# What the town outside the walls sends a minute, per resource. The zoning layer fills it in.
+func _town_income_per_minute() -> Dictionary:
+	return {}
+
+
+func _income_total(resource: String) -> float:
+	var total: float = 0.0
+	var sources: Dictionary = income_now.get(resource, {})
+	for source: String in sources:
+		total += float(sources[source])
+	return total
+
+
+static func _short_number(value: float) -> String:
+	if value >= 1000000.0:
+		return "%.1fM" % (value / 1000000.0)
+	if value >= 10000.0:
+		return "%dK" % int(value / 1000.0)
+	if value >= 1000.0:
+		return "%.1fK" % (value / 1000.0)
+	return "%d" % int(round(value))
+
+
+func _income_breakdown(resource: String) -> String:
+	var total: float = _income_total(resource)
+	if total < 0.5:
+		return "%s: nothing coming in right now. Open a workplace, collect from full ones, or zone more land." % resource.capitalize()
+	var parts: Array[String] = []
+	var sources: Dictionary = income_now.get(resource, {})
+	for source: String in ["Workplaces", "Mills", "Town lots"]:
+		if float(sources.get(source, 0.0)) >= 0.5:
+			parts.append("%s +%s" % [source.to_lower(), _short_number(float(sources[source]))])
+	return "%s +%s a minute: %s." % [resource.capitalize(), _short_number(total), ", ".join(PackedStringArray(parts))]
+
+
+func _on_income_input(event: InputEvent, resource: String) -> void:
+	var tapped: bool = (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
+		or (event is InputEventScreenTouch and event.pressed)
+	if tapped:
+		sim.notice = _income_breakdown(resource)
+		get_viewport().set_input_as_handled()
+		_refresh_hud()
+
+
+func _refresh_income() -> void:
+	var now: int = Time.get_ticks_msec()
+	if now - income_clock_msec >= INCOME_REFRESH_MSEC:
+		income_clock_msec = now
+		income_now = _income_per_minute()
+	var small: bool = _is_small()
+	for resource: String in income_labels:
+		var label: Label = income_labels[resource]
+		if not is_instance_valid(label):
+			continue
+		var total: int = int(round(_income_total(resource)))
+		label.visible = total > 0
+		label.text = ("+%s" if small else "+%s/min") % _short_number(float(total))
+		label.tooltip_text = _income_breakdown(resource)
+		var before: int = int(income_shown.get(resource, -1))
+		income_shown[resource] = total
+		if before >= 0 and total > before and started:
+			# The pace went up: the number flashes bright and settles back.
+			label.add_theme_color_override("font_color", INCOME_RISE_COLOR)
+			label.pivot_offset = label.size * 0.5
+			label.scale = Vector2.ONE * 1.25
+			var pulse := create_tween()
+			pulse.tween_property(label, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			pulse.parallel().tween_method(_tint_income.bind(label), INCOME_RISE_COLOR, INCOME_COLOR, 0.8)
+
+
+func _tint_income(tint: Color, label: Label) -> void:
+	if is_instance_valid(label):
+		label.add_theme_color_override("font_color", tint)
+
+
 func _refresh_hud() -> void:
 	_pump_banner()
 	expansion.refresh(sim, Sim.EXPANSION_PLOTS)
@@ -4204,6 +4316,7 @@ func _refresh_hud() -> void:
 		gauge.max_value = maxf(1.0, float(cap))
 		gauge.value = float(held)
 		resource_rows[resource].add_theme_color_override("font_color", UI.READY if held >= cap else UI.PAPER)
+	_refresh_income()
 	# Collect stays compact but glows amber when there is something to bank.
 	var bankable: bool = false
 	for b: Dictionary in sim.buildings:

@@ -1661,28 +1661,7 @@ func tick(dt: float) -> void:
 				chronicle.queue_banner("Old Bell", chronicle.great_work_data(work)["name"] + " stands in the village.")
 		var spec: Dictionary = building_specs[b["type"]]
 		if spec.get("production") != null:
-			var posted: int = 0
-			for u in units:
-				if int(u["workplace"]) == int(b["id"]) and u["hp"] > 0 and u["order"].is_empty() and not u["hold"] and not raid_active and not raid_warning:
-					posted += 1
-			# A lone workplace: any posted crew adds 25%. A farm estate grows with its land, and
-			# reaches its full +25% only with one hand for every few tiles (crew_cap).
-			var hands: float = 1.25 if posted > 0 else 1.0
-			if estates.has(int(b["id"])):
-				hands = 1.0 + 0.25 * minf(1.0, float(posted) / float(crew_cap(b)))
-			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * hands * estate_scale(b)
-			rate *= needs.production_multiplier()
-			# Well fed (bread at the last meal): townMeal.wellFed gathering bonus.
-			rate *= 1.0 + needs.fed_bonus(self, "gather")
-			# Tinker Workshop: a staffed workshop nearby speeds the work.
-			rate *= perks.gather_for(b)
-			# Crops swell under the Full Moon and thin under the New Moon (data/moon.json). The moon
-			# turns with the raids, so the opening days before the first raid keep their plain yield.
-			if wave > 0:
-				rate *= MoonRules.harvest_multiplier(moon_phase, str(b["type"]))
-			# Moon Orchards / Full Granaries: food production, not a flat buff.
-			if str(spec.get("production", "")) == "food":
-				rate *= 1.0 + chronicle.bonus("growth")
+			var rate: float = production_rate(b)
 			b["reserve"] = maxf(float(b["reserve"]), minf(reserve_cap(b), float(b["reserve"]) + rate * dt))
 		for recipe: Dictionary in spec.get("refine", []):
 			_refine(recipe, dt)
@@ -1794,6 +1773,68 @@ func _auto_pave() -> void:
 		if living.pave(self, Vector2i(int(parts[0]), int(parts[1]))):
 			builders -= 1
 	notice = previous
+
+
+# Goods per second one built workplace adds to its reserve right now (0 for anything that does
+# not produce). tick() fills reserves with it, and the HUD's income line reads it.
+func production_rate(b: Dictionary) -> float:
+	var spec: Dictionary = building_specs[b["type"]]
+	if spec.get("production") == null or float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+		return 0.0
+	var posted: int = 0
+	for u in units:
+		if int(u["workplace"]) == int(b["id"]) and u["hp"] > 0 and u["order"].is_empty() and not u["hold"] and not raid_active and not raid_warning:
+			posted += 1
+	# A lone workplace: any posted crew adds 25%. A farm estate grows with its land, and
+	# reaches its full +25% only with one hand for every few tiles (crew_cap).
+	var hands: float = 1.25 if posted > 0 else 1.0
+	if estates.has(int(b["id"])):
+		hands = 1.0 + 0.25 * minf(1.0, float(posted) / float(crew_cap(b)))
+	var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * hands * estate_scale(b)
+	rate *= needs.production_multiplier()
+	# Well fed (bread at the last meal): townMeal.wellFed gathering bonus.
+	rate *= 1.0 + needs.fed_bonus(self, "gather")
+	# Tinker Workshop: a staffed workshop nearby speeds the work.
+	rate *= perks.gather_for(b)
+	# Crops swell under the Full Moon and thin under the New Moon (data/moon.json). The moon
+	# turns with the raids, so the opening days before the first raid keep their plain yield.
+	if wave > 0:
+		rate *= MoonRules.harvest_multiplier(moon_phase, str(b["type"]))
+	# Moon Orchards / Full Granaries: food production, not a flat buff.
+	if str(spec.get("production", "")) == "food":
+		rate *= 1.0 + chronicle.bonus("growth")
+	return rate
+
+
+# What the village makes in a minute at today's pace, per resource and source:
+# {"wood": {"Workplaces": 42.0, "Mills": 0.0}, ...}. A workplace whose reserve is full has stalled
+# until someone collects, so it counts nothing; a mill counts only while it has stock to work and
+# room to put the result. Read-only: the HUD's income line uses it.
+func income_per_minute() -> Dictionary:
+	var income: Dictionary = {}
+	for b: Dictionary in buildings:
+		if float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+			continue
+		var spec: Dictionary = building_specs[b["type"]]
+		var resource: Variant = spec.get("production")
+		if resource != null and float(b["reserve"]) < reserve_cap(b):
+			_add_income(income, str(resource), "Workplaces", production_rate(b) * 60.0)
+		for recipe: Dictionary in spec.get("refine", []):
+			var stocked: bool = true
+			for need: String in recipe["in"]:
+				stocked = stocked and float(resources.get(need, 0)) >= float(recipe["in"][need])
+			for made: String in recipe["out"]:
+				if stocked and float(resources.get(made, 0)) < storage_cap(made):
+					_add_income(income, made, "Mills", float(recipe["perSec"]) * float(recipe["out"][made]) * 60.0)
+	return income
+
+
+func _add_income(income: Dictionary, resource: String, source: String, amount: float) -> void:
+	if amount <= 0.0:
+		return
+	var sources: Dictionary = income.get(resource, {})
+	sources[source] = float(sources.get(source, 0.0)) + amount
+	income[resource] = sources
 
 
 func _refine(recipe: Dictionary, dt: float) -> void:

@@ -1651,6 +1651,20 @@ func _town_text_node(font_size: int) -> Label3D:
 	return label
 
 
+# The town's lots pay every incomeSeconds; the HUD shows that as a pace a minute. Gold carries the
+# Wild Market bonus the same way the payout does.
+func _town_income_per_minute() -> Dictionary:
+	var per_minute: Dictionary = {}
+	if town == null:
+		return per_minute
+	var period: float = maxf(1.0, float(town.specs.get("incomeSeconds", 60.0)))
+	var income: Dictionary = town.income_now()
+	for resource: String in income:
+		var amount: float = float(income[resource]) * (1.0 + sim.perks.total("trade") if resource == "gold" else 1.0)
+		per_minute[resource] = amount * 60.0 / period
+	return per_minute
+
+
 # Floating text that rises and fades over a cell (level names, income, the town's new title).
 func _town_float(c: Vector2i, text: String, colour: Color, height: float, font_size: int, delay: float = 0.0) -> void:
 	if text.is_empty() or not started:
