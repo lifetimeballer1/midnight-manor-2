@@ -1803,6 +1803,8 @@ func production_rate(b: Dictionary) -> float:
 	# Moon Orchards / Full Granaries: food production, not a flat buff.
 	if str(spec.get("production", "")) == "food":
 		rate *= 1.0 + chronicle.bonus("growth")
+	# Zone income milestones (data/zones.json): set by the zoning layer from what stands.
+	rate *= float(zone_boost.get(str(b["type"]), 1.0))
 	return rate
 
 
@@ -1835,6 +1837,7 @@ func income_per_minute() -> Dictionary:
 const OFFLINE_CAP_SECONDS: float = 8.0 * 3600.0
 const OFFLINE_MIN_SECONDS: float = 180.0
 var away_seconds: float = 0.0   # real seconds since the loaded save was written
+var zone_boost: Dictionary = {}   # building type -> income multiplier from zone milestones (not saved)
 
 
 # What the manor earned in `seconds` away, per resource, before storage limits.

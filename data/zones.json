@@ -4,6 +4,7 @@
   "growSeconds": 3.5,
   "buildSeconds": 6,
   "incomeSeconds": 60,
+  "milestones": {"_note": "Income milestones: once this many buildings and lots of one zone stand (in the village and outside the walls together), that zone's income is multiplied by multiplier, again at each count.", "counts": [10, 25, 50], "multiplier": 2},
   "safeFromWalls": 22,
   "safeFromOutpost": 20,
   "road": {
