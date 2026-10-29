@@ -455,11 +455,19 @@
       "range": 4.5,
       "wallDamage": 3,
       "siege": true
+    },
+    "warlord": {
+      "hp": 4.5,
+      "damage": 1.6,
+      "speed": 0.95,
+      "range": 1.4,
+      "wallDamage": 3
     }
   },
   "enemyFactions": [
     {
       "id": "thornband",
+      "warlord": "Gorrath Thorn-Crown",
       "name": "Thornband",
       "minWave": 1,
       "color": "#997747",
@@ -472,6 +480,7 @@
     },
     {
       "id": "pale-host",
+      "warlord": "Ysolde of the Mist",
       "name": "Pale Host",
       "minWave": 3,
       "color": "#799ba3",
@@ -484,6 +493,7 @@
     },
     {
       "id": "cinder-clan",
+      "warlord": "Brann Ash-Maul",
       "name": "Cinder Clan",
       "minWave": 5,
       "color": "#ad5948",
@@ -497,6 +507,7 @@
     },
     {
       "id": "ember-legion",
+      "warlord": "Marshal Kael Emberhand",
       "name": "Ember Legion",
       "minWave": 8,
       "minLevel": 8,
@@ -511,6 +522,7 @@
     },
     {
       "id": "pale-court",
+      "warlord": "The Pale Queen",
       "name": "Pale Court",
       "minWave": 12,
       "minLevel": 10,

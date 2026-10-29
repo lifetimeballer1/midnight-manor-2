@@ -13,6 +13,7 @@ const Perks = preload("res://scripts/game/village_perks.gd")
 const Materials = preload("res://scripts/game/village_materials.gd")
 const Aftermath = preload("res://scripts/game/village_aftermath.gd")
 const Gear = preload("res://scripts/game/village_gear.gd")
+const WarRules = preload("res://scripts/game/war_rules.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
@@ -22,6 +23,7 @@ var perks = Perks.new()
 var materials = Materials.new()
 var aftermath = Aftermath.new()
 var gear = Gear.new()
+var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
 # Farm estates: a connected patch of farm zone is one farm. village_growth.gd fills this in from the
 # zone on its own clock: house building id -> {tiles, fields: Array[Vector2i], name}. Derived, not saved.
 var estates: Dictionary = {}
@@ -1618,7 +1620,7 @@ func _walk(u: Dictionary, target: Vector2, dt: float, enemy: bool = false) -> bo
 	var steps: Array = cached["steps"]
 	var waypoint: Vector2 = Vector2(steps[0]) + Vector2.ONE * 0.5 if not steps.is_empty() else target
 	var before: Vector2 = position_of(u)
-	var speed: float = (1.2 * float(_role_stats(str(u.get("role", ""))).get("speed", 1.0)) if enemy else _stat(u, "speed") * living.speed_at(before)) * dt
+	var speed: float = (1.2 * float(_role_stats(str(u.get("role", ""))).get("speed", 1.0)) * (1.6 if u.has("routed") else 1.0) if enemy else _stat(u, "speed") * living.speed_at(before)) * dt
 	var point: Vector2 = before.move_toward(waypoint, speed)
 	if not enemy:
 		living.walked(before, point, elapsed)
@@ -2254,8 +2256,7 @@ func _fighter(u: Dictionary, dt: float) -> void:
 	if gap <= _stat(u, "range"):
 		u["phase"] = "attack"
 		if u["cooldown"] <= 0:
-			var damage: float = _stat(u, "damage")
-			enemy["hp"] -= damage
+			var damage: float = WarRules.harm(self, enemy, _stat(u, "damage"), str(u["type"]))
 			events.append({"kind": "hit", "x": float(enemy["x"]), "y": float(enemy["y"]), "amount": damage, "friendly": false})
 			u["cooldown"] = 1.0
 			if u["type"] == "archer":
@@ -2360,8 +2361,20 @@ func _spawn_raid() -> void:
 		var hp: float = base * float(stats.get("hp", 1.0))
 		enemies.append({"id": _id(), "type": "raider", "role": role, "raids_resources": role == "scout" or (role == "raider" and index % 2 == 1), "faction": str(faction.get("id", "thornband")),
 			"x": point.x, "y": point.y, "hp": hp, "max_hp": hp, "phase": "walk", "cooldown": 0.0})
+	war_log = WarRules.new_log()
+	war_log["base"] = raid_stats.duplicate(true)
 	raid_stats["seconds_held"] = 0.0
 	notice = "Wave %d / %s / hold the Manor!" % [wave, str(faction.get("name", "Raiders"))]
+	if WarRules.warlord_wave(wave):
+		# The warlord rides in behind the first raider, from the same side.
+		var lead: Vector2 = position_of(enemies[0]) if not enemies.is_empty() else _entry_point(Vector2(bounds.position.x + 0.5, 8.0))
+		var stats: Dictionary = _role_stats("warlord")
+		var hp: float = base * float(stats.get("hp", 4.5))
+		enemies.append({"id": _id(), "type": "raider", "role": "warlord", "raids_resources": false, "faction": str(faction.get("id", "thornband")),
+			"x": lead.x, "y": lead.y, "hp": hp, "max_hp": hp, "phase": "walk", "cooldown": 0.0})
+		war_log["warlord"] = WarRules.warlord_name(faction)
+		events.append({"kind": "warlord", "name": war_log["warlord"], "faction": str(faction.get("name", "Raiders"))})
+		notice = "Wave %d / %s rides with the %s. Bring the warlord down and the band will break!" % [wave, str(war_log["warlord"]), str(faction.get("name", "Raiders"))]
 
 
 # Where a raider steps onto the land. The spawn lines follow the claimed land's bounding box,
@@ -2450,15 +2463,15 @@ func _raid_tick(dt: float) -> void:
 		var stats: Dictionary = building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]
 		if float(stats["damage"]) <= 0:
 			continue
-		var enemy: Dictionary = _tower_target(center(b))
-		if not enemy.is_empty() and center(b).distance_to(position_of(enemy)) <= float(stats["range"]):
-			var damage: float = float(stats["damage"])
-			enemy["hp"] -= damage
-			b["cooldown"] = (3.0 if chronicle.effect("command:trap-reset") else 5.0) if b["type"] == "trap" else 1.0
-			_shot(center(b), position_of(enemy))
-			events.append({"kind": "hit", "x": float(enemy["x"]), "y": float(enemy["y"]), "amount": damage, "friendly": false})
+		WarRules.fire(self, b, stats)
+	WarRules.tick_raiders(self, dt)
+	var gone: Array[int] = []
 	for enemy in enemies:
 		if enemy["hp"] <= 0:
+			continue
+		if enemy.has("routed"):
+			if WarRules.flee(self, enemy, dt):
+				gone.append(int(enemy["id"]))
 			continue
 		enemy["cooldown"] = maxf(0, float(enemy["cooldown"]) - dt)
 		enemy["phase"] = "idle"
@@ -2479,7 +2492,7 @@ func _raid_tick(dt: float) -> void:
 			enemy["fx"] = float(opponent["x"])
 			enemy["fy"] = float(opponent["y"])
 			if enemy["cooldown"] <= 0:
-				var damage: float = (8 + wave * 2) * float(_role_stats(str(enemy.get("role", "raider"))).get("damage", 1.0))
+				var damage: float = WarRules.raider_damage(enemy, (8 + wave * 2) * float(_role_stats(str(enemy.get("role", "raider"))).get("damage", 1.0)))
 				opponent["hp"] = maxf(0, float(opponent["hp"]) - damage)
 				events.append({"kind": "hit", "x": float(opponent["x"]), "y": float(opponent["y"]), "amount": damage, "friendly": true})
 				if reach > 1.5: _shot(position_of(enemy), position_of(opponent))
@@ -2489,10 +2502,25 @@ func _raid_tick(dt: float) -> void:
 					_fall(position_of(opponent), "home")
 				enemy["cooldown"] = 1
 			continue
+		var role_name: String = str(enemy.get("role", "raider"))
+		if role_name == "bombard":
+			# A bombard shells what it can reach from where it stands.
+			var mark: Dictionary = WarRules.bombard_target(self, enemy, reach)
+			if not mark.is_empty():
+				enemy["phase"] = "attack"
+				enemy["fx"] = center(mark).x
+				enemy["fy"] = center(mark).y
+				if enemy["cooldown"] <= 0:
+					_siege_blow(enemy, mark, true)
+					enemy["cooldown"] = 2.5
+				continue
 		var objective: Dictionary = _hall()
 		if bool(enemy.get("raids_resources", false)):
 			var site: Dictionary = home_raid.loot_target(self, position_of(enemy))
 			if not site.is_empty(): objective = site
+		elif role_name == "ram":
+			var gate: Dictionary = WarRules.ram_target(self, enemy)
+			if not gate.is_empty(): objective = gate
 		var goal := NO_POINT
 		if not objective.is_empty() and objective["hp"] > 0.0:
 			goal = _cached_edge_goal(enemy, objective, true)
@@ -2514,30 +2542,23 @@ func _raid_tick(dt: float) -> void:
 			enemy["fx"] = center(objective).x
 			enemy["fy"] = center(objective).y
 			if enemy["cooldown"] <= 0:
-				var wall_mult: float = float(_role_stats(str(enemy.get("role", "raider"))).get("wallDamage", 1.0))
-				# Gate Engineering braces a gate while a ram works on it.
-				if str(objective["type"]) == "gate" and chronicle.effect("command:gate-brace"):
-					wall_mult *= 0.6
-				var damage: float = (8 + wave * 2) * wall_mult
-				var previous_hp: float = objective["hp"]
-				objective["hp"] = maxf(0, previous_hp - damage)
-				home_raid.hit(self, objective, previous_hp - float(objective["hp"]))
-				events.append({"kind": "hit", "x": center(objective).x, "y": center(objective).y, "amount": damage, "friendly": true})
+				_siege_blow(enemy, objective, false)
 				enemy["cooldown"] = 1
-				_hit(center(objective), "foe")
-				if objective["hp"] <= 0:
-					raid_stats["built_lost"] = int(raid_stats["built_lost"]) + 1
-					if str(objective["type"]) == "gate":
-						raid_stats["gates_lost"] = int(raid_stats["gates_lost"]) + 1
-					_ruin(center(objective))
-					aftermath.fell(self, objective)
-					revision += 1
-					_invalidate()
 		else:
 			_walk(enemy, goal, dt, true)
 			aftermath.trample(self, tile_of(enemy))
+	var warlord_down := NO_POINT
+	var warlord_faction: String = ""
 	for index in range(enemies.size() - 1, -1, -1):
+		if gone.has(int(enemies[index]["id"])) and enemies[index]["hp"] > 0:
+			paths.erase(int(enemies[index]["id"]))
+			war_log["routed"] = int(war_log["routed"]) + 1
+			enemies.remove_at(index)
+			continue
 		if enemies[index]["hp"] <= 0:
+			if str(enemies[index].get("role", "")) == "warlord":
+				warlord_down = position_of(enemies[index])
+				warlord_faction = str(enemies[index].get("faction", ""))
 			_fall(position_of(enemies[index]), "foe")
 			paths.erase(int(enemies[index]["id"]))
 			events.append({"kind": "defeat", "x": float(enemies[index]["x"]), "y": float(enemies[index]["y"]), "friendly": false})
@@ -2545,9 +2566,39 @@ func _raid_tick(dt: float) -> void:
 			raid_stats["kills"] = int(raid_stats["kills"]) + 1
 			var by_role: Dictionary = raid_stats["kills_by"]
 			by_role[role] = int(by_role.get(role, 0)) + 1
+			var slain: Dictionary = war_log["slain"]
+			slain[role] = int(slain.get(role, 0)) + 1
 			enemies.remove_at(index)
+	if has_point(warlord_down):
+		WarRules.rout(self, warlord_down, warlord_faction)
 	if enemies.is_empty() or home_raid.stars() == 3 or home_raid.active["seconds"] >= HomeRaid.MAX_SECONDS:
 		_finish_raid(home_raid.stars() == 0)
+
+
+# A raider's blow on a building: walls take more from wall-breakers, a braced gate less.
+# Bombards lob theirs from range (the view draws the shell), everyone else strikes in reach.
+func _siege_blow(enemy: Dictionary, objective: Dictionary, lobbed: bool) -> void:
+	var wall_mult: float = float(_role_stats(str(enemy.get("role", "raider"))).get("wallDamage", 1.0))
+	# Gate Engineering braces a gate while a ram works on it.
+	if str(objective["type"]) == "gate" and chronicle.effect("command:gate-brace"):
+		wall_mult *= 0.6
+	var damage: float = WarRules.raider_damage(enemy, (8 + wave * 2) * wall_mult)
+	var previous_hp: float = objective["hp"]
+	objective["hp"] = maxf(0, previous_hp - damage)
+	home_raid.hit(self, objective, previous_hp - float(objective["hp"]))
+	events.append({"kind": "hit", "x": center(objective).x, "y": center(objective).y, "amount": damage, "friendly": true})
+	if lobbed:
+		events.append({"kind": "lob", "from_x": float(enemy["x"]), "from_y": float(enemy["y"]), "x": center(objective).x, "y": center(objective).y})
+	else:
+		_hit(center(objective), "foe")
+	if objective["hp"] <= 0:
+		raid_stats["built_lost"] = int(raid_stats["built_lost"]) + 1
+		if str(objective["type"]) == "gate":
+			raid_stats["gates_lost"] = int(raid_stats["gates_lost"]) + 1
+		_ruin(center(objective))
+		aftermath.fell(self, objective)
+		revision += 1
+		_invalidate()
 
 
 func _finish_raid(victory: bool) -> void:
@@ -2585,13 +2636,18 @@ func _finish_raid(victory: bool) -> void:
 			notice = "The Manor stands / masons put the damage back."
 		else:
 			notice = "The Manor stands / salvage and recovery."
-		_reward({"gold": (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase)})
+		var spoils: float = (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase)
+		war_log["spoils"] = spoils
+		_reward({"gold": spoils})
 	else:
 		notice = "Defense breached / attackers earned %d stars. Repair and rise again." % home_raid.last["stars"]
 	var marks: String = aftermath.raid_summary()
 	if not marks.is_empty():
 		notice += " " + marks
 	raid_stats["seconds_held"] = maxf(held, 0.0)
+	war_log["wave"] = wave
+	war_log["victory"] = victory
+	war_log["done"] = true
 	events.append({"kind": "raid_result", "victory": victory})
 	moon_phase = MoonRules.next_phase(moon_phase)
 
@@ -3134,7 +3190,8 @@ func _max_raiders() -> int:
 	# The spawner caps a raid at maxCount and then scales it by the moon (a blood moon is 1.25x),
 	# so the validator must allow the largest raid the spawner can actually produce.
 	var base: int = int(world_specs["homeRaids"].get("maxCount", 8))
-	return roundi(float(base) * maxf(1.0, float(MoonRules.config()["blood_moon_enemy_multiplier"])))
+	# One more for the warlord who leads every fourth wave.
+	return roundi(float(base) * maxf(1.0, float(MoonRules.config()["blood_moon_enemy_multiplier"]))) + 1
 
 
 func save_game(path: String = "user://village-v1.json") -> bool:

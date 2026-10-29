@@ -27,6 +27,7 @@ The web build is exported **single-threaded** on purpose: threaded Godot builds 
 - **Wall rows:** select a wall, open **More**, then **Upgrade Row**. Only the longest straight, connected row of the same wall type and level is included (horizontal wins ties). Review the highlighted walls and total cost, then confirm or cancel. The village pauses during confirmation; a blocked upgrade spends nothing. Repair ruined segments and finish construction before upgrading the row.
 - **People:** hire eight professions, select villagers to assign workplaces, train units. Cottages add beds; warm beds + food grow the population.
 - **Defense:** Horn (bottom bar) starts a real wave after a warning. Warriors/archers, towers and traps defend; walls block routes. Click a selected fighter's destination to issue orders. Fallen defenders revive; ruins can be repaired.
+- **Warfare:** each defense fights its own way (`scripts/game/war_rules.gd`): archer towers loose two arrows, ballistas pierce a line and pick siege engines first, bastions fire bursting shells, watchfires mark raiders to take 25% more damage, fire traps set raiders burning. Bombards shell buildings from range, rams go for gates. Every fourth wave a named warlord leads the band (health bar at the top of the screen); kill it and the rest flee. Raiders wear their trade (rams, mortars, torches, the warlord's crown and banner), and the defense report leads with the battle. View layers: `village_defenses.gd` (walls, manned towers, recoil, collapse) and `village_warfare.gd`.
 - **Village Path:** eleven early quests with original objectives/rewards (one-time rewards).
 - **Camera:** left/middle-drag pan, right-drag rotate/tilt, wheel zoom, Q/E orbit, R/F tilt, WASD pan, 0 recentres. Touch tap/drag hooks exist; real mobile testing still pending.
 - **Pause / Save:** pauses + save/lighting/sound. Autosaves every 5 active seconds, on focus loss and close. Away for 3+ minutes (closed or in the background), workplaces and the town keep earning for up to 8 hours; a "While you were away" card banks it (no raids or growth offline).
@@ -152,7 +153,8 @@ Reports: `docs/export_verification.json`, `docs/godot_verification.json`, `docs/
 
 New regression suites: `test_overhaul_foundation`, `test_village_needs`,
 `test_frontier_battles`, `test_campaign_actions` (same console command format above).
-`test_wall_rows` covers same-level row boundaries, all-or-nothing costs, confirmation
+`test_warfare` covers the war rules (weapons, siege, warlords, rout, saves). `test_defenses` covers the walls-and-defenses presentation layer (joined runs, manned towers, firing,
+hit, damage and collapse animation). `test_wall_rows` covers same-level row boundaries, all-or-nothing costs, confirmation
 and cancellation. Its optional native `--capture-dir=<existing absolute directory>`
 captures portrait and desktop confirmation panels using an isolated, no-save fixture.
 Optional native QA captures use `--capture-dir=<existing absolute directory>` with

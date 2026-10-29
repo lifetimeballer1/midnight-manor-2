@@ -1,4 +1,4 @@
-extends "res://scripts/game/village_polish.gd"
+extends "res://scripts/game/village_warfare.gd"
 
 # The town outside the walls: city-builder zoning over the realm layer (model: town_zoning.gd).
 #
