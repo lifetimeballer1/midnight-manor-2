@@ -8,6 +8,7 @@ const BurstPool = preload("res://scripts/game/combat_burst_pool.gd")
 const Atmosphere = preload("res://scripts/game/village_atmosphere.gd")
 const Expansion = preload("res://scripts/game/village_expansion.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
+const Soundscape = preload("res://scripts/game/manor_soundscape.gd")
 var burst_pool = BurstPool.new()
 var music = ManorScore.new()
 var details = Details.new()
@@ -281,6 +282,7 @@ var needs_label: Label
 var needs_summary: Label
 var hud_root: Control
 var battle_view: Node3D
+var soundscape: Node
 var expedition_region: String = ""
 var expedition_crew: Array[int] = []
 var expedition_launch: Button
@@ -336,6 +338,10 @@ func _ready() -> void:
 	_build_grid()
 	_sync_expansion(false)
 	_setup_audio()
+	soundscape = Soundscape.new()
+	soundscape.name = "Soundscape"
+	add_child(soundscape)
+	soundscape.setup(self)
 	_ui()
 	_rebuild_buildings()
 	_update_actors(0)
