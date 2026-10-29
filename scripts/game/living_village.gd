@@ -12,6 +12,10 @@ var remaining: float = 0
 var revision: int = 0
 var navigation_revision: int = 0
 var decay_clock: float = 0
+# Most trail cells a save may hold: one per tile of the whole claimed world (base plus every reach,
+# 40 x 36), with room to spare. Zone-grown villages lay a lane to every building, so the old 320
+# was reached by an ordinary big village and every autosave after that failed its own check.
+const MAX_CELLS: int = 1600
 # The sim answers whether a tile is in the village (base or a claimed plot).
 var tile_in_world: Callable = func(t: Vector2i) -> bool: return t.x >= 0 and t.x < 20 and t.y >= 0 and t.y < 16
 
@@ -127,7 +131,9 @@ func tick(sim, dt: float) -> void:
 	var hall: Dictionary = sim._hall()
 	if hall.is_empty() or hall["hp"] <= 0 or hall["remaining"] > 0:
 		return
-	insight = minf(float(config["research"]["insight_cap"]), insight + float(config["research"]["rate_per_minute"]) * dt / 60)
+	# Scriptorium: staffed scribes add to the insight the village gathers.
+	var scribes: float = 1.0 + (sim.perks.total("research") if sim.get("perks") != null else 0.0)
+	insight = minf(float(config["research"]["insight_cap"]), insight + float(config["research"]["rate_per_minute"]) * scribes * dt / 60)
 	if not active.is_empty():
 		remaining = maxf(0, remaining - dt)
 		if remaining <= 0:
@@ -213,7 +219,7 @@ func valid(data: Variant) -> bool:
 	for field in ["insight", "remaining"]:
 		var value: Variant = data.get(field)
 		if not (value is int or value is float) or not is_finite(float(value)) or value < 0: return false
-	if data["insight"] > float(config["research"]["insight_cap"]) or data["cells"].size() > 320: return false
+	if data["insight"] > float(config["research"]["insight_cap"]) or data["cells"].size() > MAX_CELLS: return false
 	if not data.get("active") is String: return false
 	if data["active"] != "" and not config["research"]["nodes"].has(data["active"]): return false
 	var seen: Dictionary = {}

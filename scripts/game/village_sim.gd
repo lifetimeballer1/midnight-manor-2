@@ -9,11 +9,29 @@ const Needs = preload("res://scripts/game/village_needs.gd")
 const Frontier = preload("res://scripts/game/frontier_combat.gd")
 const HomeRaid = preload("res://scripts/game/home_raid.gd")
 const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
+const Perks = preload("res://scripts/game/village_perks.gd")
+const Materials = preload("res://scripts/game/village_materials.gd")
+const Aftermath = preload("res://scripts/game/village_aftermath.gd")
+const Gear = preload("res://scripts/game/village_gear.gd")
+const WarRules = preload("res://scripts/game/war_rules.gd")
 var living = Living.new()
 var needs = Needs.new()
 var frontier = Frontier.new()
 var home_raid = HomeRaid.new()
 var chronicle = Chronicle.new()
+var perks = Perks.new()
+var materials = Materials.new()
+var aftermath = Aftermath.new()
+var gear = Gear.new()
+var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
+var rally_time: float = 0.0       # seconds left on the rally horn (not saved)
+var rally_ready_at: float = 0.0   # when the rally horn can sound again (not saved)
+var horn_called: bool = false     # the player sounded the horn for the coming raid (not saved)
+# Farm estates: a connected patch of farm zone is one farm. village_growth.gd fills this in from the
+# zone on its own clock: house building id -> {tiles, fields: Array[Vector2i], name}. Derived, not saved.
+var estates: Dictionary = {}
+const ESTATE_TILES_PER_HAND: int = 4
+const ESTATE_MAX_HANDS: int = 8
 var navigation_revision: int = 0
 const ROLES: Array[String] = ["builder", "warrior", "archer", "farmer", "lumberjack", "miner", "fisherman", "shepherd"]
 const XP_LEVELS: Array[int] = [0, 100, 220, 380, 580, 830, 1150, 1500, 2100, 2400, 2600]
@@ -27,6 +45,13 @@ const EXPANSION_PLOTS: Dictionary = {
 	"south": {"label": "South Reach", "rect": Rect2i(-10, 16, 40, 10), "region": "southreach"},
 	"west": {"label": "West Reach", "rect": Rect2i(-10, 0, 10, 16), "region": "blackwater-mouth"},
 }
+# "No point here". The north and west reaches lie at negative tiles, so (-1, -1) or any x < 0 is
+# real ground there and cannot mean "none".
+const NO_POINT := Vector2(-100000.0, -100000.0)
+
+
+static func has_point(point: Vector2) -> bool:
+	return point.x > -1000.0 and point.y > -1000.0
 
 var building_specs: Dictionary = {}
 var troop_specs: Dictionary = {}
@@ -61,6 +86,8 @@ var tick_count: int = 0
 var notice: String = "The Manner stands."
 var last_save_error: String = ""
 var _save_refused: bool = false
+var _saved_length: int = -1    # the text this village last saved, so the next save need not re-check it
+var _saved_hash: int = 0
 var quest_progress: Dictionary = {}
 var optional_won: Dictionary = {}
 var raid_stats: Dictionary = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0, "defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0, "expeditions": 0, "delivered": {}}
@@ -79,6 +106,11 @@ var expansions: Array[String] = []
 const KITE_TRIGGER: float = 1.5
 const KITE_RELEASE_RATIO: float = 0.7
 const KITE_THINK: float = 0.6
+const APPROACH_THINK: float = 1.0
+# Mission objectives that read a running total (harvest, deliveries, raids won, prestige, kills,
+# expeditions). Each mission counts them from when its act opened, so work from earlier acts never
+# finishes a later mission on the spot. The starting point lives in the mission's save record.
+const SINCE_ACT_KINDS: Array[String] = ["gather", "deliver_resources", "survive_raid", "defeat", "prestige_unit", "prestige", "kill_enemy", "complete_expedition"]
 # Guard Posts hold defenders without giving them a profession, so Organized
 # Watch can fill them on its own.
 const GUARD_POSTS: Array[String] = ["watchfire", "bastion", "gate", "tower", "archer_tower", "ballista", "oathstone"]
@@ -185,8 +217,8 @@ func _add_unit(role: String) -> void:
 	units.append({"id": _id(), "type": role, "x": 8.0 + (units.size() % 6) * 0.65, "y": 10.8,
 		"hp": hp, "max_hp": hp, "phase": "idle", "workplace": -1, "carry": 0.0, "carry_resource": "",
 		"level": 1, "cooldown": 0.0, "order": [], "hold": false,
-		"fx": -1.0, "fy": -1.0, "rx": -1.0, "ry": -1.0, "kite": false, "think": 0.0,
-		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0})
+		"fx": NO_POINT.x, "fy": NO_POINT.y, "rx": NO_POINT.x, "ry": NO_POINT.y, "kite": false, "think": 0.0,
+		"post": -1, "slot": 0, "sx": NO_POINT.x, "sy": NO_POINT.y})
 
 
 func _invalidate() -> void:
@@ -589,22 +621,29 @@ func repair(id: int) -> bool:
 	if b.is_empty() or b["remaining"] > 0:
 		return false
 	# Tool Standardization: the same wall costs less timber to put back up.
-	var per_wood: float = 15.0 / (1.0 - minf(0.6, chronicle.bonus("repair")))
-	var wood: int = mini(int(resources["wood"]), ceili((float(b["max_hp"]) - float(b["hp"])) / per_wood))
-	if wood <= 0:
-		notice = "No repair needed, or not enough Wood."
+	var per_unit: float = float(materials.config.get("repair", {}).get("hpPerUnit", 15.0)) / (1.0 - minf(0.6, chronicle.bonus("repair")))
+	# Stone-built types take Stone as well once Stoneworking is known (data/materials.json).
+	var restored: float = materials.affordable_hp(self, b, float(b["max_hp"]) - float(b["hp"]), per_unit)
+	var cost: Dictionary = materials.repair_cost(self, b, restored, per_unit)
+	if restored <= 0.0 or cost.is_empty() or not _affordable(cost):
+		var missing: String = "Stone" if materials.stone_built(str(b["type"])) and materials.stone_known(self) else "Wood"
+		notice = "No repair needed, or not enough %s." % missing
 		return false
-	resources["wood"] -= wood
-	b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + wood * per_wood)
+	_spend(cost)
+	b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + restored)
 	revision += 1
 	_invalidate()
-	notice = "Repaired / %d Wood." % wood
+	var paid: Array[String] = []
+	for resource: String in ["wood", "stone"]:
+		if int(cost.get(resource, 0)) > 0:
+			paid.append("%d %s" % [int(cost[resource]), resource.capitalize()])
+	notice = "Repaired / %s." % ", ".join(PackedStringArray(paid))
 	return true
 
 
 func reserve_cap(b: Dictionary) -> float:
 	var harvest: Dictionary = building_specs[b["type"]].get("harvest", {})
-	return float(harvest.get("capacity", 0)) + float(harvest.get("perTier", 0)) * (int(b["tier"]) - 1)
+	return (float(harvest.get("capacity", 0)) + float(harvest.get("perTier", 0)) * (int(b["tier"]) - 1)) * estate_scale(b)
 
 
 func storage_cap(resource: String) -> float:
@@ -658,6 +697,103 @@ func beds() -> int:
 	return total
 
 
+# The profession a newcomer takes: the trade of a finished workplace with room in its crew (an
+# empty one first), so new villagers go straight to work. Farmer when every job is filled.
+# The trade a newcomer takes up: an open place at the workplace the village most needs filled.
+# Empty crews come first; then work that answers a shortage (stone for stalled sites, food when the
+# next meals are at risk, bread when the larder has none); farmer when every crew is full.
+func open_job_role() -> String:
+	var wants: Dictionary = job_wants()
+	var best: String = ""
+	var best_score: float = INF
+	for b in buildings:
+		if b["hp"] <= 0 or b["remaining"] > 0:
+			continue
+		var role: String = str(building_specs[b["type"]].get("workplace", ""))
+		if role.is_empty() or not troop_specs.has(role):
+			continue
+		var crew: int = crew_of(b)
+		var cap: int = crew_cap(b)
+		if crew >= cap:
+			continue
+		var score: float = float(crew) / float(cap) * 20.0 - _job_urgency(b, wants)
+		if score < best_score:
+			best = role
+			best_score = score
+	return best if not best.is_empty() else "farmer"
+
+
+# How many may work here: two, or one per ESTATE_TILES_PER_HAND tiles on a farm estate.
+func crew_cap(b: Dictionary) -> int:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	if estate.is_empty():
+		return 2
+	return clampi(ceili(float(estate["tiles"]) / ESTATE_TILES_PER_HAND), 2, ESTATE_MAX_HANDS)
+
+
+# How much bigger than a lone farm this building's land is (1 for anything not an estate).
+func estate_scale(b: Dictionary) -> float:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	if estate.is_empty():
+		return 1.0
+	var own: float = float(int(b["size"]) * int(b["size"]))
+	return maxf(1.0, float(aftermath.growing_tiles(self, int(b["id"]))) / own)
+
+
+func crew_of(b: Dictionary) -> int:
+	var crew: int = 0
+	for u in units:
+		if int(u["workplace"]) == int(b["id"]) and float(u["hp"]) > 0.0:
+			crew += 1
+	return crew
+
+
+# How badly the village wants more of each resource right now, for open_job_role.
+func job_wants() -> Dictionary:
+	var wants: Dictionary = {}
+	for b: Dictionary in buildings:
+		if float(b["remaining"]) <= 0.0 or float(b["hp"]) <= 0.0:
+			continue
+		var need: Dictionary = materials.needed(b)
+		for resource: String in need:
+			if float(resources.get(resource, 0.0)) < float(need[resource]):
+				wants[resource] = 5.0
+	if float(resources.get("food", 0.0)) < needs.demand(self) * 2.0:
+		wants["food"] = float(wants.get("food", 0.0)) + 3.0
+	if float(resources.get("bread", 0.0)) < float(units.size()):
+		wants["bread"] = float(wants.get("bread", 0.0)) + 2.0
+	return wants
+
+
+func _job_urgency(b: Dictionary, wants: Dictionary) -> float:
+	var spec: Dictionary = building_specs[b["type"]]
+	var best: float = float(wants.get(str(spec.get("production", "")), 0.0))
+	for recipe: Dictionary in spec.get("refine", []):
+		for resource: String in recipe.get("out", {}):
+			best = maxf(best, float(wants.get(resource, 0.0)))
+	return best
+
+
+# One line for the people panel: workplace places filled, and villagers with no work.
+func jobs_summary() -> String:
+	var places: int = 0
+	var filled: int = 0
+	for b: Dictionary in buildings:
+		if float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+			continue
+		var role: String = str(building_specs[b["type"]].get("workplace", ""))
+		if role.is_empty() or not troop_specs.has(role) or str(troop_specs[role].get("role", "")) == "combat":
+			continue
+		places += crew_cap(b)
+		filled += mini(crew_cap(b), crew_of(b))
+	var idle: int = 0
+	for u: Dictionary in units:
+		var kind: String = str(troop_specs[u["type"]].get("role", ""))
+		if float(u["hp"]) > 0.0 and kind not in ["combat", "builder"] and int(u["workplace"]) < 0:
+			idle += 1
+	return "Jobs %d/%d filled · %d idle" % [filled, places, idle]
+
+
 func recruit_reason(role: String) -> String:
 	if not troop_specs.has(role):
 		return "Unknown role."
@@ -673,17 +809,21 @@ func recruit_reason(role: String) -> String:
 				found = true
 		if not found:
 			return "Finish a Barracks first."
-	return "" if _affordable(troop_specs[role]["recruitCost"]) else "Not enough resources to hire."
+	if not _affordable(troop_specs[role]["recruitCost"]):
+		return "Not enough resources to hire."
+	# Veterans also need forged arms or cured leather (data/gear.json).
+	return gear.gear_reason(self, role)
 
 
 func recruit(role: String) -> bool:
 	notice = recruit_reason(role)
 	if not notice.is_empty():
 		return false
-	_spend(troop_specs[role]["recruitCost"])
+	_spend(gear.hire_cost(self, role))
 	_add_unit(role)
 	_auto_assign()
-	notice = "A %s joins the village." % troop_specs[role]["name"]
+	var label: String = str(troop_specs[role]["name"])
+	notice = "%s %s joins the village." % ["An" if label.left(1).to_upper() in ["A", "E", "I", "O", "U"] else "A", label]
 	return true
 
 
@@ -695,8 +835,8 @@ func assign(unit_id: int, building_id: int) -> bool:
 		u["workplace"] = -1
 		u["post"] = -1
 		u["slot"] = 0
-		u["sx"] = -1.0
-		u["sy"] = -1.0
+		u["sx"] = NO_POINT.x
+		u["sy"] = NO_POINT.y
 		paths.erase(unit_id)
 		stand_cache.clear()
 		notice = "Worker released."
@@ -715,14 +855,14 @@ func assign(unit_id: int, building_id: int) -> bool:
 	for other in units:
 		if int(other["id"]) != unit_id and int(other["workplace"]) == building_id:
 			count += 1
-	if count >= 2:
+	if count >= crew_cap(b):
 		notice = "This workplace crew is full."
 		return false
 	u["workplace"] = building_id
 	u["post"] = -1
 	u["slot"] = 0
-	u["sx"] = -1.0
-	u["sy"] = -1.0
+	u["sx"] = NO_POINT.x
+	u["sy"] = NO_POINT.y
 	u["hold"] = false
 	u["order"] = []
 	paths.erase(unit_id)
@@ -778,7 +918,14 @@ func train(id: int) -> bool:
 func _stat(u: Dictionary, stat: String) -> float:
 	var spec: Dictionary = troop_specs[u["type"]]
 	var honor: float = 1.0 + minf(5.0, float(u.get("prestige", 0))) * 0.1 if stat in ["hp", "damage"] else 1.0
-	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor
+	# Emberforge: staffed forges sharpen every fighter's blade.
+	var forged: float = 1.0 + perks.total("damage") if stat == "damage" and str(spec.get("role", "")) == "combat" else 1.0
+	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor * forged * WarRules.rally_factor(self, u, stat)
+
+
+# How much a gatherer brings back per trip. Hide Tannery: staffed tanneries add sturdier sacks.
+func carry_of(u: Dictionary) -> int:
+	return int(troop_specs[u["type"]]["carry"]) + int(perks.total("carry"))
 
 
 func deliver(resource: String, amount: int) -> bool:
@@ -1008,6 +1155,86 @@ func _refresh_walk_grids() -> void:
 				_walk_enemy[index] = 1
 				if not friendly_open:
 					_walk_friendly[index] = 1
+	_label_friendly_areas()
+
+
+# Connected open ground for defenders, one label per walled-off area, rebuilt with the walk
+# grids. A fighter only chases a raider in its own area; one it cannot reach is met at the
+# nearest ground it can.
+var _friendly_area: PackedInt32Array = PackedInt32Array()
+var _area_stamp := Vector2i(-1, -1)
+
+
+func _label_friendly_areas() -> void:
+	var width: int = _walk_rect.size.x
+	var height: int = _walk_rect.size.y
+	_friendly_area.resize(_walk_friendly.size())
+	_friendly_area.fill(-1)
+	var label: int = 0
+	for seed in _walk_friendly.size():
+		if _walk_friendly[seed] != 0 or _friendly_area[seed] >= 0:
+			continue
+		_friendly_area[seed] = label
+		var queue: PackedInt32Array = PackedInt32Array([seed])
+		var head: int = 0
+		while head < queue.size():
+			var current: int = queue[head]
+			head += 1
+			var cx: int = current % width
+			var cy: int = current / width
+			for direction in DIRECTIONS:
+				var nx: int = cx + direction.x
+				var ny: int = cy + direction.y
+				if nx < 0 or ny < 0 or nx >= width or ny >= height:
+					continue
+				var next: int = ny * width + nx
+				if _walk_friendly[next] == 0 and _friendly_area[next] < 0:
+					_friendly_area[next] = label
+					queue.append(next)
+		label += 1
+
+
+# The defenders' area a point belongs to, or -1 off the land. A fighter caught inside a
+# footprint takes the area of the open ground beside it, the way its route would leave.
+func friendly_area(point: Vector2) -> int:
+	# Checked once a tick (or after a building change), not per call: fighters ask per raider.
+	if _area_stamp != Vector2i(tick_count, path_revision) or _friendly_area.size() != _walk_friendly.size():
+		_area_stamp = Vector2i(tick_count, path_revision)
+		_refresh_walk_grids()
+	var tile := Vector2i(floori(point.x), floori(point.y))
+	if not _walk_rect.has_point(tile):
+		return -1
+	var width: int = _walk_rect.size.x
+	var index: int = (tile.y - _walk_rect.position.y) * width + (tile.x - _walk_rect.position.x)
+	if _friendly_area[index] >= 0 or not in_world(tile):
+		return _friendly_area[index]
+	for direction in DIRECTIONS:
+		var next: Vector2i = tile + direction
+		if _walk_rect.has_point(next):
+			var area: int = _friendly_area[(next.y - _walk_rect.position.y) * width + (next.x - _walk_rect.position.x)]
+			if area >= 0:
+				return area
+	return -1
+
+
+# The open ground in the fighter's own area nearest to a raider it cannot reach: the wall or
+# gap it should stand at so archers get their shot and the melee meet a breach.
+func _approach_point(u: Dictionary, target: Vector2) -> Vector2:
+	var area: int = friendly_area(position_of(u))
+	if area < 0:
+		return NO_POINT
+	var width: int = _walk_rect.size.x
+	var best := NO_POINT
+	var best_distance: float = INF
+	for index in _friendly_area.size():
+		if _friendly_area[index] != area:
+			continue
+		var point := Vector2(_walk_rect.position.x + index % width, _walk_rect.position.y + index / width) + Vector2.ONE * 0.5
+		var distance: float = point.distance_squared_to(target)
+		if distance < best_distance:
+			best_distance = distance
+			best = point
+	return best
 
 
 func route(start: Vector2i, goal: Vector2i, enemy: bool = false) -> Array[Vector2i]:
@@ -1153,7 +1380,7 @@ func job_target(b: Dictionary) -> Vector2:
 
 func stand_tile(b: Dictionary, slot: int) -> Vector2:
 	var candidates := stand_candidates(b)
-	return candidates[posmod(slot, candidates.size())] if not candidates.is_empty() else Vector2(-1, -1)
+	return candidates[posmod(slot, candidates.size())] if not candidates.is_empty() else NO_POINT
 
 
 func _declared_stands(b: Dictionary, except_slot: int) -> Array[Vector2]:
@@ -1207,11 +1434,11 @@ func _declared(b: Dictionary, slot: int, excluded: Array[Vector2]) -> Vector2:
 		var point: Vector2 = candidates[(slot + offset) % candidates.size()]
 		if not excluded.has(point):
 			return point
-	return Vector2(-1, -1)
+	return NO_POINT
 
 
 func _held_stand(u: Dictionary) -> Vector2:
-	return Vector2(float(u.get("sx", -1.0)), float(u.get("sy", -1.0)))
+	return Vector2(float(u.get("sx", NO_POINT.x)), float(u.get("sy", NO_POINT.y)))
 
 
 func _remember_stand(u: Dictionary, point: Vector2) -> void:
@@ -1223,10 +1450,10 @@ func _resolve_stand(u: Dictionary, b: Dictionary, excluded: Array[Vector2]) -> V
 	# The reserved stand first, then any other reachable safe edge, then wait.
 	var start := tile_of(u)
 	var point: Vector2 = _declared(b, _stand_slot(u, int(b["id"])), excluded)
-	if point.x >= 0 and _walkable(start, point):
+	if has_point(point) and _walkable(start, point):
 		_remember_stand(u, point)
 		return point
-	var best := Vector2(-1, -1)
+	var best := NO_POINT
 	var best_distance: float = INF
 	for edge in edge_candidates(b):
 		if excluded.has(edge) or not _walkable(start, edge):
@@ -1242,8 +1469,11 @@ func _resolve_stand(u: Dictionary, b: Dictionary, excluded: Array[Vector2]) -> V
 func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 	# Reserved crew stand first, then any other reachable safe edge, then wait.
 	if b.is_empty():
-		return Vector2(-1, -1)
+		return NO_POINT
 	var start := tile_of(u)
+	var field: Vector2 = _field_stand(u, b, start)
+	if has_point(field):
+		return field
 	var crew: String = ""
 	for other: Dictionary in units:
 		if int(other["workplace"]) == int(b["id"]):
@@ -1262,14 +1492,14 @@ func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 			continue
 		var other_slot: int = _stand_slot(other, int(b["id"]))
 		var other_held: Vector2 = _held_stand(other)
-		if other_held.x < 0 or not _walkable(tile_of(other), other_held):
+		if not has_point(other_held) or not _walkable(tile_of(other), other_held):
 			other_held = stand_tile(b, other_slot)
 			if not _walkable(tile_of(other), other_held):
-				other_held = Vector2(-1, -1)
-		if other_held.x >= 0:
+				other_held = NO_POINT
+		if has_point(other_held):
 			taken.append(other_held)
 	var held: Vector2 = _held_stand(u)
-	if held.x >= 0 and not taken.has(held) and _walkable(start, held):
+	if has_point(held) and not taken.has(held) and _walkable(start, held):
 		stand_cache[key] = held
 		return held
 	var resolved: Vector2 = _resolve_stand(u, b, taken)
@@ -1277,10 +1507,37 @@ func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 	return resolved
 
 
+# On a farm estate the crew work the rows: each hand takes a field tile, and moves on to another
+# every FIELD_SHIFT seconds of play. (-1, -1) when b is not an estate or no field is reachable.
+const FIELD_SHIFT: float = 20.0
+
+func _field_stand(u: Dictionary, b: Dictionary, start: Vector2i) -> Vector2:
+	var estate: Dictionary = estates.get(int(b["id"]), {})
+	var fields: Array = estate.get("fields", [])
+	if fields.is_empty():
+		return NO_POINT
+	var shift: int = floori(elapsed / FIELD_SHIFT)
+	var key: String = "field|%d|%d|%d|%d,%d|%d" % [int(b["id"]), int(u["id"]), shift, start.x, start.y, revision]
+	if stand_cache.has(key):
+		return stand_cache[key]
+	if stand_cache.size() > 4000:
+		stand_cache.clear()
+	var pick: int = posmod(int(u["id"]) * 7 + shift * 3, fields.size())
+	var out := NO_POINT
+	for i in mini(fields.size(), 4):
+		var tile: Vector2i = fields[(pick + i * 5) % fields.size()]
+		var point := Vector2(tile) + Vector2(0.5, 0.5)
+		if _walkable(start, point):
+			out = point
+			break
+	stand_cache[key] = out
+	return out
+
+
 func facing_target(u: Dictionary) -> Vector2:
-	var x: float = float(u.get("fx", -1.0))
-	var y: float = float(u.get("fy", -1.0))
-	if x >= 0 and y >= 0 and is_finite(x) and is_finite(y):
+	var x: float = float(u.get("fx", NO_POINT.x))
+	var y: float = float(u.get("fy", NO_POINT.y))
+	if is_finite(x) and is_finite(y) and has_point(Vector2(x, y)):
 		return Vector2(x, y)
 	return position_of(u)
 
@@ -1292,27 +1549,27 @@ func _face_job(u: Dictionary, b: Dictionary) -> void:
 
 
 func _clear_facing(u: Dictionary) -> void:
-	u["fx"] = -1.0
-	u["fy"] = -1.0
+	u["fx"] = NO_POINT.x
+	u["fy"] = NO_POINT.y
 
 
 func _edge_goal(u: Dictionary, b: Dictionary, enemy: bool = false) -> Vector2:
 	var candidates: Array[Vector2] = edge_candidates(b, enemy)
 	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
-	var best := Vector2(-1, -1)
+	var best := NO_POINT
 	var best_distance: float = INF
 	for point: Vector2 in candidates:
 		var distance: float = position_of(u).distance_squared_to(point)
 		if distance < best_distance:
 			best_distance = distance
 			best = point
-	if best.x >= 0 and not _cached_route(start, Vector2i(floori(best.x), floori(best.y)), enemy).is_empty():
+	if has_point(best) and not _cached_route(start, Vector2i(floori(best.x), floori(best.y)), enemy).is_empty():
 		return best
 	# A nearby edge can be sealed while the far entrance is still reachable.
 	for point: Vector2 in candidates:
 		if not _cached_route(start, Vector2i(floori(point.x), floori(point.y)), enemy).is_empty():
 			return point
-	return Vector2(-1, -1)
+	return NO_POINT
 
 
 # Memoized edge goals: same result as _edge_goal, recomputed only when the
@@ -1366,16 +1623,20 @@ func _walk(u: Dictionary, target: Vector2, dt: float, enemy: bool = false) -> bo
 	var steps: Array = cached["steps"]
 	var waypoint: Vector2 = Vector2(steps[0]) + Vector2.ONE * 0.5 if not steps.is_empty() else target
 	var before: Vector2 = position_of(u)
-	var speed: float = (1.2 * float(_role_stats(str(u.get("role", ""))).get("speed", 1.0)) if enemy else _stat(u, "speed") * living.speed_at(before)) * dt
+	var speed: float = (1.2 * float(_role_stats(str(u.get("role", ""))).get("speed", 1.0)) * (1.6 if u.has("routed") else 1.0) if enemy else _stat(u, "speed") * living.speed_at(before)) * dt
 	var point: Vector2 = before.move_toward(waypoint, speed)
 	if not enemy:
 		living.walked(before, point, elapsed)
 	u["x"] = point.x
 	u["y"] = point.y
-	u["phase"] = "walk"
+	var arrived: bool = point.distance_to(target) < 0.05
+	# Someone already standing at the goal (workers sheltering by the Hall in a raid) stands
+	# still instead of walking on the spot.
+	if not arrived or not point.is_equal_approx(before):
+		u["phase"] = "walk"
 	if not steps.is_empty() and point.distance_to(waypoint) < 0.01:
 		steps.pop_front()
-	return point.distance_to(target) < 0.05
+	return arrived
 
 
 func _hall() -> Dictionary:
@@ -1391,6 +1652,9 @@ func tick(dt: float) -> void:
 	tick_count += 1
 	elapsed += dt
 	needs.tick(self, dt)
+	perks.tick(self, dt)
+	aftermath.tick(self, dt)
+	gear.tick(self, dt)
 	_gate_tick()
 	job_timer += dt
 	if job_timer >= 5:
@@ -1402,7 +1666,11 @@ func tick(dt: float) -> void:
 			continue
 		if b["remaining"] > 0:
 			if not raid_active and not raid_warning:
-				b["remaining"] = maxf(0, float(b["remaining"]) - dt)
+				# Zone-grown sites need builders and delivered materials (village_materials.gd).
+				# Mason Yard: staffed yards nearby speed the work.
+				b["remaining"] = maxf(0, float(b["remaining"]) - materials.progress(self, b, dt) * perks.build_for(b))
+				if float(b["remaining"]) <= 0.0:
+					materials.close_site(b)
 			continue
 		for work: String in chronicle.great_works_config():
 			if chronicle.great_work_data(work)["building"] == b["type"] and work not in chronicle.great_works:
@@ -1410,15 +1678,7 @@ func tick(dt: float) -> void:
 				chronicle.queue_banner("Old Bell", chronicle.great_work_data(work)["name"] + " stands in the village.")
 		var spec: Dictionary = building_specs[b["type"]]
 		if spec.get("production") != null:
-			var posted: bool = false
-			for u in units:
-				if int(u["workplace"]) == int(b["id"]) and u["hp"] > 0 and u["order"].is_empty() and not u["hold"] and not raid_active and not raid_warning:
-					posted = true
-			var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * (1.25 if posted else 1.0)
-			rate *= needs.production_multiplier()
-			# Moon Orchards / Full Granaries: food production, not a flat buff.
-			if str(spec.get("production", "")) == "food":
-				rate *= 1.0 + chronicle.bonus("growth")
+			var rate: float = production_rate(b)
 			b["reserve"] = maxf(float(b["reserve"]), minf(reserve_cap(b), float(b["reserve"]) + rate * dt))
 		for recipe: Dictionary in spec.get("refine", []):
 			_refine(recipe, dt)
@@ -1426,7 +1686,7 @@ func tick(dt: float) -> void:
 		u["cooldown"] = maxf(0, float(u["cooldown"]) - dt)
 		if not raid_active and not raid_warning and u["hp"] > 0 and u["hp"] < u["max_hp"]:
 			# Village Medicine / Field Medicine: recovery between horns.
-			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal")) * dt)
+			u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * 0.012 * (1.0 + chronicle.bonus("heal") + needs.fed_bonus(self, "heal")) * perks.heal_at(self, position_of(u)) * dt)
 		_unit_tick(u, dt)
 	_raid_tick(dt)
 	_automation_tick(dt)
@@ -1439,13 +1699,14 @@ func tick(dt: float) -> void:
 	for resource in pending_rewards.keys():
 		pending_rewards[resource] -= _bank(resource, float(pending_rewards[resource]))
 	if not raid_active and not raid_warning and units.size() < beds() and float(resources.get("food", 0)) >= 30:
-		birth_timer += dt
+		birth_timer += dt * needs.growth_multiplier(self)
 		if birth_timer >= 60:
 			birth_timer = 0
 			resources["food"] -= 20
-			_add_unit("farmer")
+			var trade: String = open_job_role()
+			_add_unit(trade)
 			_auto_assign()
-			notice = "Warm beds and full bellies / a new villager joins."
+			notice = "Warm beds and full bellies / a new %s joins and takes up work." % str(troop_specs[trade].get("name", trade)).to_lower()
 
 
 func _gate_tick() -> void:
@@ -1531,6 +1792,112 @@ func _auto_pave() -> void:
 	notice = previous
 
 
+# Goods per second one built workplace adds to its reserve right now (0 for anything that does
+# not produce). tick() fills reserves with it, and the HUD's income line reads it.
+func production_rate(b: Dictionary) -> float:
+	var spec: Dictionary = building_specs[b["type"]]
+	if spec.get("production") == null or float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+		return 0.0
+	var posted: int = 0
+	for u in units:
+		if int(u["workplace"]) == int(b["id"]) and u["hp"] > 0 and u["order"].is_empty() and not u["hold"] and not raid_active and not raid_warning:
+			posted += 1
+	# A lone workplace: any posted crew adds 25%. A farm estate grows with its land, and
+	# reaches its full +25% only with one hand for every few tiles (crew_cap).
+	var hands: float = 1.25 if posted > 0 else 1.0
+	if estates.has(int(b["id"])):
+		hands = 1.0 + 0.25 * minf(1.0, float(posted) / float(crew_cap(b)))
+	var rate: float = float(spec["rate"]) * float(spec["tiers"][int(b["tier"]) - 1]["rateMultiplier"]) * hands * estate_scale(b)
+	rate *= needs.production_multiplier()
+	# Well fed (bread at the last meal): townMeal.wellFed gathering bonus.
+	rate *= 1.0 + needs.fed_bonus(self, "gather")
+	# Tinker Workshop: a staffed workshop nearby speeds the work.
+	rate *= perks.gather_for(b)
+	# Crops swell under the Full Moon and thin under the New Moon (data/moon.json). The moon
+	# turns with the raids, so the opening days before the first raid keep their plain yield.
+	if wave > 0:
+		rate *= MoonRules.harvest_multiplier(moon_phase, str(b["type"]))
+	# Moon Orchards / Full Granaries: food production, not a flat buff.
+	if str(spec.get("production", "")) == "food":
+		rate *= 1.0 + chronicle.bonus("growth")
+	# Zone income milestones (data/zones.json): set by the zoning layer from what stands.
+	rate *= float(zone_boost.get(str(b["type"]), 1.0))
+	return rate
+
+
+# What the village makes in a minute at today's pace, per resource and source:
+# {"wood": {"Workplaces": 42.0, "Mills": 0.0}, ...}. A workplace whose reserve is full has stalled
+# until someone collects, so it counts nothing; a mill counts only while it has stock to work and
+# room to put the result. Read-only: the HUD's income line uses it.
+func income_per_minute() -> Dictionary:
+	var income: Dictionary = {}
+	for b: Dictionary in buildings:
+		if float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+			continue
+		var spec: Dictionary = building_specs[b["type"]]
+		var resource: Variant = spec.get("production")
+		if resource != null and float(b["reserve"]) < reserve_cap(b):
+			_add_income(income, str(resource), "Workplaces", production_rate(b) * 60.0)
+		for recipe: Dictionary in spec.get("refine", []):
+			var stocked: bool = true
+			for need: String in recipe["in"]:
+				stocked = stocked and float(resources.get(need, 0)) >= float(recipe["in"][need])
+			for made: String in recipe["out"]:
+				if stocked and float(resources.get(made, 0)) < storage_cap(made):
+					_add_income(income, made, "Mills", float(recipe["perSec"]) * float(recipe["out"][made]) * 60.0)
+	return income
+
+
+# OFFLINE EARNINGS: while the game is closed (or in the background) the manor keeps its
+# workplaces going at today's pace for up to OFFLINE_CAP_SECONDS, and the town's lots keep
+# sending. Nothing else happens offline: no raids, births, growth, hunger or research.
+const OFFLINE_CAP_SECONDS: float = 8.0 * 3600.0
+const OFFLINE_MIN_SECONDS: float = 180.0
+var away_seconds: float = 0.0   # real seconds since the loaded save was written
+var zone_boost: Dictionary = {}   # building type -> income multiplier from zone milestones (not saved)
+
+
+# What the manor earned in `seconds` away, per resource, before storage limits.
+# extra_per_minute adds income the simulation does not own (the town's lots).
+func offline_earnings(seconds: float, extra_per_minute: Dictionary = {}) -> Dictionary:
+	var counted: float = clampf(seconds, 0.0, OFFLINE_CAP_SECONDS)
+	var earned: Dictionary = {}
+	if counted <= 0.0:
+		return earned
+	for b: Dictionary in buildings:
+		var resource: Variant = building_specs[b["type"]].get("production")
+		if resource == null:
+			continue
+		var rate: float = production_rate(b)
+		if rate > 0.0:
+			earned[str(resource)] = float(earned.get(str(resource), 0.0)) + rate * counted
+	for resource: String in extra_per_minute:
+		earned[resource] = float(earned.get(resource, 0.0)) + float(extra_per_minute[resource]) * counted / 60.0
+	for resource: String in earned.keys():
+		earned[resource] = floorf(float(earned[resource]))
+		if float(earned[resource]) < 1.0 or not world_specs["storageBase"].has(resource):
+			earned.erase(resource)
+	return earned
+
+
+# Banks offline earnings into the stores (capped by storage). Returns what was banked.
+func bank_offline(earned: Dictionary) -> Dictionary:
+	var banked: Dictionary = {}
+	for resource: String in earned:
+		var taken: int = _bank(resource, float(earned[resource]))
+		if taken > 0:
+			banked[resource] = taken
+	return banked
+
+
+func _add_income(income: Dictionary, resource: String, source: String, amount: float) -> void:
+	if amount <= 0.0:
+		return
+	var sources: Dictionary = income.get(resource, {})
+	sources[source] = float(sources.get(source, 0.0)) + amount
+	income[resource] = sources
+
+
 func _refine(recipe: Dictionary, dt: float) -> void:
 	var times: float = float(recipe["perSec"]) * dt
 	for resource in recipe["in"]:
@@ -1552,6 +1919,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		u["phase"] = "death"
 		return
 	u["phase"] = "idle"
+	u["on_site"] = false
 	u["think"] = maxf(0.0, float(u.get("think", 0.0)) - dt)
 	if not u["order"].is_empty():
 		if u["hold"] and troop_specs[u["type"]]["role"] == "combat":
@@ -1570,13 +1938,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		_walk(u, _cached_edge_goal(u, _hall()), dt)
 		return
 	if role == "builder":
-		for b in buildings:
-			if b["remaining"] > 0 and b["hp"] > 0:
-				_face_job(u, b)
-				if _walk(u, _edge_goal(u, b), dt):
-					u["phase"] = "work"
-				return
-		_clear_facing(u)
+		_builder_tick(u, dt)
 		return
 	if float(u["carry"]) >= 1:
 		_clear_facing(u)
@@ -1591,20 +1953,144 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		_clear_facing(u)
 		return
 	var stand: Vector2 = work_position(u, workplace)
-	if stand.x < 0:
+	if not has_point(stand):
 		_clear_facing(u)
 		return
 	_face_job(u, workplace)
 	if _walk(u, stand, dt):
 		u["phase"] = "work"
 		u["cooldown"] += dt
-		if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(troop_specs[u["type"]]["carry"]):
-			var amount: int = mini(floori(float(workplace["reserve"])), int(troop_specs[u["type"]]["carry"]))
+		if u["cooldown"] >= 2 or float(workplace["reserve"]) >= float(carry_of(u)):
+			var amount: int = mini(floori(float(workplace["reserve"])), carry_of(u))
 			if amount > 0:
 				workplace["reserve"] -= amount
 				u["carry"] = amount
 				u["carry_resource"] = str(building_specs[workplace["type"]]["production"])
 				u["cooldown"] = 0
+
+
+# Builders pick a site, fetch what its bill still needs from the central stores, carry it over and
+# work there. Sites bought from the Build menu have no bill: builders simply work at them.
+func _builder_tick(u: Dictionary, dt: float) -> void:
+	var site: Dictionary = _builder_site(u)
+	if site.is_empty():
+		u["site"] = -1
+		if float(u["carry"]) >= 1:
+			_return_haul(u, dt)
+		elif not aftermath.rubble.is_empty():
+			_salvage(u, dt)
+		else:
+			_clear_facing(u)
+		return
+	u["site"] = int(site["id"])
+	var need: Dictionary = materials.needed(site)
+	if float(u["carry"]) >= 1:
+		if not need.has(str(u["carry_resource"])):
+			_return_haul(u, dt)
+			return
+		_face_job(u, site)
+		if _walk(u, _edge_goal(u, site), dt):
+			var used: int = materials.drop_off(site, str(u["carry_resource"]), int(u["carry"]))
+			u["carry"] = float(u["carry"]) - used
+			if float(u["carry"]) < 1:
+				u["carry"] = 0.0
+				u["carry_resource"] = ""
+		return
+	var fetchable: bool = false
+	for resource: String in need:
+		if float(resources.get(resource, 0.0)) >= 1.0:
+			fetchable = true
+	# Nothing to fetch and nothing delivered left to work: gather rubble stone meanwhile, or wait.
+	if not fetchable and materials.has_bill(site) and materials.work_left(site) <= 0.001:
+		if not aftermath.rubble.is_empty():
+			_salvage(u, dt)
+			return
+		_face_job(u, site)
+		if _walk(u, _edge_goal(u, site), dt):
+			u["on_site"] = true
+		return
+	if fetchable:
+		_clear_facing(u)
+		if _walk(u, _edge_goal(u, _hall()), dt):
+			var load: Dictionary = materials.pick_up(self, site, materials.haul(self, u))
+			if not load.is_empty():
+				u["carry"] = float(load["amount"])
+				u["carry_resource"] = str(load["resource"])
+		return
+	_face_job(u, site)
+	if _walk(u, _edge_goal(u, site), dt):
+		u["phase"] = "work"
+		u["on_site"] = true
+
+
+# With no site to work, a builder carries rubble from fallen stone buildings back to the stores.
+func _salvage(u: Dictionary, dt: float) -> void:
+	var pile: Dictionary = aftermath.nearest_rubble(position_of(u))
+	if pile.is_empty():
+		return
+	var at := Vector2(float(pile["x"]), float(pile["y"]))
+	u["fx"] = at.x
+	u["fy"] = at.y
+	# Stand on the pile when it lies on open ground, else beside it (a rebuilt wall may cover it).
+	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
+	var spot := NO_POINT
+	var centre := Vector2i(floori(at.x), floori(at.y))
+	for step: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)]:
+		var tile: Vector2i = centre + step
+		if in_world(tile) and (tile == start or not _cached_route(start, tile, false).is_empty()):
+			spot = Vector2(tile) + Vector2.ONE * 0.5
+			break
+	if not has_point(spot):
+		aftermath.salvage(pile, int(pile["stone"]))   # nobody can reach it: the stone is lost
+		return
+	if position_of(u).distance_to(at) <= 1.6 or _walk(u, spot, dt):
+		u["carry"] = float(aftermath.salvage(pile, materials.haul(self, u)))
+		u["carry_resource"] = "stone"
+		u["phase"] = "work"
+
+
+# Bring back materials a site no longer needs.
+func _return_haul(u: Dictionary, dt: float) -> void:
+	_clear_facing(u)
+	if _walk(u, _edge_goal(u, _hall()), dt):
+		var accepted: int = _bank(str(u["carry_resource"]), float(u["carry"]))
+		u["carry"] = float(u["carry"]) - accepted
+		if float(u["carry"]) < 1:
+			u["carry"] = 0.0
+			u["carry_resource"] = ""
+
+
+# The site this builder works: their current one while it still stands unfinished, else the
+# billed site with the fewest builders on it (nearest first), else any unfinished site.
+func _builder_site(u: Dictionary) -> Dictionary:
+	var current: Dictionary = get_building(int(u.get("site", -1)))
+	if not current.is_empty() and float(current["remaining"]) > 0.0 and float(current["hp"]) > 0.0:
+		if materials.has_bill(current):
+			materials.settle_bill(self, current)
+		# Stay while the site can move on (or this load is for it); a stalled site lets them go.
+		if not materials.has_bill(current) or materials.workable(self, current) \
+				or (float(u["carry"]) >= 1 and materials.needed(current).has(str(u["carry_resource"]))):
+			return current
+	var crews: Dictionary = {}
+	for other: Dictionary in units:
+		if other != u and float(other["hp"]) > 0.0 and int(other.get("site", -1)) >= 0:
+			crews[int(other["site"])] = int(crews.get(int(other["site"]), 0)) + 1
+	var best: Dictionary = {}
+	var best_score: float = INF
+	for b: Dictionary in buildings:
+		if float(b["remaining"]) <= 0.0 or float(b["hp"]) <= 0.0:
+			continue
+		var score: float = float(crews.get(int(b["id"]), 0)) * 1000.0 + position_of(u).distance_to(center(b))
+		if not materials.has_bill(b):
+			score += 100000.0
+		else:
+			materials.settle_bill(self, b)
+			if not materials.workable(self, b):
+				score += 1000000.0   # waiting on materials: only when nothing else can be worked
+		if score < best_score:
+			best_score = score
+			best = b
+	return best
 
 
 func _nearest_enemy(point: Vector2) -> Dictionary:
@@ -1636,7 +2122,24 @@ func _threat_base_rank(enemy: Dictionary, hall: Dictionary) -> float:
 	return rank
 
 
+# Who a fighter goes for. A raider already within its reach comes first (the most dangerous
+# one), so nobody watches an attacker swing at them while staring at a threat across the
+# village. Otherwise the most dangerous raider it can actually get to, and only when none can
+# be reached (walled off), the most dangerous one overall, to be met at the nearest ground.
 func _threat_enemy(u: Dictionary) -> Dictionary:
+	var here: Vector2 = position_of(u)
+	var reach: float = _stat(u, "range")
+	var in_reach: Dictionary = _ranked_enemy(u, func(enemy: Dictionary) -> bool:
+		return here.distance_to(position_of(enemy)) <= reach)
+	if not in_reach.is_empty() or u["hold"]:
+		return in_reach if not in_reach.is_empty() else _ranked_enemy(u, Callable())
+	var area: int = friendly_area(here)
+	var reachable: Dictionary = _ranked_enemy(u, func(enemy: Dictionary) -> bool:
+		return area >= 0 and friendly_area(position_of(enemy)) == area)
+	return reachable if not reachable.is_empty() else _ranked_enemy(u, Callable())
+
+
+func _ranked_enemy(u: Dictionary, accept: Callable) -> Dictionary:
 	var best: Dictionary = {}
 	var best_rank: float = -INF
 	var here: Vector2 = position_of(u)
@@ -1648,7 +2151,7 @@ func _threat_enemy(u: Dictionary) -> Dictionary:
 			if enemy["hp"] > 0:
 				threat_ranks[int(enemy["id"])] = _threat_base_rank(enemy, hall)
 	for enemy in enemies:
-		if enemy["hp"] <= 0:
+		if enemy["hp"] <= 0 or (accept.is_valid() and not accept.call(enemy)):
 			continue
 		var rank: float = float(threat_ranks.get(int(enemy["id"]), -INF)) - 0.35 * here.distance_to(position_of(enemy))
 		if rank > best_rank:
@@ -1674,20 +2177,20 @@ func _flee_point(u: Dictionary, enemy: Dictionary, release: float) -> Vector2:
 			var steps: int = maxi(absi(x - here_tile.x), absi(y - here_tile.y))
 			options.append([away - steps * 0.35, point])
 	if options.is_empty():
-		return Vector2(-1, -1)
+		return NO_POINT
 	options.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) > float(b[0]))
 	for option: Array in options:
 		var point: Vector2 = option[1]
 		if _cached_route(here_tile, Vector2i(floori(point.x), floori(point.y)), false).is_empty():
 			continue
 		return point
-	return Vector2(-1, -1)
+	return NO_POINT
 
 
 func _close_kite(u: Dictionary) -> void:
 	u["kite"] = false
-	u["rx"] = -1.0
-	u["ry"] = -1.0
+	u["rx"] = NO_POINT.x
+	u["ry"] = NO_POINT.y
 
 
 func _archer_space(u: Dictionary, enemy: Dictionary) -> Vector2:
@@ -1698,18 +2201,18 @@ func _archer_space(u: Dictionary, enemy: Dictionary) -> Vector2:
 	if bool(u.get("kite", false)):
 		if gap >= release:
 			_close_kite(u)
-			return Vector2(-1, -1)
+			return NO_POINT
 	elif gap > KITE_TRIGGER:
-		return Vector2(-1, -1)
+		return NO_POINT
 	else:
 		u["kite"] = true
-	var goal := Vector2(float(u.get("rx", -1.0)), float(u.get("ry", -1.0)))
-	if goal.x >= 0 and u["think"] > 0 and _walkable(here_tile, goal):
+	var goal := Vector2(float(u.get("rx", NO_POINT.x)), float(u.get("ry", NO_POINT.y)))
+	if has_point(goal) and u["think"] > 0 and _walkable(here_tile, goal):
 		return goal
 	var point: Vector2 = _flee_point(u, enemy, release)
-	if point.x < 0:
+	if not has_point(point):
 		_close_kite(u)
-		return Vector2(-1, -1)
+		return NO_POINT
 	u["rx"] = point.x
 	u["ry"] = point.y
 	u["think"] = KITE_THINK
@@ -1749,15 +2252,16 @@ func _fighter(u: Dictionary, dt: float) -> void:
 		var closest: Dictionary = _nearest_enemy(here)
 		if not closest.is_empty() and (here.distance_to(position_of(closest)) <= KITE_TRIGGER or bool(u.get("kite", false))):
 			var space: Vector2 = _archer_space(u, closest)
-			if space.x >= 0:
+			if has_point(space):
 				_walk(u, space, dt)
 				return
 			_close_kite(u)
 	if gap <= _stat(u, "range"):
 		u["phase"] = "attack"
 		if u["cooldown"] <= 0:
-			var damage: float = _stat(u, "damage")
-			enemy["hp"] -= damage
+			var damage: float = WarRules.harm(self, enemy, _stat(u, "damage"), str(u["type"]))
+			if float(enemy["hp"]) <= 0.0:
+				WarRules.credit_kill(self, u, enemy)
 			events.append({"kind": "hit", "x": float(enemy["x"]), "y": float(enemy["y"]), "amount": damage, "friendly": false})
 			u["cooldown"] = 1.0
 			if u["type"] == "archer":
@@ -1765,20 +2269,36 @@ func _fighter(u: Dictionary, dt: float) -> void:
 			else:
 				_hit(position_of(enemy), "home")
 		return
-	if not u["hold"]:
-		_walk(u, position_of(enemy), dt)
+	if u["hold"]:
+		return
+	if _walk(u, position_of(enemy), dt) or u["phase"] == "walk":
+		return
+	# No way through to this raider (a wall between): stand at the nearest open ground instead
+	# of freezing where they are. Re-chosen every so often as the raider moves.
+	var goal := Vector2(float(u.get("ax", NO_POINT.x)), float(u.get("ay", NO_POINT.y)))
+	if not has_point(goal) or u["think"] <= 0:
+		goal = _approach_point(u, position_of(enemy))
+		u["ax"] = goal.x
+		u["ay"] = goal.y
+		u["think"] = APPROACH_THINK
+	if has_point(goal) and here.distance_to(goal) > 0.1:
+		_walk(u, goal, dt)
 
 
 func start_raid() -> bool:
-	if raid_active or raid_warning:
+	if raid_active:
+		# During a raid the Horn calls the defenders to rally instead.
+		return WarRules.sound_rally(self)
+	if raid_warning:
 		notice = "A raid is already on the road."
 		return false
 	if _hall().get("hp", 0) <= 0:
 		notice = "Repair the Manor Hall before testing defenses."
 		return false
 	raid_warning = true
+	horn_called = true
 	next_raid_at = elapsed + 3
-	notice = "Test wave / horns in 3 seconds."
+	notice = "You sound the horn / they come in 3 seconds. Spoils +25% for calling them."
 	return true
 
 
@@ -1829,6 +2349,7 @@ func _spawn_raid() -> void:
 	raid_active = true
 	wave += 1
 	home_raid.begin(self)
+	aftermath.begin_raid()
 	var faction: Dictionary = _active_faction()
 	var roles: Array = faction.get("roles", ["raider"])
 	var count: int = mini(int(world_specs["homeRaids"].get("maxCount", 8)), wave + 1)
@@ -1842,14 +2363,62 @@ func _spawn_raid() -> void:
 			1: point = Vector2(bounds.end.x - 0.5, 4.5 + index)
 			2: point = Vector2(5.5 + index, bounds.position.y + 0.5)
 			3: point = Vector2(6.5 + index, bounds.end.y - 0.5)
+		point = _entry_point(point)
 		# Hostiles stay "raider" in the save schema; the role drives their stats.
 		var role: String = str(roles[index % roles.size()])
 		var stats: Dictionary = _role_stats(role)
 		var hp: float = base * float(stats.get("hp", 1.0))
 		enemies.append({"id": _id(), "type": "raider", "role": role, "raids_resources": role == "scout" or (role == "raider" and index % 2 == 1), "faction": str(faction.get("id", "thornband")),
 			"x": point.x, "y": point.y, "hp": hp, "max_hp": hp, "phase": "walk", "cooldown": 0.0})
+	war_log = WarRules.new_log()
+	war_log["base"] = raid_stats.duplicate(true)
+	war_log["called"] = horn_called
+	horn_called = false
+	rally_time = 0.0
+	rally_ready_at = 0.0
 	raid_stats["seconds_held"] = 0.0
 	notice = "Wave %d / %s / hold the Manor!" % [wave, str(faction.get("name", "Raiders"))]
+	if WarRules.warlord_wave(wave):
+		# The warlord rides in behind the first raider, from the same side.
+		var lead: Vector2 = position_of(enemies[0]) if not enemies.is_empty() else _entry_point(Vector2(bounds.position.x + 0.5, 8.0))
+		var stats: Dictionary = _role_stats("warlord")
+		var hp: float = base * float(stats.get("hp", 4.5))
+		enemies.append({"id": _id(), "type": "raider", "role": "warlord", "raids_resources": false, "faction": str(faction.get("id", "thornband")),
+			"x": lead.x, "y": lead.y, "hp": hp, "max_hp": hp, "phase": "walk", "cooldown": 0.0})
+		war_log["warlord"] = WarRules.warlord_name(faction)
+		events.append({"kind": "warlord", "name": war_log["warlord"], "faction": str(faction.get("name", "Raiders"))})
+		notice = "Wave %d / %s rides with the %s. Bring the warlord down and the band will break!" % [wave, str(war_log["warlord"]), str(faction.get("name", "Raiders"))]
+
+
+# Where a raider steps onto the land. The spawn lines follow the claimed land's bounding box,
+# and with only the North or South Reach held its corners hang over nothing: a raider placed
+# there could never walk in, and the defenders could never reach it, so the raid froze. Such a
+# point moves to the nearest open tile on the edge of the land.
+func _entry_point(point: Vector2) -> Vector2:
+	var tile := Vector2i(floori(point.x), floori(point.y))
+	if in_world(tile) and not _blocked(tile, true):
+		return point
+	_refresh_walk_grids()
+	var width: int = _walk_rect.size.x
+	var best := point
+	var best_distance: float = INF
+	for index in _walk_enemy.size():
+		if _walk_enemy[index] != 0:
+			continue
+		var cell := Vector2i(_walk_rect.position.x + index % width, _walk_rect.position.y + index / width)
+		var edge: bool = false
+		for direction in DIRECTIONS:
+			if not in_world(cell + direction):
+				edge = true
+				break
+		if not edge:
+			continue
+		var centre := Vector2(cell) + Vector2.ONE * 0.5
+		var distance: float = centre.distance_squared_to(point)
+		if distance < best_distance:
+			best_distance = distance
+			best = centre
+	return best
 
 
 func _building_distance(point: Vector2, b: Dictionary) -> float:
@@ -1901,24 +2470,31 @@ func _raid_tick(dt: float) -> void:
 			home_raid.hit(self, b, float(target["hp"]) - float(target["damage"]))
 	home_raid.active["seconds"] = minf(HomeRaid.MAX_SECONDS, float(home_raid.active["seconds"]) + dt)
 	raid_stats["seconds_held"] = float(raid_stats.get("seconds_held", 0.0)) + dt
+	rally_time = maxf(0.0, rally_time - dt)
 	for b in buildings:
 		if b["hp"] <= 0 or b["remaining"] > 0 or b["cooldown"] > 0:
 			continue
 		var stats: Dictionary = building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]
 		if float(stats["damage"]) <= 0:
 			continue
-		var enemy: Dictionary = _tower_target(center(b))
-		if not enemy.is_empty() and center(b).distance_to(position_of(enemy)) <= float(stats["range"]):
-			var damage: float = float(stats["damage"])
-			enemy["hp"] -= damage
-			b["cooldown"] = (3.0 if chronicle.effect("command:trap-reset") else 5.0) if b["type"] == "trap" else 1.0
-			_shot(center(b), position_of(enemy))
-			events.append({"kind": "hit", "x": float(enemy["x"]), "y": float(enemy["y"]), "amount": damage, "friendly": false})
+		WarRules.fire(self, b, stats)
+	WarRules.tick_raiders(self, dt)
+	var gone: Array[int] = []
 	for enemy in enemies:
 		if enemy["hp"] <= 0:
 			continue
+		if enemy.has("routed"):
+			if WarRules.flee(self, enemy, dt):
+				gone.append(int(enemy["id"]))
+			continue
 		enemy["cooldown"] = maxf(0, float(enemy["cooldown"]) - dt)
 		enemy["phase"] = "idle"
+		if not in_world(tile_of(enemy)):
+			# A raider saved off the land by an older build steps back on at the nearest edge.
+			var entry: Vector2 = _entry_point(position_of(enemy))
+			enemy["x"] = entry.x
+			enemy["y"] = entry.y
+			paths.erase(int(enemy["id"]))
 		var reach: float = float(_role_stats(str(enemy.get("role", "raider"))).get("range", 1.1))
 		var opponent: Dictionary = {}
 		for u in units:
@@ -1930,7 +2506,7 @@ func _raid_tick(dt: float) -> void:
 			enemy["fx"] = float(opponent["x"])
 			enemy["fy"] = float(opponent["y"])
 			if enemy["cooldown"] <= 0:
-				var damage: float = (8 + wave * 2) * float(_role_stats(str(enemy.get("role", "raider"))).get("damage", 1.0))
+				var damage: float = WarRules.raider_damage(enemy, (8 + wave * 2) * float(_role_stats(str(enemy.get("role", "raider"))).get("damage", 1.0)))
 				opponent["hp"] = maxf(0, float(opponent["hp"]) - damage)
 				events.append({"kind": "hit", "x": float(opponent["x"]), "y": float(opponent["y"]), "amount": damage, "friendly": true})
 				if reach > 1.5: _shot(position_of(enemy), position_of(opponent))
@@ -1940,14 +2516,29 @@ func _raid_tick(dt: float) -> void:
 					_fall(position_of(opponent), "home")
 				enemy["cooldown"] = 1
 			continue
+		var role_name: String = str(enemy.get("role", "raider"))
+		if role_name == "bombard":
+			# A bombard shells what it can reach from where it stands.
+			var mark: Dictionary = WarRules.bombard_target(self, enemy, reach)
+			if not mark.is_empty():
+				enemy["phase"] = "attack"
+				enemy["fx"] = center(mark).x
+				enemy["fy"] = center(mark).y
+				if enemy["cooldown"] <= 0:
+					_siege_blow(enemy, mark, true)
+					enemy["cooldown"] = 2.5
+				continue
 		var objective: Dictionary = _hall()
 		if bool(enemy.get("raids_resources", false)):
 			var site: Dictionary = home_raid.loot_target(self, position_of(enemy))
 			if not site.is_empty(): objective = site
-		var goal := Vector2(-1, -1)
+		elif role_name == "ram":
+			var gate: Dictionary = WarRules.ram_target(self, enemy)
+			if not gate.is_empty(): objective = gate
+		var goal := NO_POINT
 		if not objective.is_empty() and objective["hp"] > 0.0:
 			goal = _cached_edge_goal(enemy, objective, true)
-		if goal.x < 0.0:
+		if not has_point(goal):
 			# Hall edge unreachable (walled off): fall back to the nearest
 			# building. The reachability probes already ran inside _edge_goal
 			# via the shared cache, so this costs no extra search.
@@ -1965,28 +2556,23 @@ func _raid_tick(dt: float) -> void:
 			enemy["fx"] = center(objective).x
 			enemy["fy"] = center(objective).y
 			if enemy["cooldown"] <= 0:
-				var wall_mult: float = float(_role_stats(str(enemy.get("role", "raider"))).get("wallDamage", 1.0))
-				# Gate Engineering braces a gate while a ram works on it.
-				if str(objective["type"]) == "gate" and chronicle.effect("command:gate-brace"):
-					wall_mult *= 0.6
-				var damage: float = (8 + wave * 2) * wall_mult
-				var previous_hp: float = objective["hp"]
-				objective["hp"] = maxf(0, previous_hp - damage)
-				home_raid.hit(self, objective, previous_hp - float(objective["hp"]))
-				events.append({"kind": "hit", "x": center(objective).x, "y": center(objective).y, "amount": damage, "friendly": true})
+				_siege_blow(enemy, objective, false)
 				enemy["cooldown"] = 1
-				_hit(center(objective), "foe")
-				if objective["hp"] <= 0:
-					raid_stats["built_lost"] = int(raid_stats["built_lost"]) + 1
-					if str(objective["type"]) == "gate":
-						raid_stats["gates_lost"] = int(raid_stats["gates_lost"]) + 1
-					_ruin(center(objective))
-					revision += 1
-					_invalidate()
 		else:
 			_walk(enemy, goal, dt, true)
+			aftermath.trample(self, tile_of(enemy))
+	var warlord_down := NO_POINT
+	var warlord_faction: String = ""
 	for index in range(enemies.size() - 1, -1, -1):
+		if gone.has(int(enemies[index]["id"])) and enemies[index]["hp"] > 0:
+			paths.erase(int(enemies[index]["id"]))
+			war_log["routed"] = int(war_log["routed"]) + 1
+			enemies.remove_at(index)
+			continue
 		if enemies[index]["hp"] <= 0:
+			if str(enemies[index].get("role", "")) == "warlord":
+				warlord_down = position_of(enemies[index])
+				warlord_faction = str(enemies[index].get("faction", ""))
 			_fall(position_of(enemies[index]), "foe")
 			paths.erase(int(enemies[index]["id"]))
 			events.append({"kind": "defeat", "x": float(enemies[index]["x"]), "y": float(enemies[index]["y"]), "friendly": false})
@@ -1994,9 +2580,39 @@ func _raid_tick(dt: float) -> void:
 			raid_stats["kills"] = int(raid_stats["kills"]) + 1
 			var by_role: Dictionary = raid_stats["kills_by"]
 			by_role[role] = int(by_role.get(role, 0)) + 1
+			var slain: Dictionary = war_log["slain"]
+			slain[role] = int(slain.get(role, 0)) + 1
 			enemies.remove_at(index)
+	if has_point(warlord_down):
+		WarRules.rout(self, warlord_down, warlord_faction)
 	if enemies.is_empty() or home_raid.stars() == 3 or home_raid.active["seconds"] >= HomeRaid.MAX_SECONDS:
 		_finish_raid(home_raid.stars() == 0)
+
+
+# A raider's blow on a building: walls take more from wall-breakers, a braced gate less.
+# Bombards lob theirs from range (the view draws the shell), everyone else strikes in reach.
+func _siege_blow(enemy: Dictionary, objective: Dictionary, lobbed: bool) -> void:
+	var wall_mult: float = float(_role_stats(str(enemy.get("role", "raider"))).get("wallDamage", 1.0))
+	# Gate Engineering braces a gate while a ram works on it.
+	if str(objective["type"]) == "gate" and chronicle.effect("command:gate-brace"):
+		wall_mult *= 0.6
+	var damage: float = WarRules.raider_damage(enemy, (8 + wave * 2) * wall_mult)
+	var previous_hp: float = objective["hp"]
+	objective["hp"] = maxf(0, previous_hp - damage)
+	home_raid.hit(self, objective, previous_hp - float(objective["hp"]))
+	events.append({"kind": "hit", "x": center(objective).x, "y": center(objective).y, "amount": damage, "friendly": true})
+	if lobbed:
+		events.append({"kind": "lob", "from_x": float(enemy["x"]), "from_y": float(enemy["y"]), "x": center(objective).x, "y": center(objective).y})
+	else:
+		_hit(center(objective), "foe")
+	if objective["hp"] <= 0:
+		raid_stats["built_lost"] = int(raid_stats["built_lost"]) + 1
+		if str(objective["type"]) == "gate":
+			raid_stats["gates_lost"] = int(raid_stats["gates_lost"]) + 1
+		_ruin(center(objective))
+		aftermath.fell(self, objective)
+		revision += 1
+		_invalidate()
 
 
 func _finish_raid(victory: bool) -> void:
@@ -2006,30 +2622,47 @@ func _finish_raid(victory: bool) -> void:
 	var held: float = float(raid_stats.get("seconds_held", 0.0))
 	raid_active = false
 	raid_warning = false
+	rally_time = 0.0
 	enemies.clear()
 	_invalidate()
 	scripted_raid = ""
 	next_raid_at = elapsed + (240 if victory else 360)
+	# The fallen come round beside the Chapel (or another healer) when one stands, else by the Hall.
+	var recovery: Vector2 = aftermath.recovery_spot(self)
 	for u in units:
 		if u["hp"] <= 0:
 			u["hp"] = float(u["max_hp"]) * 0.5
-			u["x"] = 8.0
-			u["y"] = 10.8
+			u["x"] = recovery.x if has_point(recovery) else 8.0
+			u["y"] = recovery.y if has_point(recovery) else 10.8
 			u["phase"] = "idle"
 	if victory:
 		raid_stats["defended"] = int(raid_stats["defended"]) + 1
 		# Organized Watch research repairs the damage instead of leaving it.
 		if chronicle.effect("command:auto-repair"):
+			# The masons still spend materials: as much of each repair as the stores cover.
+			var per_unit: float = float(materials.config.get("repair", {}).get("hpPerUnit", 15.0)) / (1.0 - minf(0.6, chronicle.bonus("repair")))
 			for b: Dictionary in buildings:
 				if float(b["hp"]) > 0.0 and float(b["remaining"]) <= 0.0:
-					b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + float(b["max_hp"]) * 0.35)
+					var want: float = minf(float(b["max_hp"]) - float(b["hp"]), float(b["max_hp"]) * 0.35)
+					var restored: float = materials.affordable_hp(self, b, want, per_unit)
+					if restored > 0.0:
+						_spend(materials.repair_cost(self, b, restored, per_unit))
+						b["hp"] = minf(float(b["max_hp"]), float(b["hp"]) + restored)
 			notice = "The Manor stands / masons put the damage back."
 		else:
 			notice = "The Manor stands / salvage and recovery."
-		_reward({"gold": (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase)})
+		var spoils: float = WarRules.spoils(self, (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase))
+		war_log["spoils"] = spoils
+		_reward({"gold": spoils})
 	else:
 		notice = "Defense breached / attackers earned %d stars. Repair and rise again." % home_raid.last["stars"]
+	var marks: String = aftermath.raid_summary()
+	if not marks.is_empty():
+		notice += " " + marks
 	raid_stats["seconds_held"] = maxf(held, 0.0)
+	war_log["wave"] = wave
+	war_log["victory"] = victory
+	war_log["done"] = true
 	events.append({"kind": "raid_result", "victory": victory})
 	moon_phase = MoonRules.next_phase(moon_phase)
 
@@ -2065,12 +2698,27 @@ func quest_by_id(id: String) -> Dictionary:
 
 func _quest_record(id: String) -> Dictionary:
 	if not quest_progress.has(id):
-		quest_progress[id] = {"optional": {}, "raid_started": false, "started_at": elapsed}
+		quest_progress[id] = {"optional": {}, "raid_started": false, "started_at": elapsed, "baseline": {}}
 		# A mission introduces its own content while it is the current mission,
 		# so objectives can ask for what the mission itself introduces.
 		var quest: Dictionary = quest_by_id(id)
 		chronicle.grant_many(quest.get("introduces", []), "story:" + id + "/introduces")
+		for objective: Dictionary in quest.get("objectives", []):
+			if str(objective["kind"]) in SINCE_ACT_KINDS:
+				objective.erase("from")
+				quest_progress[id]["baseline"][str(objective.get("id", ""))] = _objective_value(objective)
+		_apply_baselines(quest)
 	return quest_progress[id]
+
+
+# Puts each mission's saved starting points on its objectives. Records saved before baselines
+# existed have none, and their objectives keep counting the whole total, as they always did.
+func _apply_baselines(quest: Dictionary) -> void:
+	var baseline: Variant = quest_progress.get(str(quest["id"]), {}).get("baseline", {})
+	for objective: Dictionary in quest.get("objectives", []):
+		objective.erase("from")
+		if baseline is Dictionary and baseline.has(str(objective.get("id", ""))):
+			objective["from"] = float(baseline[str(objective.get("id", ""))])
 
 
 func _quest_tick() -> void:
@@ -2095,7 +2743,8 @@ func _quest_tick() -> void:
 		if not complete:
 			continue
 		completed_quests.append(id)
-		xp += int(quest.get("xp", 0))
+		# Scriptorium: staffed scribes record more from every mission.
+		xp += int(round(float(quest.get("xp", 0)) * (1.0 + perks.total("xp") + needs.fed_bonus(self, "xp"))))
 		living.insight = minf(float(living.config["research"]["insight_cap"]), living.insight + float(quest.get("insight", 0)))
 		chronicle.reputation += int(quest.get("reputation", 0))
 		_reward(quest.get("rewards", {}))
@@ -2166,6 +2815,10 @@ func _units_of(types: Array) -> int:
 
 
 func _objective_value(objective: Dictionary) -> float:
+	return maxf(0.0, _objective_total(objective) - float(objective.get("from", 0.0)))
+
+
+func _objective_total(objective: Dictionary) -> float:
 	var kinds: Array = objective.get("types", [])
 	var resource: String = str(objective.get("resource", ""))
 	match str(objective["kind"]):
@@ -2251,7 +2904,7 @@ func export_state() -> Dictionary:
 		for u in (group as Array):
 			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
 				(u as Dictionary).erase(transient)
-	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
+	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
 		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
@@ -2330,9 +2983,21 @@ func restore_state(state: Dictionary) -> bool:
 	var data: Dictionary = _migrate(state)
 	if not _validate_state(data):
 		return false
+	# Real time since this save was written; older saves carry no clock and pay nothing.
+	var saved_at: Variant = state.get("saved_at")
+	away_seconds = 0.0
+	if saved_at is float or saved_at is int:
+		var gap: float = Time.get_unix_time_from_system() - float(saved_at)
+		away_seconds = gap if is_finite(gap) and gap > 0.0 else 0.0
 	expansions.assign(data.get("expansions", []))
 	buildings.assign(data["buildings"].duplicate(true))
 	units.assign(data["units"].duplicate(true))
+	for u: Dictionary in units:
+		# Saves from before NO_POINT marked "no stand / facing / goal" as (-1, -1), real ground in a reach.
+		for pair: Array in [["sx", "sy"], ["fx", "fy"], ["ax", "ay"], ["rx", "ry"]]:
+			if u.has(pair[0]) and float(u[pair[0]]) == -1.0 and float(u.get(pair[1], -1.0)) == -1.0:
+				u[pair[0]] = NO_POINT.x
+				u[pair[1]] = NO_POINT.y
 	enemies.assign(data["enemies"].duplicate(true))
 	resources = data["resources"].duplicate(true)
 	for resource in world_specs["storageBase"]:
@@ -2341,6 +3006,8 @@ func restore_state(state: Dictionary) -> bool:
 	gathered = data["gathered"].duplicate(true)
 	completed_quests.assign(data["completed_quests"])
 	quest_progress = data.get("quest_progress", {}).duplicate(true)
+	for quest: Dictionary in quests:
+		_apply_baselines(quest)
 	optional_won = data.get("optional_won", {}).duplicate()
 	raid_stats = data.get("raid_stats", {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0,
 		"defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0,
@@ -2357,6 +3024,7 @@ func restore_state(state: Dictionary) -> bool:
 	living.restore(data.get("living", Living.new().state()))
 	chronicle.restore(data["chronicle"])
 	needs.restore(data["needs"])
+	aftermath.restore(data.get("aftermath"))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))
 	navigation_revision = living.navigation_revision
@@ -2378,6 +3046,8 @@ func _validate_state(state: Dictionary) -> bool:
 	var claimed: Array = state.get("expansions", [])
 	if state.has("moon_phase") and not _integer(state["moon_phase"]): return false
 	if int(state["version"]) >= 4 and not needs.valid(state.get("needs"), float(world_specs["townMeal"]["secondsPerDay"])):
+		return false
+	if not aftermath.valid(state.get("aftermath")):
 		return false
 	if (int(state["version"]) >= 2 or state.has("living")) and not _living_valid(state.get("living"), claimed):
 		return false
@@ -2408,6 +3078,7 @@ func _validate_state(state: Dictionary) -> bool:
 		return false
 	var ids: Dictionary = {}
 	var building_index: Dictionary = {}
+	var occupied: Dictionary = {}
 	var hall_count: int = 0
 	for b in state["buildings"]:
 		if not b is Dictionary or not building_specs.has(str(b.get("type", ""))):
@@ -2416,6 +3087,8 @@ func _validate_state(state: Dictionary) -> bool:
 			if not _number(b.get(key)):
 				return false
 		var spec: Dictionary = building_specs[b["type"]]
+		if not materials.valid_site(b):
+			return false
 		for key in ["id", "size", "tier"]:
 			if not _integer(b[key]):
 				return false
@@ -2423,9 +3096,13 @@ func _validate_state(state: Dictionary) -> bool:
 			return false
 		if ids.has(int(b["id"])) or int(b["id"]) >= int(state["next_id"]) or b["hp"] > b["max_hp"]:
 			return false
-		for other: Dictionary in building_index.values():
-			if Rect2i(int(b["x"]), int(b["y"]), int(b["size"]), int(b["size"])).intersects(Rect2i(int(other["x"]), int(other["y"]), int(other["size"]), int(other["size"]))):
-				return false
+		# Overlap by shared tiles (sizes are small) rather than against every other building.
+		for dy in int(b["size"]):
+			for dx in int(b["size"]):
+				var spot := Vector2i(int(b["x"]) + dx, int(b["y"]) + dy)
+				if occupied.has(spot):
+					return false
+				occupied[spot] = true
 		ids[int(b["id"])] = true
 		building_index[int(b["id"])] = b
 		hall_count += 1 if b["type"] == "hall" else 0
@@ -2468,7 +3145,9 @@ func _validate_state(state: Dictionary) -> bool:
 					var extra: Variant = u.get(key, -1.0)
 					if not (extra is int or extra is float) or not is_finite(float(extra)):
 						return false
-				if (float(u.get("sx", -1.0)) >= 0) != (float(u.get("sy", -1.0)) >= 0):
+				# Older saves mark an unset stand as (-1, -1), newer ones as NO_POINT; stands are tile
+				# centres, so a stand in the West or North Reach has a negative coordinate and is real.
+				if (float(u.get("sx", NO_POINT.x)) == -1.0) != (float(u.get("sy", NO_POINT.y)) == -1.0):
 					return false
 				if not u.get("kite", false) is bool:
 					return false
@@ -2496,6 +3175,12 @@ func _validate_state(state: Dictionary) -> bool:
 				return false
 			if not _number(record.get("started_at", 0)):
 				return false
+			var baseline: Variant = record.get("baseline", {})
+			if not baseline is Dictionary or baseline.size() > 16:
+				return false
+			for objective_id: Variant in baseline:
+				if not _number(baseline[objective_id]):
+					return false
 		if not state.get("raid_stats") is Dictionary:
 			return false
 		var stats: Dictionary = state["raid_stats"]
@@ -2520,7 +3205,8 @@ func _max_raiders() -> int:
 	# The spawner caps a raid at maxCount and then scales it by the moon (a blood moon is 1.25x),
 	# so the validator must allow the largest raid the spawner can actually produce.
 	var base: int = int(world_specs["homeRaids"].get("maxCount", 8))
-	return roundi(float(base) * maxf(1.0, float(MoonRules.config()["blood_moon_enemy_multiplier"])))
+	# One more for the warlord who leads every fourth wave.
+	return roundi(float(base) * maxf(1.0, float(MoonRules.config()["blood_moon_enemy_multiplier"]))) + 1
 
 
 func save_game(path: String = "user://village-v1.json") -> bool:
@@ -2544,22 +3230,35 @@ func _save_fail(message: String, code: int = OK) -> bool:
 func _save_once(path: String) -> bool:
 	var tmp_path: String = path + ".tmp"
 	var bak_path: String = path + ".bak"
+	# Check the village the same way a load does, once, before anything on disk is touched.
+	# saved_at (real clock seconds) lets the next load pay out the time the manor was away.
+	var saved: Dictionary = export_state()
+	saved["saved_at"] = Time.get_unix_time_from_system()
+	var text: String = JSON.stringify(saved)
+	var parsed: Variant = JSON.parse_string(text)
+	if not parsed is Dictionary or not _validate_state(parsed):
+		_save_refused = true
+		return _save_fail("the village state did not pass its own check; original and backup retained.")
 	var primary_exists: bool = FileAccess.file_exists(path)
 	if primary_exists:
 		var source := FileAccess.open(path, FileAccess.READ)
 		if source == null:
 			return _save_fail("existing save could not be opened; original and backup retained.", FileAccess.get_open_error())
-		var existing: Variant = JSON.parse_string(source.get_as_text())
+		var existing_text: String = source.get_as_text()
 		source.close()
-		if not (existing is Dictionary and _validate_state(existing)):
-			# Never overwrite a save we cannot read: the file and the good backup stay put.
-			_save_refused = true
-			return _save_fail("existing save unreadable; original and backup retained.")
-	# Write beside the old save, then read the copy back and check it the same way a load does.
+		# The save this village wrote last was checked before it was written; anything else (a save
+		# from before this session, or one changed on disk since) is read and checked first.
+		if existing_text.length() != _saved_length or existing_text.hash() != _saved_hash:
+			var existing: Variant = JSON.parse_string(existing_text)
+			if not (existing is Dictionary and _validate_state(existing)):
+				# Never overwrite a save we cannot read: the file and the good backup stay put.
+				_save_refused = true
+				return _save_fail("existing save unreadable; original and backup retained.")
+	# Write beside the old save, then read the copy back and make sure it is exactly what was checked.
 	var file := FileAccess.open(tmp_path, FileAccess.WRITE)
 	if file == null:
 		return _save_fail("could not open storage.", FileAccess.get_open_error())
-	file.store_string(JSON.stringify(export_state()))
+	file.store_string(text)
 	file.flush()
 	var write_error: Error = file.get_error()
 	file.close()
@@ -2569,12 +3268,11 @@ func _save_once(path: String) -> bool:
 	var written_file := FileAccess.open(tmp_path, FileAccess.READ)
 	if written_file == null:
 		return _save_fail("could not verify the written copy.", FileAccess.get_open_error())
-	var written: Variant = JSON.parse_string(written_file.get_as_text())
+	var written: String = written_file.get_as_text()
 	written_file.close()
-	if not written is Dictionary or not _validate_state(written):
+	if written != text:
 		DirAccess.remove_absolute(tmp_path)
-		_save_refused = true
-		return _save_fail("the village state did not pass its own check; original and backup retained.")
+		return _save_fail("could not verify the written copy; original and backup retained.")
 	if primary_exists:
 		if FileAccess.file_exists(bak_path):
 			var clear_error: Error = DirAccess.remove_absolute(bak_path)
@@ -2590,6 +3288,8 @@ func _save_once(path: String) -> bool:
 		if primary_exists and not FileAccess.file_exists(path) and FileAccess.file_exists(bak_path):
 			DirAccess.rename_absolute(bak_path, path)
 		return _save_fail("previous save retained.", commit_error)
+	_saved_length = text.length()
+	_saved_hash = text.hash()
 	return true
 
 

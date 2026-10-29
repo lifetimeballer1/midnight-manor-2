@@ -12,6 +12,7 @@ var music = ManorScore.new()
 var details = Details.new()
 const NAVY := Color("152334")
 const GOLD := Color("d4b275")
+const WORLD_TEXT_OUTLINE := Color(0.09, 0.06, 0.04, 0.9)   # warm dark rim for floating world text
 const PAPER := Color("f2e7cc")
 const TILE: float = 2.0
 const MAP_ORIGIN := Vector3(-20, 0, -16)
@@ -30,7 +31,7 @@ const POP_CAP: int = 6                 # live collect pops; the oldest is droppe
 const MODEL_LIMIT: int = 160
 # Cousin models: the two types without exports reuse the closest delivered
 # Mixar look. Every other type now resolves to its own exported tiers.
-const MODEL_COUSINS := {"stone_quarry": "mine", "bathhouse": "cottage", "stone-road": "wall", "city-wall": "stonewall", "forge-quarter": "forge", "grand-watchtower": "tower", "manner-citadel": "manor_hall", "grand-granary": "storehouse", "manor-gardens": "grove", "market-square": "market", "monument": "oathstone"}
+const MODEL_COUSINS := {"stone_quarry": "mine", "bathhouse": "cottage", "stone-road": "wall", "city-wall": "stonewall", "forge-quarter": "forge", "grand-watchtower": "tower", "manner-citadel": "manor_hall", "grand-granary": "storehouse", "manor-gardens": "grove", "market-square": "market", "monument": "oathstone", "fire-trap": "fire_trap"}
 const ENEMY_MODELS := {"raider": "warrior", "scout": "ranger", "archer": "archer", "breaker": "halberdier", "ram": "sapper", "bombard": "sapper"}
 # Resource glyphs stay monochrome brass so the numbers stay the loudest thing.
 const RESOURCE_GLYPHS: Dictionary = {"wood": "W", "food": "F", "gold": "G", "lumber": "L", "stone": "S"}
@@ -102,7 +103,9 @@ var selected_unit: int = -1
 var build_type: String = ""
 var moving_id: int = -1
 var paving: bool = false
-var preview_tile := Vector2i(-1, -1)
+# Bought west and north reaches have negative coordinates, so "no tile" needs a value no reach reaches.
+const NO_TILE := Vector2i(-100000, -100000)
+var preview_tile := NO_TILE
 var ghost_signature: String = ""
 var view_revision: int = -1
 var tick_accumulator: float = 0.0
@@ -131,7 +134,7 @@ var pinch_active: bool = false
 var pinch_angle: float = 0.0
 var pinch_yaw: float = 0.0
 var touch_mode: bool = false
-var placement_anchor := Vector2i(-1, -1)
+var placement_anchor := NO_TILE
 var placement_row: Array[Vector2i] = []
 var actor_accumulator: float = 0.0
 var detail_accumulator: float = 0.0
@@ -181,6 +184,18 @@ var left_dock := PanelContainer.new()
 var left_content := VBoxContainer.new()
 var resource_stack := PanelContainer.new()
 var resource_rows: Dictionary = {}
+var income_labels: Dictionary = {}        # resource -> the "+42/min" label beside its amount
+var income_now: Dictionary = {}           # resource -> {source: amount a minute}, from _income_per_minute()
+var income_shown: Dictionary = {}         # resource -> whole amount a minute last shown, to spot a rise
+var income_clock_msec: int = -100000
+const INCOME_REFRESH_MSEC: int = 1000
+const INCOME_COLOR := Color("a8c98a")
+const INCOME_RISE_COLOR := Color("d8f5b0")
+var offline_card: PanelContainer = null   # "While you were away" card, built on first use
+var offline_veil: ColorRect = null
+var offline_earned: Dictionary = {}       # resource -> amount waiting on the card's Collect
+var offline_seconds: float = 0.0
+var focus_lost_unix: float = 0.0
 var resource_bars: Dictionary = {}
 var research_buttons: Dictionary = {}
 var research_sheet_buttons: Dictionary = {}
@@ -1406,9 +1421,11 @@ func _rebuild_buildings() -> void:
 			model.rotation.z = deg_to_rad(lean_rng.randf_range(-2.5, 2.5))
 		var label := Label3D.new()
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.font = UI.font("strong")
 		label.font_size = 30
 		label.pixel_size = 0.012
-		label.outline_size = 7
+		label.outline_size = 8
+		label.outline_modulate = WORLD_TEXT_OUTLINE
 		label.modulate = GOLD
 		label.position.y = float(dims[1]) * factor + 0.5
 		root_node.add_child(label)
@@ -1682,7 +1699,7 @@ func _update_actors(delta: float) -> void:
 		if b["hp"] <= 0:
 			label_text = "RUINS / REPAIR"
 		elif b["remaining"] > 0:
-			label_text = "Building · %.0fs" % ceilf(b["remaining"])
+			label_text = _site_label(b)
 		elif b["reserve"] >= 150 or int(b["id"]) == selected_building:
 			var resource: String = str(sim.building_specs[b["type"]].get("production", ""))
 			label_text = ("+%d %s" % [int(b["reserve"]), resource.capitalize()]) if not resource.is_empty() and resource != "<null>" else ""
@@ -1690,6 +1707,21 @@ func _update_actors(delta: float) -> void:
 			label.text = label_text
 			view["label_text"] = label_text
 	_update_marker()
+
+
+# A construction's floating label. Zone-grown sites show what they wait for: missing materials,
+# builders, or how far along the work is.
+func _site_label(b: Dictionary) -> String:
+	if not sim.materials.has_bill(b):
+		return "Building · %.0fs" % ceilf(b["remaining"])
+	var short: String = sim.materials.shortage(sim, b)
+	if not short.is_empty():
+		return "Needs %s" % short
+	var total: float = maxf(0.001, float(b.get("work", b["remaining"])))
+	var done: int = clampi(roundi(100.0 * (1.0 - float(b["remaining"]) / total)), 0, 99)
+	if sim.materials.hands(sim, b) <= 0:
+		return ("Fetching materials · %d%%" if not sim.materials.needed(b).is_empty() else "Waiting for builders · %d%%") % done
+	return "Building · %d%%" % done
 
 
 func _setup_marker() -> void:
@@ -2018,6 +2050,7 @@ func _ui() -> void:
 		var row := ui.resource_row(stack, "", RESOURCE_GLYPHS.get(resource, "*"), resource)
 		resource_rows[resource] = row["value"]
 		resource_bars[resource] = row["bar"]
+		income_labels[resource] = _income_label(row["value"].get_parent(), resource)
 	root_control.add_child(bottom)
 	bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	bottom.offset_left = 16
@@ -2207,7 +2240,7 @@ func _ui() -> void:
 	welcome_help = ui.body("", intro)
 	_refresh_input_copy()
 	ui.body("Your current Chronicle objective stays visible while you play. Builds never spend resources until you confirm.", intro, 12)
-	ui.body("Saved on this device. No progress while closed.", intro, 12)
+	ui.body("Saved on this device. The manor keeps earning for up to 8 hours while you are away.", intro, 12)
 	var enter_button := ui.gold_button("Continue Village" if sim.elapsed > 0.0 else "Enter Village", _enter_village, intro, 48.0)
 	enter_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mentor_button = ui.command_button("Mentor: On" if mentor_enabled else "Mentor: Off", _toggle_mentor, intro)
@@ -2692,7 +2725,7 @@ func _open_panel(which: String) -> void:
 			_label("%d people · %d beds\nHire a role, then select a villager to assign work or train." % [sim.units.size(), sim.beds()], side_content)
 			for role in sim.playable_roles():
 				var reason: String = sim.recruit_reason(role)
-				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + "  ·  " + _cost_text(sim.troop_specs[role]["recruitCost"]), _hire.bind(role), side_content)
+				var button: Button = _button("Hire " + str(sim.troop_specs[role]["name"]) + "  ·  " + _cost_text(sim.troop_specs[role]["recruitCost"]) + _gear_text(role), _hire.bind(role), side_content)
 				button.disabled = not reason.is_empty()
 				button.tooltip_text = reason
 				hire_buttons[role] = button
@@ -2770,6 +2803,12 @@ func _build_raid_report() -> void:
 	ui.gold_button("Return to Village", _close_panel, side_content)
 
 
+# The forged gear a veteran role needs, on its own line so the people sheet stays narrow.
+func _gear_text(role: String) -> String:
+	var gear: Dictionary = sim.gear.config.get("hire", {}).get(role, {})
+	return "" if gear.is_empty() else "\n+ " + _cost_text(gear)
+
+
 func _cost_text(cost: Dictionary, multiline: bool = false) -> String:
 	var pieces := PackedStringArray()
 	for resource in cost:
@@ -2834,12 +2873,13 @@ func _build_missions() -> void:
 		# Quest-called structures (grove, chapel, watchfire…) have no
 		# permanent shop card, so the mission itself offers placement.
 		if str(objective.get("kind", "")) in ["build", "construct_great_work"] and value < target:
-			var need: String = str(objective.get("type", ""))
+			var need: String = _missing_type(objective["types"])
 			if objective["kind"] == "construct_great_work": need = str(sim.chronicle.great_work_data(str(objective.get("id", ""))).get("building", ""))
 			var gate: String = sim.unlock_reason(need)
 			var raise_button := ui.command_button("Raise", _choose_build.bind(need), row, 44.0)
 			raise_button.disabled = not gate.is_empty()
-			raise_button.tooltip_text = gate if not gate.is_empty() else "Place %s" % str(sim.building_specs.get(need, {}).get("name", need))
+			var need_name: String = str(sim.building_specs.get(need, {}).get("name", need))
+			raise_button.tooltip_text = gate if not gate.is_empty() else ("Zone ground for %s" % need_name if _zone_grown(need) else "Place %s" % need_name)
 			mission_rows.back()["action"] = raise_button
 		elif objective["kind"] == "recruit" and not objective["types"].is_empty() and value < target:
 			var role: String = str(objective["types"][0])
@@ -3290,6 +3330,11 @@ func _build_catalog() -> void:
 		build_cards[type_name] = card
 
 
+# Extra rows on a building's card from later layers (village_zoning.gd adds farm estates).
+func _inspector_extra(_b: Dictionary) -> void:
+	pass
+
+
 func _begin_research(id: String) -> void:
 	sim.living.research(sim, id)
 	if panel == "tech":
@@ -3327,6 +3372,14 @@ func _build_inspector() -> void:
 	var produced: Variant = sim.building_specs[b["type"]].get("production")
 	ui.body(str(sim.building_specs[b["type"]].get("name", "")) + (" · no output" if produced == null else " · %s" % str(produced).capitalize()), ocol, 13)
 	inspect_reserve = ui.bar(0, 1, ocol)
+	if produced != null and sim.crew_of(b) == 0 and float(b["remaining"]) <= 0.0:
+		ui.body("No workers yet · a crew adds 25% output", ocol, 12)
+	var perk: String = sim.perks.describe(sim, b)
+	if not perk.is_empty():
+		ui.body(perk, ocol, 12)
+	var gear_line: String = sim.gear.describe(sim, b)
+	if not gear_line.is_empty():
+		ui.body(gear_line, ocol, 12)
 	var crew := ui.inset_row(side_content)
 	var crew_row := HBoxContainer.new()
 	crew_row.add_theme_constant_override("separation", 6)
@@ -3338,7 +3391,8 @@ func _build_inspector() -> void:
 		if workplace != "" and str(u["type"]) == workplace and int(u["workplace"]) == selected_building:
 			posted += 1
 			ui.portrait_medallion(str(u["type"]), crew_row, 26.0)
-	ui.crest("%d/2" % posted, crew_row, "ready" if posted > 0 else "iron", 12)
+	ui.crest("%d/%d" % [posted, sim.crew_cap(b)], crew_row, "ready" if posted > 0 else "iron", 12)
+	_inspector_extra(b)
 	var act_row := HBoxContainer.new()
 	act_row.add_theme_constant_override("separation", 8)
 	side_content.add_child(act_row)
@@ -3464,7 +3518,7 @@ func _close_panel() -> void:
 func _pause_panel() -> void:
 	_label("QUIET HOURS", side_content, true)
 	ui.rule(side_content)
-	_label("Simulation is paused. Your village saves locally; closed time does not generate resources.", side_content)
+	_label("Simulation is paused. Your village saves locally. While the game is closed, workplaces and the town keep earning for up to 8 hours; nothing else happens.", side_content)
 	var resume_button := ui.gold_button("Resume", _close_panel, side_content, 44.0)
 	resume_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var save_button := ui.command_button("Save now", _save_now, side_content, 40.0)
@@ -3503,6 +3557,8 @@ func _enter_village() -> void:
 	_refresh_hud()
 	if not sim.frontier.active.is_empty() and not is_instance_valid(battle_view):
 		_show_frontier_battle()
+	_offer_offline(sim.away_seconds)
+	sim.away_seconds = 0.0
 
 
 func _mentor_advice() -> String:
@@ -3675,8 +3731,8 @@ func _choose_build(type_name: String) -> void:
 	paving = false
 	selected_building = -1
 	selected_unit = -1
-	preview_tile = Vector2i(-1, -1)
-	placement_anchor = Vector2i(-1, -1)
+	preview_tile = NO_TILE
+	placement_anchor = NO_TILE
 	placement_row.clear()
 	more_sheet.hide()
 	_close_panel()
@@ -3698,8 +3754,8 @@ func _toggle_pave() -> void:
 	moving_id = -1
 	selected_building = -1
 	selected_unit = -1
-	preview_tile = Vector2i(-1, -1)
-	placement_anchor = Vector2i(-1, -1)
+	preview_tile = NO_TILE
+	placement_anchor = NO_TILE
 	placement_row.clear()
 	more_sheet.hide()
 	_close_panel()
@@ -3720,7 +3776,7 @@ func _is_wall_row_mode() -> bool:
 
 func _wall_row_tiles(a: Vector2i, b: Vector2i) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
-	if a.x < 0 or b.x < 0:
+	if a == NO_TILE or b == NO_TILE:
 		return out
 	var dx: int = b.x - a.x
 	var dy: int = b.y - a.y
@@ -3746,13 +3802,13 @@ func _placement_tiles() -> Array[Vector2i]:
 	if _is_wall_row_mode() and not placement_row.is_empty():
 		return placement_row
 	var out: Array[Vector2i] = []
-	if preview_tile.x >= 0:
+	if preview_tile != NO_TILE:
 		out.append(preview_tile)
 	return out
 
 
 func _placement_reason() -> String:
-	if preview_tile.x < 0:
+	if preview_tile == NO_TILE:
 		return "%s a tile on the map" % _input_verb()
 	if paving:
 		return sim.living.pave_reason(sim, preview_tile)
@@ -3787,7 +3843,7 @@ func _preview() -> void:
 			detail = _cost_text(_cost_times(sim.building_cost(build_type), row_count))
 		else:
 			detail = _cost_text(sim.building_cost(build_type))
-	var coord: String = "tile %d, %d" % [preview_tile.x, preview_tile.y] if preview_tile.x >= 0 else "choose a tile"
+	var coord: String = "tile %d, %d" % [preview_tile.x, preview_tile.y] if preview_tile != NO_TILE else "choose a tile"
 	placement_label.text = "%s  ·  %s\n%s" % [headline, coord, reason if not reason.is_empty() else detail]
 	var signature: String = "%s/%s/%s/%s" % ["pave" if paving else build_type, str(tiles), preview_tile, reason]
 	if signature == ghost_signature:
@@ -3796,7 +3852,7 @@ func _preview() -> void:
 	for child in ghost_layer.get_children():
 		ghost_layer.remove_child(child)
 		child.queue_free()
-	if preview_tile.x < 0:
+	if preview_tile == NO_TILE:
 		return
 	if _is_wall_row_mode() and row_count > 1:
 		for tile: Vector2i in tiles:
@@ -3822,8 +3878,8 @@ func _confirm_placement() -> void:
 		success = sim.build(build_type, preview_tile.x, preview_tile.y)
 	if success:
 		if build_type in ["wall", "stonewall", "gate"] and moving_id < 0:
-			preview_tile = Vector2i(-1, -1)
-			placement_anchor = Vector2i(-1, -1)
+			preview_tile = NO_TILE
+			placement_anchor = NO_TILE
 			placement_row.clear()
 			ghost_signature = ""
 			confirm_button.disabled = true
@@ -3840,8 +3896,8 @@ func _cancel_placement() -> void:
 	build_type = ""
 	paving = false
 	moving_id = -1
-	preview_tile = Vector2i(-1, -1)
-	placement_anchor = Vector2i(-1, -1)
+	preview_tile = NO_TILE
+	placement_anchor = NO_TILE
 	placement_row.clear()
 	ghost_signature = ""
 	confirm_button.text = "Confirm Build"
@@ -4035,6 +4091,14 @@ func _inspect_subject(type_name: String) -> void:
 	_choose_build(type_name)
 
 
+# The first type a build objective still lacks (a multi-trade objective names several).
+func _missing_type(types: Array) -> String:
+	for type_name: Variant in types:
+		if sim._buildings_of([str(type_name)]) == 0:
+			return str(type_name)
+	return str(types[0]) if not types.is_empty() else ""
+
+
 func _deliver_objective(objective: Dictionary, contract_id: String = "") -> void:
 	var resource: String = objective["resource"]
 	var progress: float = sim._objective_value(objective) if contract_id.is_empty() else float(sim.chronicle.board_contract(contract_id).get("progress", 0.0))
@@ -4131,6 +4195,234 @@ func _orbit_right() -> void:
 	_orbit_step(1.0)
 
 
+# INCOME A MINUTE: a small "+42/min" beside each resource on the top bar. It is today's pace
+# (workplaces, mills and the town's lots), not what was banked, so it rises the moment a new
+# workplace opens and drops when one stalls full. Tap the resource (or hover the number) to see
+# where it comes from.
+func _income_label(line: Node, resource: String) -> Label:
+	var made := Label.new()
+	made.add_theme_font_override("font", UI.font("strong"))
+	made.add_theme_font_size_override("font_size", 12)
+	made.add_theme_color_override("font_color", INCOME_COLOR)
+	made.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	line.add_child(made)
+	# The whole resource row is the tap target, so a thumb finds it on a phone.
+	var row: Control = line.get_parent() as Control
+	if row != null:
+		row.mouse_filter = Control.MOUSE_FILTER_STOP
+		row.gui_input.connect(_on_income_input.bind(resource))
+	return made
+
+
+func _income_per_minute() -> Dictionary:
+	var income: Dictionary = sim.income_per_minute()
+	var town_income: Dictionary = _town_income_per_minute()
+	for resource: String in town_income:
+		var sources: Dictionary = income.get(resource, {})
+		sources["Town lots"] = float(sources.get("Town lots", 0.0)) + float(town_income[resource])
+		income[resource] = sources
+	return income
+
+
+# What the town outside the walls sends a minute, per resource. The zoning layer fills it in.
+func _town_income_per_minute() -> Dictionary:
+	return {}
+
+
+func _income_total(resource: String) -> float:
+	var total: float = 0.0
+	var sources: Dictionary = income_now.get(resource, {})
+	for source: String in sources:
+		total += float(sources[source])
+	return total
+
+
+static func _short_number(value: float) -> String:
+	if value >= 1000000.0:
+		return "%.1fM" % (value / 1000000.0)
+	if value >= 10000.0:
+		return "%dK" % int(value / 1000.0)
+	if value >= 1000.0:
+		return "%.1fK" % (value / 1000.0)
+	return "%d" % int(round(value))
+
+
+func _income_breakdown(resource: String) -> String:
+	var total: float = _income_total(resource)
+	if total < 0.5:
+		return "%s: nothing coming in right now. Open a workplace, collect from full ones, or zone more land." % resource.capitalize()
+	var parts: Array[String] = []
+	var sources: Dictionary = income_now.get(resource, {})
+	for source: String in ["Workplaces", "Mills", "Town lots"]:
+		if float(sources.get(source, 0.0)) >= 0.5:
+			parts.append("%s +%s" % [source.to_lower(), _short_number(float(sources[source]))])
+	return "%s +%s a minute: %s." % [resource.capitalize(), _short_number(total), ", ".join(PackedStringArray(parts))]
+
+
+func _on_income_input(event: InputEvent, resource: String) -> void:
+	var tapped: bool = (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) \
+		or (event is InputEventScreenTouch and event.pressed)
+	if tapped:
+		sim.notice = _income_breakdown(resource)
+		get_viewport().set_input_as_handled()
+		_refresh_hud()
+
+
+func _refresh_income() -> void:
+	var now: int = Time.get_ticks_msec()
+	if now - income_clock_msec >= INCOME_REFRESH_MSEC:
+		income_clock_msec = now
+		income_now = _income_per_minute()
+	var small: bool = _is_small()
+	for resource: String in income_labels:
+		var label: Label = income_labels[resource]
+		if not is_instance_valid(label):
+			continue
+		var total: int = int(round(_income_total(resource)))
+		label.visible = total > 0
+		label.text = ("+%s" if small else "+%s/min") % _short_number(float(total))
+		label.tooltip_text = _income_breakdown(resource)
+		var before: int = int(income_shown.get(resource, -1))
+		income_shown[resource] = total
+		if before >= 0 and total > before and started:
+			# The pace went up: the number flashes bright and settles back.
+			label.add_theme_color_override("font_color", INCOME_RISE_COLOR)
+			label.pivot_offset = label.size * 0.5
+			label.scale = Vector2.ONE * 1.25
+			var pulse := create_tween()
+			pulse.tween_property(label, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			pulse.parallel().tween_method(_tint_income.bind(label), INCOME_RISE_COLOR, INCOME_COLOR, 0.8)
+
+
+func _tint_income(tint: Color, label: Label) -> void:
+	if is_instance_valid(label):
+		label.add_theme_color_override("font_color", tint)
+
+
+# OFFLINE EARNINGS: coming back after at least a few minutes away (closed, or in the
+# background) shows what the manor earned meanwhile, banked when the player taps Collect.
+# The village waits, paused, while the card is open.
+func _offer_offline(seconds: float) -> void:
+	if save_blocked or not is_finite(seconds) or seconds < Sim.OFFLINE_MIN_SECONDS:
+		return
+	var earned: Dictionary = sim.offline_earnings(seconds, _town_income_per_minute())
+	if earned.is_empty():
+		return
+	for resource: String in earned:
+		offline_earned[resource] = float(offline_earned.get(resource, 0.0)) + float(earned[resource])
+	offline_seconds += seconds
+	_show_offline_card()
+
+
+func _offline_open() -> bool:
+	return offline_card != null and is_instance_valid(offline_card) and offline_card.visible
+
+
+static func _away_text(seconds: float) -> String:
+	var minutes: int = int(seconds / 60.0)
+	if minutes >= 60 * 24:
+		var days: int = minutes / (60 * 24)
+		return "%d day%s" % [days, "" if days == 1 else "s"]
+	if minutes >= 60:
+		return "%d h %d min" % [minutes / 60, minutes % 60] if minutes % 60 > 0 else "%d h" % (minutes / 60)
+	return "%d min" % maxi(1, minutes)
+
+
+func _show_offline_card() -> void:
+	if offline_card == null or not is_instance_valid(offline_card):
+		offline_veil = ui.menu_backdrop(hud_root)
+		offline_card = PanelContainer.new()
+		offline_card.add_theme_stylebox_override("panel", ui.sheet_box())
+		hud_root.add_child(offline_card)
+		get_viewport().size_changed.connect(_fit_offline)
+	for child in offline_card.get_children():
+		child.queue_free()
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 8)
+	offline_card.add_child(column)
+	ui.kicker("WHILE YOU WERE AWAY", column)
+	ui.heading("The manor kept working", column)
+	ui.title_rule(column)
+	var capped: bool = offline_seconds > Sim.OFFLINE_CAP_SECONDS
+	ui.body("You were gone %s.%s" % [_away_text(offline_seconds),
+		" The workplaces stop after 8 hours, so 8 hours were counted." if capped else ""], column)
+	var full: Array[String] = []
+	for resource: String in ["wood", "food", "gold", "lumber", "stone"]:
+		if not offline_earned.has(resource):
+			continue
+		var amount: float = float(offline_earned[resource])
+		var room: float = maxf(0.0, sim.storage_cap(resource) - float(sim.resources.get(resource, 0.0)))
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		column.add_child(row)
+		row.add_child(UI.ResourceIcon.make(resource, 26.0))
+		var line := Label.new()
+		line.text = "+%s %s" % [_short_number(minf(amount, room)), resource.capitalize()]
+		line.add_theme_font_override("font", UI.font("strong"))
+		line.add_theme_font_size_override("font_size", 18)
+		line.add_theme_color_override("font_color", INCOME_COLOR if room >= 1.0 else UI.MUTED)
+		row.add_child(line)
+		if room < amount:
+			full.append(resource.capitalize())
+	if not full.is_empty():
+		ui.body("Stores full: %s. Build more storage to keep more next time." % ", ".join(PackedStringArray(full)), column, 12)
+	var collect := ui.gold_button("Collect", _collect_offline, column, 48.0)
+	collect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	offline_card.show()
+	offline_veil.show()
+	_fit_offline()
+	_fit_offline.call_deferred()   # wrapped lines settle their height after the first layout
+	_refresh_hud()
+
+
+func _fit_offline() -> void:
+	if not _offline_open():
+		return
+	var size: Vector2 = get_viewport().get_visible_rect().size
+	var width: float = minf(420.0, size.x - 36.0)
+	var pad: float = offline_card.get_theme_stylebox("panel").get_minimum_size().x if offline_card.has_theme_stylebox("panel") else 40.0
+	for child in offline_card.get_children():
+		if child is Control and not child.is_queued_for_deletion():
+			(child as Control).custom_minimum_size.x = width - pad
+			(child as Control).size = Vector2(width - pad, 0.0)
+	offline_card.size = Vector2(width, 0.0)
+	offline_card.size = Vector2(width, offline_card.get_combined_minimum_size().y)
+	offline_card.position = ((size - offline_card.size) * 0.5).floor()
+
+
+func _collect_offline() -> void:
+	var banked: Dictionary = sim.bank_offline(offline_earned)
+	offline_earned.clear()
+	offline_seconds = 0.0
+	if is_instance_valid(offline_card):
+		offline_card.hide()
+	if is_instance_valid(offline_veil):
+		offline_veil.hide()
+	if banked.is_empty():
+		sim.notice = "Welcome back. The stores were already full."
+		_refresh_hud()
+		return
+	var parts: Array[String] = []
+	var batch: Array[Dictionary] = []
+	var from: Vector2 = Vector2.ZERO
+	for b: Dictionary in sim.buildings:
+		if str(b["type"]) == "hall":
+			from = sim.center(b)
+			break
+	for resource: String in banked:
+		parts.append("+%s %s" % [_short_number(float(banked[resource])), resource.capitalize()])
+		batch.append({"kind": "collect", "resource": resource, "amount": int(banked[resource]), "x": from.x, "y": from.y})
+	sim.notice = "Welcome back: %s." % ", ".join(PackedStringArray(parts))
+	# The collect flight and chime from the juice layer, when it is there.
+	if has_method("_launch_feedback"):
+		call("_launch_feedback", batch)
+	if has_method("_chime"):
+		call("_chime", "collect")
+	if not no_save and not save_blocked:
+		sim.save_game(save_path)
+	_refresh_hud()
+
+
 func _refresh_hud() -> void:
 	_pump_banner()
 	expansion.refresh(sim, Sim.EXPANSION_PLOTS)
@@ -4155,6 +4447,7 @@ func _refresh_hud() -> void:
 		gauge.max_value = maxf(1.0, float(cap))
 		gauge.value = float(held)
 		resource_rows[resource].add_theme_color_override("font_color", UI.READY if held >= cap else UI.PAPER)
+	_refresh_income()
 	# Collect stays compact but glows amber when there is something to bank.
 	var bankable: bool = false
 	for b: Dictionary in sim.buildings:
@@ -4309,7 +4602,7 @@ func _refresh_progression_panels() -> void:
 			view["action"].disabled = not ready
 			ui.paint_command(view["action"], "gold" if ready else "normal")
 	if panel == "needs" and is_instance_valid(needs_summary):
-		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% · hunger %d%%" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger)]
+		needs_summary.text = sim.needs.summary(sim) + "\nProductivity %d%% · hunger %d%%\n%s" % [int(sim.needs.production_multiplier() * 100.0), int(sim.needs.hunger), sim.jobs_summary()]
 	if panel == "mentor" and is_instance_valid(mentor_hint):
 		mentor_hint.text = _mentor_advice()
 	if panel == "quests":
@@ -4512,7 +4805,7 @@ func _play_sfx(kind: String) -> void:
 func _poof(tile: Vector2i, color: Color) -> void:
 	# Juice for raise/upgrade/repair: a dust box that swells and clears.
 	# Capped with the other transient effects; decoration only.
-	if effect_nodes.size() + burst_pool.active_count() >= EFFECT_LIMIT or tile.x < 0:
+	if effect_nodes.size() + burst_pool.active_count() >= EFFECT_LIMIT or tile == NO_TILE:
 		return
 	var puff: MeshInstance3D = _box(Vector3(TILE * 0.9, 0.5, TILE * 0.9), world_position(Vector2(tile) + Vector2.ONE * 0.5, 0.35), color)
 	puff.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -4561,10 +4854,11 @@ func _spawn_collect_pop(event: Dictionary) -> void:
 	label.text = "+%d %s" % [amount, resource.capitalize()]
 	label.modulate = GOLD
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.font = UI.font("strong")
 	label.font_size = 42
 	label.pixel_size = 0.014
 	label.outline_size = 10
-	label.outline_modulate = Color(0.09, 0.06, 0.03, 0.85)
+	label.outline_modulate = WORLD_TEXT_OUTLINE
 	label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 3.5 + float(stack) * step)
 	label.scale = Vector3.ONE * 0.55
 	add_child(label)
@@ -4606,8 +4900,12 @@ func _consume_events() -> void:
 				hit_label.text = "-%d" % int(event.get("amount", 0))
 				hit_label.modulate = Color("ff8b78") if bool(event.get("friendly", false)) else Color("f6d58a")
 				hit_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				hit_label.font = UI.font("strong")
 				hit_label.font_size = 28
 				hit_label.pixel_size = 0.012
+				hit_label.outline_size = 8
+				hit_label.outline_modulate = WORLD_TEXT_OUTLINE
+				hit_label.no_depth_test = true
 				hit_label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 2.0)
 				add_child(hit_label)
 				effect_nodes.append(hit_label)
@@ -4623,8 +4921,12 @@ func _consume_events() -> void:
 			down_label.text = "DOWN"
 			down_label.modulate = Color("ff8b78") if bool(event.get("friendly", false)) else Color("f6d58a")
 			down_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			down_label.font = UI.font("caps")
 			down_label.font_size = 34
 			down_label.pixel_size = 0.012
+			down_label.outline_size = 9
+			down_label.outline_modulate = WORLD_TEXT_OUTLINE
+			down_label.no_depth_test = true
 			down_label.position = world_position(Vector2(float(event["x"]), float(event["y"])), 2.0)
 			add_child(down_label)
 			effect_nodes.append(down_label)
@@ -4704,7 +5006,7 @@ func _process(delta: float) -> void:
 		sim.paused = true
 		return
 	_update_weather(delta)
-	sim.paused = not started or paused or panel == "wall_row_upgrade" or (not focused and capture_path.is_empty())
+	sim.paused = not started or paused or panel == "wall_row_upgrade" or _offline_open() or (not focused and capture_path.is_empty())
 	_pause_effects(sim.paused)
 	# The sky runs itself: an 8-minute cycle (long night, short day) with
 	# dawn/dusk blends. No in-game control changes it any more.
@@ -4998,7 +5300,7 @@ func _drag_map(pointer: Vector2) -> void:
 		var tile := Vector2i(floori(point.x), floori(point.y))
 		preview_tile = tile
 		if _is_wall_row_mode():
-			if placement_anchor.x < 0:
+			if placement_anchor == NO_TILE:
 				var start_point: Vector2 = pick_ground(press_point)
 				placement_anchor = Vector2i(floori(start_point.x), floori(start_point.y))
 			placement_row = _wall_row_tiles(placement_anchor, tile)
@@ -5073,8 +5375,13 @@ func _notification(what: int) -> void:
 		pinch_has_mid = false
 		if started and not no_save and not save_blocked:
 			sim.save_game(save_path)
+		focus_lost_unix = Time.get_unix_time_from_system()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		focused = true
+		# Time in the background counts as time away: the village was paused meanwhile.
+		if started and focus_lost_unix > 0.0:
+			_offer_offline(Time.get_unix_time_from_system() - focus_lost_unix)
+		focus_lost_unix = 0.0
 	elif what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if started and not no_save and not save_blocked:
 			sim.save_game(save_path)

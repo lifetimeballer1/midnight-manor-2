@@ -14,6 +14,8 @@ const DEFAULTS: Dictionary = {
 	"blood_moon_enemy_multiplier": 1.25,
 	"blood_moon_loot_multiplier": 2.0,
 	"blood_moon_tint": [0.62, 0.1, 0.1],
+	"harvest_swing": 0.2,
+	"harvest_types": ["farm", "pasture", "grove", "pond"],
 }
 
 static var _config: Dictionary = {}
@@ -76,3 +78,27 @@ static func loot_multiplier(phase: int) -> float:
 static func blood_tint() -> Color:
 	var rgb: Array = config()["blood_moon_tint"]
 	return Color(float(rgb[0]), float(rgb[1]), float(rgb[2]))
+
+
+# How bright the moon is, 0 at the New Moon and 1 at the Full Moon.
+static func brightness(phase: int) -> float:
+	var full: int = int(config()["blood_moon_phase"])
+	var away: int = absi(clamp_phase(phase) - full)
+	away = mini(away, PHASE_COUNT - away)
+	return 1.0 - float(away) / float(PHASE_COUNT / 2)
+
+
+# Crops grow with the moon: harvest_swing more at the Full Moon, that much less at the New Moon,
+# no change at the quarters. Only harvest_types are touched.
+static func harvest_multiplier(phase: int, type_name: String) -> float:
+	if type_name not in (config()["harvest_types"] as Array):
+		return 1.0
+	return 1.0 + float(config()["harvest_swing"]) * (brightness(phase) * 2.0 - 1.0)
+
+
+# A short line for the farm card, or "" at the quarters.
+static func harvest_text(phase: int) -> String:
+	var percent: int = roundi(float(config()["harvest_swing"]) * (brightness(phase) * 2.0 - 1.0) * 100.0)
+	if percent == 0:
+		return ""
+	return "%s: %+d%% harvest" % [phase_name(phase), percent]

@@ -163,6 +163,7 @@ func attach(game, b: Dictionary, view: Dictionary) -> void:
 		box(scaffold, Vector3(reach * 2 + 0.1, 0.12, 0.12), Vector3(0, 1.8, z), Color("6b5b3f"))
 	var bar: MeshInstance3D = box(scaffold, Vector3(1.8, 0.12, 0.16), Vector3(0, 2.55, 0), Color("dbb864"))
 	view["scaffold"] = scaffold
+	view["supply_reach"] = reach
 	view["progress"] = bar
 	view["previous_hp"] = float(b["hp"])
 	view["danger_until"] = 0.0
@@ -197,8 +198,11 @@ func setup_warnings(game) -> void:
 	var points: Array[Vector2] = [Vector2(0.8, 8), Vector2(19.2, 8), Vector2(10, 0.8), Vector2(10, 15.2)]
 	for point in points:
 		var label := Label3D.new()
+		label.font = VillageUI.font("strong")
 		label.font_size = 38
 		label.pixel_size = 0.016
+		label.outline_size = 10
+		label.outline_modulate = Color(0.09, 0.06, 0.04, 0.9)
 		label.modulate = Color("ffaf77")
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.position = game.world_position(point, 2.2)
@@ -225,6 +229,10 @@ func update(game, dt: float) -> void:
 		var view: Dictionary = game.building_views.get(int(b["id"]), {})
 		if view.is_empty(): continue
 		view["scaffold"].visible = b["remaining"] > 0 and b["hp"] > 0
+		if view["scaffold"].visible and b.has("bill"):
+			if not view.has("supplies"):
+				view["supplies"] = _supplies(view["scaffold"], float(view.get("supply_reach", 1.0)))
+			_show_supplies(view["supplies"], b)
 		if view.has("rings"):
 			(view["rings"] as Node3D).visible = b["hp"] > 0 and b["remaining"] <= 0
 		if view.has("windows"):
@@ -262,3 +270,50 @@ func update(game, dt: float) -> void:
 		if view.has("smoke"):
 			var smoke: CPUParticles3D = view["smoke"]
 			smoke.emitting = b["hp"] > 0 and b["remaining"] <= 0 and not game.sim.paused
+
+
+# Materials stacked inside a grown site's scaffold: logs, stone blocks and planks appear as builders
+# deliver them (village_materials.gd stock against bill). Sites with no bill show none.
+const SUPPLY_LOOK: Dictionary = {
+	"wood": [Vector3(0.9, 0.2, 0.2), Color("7a5434")],
+	"stone": [Vector3(0.34, 0.26, 0.34), Color("8b8a83")],
+	"lumber": [Vector3(0.9, 0.07, 0.24), Color("c49a62")],
+}
+
+
+func _supplies(scaffold: Node3D, reach: float) -> Dictionary:
+	var out: Dictionary = {}
+	var spots: Dictionary = {"wood": Vector3(-reach * 0.45, 0, reach - 0.35), "stone": Vector3(reach * 0.45, 0, reach - 0.35), "lumber": Vector3(-reach * 0.45, 0, -reach + 0.35)}
+	for resource: String in SUPPLY_LOOK:
+		var pieces: Array[MeshInstance3D] = []
+		var size: Vector3 = SUPPLY_LOOK[resource][0]
+		var colour: Color = SUPPLY_LOOK[resource][1]
+		var base: Vector3 = spots[resource]
+		# A little pyramid: 3, then 2, then 1.
+		var layer: int = 0
+		var placed: int = 0
+		for row: int in [3, 2, 1]:
+			for i in row:
+				var at := base + Vector3(0, size.y * (layer + 0.5), (float(i) - (row - 1) * 0.5) * size.z * 1.15)
+				if resource == "stone":
+					at = base + Vector3((float(i) - (row - 1) * 0.5) * size.x * 1.1, size.y * (layer + 0.5), 0)
+				var piece: MeshInstance3D = box(scaffold, size, at, colour.darkened(0.06 * float(placed % 3)))
+				piece.visible = false
+				pieces.append(piece)
+				placed += 1
+			layer += 1
+		out[resource] = pieces
+	return out
+
+
+func _show_supplies(supplies: Dictionary, b: Dictionary) -> void:
+	var bill: Dictionary = b.get("bill", {})
+	var stock: Dictionary = b.get("stock", {})
+	for resource: String in supplies:
+		var pieces: Array = supplies[resource]
+		var want: float = float(bill.get(resource, 0))
+		var shown: int = 0
+		if want > 0.0:
+			shown = ceili(clampf(float(stock.get(resource, 0)) / want, 0.0, 1.0) * pieces.size())
+		for i in pieces.size():
+			(pieces[i] as MeshInstance3D).visible = i < shown

@@ -137,7 +137,7 @@ func _run() -> void:
 	var declared_stand: Vector2 = blocked.work_position(fallback, woods)
 	check(tile_of(declared_stand) != Vector2i(9, 6), "declared lumber stand would be walled off")
 	check(blocked._blocked(Vector2i(9, 6), false), "wall tile is blocked ground")
-	check(declared_stand != Vector2(-1, -1) and not blocked._blocked(tile_of(declared_stand), false), "blocked workpoint falls back to another safe edge")
+	check(Sim.has_point(declared_stand) and not blocked._blocked(tile_of(declared_stand), false), "blocked workpoint falls back to another safe edge")
 	check(declared_stand.distance_to(Vector2(9.5, 6.5)) > 0.01, "fallback edge is not the blocked stand")
 	var fallback_works: bool = false
 	for tick in 240:
@@ -160,7 +160,7 @@ func _run() -> void:
 	var waiting := worker(sealed, "fisherman", 8.5, 12.5)
 	sealed.assign(int(waiting["id"]), int(pond["id"]))
 	var home := Vector2(waiting["x"], waiting["y"])
-	check(sealed.work_position(waiting, pond) == Vector2(-1, -1), "no reachable stand means no work position")
+	check(not Sim.has_point(sealed.work_position(waiting, pond)), "no reachable stand means no work position")
 	pond["reserve"] = 5.0
 	var ever_worked: bool = false
 	for tick in 120:
@@ -356,7 +356,7 @@ func _run() -> void:
 	check(not reused.restore_state(tamper), "reservation pointing at another workplace is rejected")
 	check(reused.restore_state(reversed_state), "the untampered save still loads after rejected attempts")
 	twin.assign(int(blocked_a["id"]), -1)
-	check(int(blocked_a["post"]) == -1 and int(blocked_a["slot"]) == 0 and float(blocked_a["sx"]) == -1.0, "releasing a worker frees its reservation")
+	check(int(blocked_a["post"]) == -1 and int(blocked_a["slot"]) == 0 and not Sim.has_point(twin._held_stand(blocked_a)), "releasing a worker frees its reservation")
 
 	# --- an archer breaks from whatever is actually next to it, Manor threat or not ---
 	var caught = Sim.new()

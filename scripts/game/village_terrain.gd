@@ -59,6 +59,9 @@ var _clutter_sets: Array[Dictionary] = []    # {"multi", "xforms", "pos"} - hidd
 var _glow_material: StandardMaterial3D = null
 var _grass_mesh: ArrayMesh = null
 var _slab_grass: Dictionary = {}              # plot id -> MultiMeshInstance3D of grass on claimed land
+var _reach_apron: MultiMeshInstance3D = null  # trodden earth around buildings on claimed land
+var _reach_xforms: Dictionary = {}            # MultiMesh on claimed land -> its instances' own transforms
+var _reach_hidden: Dictionary = {}            # MultiMesh on claimed land -> 1 per instance currently hidden
 var _skirt_rocks: Dictionary = {}             # base edge name -> rocks along that cliff face
 var _terrain_stats: Dictionary = {}          # placement facts recorded at build time (headless cannot read MultiMeshes back)
 
@@ -154,6 +157,7 @@ func _terrain_hide_old_ground() -> void:
 
 func _terrain_signature_now() -> int:
 	var value: int = sim.buildings.size() * 7919 + sim.living.revision * 31 + sim.living.cells.size() * 104729
+	value = (value * 31 + sim.estates.hash() + _reach_signature() + _slab_grass.size() * 13 + sim.expansions.size() * 7) & 0x7fffffff
 	for b: Dictionary in sim.buildings:
 		value = (value * 31 + int(b["x"]) * 53 + int(b["y"]) * 17 + int(b["size"])) & 0x7fffffff
 	return value
@@ -181,6 +185,10 @@ func _terrain_refresh_mask(force: bool) -> void:
 		var parts: PackedStringArray = str(id).split(",")
 		if parts.size() == 2:
 			_terrain_stamp(clear, int(parts[0]), int(parts[1]), 1.0)
+	# Farm estate fields: crop rows, not meadow grass.
+	for id: int in sim.estates:
+		for tile: Vector2i in sim.estates[id]["fields"]:
+			_terrain_stamp(clear, tile.x, tile.y, 1.0)
 	clear = _terrain_dilate(clear, 0.8)
 	for y in h:
 		for x in w:
@@ -188,6 +196,7 @@ func _terrain_refresh_mask(force: bool) -> void:
 			_terrain_mask_image.set_pixel(x, y, Color(clampf(maxf(foot[i], apron[i]) * 0.9, 0.0, 1.0), clampf(maxf(clear[i], apron[i]), 0.0, 1.0), 0.0))
 	_terrain_mask_texture.update(_terrain_mask_image)
 	_clutter_apply_mask()
+	_reach_clear()
 
 
 func _terrain_stamp(field: PackedFloat32Array, tile_x: int, tile_y: int, value: float) -> void:
@@ -556,9 +565,8 @@ func _clutter_build() -> void:
 	_clutter_add(stems_baked, stem_material, stem_x, [] as Array[Color], "AutumnMushroomStems")
 	_clutter_add(caps_baked, lit, cap_x, cap_c, "AutumnMushroomCaps")
 	_clutter_add(caps_baked, _glow_material, glow_x, [] as Array[Color], "AutumnGlowCaps")
-	# Fallen branches.
-	var branch_mesh := BoxMesh.new()
-	branch_mesh.size = Vector3(0.75, 0.05, 0.06)
+	# Fallen branches: a tapered limb with a side fork and a twig, lying in the grass.
+	var branch_mesh: ArrayMesh = _branch_mesh()
 	var branch_x: Array[Transform3D] = []
 	var branch_c: Array[Color] = []
 	for index in 14:
@@ -566,8 +574,8 @@ func _clutter_build() -> void:
 		if is_inf(at.x):
 			continue
 		var basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).scaled(Vector3(rng.randf_range(0.7, 1.6), 1.0, 1.0))
-		branch_x.append(Transform3D(basis, at + Vector3(0.0, 0.025, 0.0)))
-		branch_c.append(Color("4a3524").darkened(rng.randf_range(0.0, 0.3)).srgb_to_linear())
+		branch_x.append(Transform3D(basis, at + Vector3(0.0, 0.02, 0.0)))
+		branch_c.append(Color("7a5d42").darkened(rng.randf_range(0.0, 0.25)).srgb_to_linear())
 	_clutter_add(branch_mesh, lit, branch_x, branch_c, "AutumnBranches")
 	# Acorns and pine cones: tiny specks under the trees.
 	var acorn_mesh := SphereMesh.new()
@@ -618,6 +626,34 @@ func _clutter_build() -> void:
 	for entry: Dictionary in _clutter_sets:
 		total += (entry["xforms"] as Array).size()
 	_terrain_stats["clutter"] = {"sets": _clutter_sets.size(), "instances": total, "glow": glow_x.size()}
+
+
+# One fallen limb, about 0.75 long on x: a main stick that tapers and kinks, a fork and a short twig.
+func _branch_mesh() -> ArrayMesh:
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# [from, to, radius at from, radius at to]
+	var parts: Array = [
+		[Vector3(-0.38, 0.02, 0.0), Vector3(-0.02, 0.025, 0.03), 0.032, 0.025],
+		[Vector3(-0.02, 0.025, 0.03), Vector3(0.37, 0.02, -0.02), 0.025, 0.012],
+		[Vector3(-0.06, 0.024, 0.025), Vector3(0.16, 0.03, 0.19), 0.017, 0.008],
+		[Vector3(0.18, 0.022, 0.0), Vector3(0.27, 0.05, -0.1), 0.011, 0.006],
+	]
+	for part: Array in parts:
+		var from: Vector3 = part[0]
+		var to: Vector3 = part[1]
+		var length: float = from.distance_to(to)
+		var stick := CylinderMesh.new()
+		stick.bottom_radius = part[2]
+		stick.top_radius = part[3]
+		stick.height = length
+		stick.radial_segments = 5
+		stick.rings = 1
+		var up: Vector3 = (to - from).normalized()
+		var side: Vector3 = up.cross(Vector3.UP if absf(up.y) < 0.9 else Vector3.RIGHT).normalized()
+		var basis := Basis(side, up, side.cross(up))
+		tool.append_from(stick, 0, Transform3D(basis, (from + to) * 0.5))
+	return tool.commit()
 
 
 # Anything the player builds or paves over disappears (zero scale); it returns if the ground is cleared again.
@@ -777,6 +813,7 @@ func _slab_grow_grass(id: String) -> void:
 	node.name = "AutumnGrass_" + id
 	node.extra_cull_margin = 1.5
 	_slab_grass[id] = node
+	_terrain_signature = -1   # clear it off buildings, trails and fields on the next poll
 
 
 # Mossy boulders half-buried in the dark cliff face under the base map; they go with the edge when a plot is claimed.
@@ -814,3 +851,133 @@ func _skirt_build() -> void:
 		add_child(holder)
 		_add_multimesh(mesh, material, xforms, colors, holder, false)
 		_skirt_rocks[side] = holder
+
+
+# --- claimed land the village builds on ------------------------------------
+# The base village's ground clears itself through the terrain mask; claimed plots have their own grass
+# clumps and the wild trees, shrubs and rocks that stood there before the claim. Those are hidden (not
+# freed) wherever the village now uses the ground: buildings and a tile around them, trails, farm
+# fields and zoned ground (see _reach_reserved_tiles), so nothing grows through a house or a crop row.
+
+# Extra tiles to keep clear on claimed land; the zoning layer adds its zoned village ground.
+func _reach_reserved_tiles() -> Dictionary:
+	return {}
+
+
+# Changes when _reach_reserved_tiles would; the zoning layer overrides it.
+func _reach_signature() -> int:
+	return 0
+
+
+func _reach_blocked(reserved: bool) -> Dictionary:
+	var out: Dictionary = _reach_reserved_tiles().duplicate() if reserved else {}
+	for b: Dictionary in sim.buildings:
+		var size: int = int(b["size"])
+		for dy in range(-1, size + 1):
+			for dx in range(-1, size + 1):
+				out[Vector2i(int(b["x"]) + dx, int(b["y"]) + dy)] = true
+	for id: Variant in sim.living.cells.keys():
+		var parts: PackedStringArray = str(id).split(",")
+		if parts.size() == 2:
+			out[Vector2i(int(parts[0]), int(parts[1]))] = true
+	for id: int in sim.estates:
+		for tile: Vector2i in sim.estates[id]["fields"]:
+			out[tile] = true
+	return out
+
+
+func _reach_clear() -> void:
+	if sim.expansions.is_empty():
+		return
+	# Grass stays on zoned ground until something is built or worked there; trees and rocks go at once.
+	var worked: Dictionary = _reach_blocked(false)
+	var blocked: Dictionary = _reach_blocked(true)
+	var hidden: int = 0
+	for id: String in _slab_grass:
+		var node: MultiMeshInstance3D = _slab_grass[id]
+		if is_instance_valid(node):
+			hidden += _reach_hide(node.multimesh, Vector3.ZERO, worked, false)
+	for id: String in expansion.slabs:
+		var slab: Dictionary = expansion.slabs[id]
+		if bool(slab["locked"]):
+			continue
+		var offset: Vector3 = (slab["group"] as Node3D).position
+		for multi: MultiMesh in slab["multis"]:
+			hidden += _reach_hide(multi, offset, blocked, true)
+	_terrain_stats["reach_hidden"] = hidden
+	_reach_aprons()
+
+
+# Trodden earth around buildings on claimed land, as the base village's ground shader draws at home.
+func _reach_aprons() -> void:
+	if _reach_apron == null:
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3.ONE
+		var material := StandardMaterial3D.new()
+		material.vertex_color_use_as_albedo = true
+		material.roughness = 1.0
+		mesh.material = material
+		_reach_apron = MultiMeshInstance3D.new()
+		_reach_apron.name = "ReachAprons"
+		_reach_apron.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_reach_apron.multimesh = MultiMesh.new()
+		_reach_apron.multimesh.transform_format = MultiMesh.TRANSFORM_3D
+		_reach_apron.multimesh.use_colors = true
+		_reach_apron.multimesh.mesh = mesh
+		add_child(_reach_apron)
+	var placed: Array = []
+	for b: Dictionary in sim.buildings:
+		var size: int = int(b["size"])
+		if Sim.BASE_RECT.has_point(Vector2i(int(b["x"]), int(b["y"]))) or float(b["hp"]) <= 0.0:
+			continue
+		var centre: Vector3 = world_position(Vector2(float(b["x"]) + size * 0.5, float(b["y"]) + size * 0.5))
+		var span: float = size * TILE
+		placed.append([Vector3(span + 1.4, 0.01, span + 1.4), centre + Vector3(0, 0.006, 0), Color("6b5636")])
+		placed.append([Vector3(span + 0.6, 0.01, span + 0.6), centre + Vector3(0, 0.011, 0), Color("57452f")])
+	var multi: MultiMesh = _reach_apron.multimesh
+	multi.instance_count = placed.size()
+	for i in placed.size():
+		multi.set_instance_transform(i, Transform3D(Basis.from_scale(placed[i][0]), placed[i][1]))
+		multi.set_instance_color(i, placed[i][2])
+
+
+# Hides the instances standing on blocked tiles (wide ones also when a side neighbour is blocked).
+func _reach_hide(multi: MultiMesh, offset: Vector3, blocked: Dictionary, wide: bool) -> int:
+	if multi == null:
+		return 0
+	if not _reach_xforms.has(multi):
+		var own: Array[Transform3D] = []
+		for index in multi.instance_count:
+			own.append(multi.get_instance_transform(index))
+		_reach_xforms[multi] = own
+	var xforms: Array = _reach_xforms[multi]
+	if not _reach_hidden.has(multi):
+		var shown := PackedByteArray()
+		shown.resize(xforms.size())
+		shown.fill(0)
+		_reach_hidden[multi] = shown
+	# Only instances whose state flips are touched: setting every grass instance each time the ground
+	# mask refreshed was a steady cost in a big village.
+	var state: PackedByteArray = _reach_hidden[multi]
+	var hidden: int = 0
+	for index in xforms.size():
+		var xform: Transform3D = xforms[index]
+		var at: Vector3 = xform.origin + offset
+		var tile := Vector2i(floori((at.x - MAP_ORIGIN.x) / TILE), floori((at.z - MAP_ORIGIN.z) / TILE))
+		var hit: bool = blocked.has(tile)
+		if wide and not hit:
+			for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				if blocked.has(tile + step):
+					hit = true
+					break
+		if hit:
+			hidden += 1
+		if state[index] == (1 if hit else 0):
+			continue
+		state[index] = 1 if hit else 0
+		if hit:
+			multi.set_instance_transform(index, Transform3D(Basis.from_scale(Vector3.ZERO), xform.origin))
+		else:
+			multi.set_instance_transform(index, xform)
+	_reach_hidden[multi] = state
+	return hidden

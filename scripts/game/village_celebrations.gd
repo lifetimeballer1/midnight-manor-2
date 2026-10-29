@@ -146,18 +146,29 @@ func _float_label(at: Vector3, text: String, tint: Color, font: int, rise: float
 		return
 	var label := Label3D.new()
 	label.text = text
+	# The manor's carved type; Cinzel only for words, since its 1 reads as I.
+	var has_digit: bool = false
+	for c: String in text:
+		if c >= "0" and c <= "9":
+			has_digit = true
+			break
+	label.font = UI.font("strong" if has_digit else "display")
 	label.modulate = tint
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.font_size = font
 	label.pixel_size = 0.014
-	label.outline_size = 12
-	label.outline_modulate = NAVY
+	label.outline_size = 14
+	label.outline_modulate = WORLD_TEXT_OUTLINE
+	label.no_depth_test = true
+	label.render_priority = 6
+	label.outline_render_priority = 5
 	label.position = at
 	add_child(label)
 	effect_nodes.append(label)
+	# Rise the whole time, but hold full strength for the first half so the words can be read.
 	var tween: Tween = create_tween()
-	tween.tween_property(label, "position:y", at.y + rise, seconds)
-	tween.parallel().tween_property(label, "modulate:a", 0.0, seconds)
+	tween.tween_property(label, "position:y", at.y + rise, seconds).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, seconds * 0.5).set_delay(seconds * 0.5)
 	tween.tween_callback(label.queue_free)
 
 

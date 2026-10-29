@@ -1,4 +1,4 @@
-extends "res://scripts/game/village_polish.gd"
+extends "res://scripts/game/village_warfare.gd"
 
 # The town outside the walls: city-builder zoning over the realm layer (model: town_zoning.gd).
 #
@@ -39,6 +39,7 @@ extends "res://scripts/game/village_polish.gd"
 
 const Town = preload("res://scripts/game/town_zoning.gd")
 const Growth = preload("res://scripts/game/village_growth.gd")
+const Fields = preload("res://scripts/game/village_fields.gd")
 
 const TOWN_SAVE_PATH: String = "user://town-v1.json"
 const TOWN_SAVE_SECONDS: float = 10.0
@@ -71,6 +72,11 @@ const TOWN_NO_CELL := Vector2i(-9999, -9999)
 
 var town = null
 var growth = null                           # village_growth.gd: free buildings on zoned village ground
+var _fields = null                          # village_fields.gd: crop rows on farm estates
+var _milestone_seen: Dictionary = {}        # zone -> milestone tier already shown (the first look is silent)
+var _milestone_clock_msec: int = -100000
+var _town_milestone_label: Label = null
+var _town_milestone_bar: ProgressBar = null
 var _zoning_move: bool = false              # a Move of a zoned building uses the ordinary placement
 var town_bar: VBoxContainer = null
 var _town_button: Button = null
@@ -131,12 +137,16 @@ func _ready() -> void:
 		town.from_dict(JSON.parse_string(FileAccess.get_file_as_string(TOWN_SAVE_PATH)))
 	growth = Growth.new()
 	growth.setup(town.village_spec(), Vector2i(roundi(-MAP_ORIGIN.x / TILE), roundi(-MAP_ORIGIN.z / TILE)), roundi(town.cell / TILE))
+	growth.refresh_estates(sim, town)
+	_fields = Fields.new()
+	add_child(_fields)
 	_town_root = Node3D.new()
 	_town_root.name = "Town"
 	add_child(_town_root)
 	_town_build_nodes()
 	_town_build_ui()
 	_town_sync()
+	_refresh_milestones()
 
 
 func _process(delta: float) -> void:
@@ -151,6 +161,7 @@ func _process(delta: float) -> void:
 			_town_save_clock = 0.0
 			town_save()
 	_town_time += delta
+	_fields.sync(sim, self, delta)
 	_town_click_clock = maxf(_town_click_clock - delta, 0.0)
 	_town_sync()
 	_town_animate(delta, active)
@@ -252,7 +263,9 @@ func _town_event(event: Dictionary) -> void:
 			var gained: Array[String] = []
 			var income: Dictionary = event["income"]
 			for resource: String in income:
-				var banked: int = sim._bank(resource, float(income[resource]))
+				# Wild Market: staffed hagglers raise the gold the town sends.
+				var amount: float = float(income[resource]) * (1.0 + sim.perks.total("trade") if resource == "gold" else 1.0)
+				var banked: int = sim._bank(resource, amount)
 				if banked > 0:
 					gained.append("+%d %s" % [banked, resource.capitalize()])
 			if not gained.is_empty():
@@ -942,6 +955,15 @@ func _town_build_ui() -> void:
 	_town_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_town_hint_label.custom_minimum_size = Vector2(220, 0)   # a width to wrap at before the first layout
 	titles.add_child(_town_hint_label)
+	_town_milestone_label = Label.new()
+	_town_milestone_label.add_theme_font_override("font", UI.font("strong"))
+	_town_milestone_label.add_theme_font_size_override("font_size", 12)
+	_town_milestone_label.add_theme_color_override("font_color", UI.GOLD)
+	_town_milestone_label.clip_text = true
+	_town_milestone_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	titles.add_child(_town_milestone_label)
+	_town_milestone_bar = ui.bar(0, 1, titles)
+	_town_milestone_bar.custom_minimum_size.y = 6
 	# Demand bars: one short column per zone, in its colour.
 	var demand := HBoxContainer.new()
 	demand.add_theme_constant_override("separation", 6)
@@ -1061,8 +1083,26 @@ func _town_refresh_status() -> void:
 		hint = "Clear: removes zones, roads and lots."
 	else:
 		hint = "%s: %s" % [str(town.zone_spec(_town_tool).get("name", "")), str(town.zone_spec(_town_tool).get("blurb", ""))]
+		if _town_tool in town.village_zone_ids():
+			hint += " In the village, paint side by side freely: each building gets a path to its door."
 	if small and hint.length() > 70:
 		hint = hint.substr(0, hint.find(".") + 1)
+	var milestone_zone: bool = _town_tool in town.zone_ids()
+	_town_milestone_label.visible = milestone_zone
+	_town_milestone_bar.visible = milestone_zone
+	if milestone_zone:
+		_town_milestone_label.text = milestone_text(_town_tool)
+		var count: int = int(zone_standing().get(_town_tool, 0))
+		var tier: int = town.milestone_tier(count)
+		var targets: Array = town.milestone_counts()
+		var low: int = 0 if tier == 0 else int(targets[tier - 1])
+		var high: int = int(targets[mini(tier, targets.size() - 1)])
+		_town_milestone_bar.max_value = maxf(1.0, float(high - low))
+		_town_milestone_bar.value = float(high - low) if tier >= targets.size() else float(count - low)
+		var tint: StyleBoxFlat = StyleBoxFlat.new()
+		tint.bg_color = town.zone_color(_town_tool)
+		tint.set_corner_radius_all(2)
+		_town_milestone_bar.add_theme_stylebox_override("fill", tint)
 	if hint != _town_hint_label.text:
 		_town_hint_label.text = hint
 		# The bar's height follows the hint's wrapped lines; settle the layout once it has wrapped.
@@ -1070,8 +1110,88 @@ func _town_refresh_status() -> void:
 
 
 func _refresh_hud() -> void:
+	_refresh_milestones()
 	super()
 	_town_refresh_status()
+
+
+# INCOME MILESTONES: count each zone's standing buildings (village) and built lots (outside the
+# walls). At each count in zones.json "milestones" the zone's income is multiplied again: village
+# workplaces through sim.zone_boost (by building type), town lots through town.zone_boost.
+func zone_standing() -> Dictionary:
+	var counts: Dictionary = {}
+	if town == null or growth == null:
+		return counts
+	for zone: String in town.zone_ids():
+		counts[zone] = 0
+	for b: Dictionary in sim.buildings:
+		if float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+			continue
+		var zone: String = growth.zone_of(str(b["type"]))
+		if counts.has(zone):
+			counts[zone] = int(counts[zone]) + 1
+	for c: Vector2i in town.lots:
+		var lot: Dictionary = town.lots[c]
+		if town.built(lot) and counts.has(str(lot["zone"])):
+			counts[str(lot["zone"])] = int(counts[str(lot["zone"])]) + 1
+	return counts
+
+
+func _refresh_milestones(force: bool = false) -> void:
+	if town == null or growth == null:
+		return
+	var now: int = Time.get_ticks_msec()
+	if not force and now - _milestone_clock_msec < 1000:
+		return
+	_milestone_clock_msec = now
+	var counts: Dictionary = zone_standing()
+	var boost_types: Dictionary = {}
+	var boost_zones: Dictionary = {}
+	for zone: String in counts:
+		var tier: int = town.milestone_tier(int(counts[zone]))
+		var multiplier: float = town.milestone_multiplier(tier)
+		if multiplier != 1.0:
+			boost_zones[zone] = multiplier
+			for type_name: String in growth.zone_types(zone):
+				boost_types[type_name] = multiplier
+		if not _milestone_seen.has(zone) or not started:
+			_milestone_seen[zone] = tier
+		elif tier > int(_milestone_seen[zone]):
+			_milestone_seen[zone] = tier
+			_announce_milestone(zone, int(counts[zone]), multiplier)
+		elif tier < int(_milestone_seen[zone]):
+			_milestone_seen[zone] = tier   # lost to a raid: reaching it again is worth a cheer again
+	sim.zone_boost = boost_types
+	town.zone_boost = boost_zones
+
+
+func _announce_milestone(zone: String, count: int, multiplier: float) -> void:
+	var name: String = str(town.zone_spec(zone).get("short", zone))
+	var kind: String = str(town.zone_spec(zone).get("name", name))
+	sim.chronicle.queue_banner("Old Bell", "%d %s stand. %s income is now x%d." % [count, name.to_lower(), kind, int(multiplier)])
+	sim.notice = "Milestone: %d %s. %s income x%d." % [count, name.to_lower(), kind, int(multiplier)]
+	_play_sfx("upgrade")
+	var hall: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		if str(b["type"]) == "hall":
+			hall = b
+			break
+	if not hall.is_empty():
+		var at: Vector3 = world_position(sim.center(hall), 0.6)
+		_impact_burst(at, town.zone_color(zone), 18, 1.4, true)
+
+
+# One line for the zoning bar: how far the chosen zone is from its next milestone.
+func milestone_text(zone: String) -> String:
+	var counts: Dictionary = zone_standing()
+	var count: int = int(counts.get(zone, 0))
+	var name: String = str(town.zone_spec(zone).get("short", zone))
+	var tier: int = town.milestone_tier(count)
+	var now: String = "" if tier == 0 else " · income x%d" % int(town.milestone_multiplier(tier))
+	var targets: Array = town.milestone_counts()
+	if tier >= targets.size():
+		return "%s: %d standing%s · every milestone reached" % [name, count, now]
+	return "%s: %d/%d standing%s · x%d income at %d" % [name, count, int(targets[tier]), now, int(town.milestone_multiplier(tier + 1)), int(targets[tier])]
 
 
 func _layout_ui() -> void:
@@ -1181,7 +1301,10 @@ func _town_build_nodes() -> void:
 func _town_sync() -> void:
 	if town == null:
 		return
-	var mode: String = "%s/%s/%d" % [str(_town_active), _town_tool if _town_active else "", sim.revision if not town.village.is_empty() else 0]
+	var fields: int = 0
+	for id: int in sim.estates:
+		fields += (sim.estates[id]["fields"] as Array).size() * 31 + id
+	var mode: String = "%s/%s/%d/%d" % [str(_town_active), _town_tool if _town_active else "", sim.revision if not town.village.is_empty() else 0, fields]
 	if town.revision == _town_drawn_revision and mode == _town_drawn_mode:
 		return
 	var roads_changed: bool = town.revision != _town_drawn_revision
@@ -1243,6 +1366,10 @@ func _town_build_overlay() -> void:
 	# Zoned village ground: the same wash, faint under buildings that stand on it already.
 	if not town.village.is_empty():
 		var taken: Dictionary = _village_taken()
+		# Farm estate fields count as built on: their crops, hedges and water show the zone already.
+		for id: int in sim.estates:
+			for tile: Vector2i in sim.estates[id]["fields"]:
+				taken[growth.tile_cell(tile)] = true
 		for c: Vector2i in town.village:
 			var zone: String = str(town.village[c])
 			var built: bool = taken.has(c)
@@ -1620,6 +1747,7 @@ func _town_label(c: Vector2i, text: String) -> void:
 # glyphs the web build's default font has (no stars or ticks).
 func _town_text_node(font_size: int) -> Label3D:
 	var label := Label3D.new()
+	label.font = UI.font("strong")
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.font_size = font_size
@@ -1631,6 +1759,20 @@ func _town_text_node(font_size: int) -> Label3D:
 	label.render_priority = 4
 	label.outline_render_priority = 3
 	return label
+
+
+# The town's lots pay every incomeSeconds; the HUD shows that as a pace a minute. Gold carries the
+# Wild Market bonus the same way the payout does.
+func _town_income_per_minute() -> Dictionary:
+	var per_minute: Dictionary = {}
+	if town == null:
+		return per_minute
+	var period: float = maxf(1.0, float(town.specs.get("incomeSeconds", 60.0)))
+	var income: Dictionary = town.income_now()
+	for resource: String in income:
+		var amount: float = float(income[resource]) * (1.0 + sim.perks.total("trade") if resource == "gold" else 1.0)
+		per_minute[resource] = amount * 60.0 / period
+	return per_minute
 
 
 # Floating text that rises and fades over a cell (level names, income, the town's new title).
@@ -1935,3 +2077,61 @@ func town_road_mesh_ok() -> bool:
 
 func town_overlay_ok() -> bool:
 	return _town_overlay.mesh != null or town.zones.size() == town.lots.size()
+
+
+# Zoned village ground on claimed land is kept clear of the wild trees and rocks it came with.
+func _reach_reserved_tiles() -> Dictionary:
+	var out: Dictionary = {}
+	if town == null or growth == null:
+		return out
+	for c: Vector2i in town.village:
+		for tile: Vector2i in growth.cell_tiles(c):
+			out[tile] = true
+	return out
+
+
+func _reach_signature() -> int:
+	return town.village.hash() if town != null else 0
+
+
+# --- Farm estates on the building card ----------------------------------------------------------
+
+func _inspector_extra(b: Dictionary) -> void:
+	super(b)
+	if growth == null or not sim.estates.has(int(b["id"])):
+		return
+	var estate: Dictionary = sim.estates[int(b["id"])]
+	var row := ui.inset_row(side_content)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 4)
+	row.add_child(col)
+	ui.body("%s %s · %d tiles of land" % [str(sim.building_specs[b["type"]]["name"]), str(estate["name"]), int(estate["tiles"])], col, 13)
+	ui.body("Paint more farm zone beside it to grow the estate. One farmhand per four tiles.", col, 12)
+	var trodden: int = sim.aftermath.trampled_on(sim, int(b["id"]))
+	if trodden > 0:
+		ui.body("%d %s trampled by raiders; its farmhands are replanting." % [trodden, "tile" if trodden == 1 else "tiles"], col, 12)
+	var moon: String = Sim.MoonRules.harvest_text(sim.moon_phase) if sim.wave > 0 else ""
+	if not moon.is_empty():
+		ui.body(moon, col, 12)
+	var crops := HBoxContainer.new()
+	crops.add_theme_constant_override("separation", 6)
+	col.add_child(crops)
+	for crop: String in growth.crops():
+		if not sim.building_specs.has(crop):
+			continue
+		var label: String = {"farm": "Wheat", "pasture": "Pasture", "grove": "Orchard", "pond": "Fishpond"}.get(crop, str(sim.building_specs[crop]["name"]))
+		var button = ui.command_button(label, _switch_crop.bind(int(b["id"]), crop), crops, 34.0)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var reason: String = growth.crop_reason(sim, int(b["id"]), crop)
+		button.disabled = not reason.is_empty()
+		button.tooltip_text = "Grown here now." if crop == str(b["type"]) else ("Turn the estate to %s. The farmhouse is rebuilt from materials." % label if reason.is_empty() else reason)
+		if crop == str(b["type"]):
+			ui.paint_command(button, "gold")
+
+
+func _switch_crop(id: int, crop: String) -> void:
+	if growth.switch_crop(sim, id, crop):
+		growth.refresh_estates(sim, town)
+		_play_sfx("confirm")
+	_open_panel("building")
+	_refresh_hud()

@@ -180,7 +180,7 @@ func _poof(tile: Vector2i, color: Color) -> void:
 	if not _vfx_on:
 		super(tile, color)
 		return
-	if effect_nodes.size() + burst_pool.active_count() >= EFFECT_LIMIT or tile.x < 0:
+	if effect_nodes.size() + burst_pool.active_count() >= EFFECT_LIMIT or tile == NO_TILE:
 		return
 	var low: bool = _sky_is_phone()
 	var cloud := Node3D.new()

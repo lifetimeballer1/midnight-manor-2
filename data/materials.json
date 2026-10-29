@@ -1,0 +1,20 @@
+{
+	"_note": "Building with real materials. A building that rises or tiers up on a zone (village_growth.gd) gets a bill of materials from these rules instead of going up free. Builders carry the bill from the central stores to the site; work moves only while a builder stands on site and only as far as the delivered share of the bill allows. Defences bought from the Build menu are paid up front and keep their old build timer. Stone portions only apply once Stoneworking is discovered; before that the stone share is paid as woodPerStone times as much Wood, so a young village never stalls on a resource it cannot get yet. Lumber likewise is asked for only once a Sawmill stands.",
+	"grown": {
+		"woodShare": 0.5,
+		"stonePerTile": {"2": 4, "3": 6, "4": 8, "5": 10},
+		"lumberFromTier": 3,
+		"lumberShare": 0.2
+	},
+	"woodPerStone": 2,
+	"builders": {
+		"haul": 20,
+		"extraHands": 0.6,
+		"maxHands": 3
+	},
+	"repair": {
+		"hpPerUnit": 15,
+		"stoneShare": 0.5,
+		"stoneTypes": ["hall", "stonewall", "rampart", "tower", "archer_tower", "ballista", "bastion", "watchfire", "gate", "stone_quarry", "mason_yard", "smeltery", "chapel", "sunken-chapel", "bell-tower", "city-wall", "monument", "grand-watchtower", "manner-citadel", "dawn-gate"]
+	}
+}

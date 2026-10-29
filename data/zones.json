@@ -4,6 +4,7 @@
   "growSeconds": 3.5,
   "buildSeconds": 6,
   "incomeSeconds": 60,
+  "milestones": {"_note": "Income milestones: once this many buildings and lots of one zone stand (in the village and outside the walls together), that zone's income is multiplied by multiplier, again at each count.", "counts": [10, 25, 50], "multiplier": 2},
   "safeFromWalls": 22,
   "safeFromOutpost": 20,
   "road": {
@@ -84,6 +85,12 @@
     "tierLevels": {"2": 2, "3": 4, "4": 6, "5": 8},
     "hallPeople": {"2": 12, "3": 24},
     "maxRising": 2,
+"estates": {
+"_note": "A connected patch of farm zone is one farm estate: the first of these crops to rise there is its farmhouse, the rest of the patch is its fields. Output and storage grow with the estate's tiles, and it takes one farmhand per four tiles (two at least, eight at most) for the full crew bonus. The building card switches the crop. Mills, bakeries and the like still rise on farm zone as their own buildings. One estate takes at most maxCells zone cells; a bigger patch is shared between several farms.",
+"crops": ["farm", "pasture", "grove", "pond"],
+"sizes": [{"name": "Smallholding", "tiles": 0}, {"name": "Farmstead", "tiles": 12}, {"name": "Grange", "tiles": 30}],
+"maxCells": 12
+},
     "bedsSpare": 3,
     "zones": {
       "housing": [{"type": "cottage"}, {"type": "storehouse", "after": 2}, {"type": "bathhouse", "after": 2}, {"type": "longhouse", "after": 3}],

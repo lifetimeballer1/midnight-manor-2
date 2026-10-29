@@ -49,6 +49,7 @@ var village: Dictionary = {}                # Vector2i -> zone id, zoned ground 
 var elapsed: float = 0.0
 var grow_clock: float = 0.0
 var income_clock: float = 0.0
+var zone_boost: Dictionary = {}             # zone -> income multiplier from milestones (set by the game layer; not saved)
 var level_clock: float = 0.0                # needs are checked a couple of times a second, not per frame
 var revision: int = 0                       # bumps on any change the view draws
 var events: Array[Dictionary] = []          # grew / levelled / income / cleared; take_events() drains them
@@ -759,9 +760,28 @@ func income_now() -> Dictionary:
 		if not built(lot) or not can_build(c) or not has_access(c):
 			continue
 		var income: Dictionary = level_spec(str(lot["zone"]), int(lot["level"])).get("income", {})
+		var boost: float = float(zone_boost.get(str(lot["zone"]), 1.0))
 		for resource: String in income:
-			total[resource] = int(total.get(resource, 0)) + int(income[resource])
+			total[resource] = int(total.get(resource, 0)) + int(round(float(income[resource]) * boost))
 	return total
+
+
+# Income milestones (zones.json "milestones"): how many of them `count` standing buildings reach,
+# and the income multiplier that gives.
+func milestone_counts() -> Array:
+	return specs.get("milestones", {}).get("counts", [])
+
+
+func milestone_tier(count: int) -> int:
+	var tier: int = 0
+	for need: Variant in milestone_counts():
+		if count >= int(need):
+			tier += 1
+	return tier
+
+
+func milestone_multiplier(tier: int) -> float:
+	return pow(float(specs.get("milestones", {}).get("multiplier", 1.0)), tier)
 
 
 func take_events() -> Array[Dictionary]:

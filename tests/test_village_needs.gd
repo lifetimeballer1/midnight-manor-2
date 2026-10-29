@@ -25,6 +25,8 @@ func _run() -> void:
 		test_shortage_and_recovery()
 		test_housing()
 		test_persistence()
+		test_newcomers_take_open_jobs()
+		test_newcomers_answer_shortages()
 	print("VILLAGE_NEEDS ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)
 
@@ -39,7 +41,7 @@ func test_meals(sim) -> void:
 	advance(sim, 179)
 	check(sim.resources["food"] == 100.0, "meals wait for their active-time interval")
 	advance(sim, 1)
-	check(sim.resources["food"] == 75.0, "five villagers consume five Food each at the authored town meal")
+	check(sim.resources["food"] == 65.0, "five Food a portion at the authored town meal; the two fighters eat a double portion")
 	check(sim.needs.hunger == 0.0 and sim.needs.morale == 70.0, "a fed, housed starting village stays stable")
 	check(sim.needs.production_multiplier() == 1.0, "healthy village preserves the original production rate")
 
@@ -108,3 +110,63 @@ func test_persistence() -> void:
 	bad.erase("needs")
 	check(not restored.restore_state(bad), "new-version saves cannot silently lose their needs section")
 	check(restored.needs.hunger == 0.0, "rejected saves leave the current village unchanged")
+
+
+# A villager born into warm beds takes up the trade of a workplace with room, and goes to work.
+func test_newcomers_take_open_jobs() -> void:
+	var sim = Sim.new()
+	for b: Dictionary in sim.buildings:
+		b["remaining"] = 0.0
+	sim._auto_assign()
+	var open_role: String = sim.open_job_role()
+	var open_place: int = -1
+	for b: Dictionary in sim.buildings:
+		var crew: int = 0
+		for u: Dictionary in sim.units:
+			if int(u["workplace"]) == int(b["id"]):
+				crew += 1
+		if str(sim.building_specs[b["type"]].get("workplace", "")) == open_role and crew < 2:
+			open_place = int(b["id"])
+	check(open_role != "farmer" and open_place >= 0, "the starting village has an open job (%s)" % open_role)
+	sim.buildings.append(sim._new_building("cottage", 4, 12, false))
+	sim.resources["food"] = 500.0
+	var before: int = sim.units.size()
+	for i in 1300:
+		sim.tick(0.05)
+	check(sim.units.size() == before + 1, "a villager is born into the free beds")
+	var newcomer: Dictionary = sim.units.back()
+	var place: Dictionary = sim.get_building(int(newcomer["workplace"]))
+	check(str(newcomer["type"]) == open_role and not place.is_empty() and str(sim.building_specs[place["type"]].get("workplace", "")) == open_role, "the newcomer is a %s and goes straight to work (%s at %d)" % [open_role, newcomer["type"], int(newcomer["workplace"])])
+	for b: Dictionary in sim.buildings:
+		if str(sim.building_specs[b["type"]].get("workplace", "")) != "":
+			for n in 2:
+				sim._add_unit(str(sim.building_specs[b["type"]]["workplace"]))
+	sim._auto_assign()
+	check(sim.open_job_role() == "farmer", "with every crew full, newcomers are farmers as before")
+
+
+func test_newcomers_answer_shortages() -> void:
+	var sim = Sim.new()
+	for b: Dictionary in sim.buildings:
+		b["remaining"] = 0.0
+	sim._auto_assign()
+	var quarry: Dictionary = sim._new_building("stone_quarry", 14, 2, false)
+	sim.buildings.append(quarry)
+	var lumber: Dictionary = sim._new_building("lumber", 17, 2, false)
+	sim.buildings.append(lumber)
+	sim.resources["food"] = 500.0
+	sim.resources["bread"] = 50.0
+	sim.living.discoveries.append("stoneworking")
+	sim.resources["stone"] = 0.0
+	var site: Dictionary = sim._new_building("cottage", 12, 9, true)
+	site["tier"] = 2
+	sim.materials.open_site(sim, site, 2)
+	sim.buildings.append(site)
+	check(sim.job_wants().has("stone"), "a site stuck for stone makes the village want stone")
+	check(sim.open_job_role() == "miner" and str(sim.building_specs["stone_quarry"]["workplace"]) == "miner", "a newcomer goes to the empty quarry while builders wait for stone")
+	sim.resources["stone"] = 500.0
+	sim.resources["food"] = 0.0
+	var role: String = sim.open_job_role()
+	check(role in ["farmer", "fisherman", "shepherd", "forager", "butcher", "diver", "mudlark", "miner", "lumberjack"], "with the larder empty a newcomer still takes an open job (%s)" % role)
+	check(sim.jobs_summary().begins_with("Jobs ") and sim.jobs_summary().contains("idle"), "the people panel counts filled jobs and idle villagers")
+
