@@ -7,6 +7,7 @@ const ManorScore = preload("res://scripts/game/manor_music.gd")
 const BurstPool = preload("res://scripts/game/combat_burst_pool.gd")
 const Atmosphere = preload("res://scripts/game/village_atmosphere.gd")
 const Expansion = preload("res://scripts/game/village_expansion.gd")
+const Threat = preload("res://scripts/game/village_threat.gd")
 var burst_pool = BurstPool.new()
 var music = ManorScore.new()
 var details = Details.new()
@@ -3506,6 +3507,13 @@ func _refresh_inspector() -> void:
 		var shown: Dictionary = sim.get_building(selected_building)
 		if not shown.is_empty():
 			inspect_text.text = "Tier %d · HP %d of %d\nOn-site reserve %d / %d\nCollect whenever you need it." % [shown["tier"], shown["hp"], shown["max_hp"], shown["reserve"], sim.reserve_cap(shown)]
+			if sim.rebuild.is_ruin(shown) and sim.rebuild.priority(sim, shown) >= 0:
+				var rising: String = "Builders are rebuilding it: %d%% done." % int(float(shown.get("rebuild", 0.0)) * 100.0)
+				if not sim.rebuild.can_work(sim, shown):
+					rising = "Builders will rebuild it when the stores hold %s." % _cost_text(sim.rebuild.step_cost(sim, shown))
+				inspect_text.text = "Ruined · %s" % rising
+				if sim.rebuild.trickle_rate(sim, shown) > 0.0:
+					inspect_text.text += "\nIt still yields a little until then."
 			if inspect_collect != null and is_instance_valid(inspect_collect):
 				inspect_collect.disabled = float(shown.get("reserve", 0.0)) < 1 or float(shown.get("hp", 0.0)) <= 0 or float(shown.get("remaining", 0.0)) > 0
 				inspect_collect.tooltip_text = "Bank the on-site reserve of %s" % str(sim.building_specs[shown["type"]]["name"])
@@ -4314,7 +4322,7 @@ func _income_breakdown(resource: String) -> String:
 		return "%s: nothing coming in right now. Open a workplace, collect from full ones, or zone more land." % resource.capitalize()
 	var parts: Array[String] = []
 	var sources: Dictionary = income_now.get(resource, {})
-	for source: String in ["Workplaces", "Mills", "Town lots"]:
+	for source: String in ["Workplaces", "Mills", "Town lots", "Ruins"]:
 		if float(sources.get(source, 0.0)) >= 0.5:
 			parts.append("%s +%s" % [source.to_lower(), _short_number(float(sources[source]))])
 	return "%s +%s a minute: %s." % [resource.capitalize(), _short_number(total), ", ".join(PackedStringArray(parts))]
@@ -4565,7 +4573,8 @@ func _refresh_hud() -> void:
 		raid_hud.text = "Horns · %s · %.0fs" % [sim.raid_direction(), maxf(0.0, sim.next_raid_at - sim.elapsed)]
 		music.set_mood("tension")
 	else:
-		raid_hud.text = "Quiet · next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
+		raid_hud.text = "Threat %d%% · the horns sound when it is full" % int(Threat.meter(sim) * 100.0)
+		raid_hud.tooltip_text = "Threat builds between raids and holds while the Hall lies in ruins. Raids grow with your defences. Sound the Horn to call the next one early for +25% spoils."
 		music.set_mood("night" if night else "day")
 	# One horn tick on the rising edge of an alarm; the music mood already
 	# carries the sustained danger, so this never repeats while held.
@@ -4586,7 +4595,7 @@ func _refresh_hud() -> void:
 		quest_label.text = _quest_summary(true)
 		quest_label.tooltip_text = _objective_summary()
 		if not sim.raid_active and not sim.raid_warning:
-			raid_hud.text = "Horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
+			raid_hud.text = "Threat %d%%" % int(Threat.meter(sim) * 100.0)
 	_refresh_research()
 	_refresh_progression_panels()
 	if sim.raid_active or sim.raid_warning:
@@ -5004,6 +5013,11 @@ func _consume_events() -> void:
 			var rubble: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 1.0)
 			_impact_burst(rubble, Color("9aa0ad"), 16, 1.6)
 			_impact_burst(rubble, GOLD, 6, 1.0)
+		elif event.get("kind") == "rebuilt":
+			var risen: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 1.4)
+			_impact_burst(risen, GOLD, 16, 1.2, true)
+			if has_method("_float_label"):
+				call("_float_label", risen + Vector3(0, 1.6, 0), "Rebuilt", GOLD, 40, 1.0, 2.2)
 		elif event.get("kind") == "raid_result":
 			_show_combat_banner("THE MANOR STANDS" if bool(event.get("victory", false)) else "THE MANOR FELL", bool(event.get("victory", false)))
 	sim.events.clear()

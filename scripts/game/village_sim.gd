@@ -12,6 +12,8 @@ const MoonRules = preload("res://scripts/game/village_moon_rules.gd")
 const Perks = preload("res://scripts/game/village_perks.gd")
 const Materials = preload("res://scripts/game/village_materials.gd")
 const Aftermath = preload("res://scripts/game/village_aftermath.gd")
+const Rebuild = preload("res://scripts/game/village_rebuild.gd")
+const Threat = preload("res://scripts/game/village_threat.gd")
 const Gear = preload("res://scripts/game/village_gear.gd")
 const WarRules = preload("res://scripts/game/war_rules.gd")
 var living = Living.new()
@@ -22,6 +24,7 @@ var chronicle = Chronicle.new()
 var perks = Perks.new()
 var materials = Materials.new()
 var aftermath = Aftermath.new()
+var rebuild = Rebuild.new()
 var gear = Gear.new()
 var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
 var rally_time: float = 0.0       # seconds left on the rally horn (not saved)
@@ -92,6 +95,7 @@ var quest_progress: Dictionary = {}
 var optional_won: Dictionary = {}
 var raid_stats: Dictionary = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0, "defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0, "expeditions": 0, "delivered": {}}
 var scripted_raid: String = ""
+var raid_span: float = 240.0      # seconds the threat meter takes to fill after the last raid (saved)
 var region_progress: Dictionary = {}
 var next_id: int = 1
 var birth_timer: float = 0
@@ -1654,6 +1658,12 @@ func tick(dt: float) -> void:
 	needs.tick(self, dt)
 	perks.tick(self, dt)
 	aftermath.tick(self, dt)
+	if not raid_active and not raid_warning:
+		var builders: int = 0
+		for u: Dictionary in units:
+			if str(u["type"]) == "builder" and float(u["hp"]) > 0.0:
+				builders += 1
+		rebuild.tick(self, dt, builders)
 	gear.tick(self, dt)
 	_gate_tick()
 	job_timer += dt
@@ -1833,6 +1843,10 @@ func income_per_minute() -> Dictionary:
 	var income: Dictionary = {}
 	for b: Dictionary in buildings:
 		if float(b["hp"]) <= 0.0 or float(b["remaining"]) > 0.0:
+			# A ruined workplace still yields a trickle until it is rebuilt.
+			var trickle: float = rebuild.trickle_rate(self, b)
+			if trickle > 0.0:
+				_add_income(income, str(building_specs[b["type"]]["production"]), "Ruins", trickle * 60.0)
 			continue
 		var spec: Dictionary = building_specs[b["type"]]
 		var resource: Variant = spec.get("production")
@@ -1868,7 +1882,7 @@ func offline_earnings(seconds: float, extra_per_minute: Dictionary = {}) -> Dict
 		var resource: Variant = building_specs[b["type"]].get("production")
 		if resource == null:
 			continue
-		var rate: float = production_rate(b)
+		var rate: float = production_rate(b) + rebuild.trickle_rate(self, b)
 		if rate > 0.0:
 			earned[str(resource)] = float(earned.get(str(resource), 0.0)) + rate * counted
 	for resource: String in extra_per_minute:
@@ -1975,8 +1989,16 @@ func _builder_tick(u: Dictionary, dt: float) -> void:
 	var site: Dictionary = _builder_site(u)
 	if site.is_empty():
 		u["site"] = -1
+		var ruin: Dictionary = {} if float(u["carry"]) >= 1 else rebuild.target(self)
 		if float(u["carry"]) >= 1:
 			_return_haul(u, dt)
+		elif not ruin.is_empty() and rebuild.can_work(self, ruin):
+			# Rise again: with no site to raise, builders put the Hall and workplaces back up.
+			_face_job(u, ruin)
+			if _walk(u, _edge_goal(u, ruin), dt):
+				u["phase"] = "work"
+				u["on_site"] = true
+				rebuild.work(self, ruin, 1.0, dt)
 		elif not aftermath.rubble.is_empty():
 			_salvage(u, dt)
 		else:
@@ -2388,6 +2410,8 @@ func _spawn_raid() -> void:
 		war_log["warlord"] = WarRules.warlord_name(faction)
 		events.append({"kind": "warlord", "name": war_log["warlord"], "faction": str(faction.get("name", "Raiders"))})
 		notice = "Wave %d / %s rides with the %s. Bring the warlord down and the band will break!" % [wave, str(war_log["warlord"]), str(faction.get("name", "Raiders"))]
+	# Raid strength follows defence strength; story raids keep their size.
+	war_log["share"] = 1.0 if not scripted_raid.is_empty() else Threat.ease_raid(self)
 
 
 # Where a raider steps onto the land. The spawn lines follow the claimed land's bounding box,
@@ -2458,7 +2482,11 @@ func _raid_tick(dt: float) -> void:
 			# Chronicle deliberately summons the first defense lesson sooner.
 			next_raid_at = maxf(next_raid_at, elapsed + 90.0)
 			return
-		if _hall().get("hp", 0) > 0 and elapsed >= next_raid_at - 25:
+		if _hall().get("hp", 0) <= 0 and not raid_warning:
+			# The threat meter holds while the Hall lies in ruins: the village rises before it is raided again.
+			# Once it stands there is at least a minute of quiet before the horns.
+			next_raid_at = maxf(next_raid_at + dt, elapsed + 85.0)
+		elif elapsed >= next_raid_at - 25:
 			raid_warning = true
 		if raid_warning and elapsed >= next_raid_at:
 			_spawn_raid()
@@ -2626,7 +2654,8 @@ func _finish_raid(victory: bool) -> void:
 	enemies.clear()
 	_invalidate()
 	scripted_raid = ""
-	next_raid_at = elapsed + (240 if victory else 360)
+	raid_span = 240.0 if victory else 360.0
+	next_raid_at = elapsed + raid_span
 	# The fallen come round beside the Chapel (or another healer) when one stands, else by the Hall.
 	var recovery: Vector2 = aftermath.recovery_spot(self)
 	for u in units:
@@ -2909,7 +2938,7 @@ func export_state() -> Dictionary:
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
 		"optional_won": optional_won.duplicate(), "raid_stats": raid_stats.duplicate(true),
-		"elapsed": elapsed, "xp": xp, "wave": wave, "next_raid_at": next_raid_at,
+		"elapsed": elapsed, "xp": xp, "wave": wave, "next_raid_at": next_raid_at, "raid_span": raid_span,
 		"raid_active": raid_active, "raid_warning": raid_warning, "next_id": next_id, "birth_timer": birth_timer, "moon_phase": moon_phase, "expansions": expansions.duplicate()}
 
 
@@ -3016,6 +3045,8 @@ func restore_state(state: Dictionary) -> bool:
 	xp = int(data["xp"])
 	wave = int(data["wave"])
 	next_raid_at = float(data["next_raid_at"])
+	var span: Variant = data.get("raid_span", 240.0)
+	raid_span = clampf(float(span), 60.0, 3600.0) if (span is float or span is int) else 240.0
 	moon_phase = MoonRules.clamp_phase(data.get("moon_phase", 0))
 	raid_active = data["raid_active"]
 	raid_warning = data["raid_warning"]
