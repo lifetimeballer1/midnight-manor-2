@@ -99,6 +99,9 @@ func _run() -> void:
 	await capture("1-arrive.png")
 	for i in 6:
 		await create_timer(2.5).timeout
+		if i == 3:
+			game.sim.start_raid()   # the Horn during a raid: rally
+			await create_timer(0.25).timeout
 		var focus: Vector2 = mid
 		var role: String = ["warlord", "ram", "bombard", "warlord", "", ""][i]
 		for e: Dictionary in game.sim.enemies:

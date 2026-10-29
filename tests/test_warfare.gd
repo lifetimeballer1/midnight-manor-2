@@ -19,6 +19,9 @@ func _initialize() -> void:
 	_warlord_spawns_and_rallies()
 	_warlord_fall_routs_band()
 	_warlord_save_round_trip()
+	_rally_horn()
+	_veterans()
+	_spoils_bonuses()
 	print("WARFARE ", "PASS" if failures.is_empty() else "FAIL", " checks=", checks, " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)
 
@@ -191,6 +194,51 @@ func _warlord_save_round_trip() -> void:
 	check(not WarRules.warlord_of(loaded).is_empty(), "the warlord is still there after loading")
 	check(not WarRules.current_warlord_name(loaded, WarRules.warlord_of(loaded)).is_empty(), "the warlord keeps a name after loading")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+func _rally_horn() -> void:
+	var sim = _bare()
+	sim._add_unit("warrior")
+	var warrior: Dictionary = sim.units.back()
+	warrior["hp"] = float(warrior["max_hp"]) * 0.5
+	var plain: float = sim._stat(warrior, "damage")
+	check(sim.start_raid(), "during a raid the Horn rallies the defenders")
+	check(sim._stat(warrior, "damage") > plain and sim.rally_time > 0.0, "rallied fighters hit harder")
+	check(float(warrior["hp"]) > float(warrior["max_hp"]) * 0.5, "the rally heals a little")
+	check(not sim.start_raid(), "the rally horn has to rest before it sounds again")
+	sim._raid_tick(WarRules.CALL_SECONDS + 0.5)
+	check(is_equal_approx(sim._stat(warrior, "damage"), plain), "the rally wears off")
+
+
+func _veterans() -> void:
+	var sim = _bare()
+	sim._add_unit("warrior")
+	var warrior: Dictionary = sim.units.back()
+	warrior["x"] = 3.5
+	warrior["y"] = 3.5
+	for index in WarRules.KILLS_PER_LEVEL:
+		var foe: Dictionary = _raider(sim, 4.0, 3.5, "raider", 1.0)
+		warrior["cooldown"] = 0.0
+		sim.tick_count += 1   # a fresh tick, so the threat ranks see the new raider
+		sim._fighter(warrior, 0.1)
+		check(foe.get("slayer", -1) == int(warrior["id"]), "the fighter is credited with its kill %d" % (index + 1))
+		sim.enemies.erase(foe)
+	check(int(warrior["level"]) == 2, "enough kills raise a fighter a level")
+	check(sim.events.any(func(e): return e.get("kind") == "promoted"), "the rise is shown")
+
+
+func _spoils_bonuses() -> void:
+	var sim = Sim.new()
+	sim.start_raid()
+	var t: int = 0
+	while not sim.raid_active and t < 100:
+		sim.tick(0.1)
+		t += 1
+	check(bool(sim.war_log.get("called", false)), "a raid called by the horn is remembered")
+	check(WarRules.spoils(sim, 100.0) > 100.0, "calling the raid early and holding it clean pays more")
+	sim.raid_stats["built_lost"] = int(sim.raid_stats["built_lost"]) + 1
+	sim.war_log["called"] = false
+	check(is_equal_approx(WarRules.spoils(sim, 100.0), 100.0), "a raid that broke something and was not called pays the base")
 
 
 func check(condition: bool, label: String) -> void:

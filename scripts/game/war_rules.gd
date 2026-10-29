@@ -300,3 +300,79 @@ static func flee(sim, enemy: Dictionary, dt: float) -> bool:
 		# No path out (walled in): the raider still slips away when its time runs out.
 		enemy["phase"] = "idle"
 	return false
+
+
+# --------------------------------------------------------------- the defenders' side
+
+
+const CALL_SECONDS: float = 12.0          # the rally horn lasts this long
+const CALL_COOLDOWN: float = 60.0         # and can sound again after this
+const CALL_DAMAGE: float = 0.35
+const CALL_SPEED: float = 0.3
+const CALL_HEAL: float = 0.25             # of each standing fighter's health, at once
+const KILLS_PER_LEVEL: int = 4            # a fighter rises a level every few kills of its own
+const EARLY_HORN_BONUS: float = 0.25      # spoils for calling a raid before it comes
+const FLAWLESS_BONUS: float = 0.5         # spoils when nothing broke and nobody fell
+
+
+# The Horn during a raid: every standing fighter is healed a little and fights harder and
+# faster for a short while. Returns false (with a notice) while it is still resting.
+static func sound_rally(sim) -> bool:
+	if sim.elapsed < sim.rally_ready_at:
+		sim.notice = "The rally horn rests. %ds more." % ceili(sim.rally_ready_at - sim.elapsed)
+		return false
+	sim.rally_time = CALL_SECONDS
+	sim.rally_ready_at = sim.elapsed + CALL_COOLDOWN
+	var rallied: int = 0
+	for u: Dictionary in sim.units:
+		if float(u["hp"]) <= 0.0 or str(sim.troop_specs[u["type"]]["role"]) != "combat":
+			continue
+		u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) * CALL_HEAL)
+		rallied += 1
+		sim.events.append({"kind": "rally", "x": float(u["x"]), "y": float(u["y"])})
+	sim.notice = "Rally! %d fighter%s hit harder and faster for %ds." % [rallied, "" if rallied == 1 else "s", int(CALL_SECONDS)]
+	return true
+
+
+static func rally_factor(sim, u: Dictionary, stat: String) -> float:
+	if sim.rally_time <= 0.0 or str(sim.troop_specs[u["type"]].get("role", "")) != "combat":
+		return 1.0
+	if stat == "damage":
+		return 1.0 + CALL_DAMAGE
+	if stat == "speed":
+		return 1.0 + CALL_SPEED
+	return 1.0
+
+
+# A fighter's blow that finished a raider: the kill is its own, and enough of them raise it a level.
+static func credit_kill(sim, u: Dictionary, enemy: Dictionary) -> void:
+	if enemy.has("slayer"):
+		return
+	enemy["slayer"] = int(u["id"])
+	u["kills"] = int(u.get("kills", 0)) + 1
+	var level: int = int(u["level"])
+	if level >= int(sim.troop_specs[u["type"]]["maxLevel"]) or int(u["kills"]) < KILLS_PER_LEVEL * level:
+		return
+	var before: float = float(u["max_hp"])
+	u["level"] = level + 1
+	u["max_hp"] = sim._stat(u, "hp")
+	u["hp"] = minf(float(u["max_hp"]), float(u["hp"]) + float(u["max_hp"]) - before)
+	sim.war_log["promoted"] = int(sim.war_log.get("promoted", 0)) + 1
+	sim.events.append({"kind": "promoted", "x": float(u["x"]), "y": float(u["y"]), "level": int(u["level"]), "id": int(u["id"])})
+
+
+# The gold a held raid pays, and the reasons it is more than the base.
+static func spoils(sim, base: float) -> float:
+	var bonus: float = 0.0
+	var reasons: Array = []
+	if bool(sim.war_log.get("called", false)):
+		bonus += EARLY_HORN_BONUS
+		reasons.append("called early")
+	var start: Dictionary = sim.war_log.get("base", {})
+	if not start.is_empty() and int(sim.raid_stats.get("built_lost", 0)) == int(start.get("built_lost", 0)) \
+			and int(sim.raid_stats.get("defenders_lost", 0)) == int(start.get("defenders_lost", 0)):
+		bonus += FLAWLESS_BONUS
+		reasons.append("flawless")
+		sim.war_log["flawless"] = true
+	sim.war_log["bonus"] = reasons
+	return base * (1.0 + bonus)

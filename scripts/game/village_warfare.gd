@@ -11,6 +11,8 @@ extends "res://scripts/game/village_defenses.gd"
 #     and a raider marked by the watchfire carries an ember over its head.
 #   * A warlord's arrival is called out and a health bar for it sits at the top of the screen.
 #     When it falls the band breaks, with a banner, a horn and a gold burst.
+#   * The Horn rallies the defenders during a raid (gold rings and sparks), fighters who rise a
+#     level from their kills get a LEVEL badge, and a warlord wave is called out in the warning.
 #   * The defense report that opens after a raid now leads with the battle: who fell, who
 #     fled, the warlord's fate, defenders downed, spoils, and which defense did the most.
 # Nothing here changes the simulation. Events are marked so each is read once.
@@ -33,6 +35,9 @@ var _wf_mats: Dictionary = {}
 var _wf_meshes: Dictionary = {}
 var _wf_clock: float = 0.0
 var _wf_burn_clock: float = 0.0
+var _wf_warned: bool = false
+var _wf_rally_clock: float = 0.0
+var _wf_rally_called: bool = false
 var _wf_boss: PanelContainer = null
 var _wf_boss_name: Label = null
 var _wf_boss_bar: ProgressBar = null
@@ -268,6 +273,10 @@ func _read_combat_events() -> void:
 				_wf_warlord_arrives(event)
 			"warlord_fall":
 				_wf_warlord_falls(event)
+			"rally":
+				_wf_rally(Vector2(float(event["x"]), float(event["y"])))
+			"promoted":
+				_wf_promoted(event)
 	super()
 
 
@@ -362,6 +371,111 @@ func _process(delta: float) -> void:
 	if not started:
 		return
 	_wf_update_boss()
+	_wf_update_horn(0.0 if sim.paused else delta)
+
+
+# ---------------------------------------------------------------- rally horn and veterans
+
+
+# During a raid the Horn rallies the defenders; it shows when it can sound again. Before a
+# warlord wave the raid line says so, and the warning calls it out once.
+func _wf_update_horn(step: float) -> void:
+	if nav_attack != null and is_instance_valid(nav_attack):
+		var label: String = "Horn"
+		var tip: String = "Sound the horn: call the next raid now (+25% spoils)"
+		if sim.raid_active:
+			var rest: float = sim.rally_ready_at - sim.elapsed
+			label = "Rally" if rest <= 0.0 else "Rally %d" % ceili(rest)
+			tip = "Rally: heal fighters a little; they hit harder and move faster for %ds" % int(WarRules.CALL_SECONDS)
+		if nav_attack.text != label:
+			nav_attack.text = label
+			nav_attack.tooltip_text = tip
+	var warned: bool = sim.raid_warning and WarRules.warlord_wave(sim.wave + 1)
+	if warned and not _wf_warned:
+		_show_combat_banner("A WARLORD APPROACHES", false)
+	_wf_warned = warned
+	if raid_hud != null and is_instance_valid(raid_hud) and not sim.raid_active and WarRules.warlord_wave(sim.wave + 1) \
+			and not raid_hud.text.ends_with(" · Warlord"):
+		raid_hud.text += " · Warlord"
+	# Rallied fighters throw off a few gold sparks while the horn lasts.
+	if sim.rally_time <= 0.0 or step <= 0.0:
+		return
+	_wf_rally_clock += step
+	if _wf_rally_clock < 0.4:
+		return
+	_wf_rally_clock = 0.0
+	for u: Dictionary in sim.units:
+		if not _effect_budget_open():
+			return
+		if float(u["hp"]) > 0.0 and str(sim.troop_specs[u["type"]]["role"]) == "combat":
+			burst_pool.spawn(world_position(sim.position_of(u), 0.4), WF_GOLD, 3, 0.5, true)
+
+
+func _wf_rally(tile: Vector2) -> void:
+	if not _wf_rally_called:
+		_wf_rally_called = true
+		_show_combat_banner("RALLY!", true)
+		if has_method("_voice"):
+			call("_voice", "brass")
+		get_tree().create_timer(0.2).timeout.connect(func() -> void: _wf_rally_called = false)
+	_wf_ring(tile, WF_GOLD, 1.1)
+	if _effect_budget_open():
+		burst_pool.spawn(world_position(tile, 0.8), WF_GOLD, 8, 0.9, true)
+
+
+func _wf_promoted(event: Dictionary) -> void:
+	var tile := Vector2(float(event["x"]), float(event["y"]))
+	_wf_ring(tile, WF_GOLD, 0.8)
+	if not _effect_budget_open():
+		return
+	burst_pool.spawn(world_position(tile, 1.2), WF_GOLD, 14, 1.2, true)
+	var label := Label3D.new()
+	label.text = "LEVEL %d" % int(event.get("level", 2))
+	label.modulate = WF_GOLD
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.font = UI.font("strong")
+	label.font_size = 36
+	label.pixel_size = 0.013
+	label.outline_size = 9
+	label.outline_modulate = WORLD_TEXT_OUTLINE
+	label.no_depth_test = true
+	label.position = world_position(tile, 2.6)
+	add_child(label)
+	effect_nodes.append(label)
+	var tween: Tween = _effect_tween()
+	tween.tween_property(label, "position:y", label.position.y + 1.2, 1.3)
+	tween.parallel().tween_property(label, "modulate:a", 0.0, 1.3).set_delay(0.5)
+	tween.tween_callback(label.queue_free)
+	if has_method("_chime"):
+		call("_chime", "collect")
+
+
+# A gold ring that spreads over the ground under a fighter.
+func _wf_ring(tile: Vector2, tint: Color, reach: float) -> void:
+	if not _effect_budget_open():
+		return
+	var ring := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.8
+	torus.outer_radius = 1.0
+	torus.rings = 24
+	torus.ring_segments = 4
+	ring.mesh = torus
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	material.albedo_color = Color(tint, 0.9)
+	ring.material_override = material
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	ring.position = world_position(tile, 0.12)
+	ring.scale = Vector3(0.2, 0.08, 0.2)
+	add_child(ring)
+	effect_nodes.append(ring)
+	var tween: Tween = _effect_tween()
+	tween.tween_property(ring, "scale", Vector3(reach, 0.08, reach), 0.45).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tween.parallel().tween_property(material, "albedo_color:a", 0.0, 0.6)
+	tween.tween_callback(ring.queue_free)
 
 
 func _wf_update_boss() -> void:
@@ -473,7 +587,13 @@ func _build_raid_report() -> void:
 	var downed: int = maxi(0, int(sim.raid_stats.get("defenders_lost", 0)) - int(base.get("defenders_lost", 0)))
 	_wf_row(column, "Defenders down", str(downed), "They come round after the raid." if downed > 0 else "")
 	if bool(war.get("victory", false)) and float(war.get("spoils", 0.0)) > 0.0:
-		_wf_row(column, "Spoils", "+%d gold" % int(float(war["spoils"])), "", UI.READY)
+		var reasons: Array = war.get("bonus", [])
+		var why: String = ""
+		if not reasons.is_empty():
+			why = "Bonus: %s." % ", ".join(PackedStringArray(reasons))
+		_wf_row(column, "Spoils", "+%d gold" % int(float(war["spoils"])), why, UI.READY)
+	if int(war.get("promoted", 0)) > 0:
+		_wf_row(column, "Veterans", "+%d level%s" % [int(war["promoted"]), "" if int(war["promoted"]) == 1 else "s"], "Fighters rose a level from their own kills.", UI.GOLD)
 	var best: String = ""
 	var best_damage: float = 0.0
 	for source: String in war.get("damage_by", {}):

@@ -24,6 +24,9 @@ var materials = Materials.new()
 var aftermath = Aftermath.new()
 var gear = Gear.new()
 var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
+var rally_time: float = 0.0       # seconds left on the rally horn (not saved)
+var rally_ready_at: float = 0.0   # when the rally horn can sound again (not saved)
+var horn_called: bool = false     # the player sounded the horn for the coming raid (not saved)
 # Farm estates: a connected patch of farm zone is one farm. village_growth.gd fills this in from the
 # zone on its own clock: house building id -> {tiles, fields: Array[Vector2i], name}. Derived, not saved.
 var estates: Dictionary = {}
@@ -917,7 +920,7 @@ func _stat(u: Dictionary, stat: String) -> float:
 	var honor: float = 1.0 + minf(5.0, float(u.get("prestige", 0))) * 0.1 if stat in ["hp", "damage"] else 1.0
 	# Emberforge: staffed forges sharpen every fighter's blade.
 	var forged: float = 1.0 + perks.total("damage") if stat == "damage" and str(spec.get("role", "")) == "combat" else 1.0
-	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor * forged
+	return float(spec["base"].get(stat, 0)) * (1 + float(spec["growth"].get(stat, 0)) * (int(u["level"]) - 1)) * honor * forged * WarRules.rally_factor(self, u, stat)
 
 
 # How much a gatherer brings back per trip. Hide Tannery: staffed tanneries add sturdier sacks.
@@ -2257,6 +2260,8 @@ func _fighter(u: Dictionary, dt: float) -> void:
 		u["phase"] = "attack"
 		if u["cooldown"] <= 0:
 			var damage: float = WarRules.harm(self, enemy, _stat(u, "damage"), str(u["type"]))
+			if float(enemy["hp"]) <= 0.0:
+				WarRules.credit_kill(self, u, enemy)
 			events.append({"kind": "hit", "x": float(enemy["x"]), "y": float(enemy["y"]), "amount": damage, "friendly": false})
 			u["cooldown"] = 1.0
 			if u["type"] == "archer":
@@ -2281,15 +2286,19 @@ func _fighter(u: Dictionary, dt: float) -> void:
 
 
 func start_raid() -> bool:
-	if raid_active or raid_warning:
+	if raid_active:
+		# During a raid the Horn calls the defenders to rally instead.
+		return WarRules.sound_rally(self)
+	if raid_warning:
 		notice = "A raid is already on the road."
 		return false
 	if _hall().get("hp", 0) <= 0:
 		notice = "Repair the Manor Hall before testing defenses."
 		return false
 	raid_warning = true
+	horn_called = true
 	next_raid_at = elapsed + 3
-	notice = "Test wave / horns in 3 seconds."
+	notice = "You sound the horn / they come in 3 seconds. Spoils +25% for calling them."
 	return true
 
 
@@ -2363,6 +2372,10 @@ func _spawn_raid() -> void:
 			"x": point.x, "y": point.y, "hp": hp, "max_hp": hp, "phase": "walk", "cooldown": 0.0})
 	war_log = WarRules.new_log()
 	war_log["base"] = raid_stats.duplicate(true)
+	war_log["called"] = horn_called
+	horn_called = false
+	rally_time = 0.0
+	rally_ready_at = 0.0
 	raid_stats["seconds_held"] = 0.0
 	notice = "Wave %d / %s / hold the Manor!" % [wave, str(faction.get("name", "Raiders"))]
 	if WarRules.warlord_wave(wave):
@@ -2457,6 +2470,7 @@ func _raid_tick(dt: float) -> void:
 			home_raid.hit(self, b, float(target["hp"]) - float(target["damage"]))
 	home_raid.active["seconds"] = minf(HomeRaid.MAX_SECONDS, float(home_raid.active["seconds"]) + dt)
 	raid_stats["seconds_held"] = float(raid_stats.get("seconds_held", 0.0)) + dt
+	rally_time = maxf(0.0, rally_time - dt)
 	for b in buildings:
 		if b["hp"] <= 0 or b["remaining"] > 0 or b["cooldown"] > 0:
 			continue
@@ -2608,6 +2622,7 @@ func _finish_raid(victory: bool) -> void:
 	var held: float = float(raid_stats.get("seconds_held", 0.0))
 	raid_active = false
 	raid_warning = false
+	rally_time = 0.0
 	enemies.clear()
 	_invalidate()
 	scripted_raid = ""
@@ -2636,7 +2651,7 @@ func _finish_raid(victory: bool) -> void:
 			notice = "The Manor stands / masons put the damage back."
 		else:
 			notice = "The Manor stands / salvage and recovery."
-		var spoils: float = (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase)
+		var spoils: float = WarRules.spoils(self, (20 + wave * 10) * MoonRules.loot_multiplier(moon_phase))
 		war_log["spoils"] = spoils
 		_reward({"gold": spoils})
 	else:
