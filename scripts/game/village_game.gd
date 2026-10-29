@@ -1988,6 +1988,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	more_board_button = _action_button("Manor Board", _open_panel.bind("board"), campaign_grid)
 	more_doctrine_button = _action_button("Doctrine", _open_panel.bind("doctrine"), campaign_grid)
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
+	_action_button("Stewards", _open_panel.bind("stewards"), campaign_grid)
 	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
@@ -2837,8 +2838,33 @@ func _open_panel(which: String) -> void:
 			_build_expedition()
 		"raid_report":
 			_build_raid_report()
+		"stewards":
+			_build_stewards()
 	_layout_ui()
 	_update_marker()
+
+
+# Stewards: earned helpers, each with an on/off switch once earned (village_stewards.gd).
+func _build_stewards() -> void:
+	ui.heading("STEWARDS", side_content)
+	ui.body("Helpers the manor earns as it grows. They are never bought.", side_content, 12)
+	for id: String in Sim.Stewards.ORDER:
+		var info: Dictionary = Sim.Stewards.INFO[id]
+		ui.rule(side_content)
+		_label(str(info["name"]), side_content, true)
+		ui.body(str(info["does"]), side_content)
+		if sim.stewards.has(id):
+			var on: bool = sim.stewards.working(id)
+			var button: Button = ui.command_button("At work: On" if on else "At work: Off", _toggle_steward.bind(id), side_content, 40.0)
+			button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		else:
+			ui.body(str(info["earn"]), side_content, 12)
+
+
+func _toggle_steward(id: String) -> void:
+	if sim.stewards.toggle(id):
+		sim.notice = "%s %s." % [str(Sim.Stewards.INFO[id]["name"]), "is at work" if sim.stewards.working(id) else "rests"]
+		_open_panel("stewards")
 
 
 func _raid_stars(score: int) -> String:

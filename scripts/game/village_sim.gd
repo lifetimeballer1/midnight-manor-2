@@ -14,6 +14,7 @@ const Materials = preload("res://scripts/game/village_materials.gd")
 const Aftermath = preload("res://scripts/game/village_aftermath.gd")
 const Rebuild = preload("res://scripts/game/village_rebuild.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
+const Stewards = preload("res://scripts/game/village_stewards.gd")
 const Gear = preload("res://scripts/game/village_gear.gd")
 const WarRules = preload("res://scripts/game/war_rules.gd")
 var living = Living.new()
@@ -25,6 +26,7 @@ var perks = Perks.new()
 var materials = Materials.new()
 var aftermath = Aftermath.new()
 var rebuild = Rebuild.new()
+var stewards = Stewards.new()
 var gear = Gear.new()
 var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
 var rally_time: float = 0.0       # seconds left on the rally horn (not saved)
@@ -1700,6 +1702,7 @@ func tick(dt: float) -> void:
 		_unit_tick(u, dt)
 	_raid_tick(dt)
 	_automation_tick(dt)
+	stewards.tick(self, dt)
 	living.tick(self, dt)
 	if navigation_revision != living.navigation_revision:
 		navigation_revision = living.navigation_revision
@@ -2933,7 +2936,7 @@ func export_state() -> Dictionary:
 		for u in (group as Array):
 			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
 				(u as Dictionary).erase(transient)
-	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
+	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "stewards": stewards.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
 		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
@@ -3056,6 +3059,7 @@ func restore_state(state: Dictionary) -> bool:
 	chronicle.restore(data["chronicle"])
 	needs.restore(data["needs"])
 	aftermath.restore(data.get("aftermath"))
+	stewards.restore(data.get("stewards"))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))
 	navigation_revision = living.navigation_revision
