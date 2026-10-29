@@ -40,6 +40,13 @@ const EXPANSION_PLOTS: Dictionary = {
 	"south": {"label": "South Reach", "rect": Rect2i(-10, 16, 40, 10), "region": "southreach"},
 	"west": {"label": "West Reach", "rect": Rect2i(-10, 0, 10, 16), "region": "blackwater-mouth"},
 }
+# "No point here". The north and west reaches lie at negative tiles, so (-1, -1) or any x < 0 is
+# real ground there and cannot mean "none".
+const NO_POINT := Vector2(-100000.0, -100000.0)
+
+
+static func has_point(point: Vector2) -> bool:
+	return point.x > -1000.0 and point.y > -1000.0
 
 var building_specs: Dictionary = {}
 var troop_specs: Dictionary = {}
@@ -205,8 +212,8 @@ func _add_unit(role: String) -> void:
 	units.append({"id": _id(), "type": role, "x": 8.0 + (units.size() % 6) * 0.65, "y": 10.8,
 		"hp": hp, "max_hp": hp, "phase": "idle", "workplace": -1, "carry": 0.0, "carry_resource": "",
 		"level": 1, "cooldown": 0.0, "order": [], "hold": false,
-		"fx": -1.0, "fy": -1.0, "rx": -1.0, "ry": -1.0, "kite": false, "think": 0.0,
-		"post": -1, "slot": 0, "sx": -1.0, "sy": -1.0})
+		"fx": NO_POINT.x, "fy": NO_POINT.y, "rx": NO_POINT.x, "ry": NO_POINT.y, "kite": false, "think": 0.0,
+		"post": -1, "slot": 0, "sx": NO_POINT.x, "sy": NO_POINT.y})
 
 
 func _invalidate() -> void:
@@ -810,7 +817,8 @@ func recruit(role: String) -> bool:
 	_spend(gear.hire_cost(self, role))
 	_add_unit(role)
 	_auto_assign()
-	notice = "A %s joins the village." % troop_specs[role]["name"]
+	var label: String = str(troop_specs[role]["name"])
+	notice = "%s %s joins the village." % ["An" if label.left(1).to_upper() in ["A", "E", "I", "O", "U"] else "A", label]
 	return true
 
 
@@ -822,8 +830,8 @@ func assign(unit_id: int, building_id: int) -> bool:
 		u["workplace"] = -1
 		u["post"] = -1
 		u["slot"] = 0
-		u["sx"] = -1.0
-		u["sy"] = -1.0
+		u["sx"] = NO_POINT.x
+		u["sy"] = NO_POINT.y
 		paths.erase(unit_id)
 		stand_cache.clear()
 		notice = "Worker released."
@@ -848,8 +856,8 @@ func assign(unit_id: int, building_id: int) -> bool:
 	u["workplace"] = building_id
 	u["post"] = -1
 	u["slot"] = 0
-	u["sx"] = -1.0
-	u["sy"] = -1.0
+	u["sx"] = NO_POINT.x
+	u["sy"] = NO_POINT.y
 	u["hold"] = false
 	u["order"] = []
 	paths.erase(unit_id)
@@ -1209,9 +1217,9 @@ func friendly_area(point: Vector2) -> int:
 func _approach_point(u: Dictionary, target: Vector2) -> Vector2:
 	var area: int = friendly_area(position_of(u))
 	if area < 0:
-		return Vector2(-1, -1)
+		return NO_POINT
 	var width: int = _walk_rect.size.x
-	var best := Vector2(-1, -1)
+	var best := NO_POINT
 	var best_distance: float = INF
 	for index in _friendly_area.size():
 		if _friendly_area[index] != area:
@@ -1367,7 +1375,7 @@ func job_target(b: Dictionary) -> Vector2:
 
 func stand_tile(b: Dictionary, slot: int) -> Vector2:
 	var candidates := stand_candidates(b)
-	return candidates[posmod(slot, candidates.size())] if not candidates.is_empty() else Vector2(-1, -1)
+	return candidates[posmod(slot, candidates.size())] if not candidates.is_empty() else NO_POINT
 
 
 func _declared_stands(b: Dictionary, except_slot: int) -> Array[Vector2]:
@@ -1421,11 +1429,11 @@ func _declared(b: Dictionary, slot: int, excluded: Array[Vector2]) -> Vector2:
 		var point: Vector2 = candidates[(slot + offset) % candidates.size()]
 		if not excluded.has(point):
 			return point
-	return Vector2(-1, -1)
+	return NO_POINT
 
 
 func _held_stand(u: Dictionary) -> Vector2:
-	return Vector2(float(u.get("sx", -1.0)), float(u.get("sy", -1.0)))
+	return Vector2(float(u.get("sx", NO_POINT.x)), float(u.get("sy", NO_POINT.y)))
 
 
 func _remember_stand(u: Dictionary, point: Vector2) -> void:
@@ -1437,10 +1445,10 @@ func _resolve_stand(u: Dictionary, b: Dictionary, excluded: Array[Vector2]) -> V
 	# The reserved stand first, then any other reachable safe edge, then wait.
 	var start := tile_of(u)
 	var point: Vector2 = _declared(b, _stand_slot(u, int(b["id"])), excluded)
-	if point.x >= 0 and _walkable(start, point):
+	if has_point(point) and _walkable(start, point):
 		_remember_stand(u, point)
 		return point
-	var best := Vector2(-1, -1)
+	var best := NO_POINT
 	var best_distance: float = INF
 	for edge in edge_candidates(b):
 		if excluded.has(edge) or not _walkable(start, edge):
@@ -1456,10 +1464,10 @@ func _resolve_stand(u: Dictionary, b: Dictionary, excluded: Array[Vector2]) -> V
 func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 	# Reserved crew stand first, then any other reachable safe edge, then wait.
 	if b.is_empty():
-		return Vector2(-1, -1)
+		return NO_POINT
 	var start := tile_of(u)
 	var field: Vector2 = _field_stand(u, b, start)
-	if field.x >= 0:
+	if has_point(field):
 		return field
 	var crew: String = ""
 	for other: Dictionary in units:
@@ -1479,14 +1487,14 @@ func work_position(u: Dictionary, b: Dictionary) -> Vector2:
 			continue
 		var other_slot: int = _stand_slot(other, int(b["id"]))
 		var other_held: Vector2 = _held_stand(other)
-		if other_held.x < 0 or not _walkable(tile_of(other), other_held):
+		if not has_point(other_held) or not _walkable(tile_of(other), other_held):
 			other_held = stand_tile(b, other_slot)
 			if not _walkable(tile_of(other), other_held):
-				other_held = Vector2(-1, -1)
-		if other_held.x >= 0:
+				other_held = NO_POINT
+		if has_point(other_held):
 			taken.append(other_held)
 	var held: Vector2 = _held_stand(u)
-	if held.x >= 0 and not taken.has(held) and _walkable(start, held):
+	if has_point(held) and not taken.has(held) and _walkable(start, held):
 		stand_cache[key] = held
 		return held
 	var resolved: Vector2 = _resolve_stand(u, b, taken)
@@ -1502,7 +1510,7 @@ func _field_stand(u: Dictionary, b: Dictionary, start: Vector2i) -> Vector2:
 	var estate: Dictionary = estates.get(int(b["id"]), {})
 	var fields: Array = estate.get("fields", [])
 	if fields.is_empty():
-		return Vector2(-1, -1)
+		return NO_POINT
 	var shift: int = floori(elapsed / FIELD_SHIFT)
 	var key: String = "field|%d|%d|%d|%d,%d|%d" % [int(b["id"]), int(u["id"]), shift, start.x, start.y, revision]
 	if stand_cache.has(key):
@@ -1510,7 +1518,7 @@ func _field_stand(u: Dictionary, b: Dictionary, start: Vector2i) -> Vector2:
 	if stand_cache.size() > 4000:
 		stand_cache.clear()
 	var pick: int = posmod(int(u["id"]) * 7 + shift * 3, fields.size())
-	var out := Vector2(-1, -1)
+	var out := NO_POINT
 	for i in mini(fields.size(), 4):
 		var tile: Vector2i = fields[(pick + i * 5) % fields.size()]
 		var point := Vector2(tile) + Vector2(0.5, 0.5)
@@ -1522,9 +1530,9 @@ func _field_stand(u: Dictionary, b: Dictionary, start: Vector2i) -> Vector2:
 
 
 func facing_target(u: Dictionary) -> Vector2:
-	var x: float = float(u.get("fx", -1.0))
-	var y: float = float(u.get("fy", -1.0))
-	if x >= 0 and y >= 0 and is_finite(x) and is_finite(y):
+	var x: float = float(u.get("fx", NO_POINT.x))
+	var y: float = float(u.get("fy", NO_POINT.y))
+	if is_finite(x) and is_finite(y) and has_point(Vector2(x, y)):
 		return Vector2(x, y)
 	return position_of(u)
 
@@ -1536,27 +1544,27 @@ func _face_job(u: Dictionary, b: Dictionary) -> void:
 
 
 func _clear_facing(u: Dictionary) -> void:
-	u["fx"] = -1.0
-	u["fy"] = -1.0
+	u["fx"] = NO_POINT.x
+	u["fy"] = NO_POINT.y
 
 
 func _edge_goal(u: Dictionary, b: Dictionary, enemy: bool = false) -> Vector2:
 	var candidates: Array[Vector2] = edge_candidates(b, enemy)
 	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
-	var best := Vector2(-1, -1)
+	var best := NO_POINT
 	var best_distance: float = INF
 	for point: Vector2 in candidates:
 		var distance: float = position_of(u).distance_squared_to(point)
 		if distance < best_distance:
 			best_distance = distance
 			best = point
-	if best.x >= 0 and not _cached_route(start, Vector2i(floori(best.x), floori(best.y)), enemy).is_empty():
+	if has_point(best) and not _cached_route(start, Vector2i(floori(best.x), floori(best.y)), enemy).is_empty():
 		return best
 	# A nearby edge can be sealed while the far entrance is still reachable.
 	for point: Vector2 in candidates:
 		if not _cached_route(start, Vector2i(floori(point.x), floori(point.y)), enemy).is_empty():
 			return point
-	return Vector2(-1, -1)
+	return NO_POINT
 
 
 # Memoized edge goals: same result as _edge_goal, recomputed only when the
@@ -1616,10 +1624,14 @@ func _walk(u: Dictionary, target: Vector2, dt: float, enemy: bool = false) -> bo
 		living.walked(before, point, elapsed)
 	u["x"] = point.x
 	u["y"] = point.y
-	u["phase"] = "walk"
+	var arrived: bool = point.distance_to(target) < 0.05
+	# Someone already standing at the goal (workers sheltering by the Hall in a raid) stands
+	# still instead of walking on the spot.
+	if not arrived or not point.is_equal_approx(before):
+		u["phase"] = "walk"
 	if not steps.is_empty() and point.distance_to(waypoint) < 0.01:
 		steps.pop_front()
-	return point.distance_to(target) < 0.05
+	return arrived
 
 
 func _hall() -> Dictionary:
@@ -1936,7 +1948,7 @@ func _unit_tick(u: Dictionary, dt: float) -> void:
 		_clear_facing(u)
 		return
 	var stand: Vector2 = work_position(u, workplace)
-	if stand.x < 0:
+	if not has_point(stand):
 		_clear_facing(u)
 		return
 	_face_job(u, workplace)
@@ -2016,14 +2028,14 @@ func _salvage(u: Dictionary, dt: float) -> void:
 	u["fy"] = at.y
 	# Stand on the pile when it lies on open ground, else beside it (a rebuilt wall may cover it).
 	var start := Vector2i(floori(float(u["x"])), floori(float(u["y"])))
-	var spot := Vector2(-1, -1)
+	var spot := NO_POINT
 	var centre := Vector2i(floori(at.x), floori(at.y))
 	for step: Vector2i in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)]:
 		var tile: Vector2i = centre + step
 		if in_world(tile) and (tile == start or not _cached_route(start, tile, false).is_empty()):
 			spot = Vector2(tile) + Vector2.ONE * 0.5
 			break
-	if spot.x < 0.0:
+	if not has_point(spot):
 		aftermath.salvage(pile, int(pile["stone"]))   # nobody can reach it: the stone is lost
 		return
 	if position_of(u).distance_to(at) <= 1.6 or _walk(u, spot, dt):
@@ -2160,20 +2172,20 @@ func _flee_point(u: Dictionary, enemy: Dictionary, release: float) -> Vector2:
 			var steps: int = maxi(absi(x - here_tile.x), absi(y - here_tile.y))
 			options.append([away - steps * 0.35, point])
 	if options.is_empty():
-		return Vector2(-1, -1)
+		return NO_POINT
 	options.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) > float(b[0]))
 	for option: Array in options:
 		var point: Vector2 = option[1]
 		if _cached_route(here_tile, Vector2i(floori(point.x), floori(point.y)), false).is_empty():
 			continue
 		return point
-	return Vector2(-1, -1)
+	return NO_POINT
 
 
 func _close_kite(u: Dictionary) -> void:
 	u["kite"] = false
-	u["rx"] = -1.0
-	u["ry"] = -1.0
+	u["rx"] = NO_POINT.x
+	u["ry"] = NO_POINT.y
 
 
 func _archer_space(u: Dictionary, enemy: Dictionary) -> Vector2:
@@ -2184,18 +2196,18 @@ func _archer_space(u: Dictionary, enemy: Dictionary) -> Vector2:
 	if bool(u.get("kite", false)):
 		if gap >= release:
 			_close_kite(u)
-			return Vector2(-1, -1)
+			return NO_POINT
 	elif gap > KITE_TRIGGER:
-		return Vector2(-1, -1)
+		return NO_POINT
 	else:
 		u["kite"] = true
-	var goal := Vector2(float(u.get("rx", -1.0)), float(u.get("ry", -1.0)))
-	if goal.x >= 0 and u["think"] > 0 and _walkable(here_tile, goal):
+	var goal := Vector2(float(u.get("rx", NO_POINT.x)), float(u.get("ry", NO_POINT.y)))
+	if has_point(goal) and u["think"] > 0 and _walkable(here_tile, goal):
 		return goal
 	var point: Vector2 = _flee_point(u, enemy, release)
-	if point.x < 0:
+	if not has_point(point):
 		_close_kite(u)
-		return Vector2(-1, -1)
+		return NO_POINT
 	u["rx"] = point.x
 	u["ry"] = point.y
 	u["think"] = KITE_THINK
@@ -2235,7 +2247,7 @@ func _fighter(u: Dictionary, dt: float) -> void:
 		var closest: Dictionary = _nearest_enemy(here)
 		if not closest.is_empty() and (here.distance_to(position_of(closest)) <= KITE_TRIGGER or bool(u.get("kite", false))):
 			var space: Vector2 = _archer_space(u, closest)
-			if space.x >= 0:
+			if has_point(space):
 				_walk(u, space, dt)
 				return
 			_close_kite(u)
@@ -2257,13 +2269,13 @@ func _fighter(u: Dictionary, dt: float) -> void:
 		return
 	# No way through to this raider (a wall between): stand at the nearest open ground instead
 	# of freezing where they are. Re-chosen every so often as the raider moves.
-	var goal := Vector2(float(u.get("ax", -1.0)), float(u.get("ay", -1.0)))
-	if goal.x < 0 or u["think"] <= 0:
+	var goal := Vector2(float(u.get("ax", NO_POINT.x)), float(u.get("ay", NO_POINT.y)))
+	if not has_point(goal) or u["think"] <= 0:
 		goal = _approach_point(u, position_of(enemy))
 		u["ax"] = goal.x
 		u["ay"] = goal.y
 		u["think"] = APPROACH_THINK
-	if goal.x >= 0 and here.distance_to(goal) > 0.1:
+	if has_point(goal) and here.distance_to(goal) > 0.1:
 		_walk(u, goal, dt)
 
 
@@ -2481,10 +2493,10 @@ func _raid_tick(dt: float) -> void:
 		if bool(enemy.get("raids_resources", false)):
 			var site: Dictionary = home_raid.loot_target(self, position_of(enemy))
 			if not site.is_empty(): objective = site
-		var goal := Vector2(-1, -1)
+		var goal := NO_POINT
 		if not objective.is_empty() and objective["hp"] > 0.0:
 			goal = _cached_edge_goal(enemy, objective, true)
-		if goal.x < 0.0:
+		if not has_point(goal):
 			# Hall edge unreachable (walled off): fall back to the nearest
 			# building. The reachability probes already ran inside _edge_goal
 			# via the shared cache, so this costs no extra search.
@@ -2554,8 +2566,8 @@ func _finish_raid(victory: bool) -> void:
 	for u in units:
 		if u["hp"] <= 0:
 			u["hp"] = float(u["max_hp"]) * 0.5
-			u["x"] = 8.0 if recovery.x < 0.0 else recovery.x
-			u["y"] = 10.8 if recovery.x < 0.0 else recovery.y
+			u["x"] = recovery.x if has_point(recovery) else 8.0
+			u["y"] = recovery.y if has_point(recovery) else 10.8
 			u["phase"] = "idle"
 	if victory:
 		raid_stats["defended"] = int(raid_stats["defended"]) + 1
@@ -2909,6 +2921,12 @@ func restore_state(state: Dictionary) -> bool:
 	expansions.assign(data.get("expansions", []))
 	buildings.assign(data["buildings"].duplicate(true))
 	units.assign(data["units"].duplicate(true))
+	for u: Dictionary in units:
+		# Saves from before NO_POINT marked "no stand / facing / goal" as (-1, -1), real ground in a reach.
+		for pair: Array in [["sx", "sy"], ["fx", "fy"], ["ax", "ay"], ["rx", "ry"]]:
+			if u.has(pair[0]) and float(u[pair[0]]) == -1.0 and float(u.get(pair[1], -1.0)) == -1.0:
+				u[pair[0]] = NO_POINT.x
+				u[pair[1]] = NO_POINT.y
 	enemies.assign(data["enemies"].duplicate(true))
 	resources = data["resources"].duplicate(true)
 	for resource in world_specs["storageBase"]:
@@ -3056,9 +3074,9 @@ func _validate_state(state: Dictionary) -> bool:
 					var extra: Variant = u.get(key, -1.0)
 					if not (extra is int or extra is float) or not is_finite(float(extra)):
 						return false
-				# A held stand is (-1, -1) when unset; stands are tile centres, so a stand in the West or
-				# North Reach has a negative coordinate and is still a real stand.
-				if (float(u.get("sx", -1.0)) == -1.0) != (float(u.get("sy", -1.0)) == -1.0):
+				# Older saves mark an unset stand as (-1, -1), newer ones as NO_POINT; stands are tile
+				# centres, so a stand in the West or North Reach has a negative coordinate and is real.
+				if (float(u.get("sx", NO_POINT.x)) == -1.0) != (float(u.get("sy", NO_POINT.y)) == -1.0):
 					return false
 				if not u.get("kite", false) is bool:
 					return false

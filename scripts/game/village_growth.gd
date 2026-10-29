@@ -177,7 +177,11 @@ func ranked(sim, zone: String) -> Array[String]:
 	return out
 
 
-# Where a type could rise on its zone, nearest the hall first, or (-1, -1). A spot must keep the
+# find_spot's "nowhere": the north and west reaches have negative tiles, so (-1, -1) is real ground.
+const NO_SPOT := Vector2i(-100000, -100000)
+
+
+# Where a type could rise on its zone, nearest the hall first, or NO_SPOT. A spot must keep the
 # village walkable: the new building needs a way in from the hall (and a work stand to use), and it
 # may not cut anyone else off, cover another building's work stand or sit on a paved road. Spots on a
 # well-trodden trail are taken only when nothing else fits, so the village's paths stay lanes.
@@ -189,7 +193,7 @@ func find_spot(sim, type_name: String, tiles: Dictionary, walk: Variant = null) 
 		walk = _walk(sim)
 		_floods = 0
 	if not sim.unlock_reason(type_name).is_empty():
-		return Vector2i(-1, -1)
+		return NO_SPOT
 	var anchors: Array = _order(sim, tiles, size, heart, walk)
 	for anchor: Vector2i in anchors:
 		var fits: bool = true
@@ -202,7 +206,7 @@ func find_spot(sim, type_name: String, tiles: Dictionary, walk: Variant = null) 
 		var reason: String = sim.build_reason(type_name, anchor.x, anchor.y)
 		if not reason.is_empty() and reason != "Not enough resources.":
 			if reason not in ["This footprint is occupied.", "Outside the village."]:
-				return Vector2i(-1, -1)   # locked, limited or too early: no spot will do
+				return NO_SPOT   # locked, limited or too early: no spot will do
 			continue
 		var footprint := Rect2i(anchor, Vector2i.ONE * size)
 		if walk.is_empty():
@@ -210,12 +214,12 @@ func find_spot(sim, type_name: String, tiles: Dictionary, walk: Variant = null) 
 		if not _door_open(sim, walk, type_name, footprint, walk["reached"]) or _covers_stand(walk, footprint):
 			continue
 		if _floods >= FLOOD_BUDGET:
-			return Vector2i(-1, -1)      # try again on the next tick rather than stall a frame
+			return NO_SPOT      # try again on the next tick rather than stall a frame
 		_floods += 1
 		var after: PackedByteArray = _flood(walk, footprint)
 		if _door_open(sim, walk, type_name, footprint, after) and _keeps_everyone(walk, after):
 			return anchor
-	return Vector2i(-1, -1)
+	return NO_SPOT
 
 
 # Zoned anchors for a footprint size, nearest the hall first and trodden trails last; paved road is
@@ -434,7 +438,7 @@ func grow_one(sim, town) -> Dictionary:
 				if ground.is_empty():
 					continue
 			var spot: Vector2i = find_spot(sim, type_name, ground, walk)
-			if spot.x < 0 and spot.y < 0:
+			if spot == NO_SPOT:
 				continue
 			_turn += i + 1
 			var b: Dictionary = sim._new_building(type_name, spot.x, spot.y, true)
@@ -705,8 +709,8 @@ func _fold(sim, b: Dictionary, house: Dictionary) -> void:
 			u["workplace"] = -1
 			u["post"] = -1
 			u["slot"] = 0
-			u["sx"] = -1.0
-			u["sy"] = -1.0
+			u["sx"] = sim.NO_POINT.x
+			u["sy"] = sim.NO_POINT.y
 			if not role.is_empty() and sim.troop_specs.has(role):
 				u["type"] = role
 				u["workplace"] = int(house["id"])
