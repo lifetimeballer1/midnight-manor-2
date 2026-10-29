@@ -42,7 +42,8 @@ func _ring_bell() -> void:
 	_sparkle_ring(at, 10, 3.2, 2.6)
 	_impact_burst(at + Vector3(0, 2.6, 0), GOLD, 18, 1.2, true)
 	if mentor_enabled:
-		_float_label(at + Vector3(0, 4.6, 0), "The Old Bell rings", GOLD, 56, 1.2, 2.6)
+		# Raised clear of the roof and smaller, so the words never hide the Hall itself.
+		_float_label(at + Vector3(0, 7.2, 0), "The Old Bell rings", GOLD, 40, 1.0, 2.6)
 	if sound:
 		_play_bell()
 

@@ -224,7 +224,7 @@ func _terrain_dilate(field: PackedFloat32Array, falloff: float) -> PackedFloat32
 
 
 func _terrain_is_phone() -> bool:
-	return low_power or battery_saver or OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
+	return _quality_lite()
 
 
 # Same large-scale noise the ground shader reads (wp * 0.022 + offset), so blade tint follows the ground.

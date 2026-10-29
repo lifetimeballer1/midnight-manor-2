@@ -149,6 +149,13 @@ var grid_layer := MeshInstance3D.new()
 var grid_button: Button
 var power_button: Button
 var shadow_button: Button
+# Graphics quality: "auto" picks Medium on phones and High elsewhere. Low also drops shadows and renders
+# the 3D view at a lower resolution; Medium keeps the lighter phone effects; High uses the full desktop set.
+const QUALITY_LEVELS: Array[String] = ["auto", "low", "medium", "high"]
+var quality: String = "auto"
+var quality_button: Button
+var fps_label: Label
+var fps_clock: float = 0.0
 # TEMP raid-start instrumentation (removed before commit).
 var spike_active: bool = false
 var spike_lines: Array[String] = []
@@ -385,6 +392,8 @@ func _load_settings() -> void:
 				shadows_on = bool((parsed as Dictionary)["shadows_on"])
 			if parsed.get("mentor_enabled") is bool:
 				mentor_enabled = parsed["mentor_enabled"]
+			if str(parsed.get("quality", "")) in QUALITY_LEVELS:
+				quality = str(parsed["quality"])
 	_apply_power_settings()
 
 
@@ -393,12 +402,15 @@ func _save_settings() -> void:
 		return
 	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 	if f != null:
-		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound, "battery_saver": battery_saver, "shadows_on": shadows_on, "mentor_enabled": mentor_enabled}))
+		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound, "battery_saver": battery_saver, "shadows_on": shadows_on, "mentor_enabled": mentor_enabled, "quality": quality}))
 
 
 func _apply_power_settings() -> void:
 	Engine.max_fps = 30 if battery_saver else 0
 	sun.shadow_enabled = shadows_on
+	get_viewport().scaling_3d_scale = 0.75 if quality_level() == "low" else 1.0
+	if is_instance_valid(quality_button):
+		quality_button.text = _quality_text()
 	device_tuned = false
 	if is_instance_valid(power_button):
 		power_button.text = "Battery saver: On" if battery_saver else "Battery saver: Off"
@@ -411,6 +423,48 @@ func _toggle_power() -> void:
 	_save_settings()
 	_apply_power_settings()
 	sim.notice = "Battery saver on / 30 fps" if battery_saver else "Battery saver off / full fps"
+
+
+func _on_phone() -> bool:
+	return OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
+
+
+# The level in force: "auto" resolves to Medium on phones and High elsewhere.
+func quality_level() -> String:
+	if quality == "auto":
+		return "medium" if _on_phone() else "high"
+	return quality
+
+
+# True when the lighter effect set should be used (Low or Medium quality, or battery saver).
+func _quality_lite() -> bool:
+	return low_power or battery_saver or quality_level() != "high"
+
+
+func _quality_text() -> String:
+	var level: String = quality_level().capitalize()
+	return "Quality: Auto (%s)" % level if quality == "auto" else "Quality: %s" % level
+
+
+func _cycle_quality() -> void:
+	quality = QUALITY_LEVELS[(QUALITY_LEVELS.find(quality) + 1) % QUALITY_LEVELS.size()]
+	var level: String = quality_level()
+	shadows_on = level != "low"
+	# High lifts the lighter phone effects at once; going lighter applies now and fully on the next start.
+	low_power = false if level == "high" else low_power
+	_save_settings()
+	_apply_power_settings()
+	sim.notice = "%s · terrain and realm detail follow on the next start." % _quality_text()
+
+
+func _refresh_fps(delta: float) -> void:
+	if fps_label == null or not is_instance_valid(fps_label) or not fps_label.is_visible_in_tree():
+		return
+	fps_clock -= delta
+	if fps_clock > 0.0:
+		return
+	fps_clock = 0.5
+	fps_label.text = "Frame rate: %d fps · %s" % [int(Engine.get_frames_per_second()), quality_level().capitalize()]
 
 
 func _toggle_shadows() -> void:
@@ -1131,7 +1185,7 @@ func _apply_lighting() -> void:
 # transient poofs/projectiles capped at 24 nodes, pond + rain rings loop.
 func _tune_for_device() -> void:
 	device_tuned = true
-	if not (low_power or battery_saver or OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")):
+	if not _quality_lite():
 		return
 	var caps: Array = [[fireflies, 28], [mist, 8], [rain, 200], [motes, 14]]
 	for entry: Array in caps:
@@ -2236,7 +2290,6 @@ func _ui() -> void:
 	ui.heading("THE MANOR STANDS", intro)
 	ui.title_rule(intro)
 	ui.body("Build your village beneath the moon.\nGather, grow, and hold the walls.", intro)
-	ui.body("Drag to pan. Pinch or scroll to zoom.\nTap a building for its actions. Confirm previews to build.", intro)
 	welcome_help = ui.body("", intro)
 	_refresh_input_copy()
 	ui.body("Your current Chronicle objective stays visible while you play. Builds never spend resources until you confirm.", intro, 12)
@@ -2455,6 +2508,9 @@ func _layout_ui() -> void:
 	# The next objective stays visible on phones even when the Chronicle button
 	# collapses into More. New players should never have to guess what is next.
 	quest_label.visible = true
+	quest_label.clip_text = compact_dock
+	quest_label.autowrap_mode = TextServer.AUTOWRAP_OFF if compact_dock else TextServer.AUTOWRAP_WORD_SMART
+	quest_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS if compact_dock else TextServer.OVERRUN_NO_TRIMMING
 	research_button.visible = not compact_dock and _research_surface_ready()
 	research_label.visible = not compact_dock and _research_surface_ready()
 	if compact_dock:
@@ -3538,6 +3594,11 @@ func _pause_panel() -> void:
 	shadow_button = ui.command_button("Shadows: On" if shadows_on else "Shadows: Off", _toggle_shadows, side_content, 40.0)
 	shadow_button.tooltip_text = "Toggle sun shadows (biggest phone speedup)."
 	shadow_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quality_button = ui.command_button(_quality_text(), _cycle_quality, side_content, 40.0)
+	quality_button.tooltip_text = "Low, Medium or High graphics. Auto picks Medium on phones."
+	quality_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fps_label = ui.body("Frame rate: measuring...", side_content, 12)
+	fps_clock = 0.0
 	var recenter_button := ui.command_button("Recenter camera", _recenter, side_content, 40.0)
 	recenter_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_label("Chronicle, research, defenses, doctrines, regions and Great Works are live. Closed time does not advance the village.", side_content)
@@ -4521,7 +4582,9 @@ func _refresh_hud() -> void:
 	music.set_calm(sim.paused)
 	if _is_small():
 		hud.text = "Lv %d" % sim.village_level()
-		quest_label.text = _quest_summary(true) if _is_landscape_phone() else _objective_summary(true)
+		# Phones fold the mission to one line; the full objective and expansion goal stay in the tooltip and Chronicle.
+		quest_label.text = _quest_summary(true)
+		quest_label.tooltip_text = _objective_summary()
 		if not sim.raid_active and not sim.raid_warning:
 			raid_hud.text = "Horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
 	_refresh_research()
@@ -5006,6 +5069,7 @@ func _process(delta: float) -> void:
 		sim.paused = true
 		return
 	_update_weather(delta)
+	_refresh_fps(delta)
 	sim.paused = not started or paused or panel == "wall_row_upgrade" or _offline_open() or (not focused and capture_path.is_empty())
 	_pause_effects(sim.paused)
 	# The sky runs itself: an 8-minute cycle (long night, short day) with
