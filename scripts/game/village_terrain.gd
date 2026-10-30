@@ -32,6 +32,7 @@ const LEAF_COUNT_LOW: int = 12
 const MIST_COUNT: int = 9                           # ground mist patches; phones get MIST_COUNT_LOW
 const MIST_COUNT_LOW: int = 5
 const SLAB_TINT := Color(0.8, 0.79, 0.74)
+const SLAB_TEX_SPAN: float = 9.0                   # world units per repeat of the slab meadow texture
 const SLAB_GRASS_CLUMPS: int = 420                 # per claimed plot; phones get half
 const CLUTTER_CLEAR: float = 0.3                    # mask value above which clutter is hidden
 const TREE_FALL_TONES: Array[String] = ["7f8a22", "9a8a1c", "c99a1a", "e0a924", "d9741a", "e8861e", "a8381a", "c14a1c", "8e2a14"]
@@ -131,6 +132,7 @@ func _terrain_build() -> void:
 	_terrain_noise = noise_image
 	_grass_build()
 	_terrain_recolor_trees()
+	Dressing.reshape_scenery(get_node_or_null("Scenery"))
 	_leaves_build()
 	_clutter_build()
 	_mist_build()
@@ -178,8 +180,13 @@ func _terrain_refresh_mask(force: bool) -> void:
 		for tx in size:
 			for ty in size:
 				_terrain_stamp(foot, int(b["x"]) + tx, int(b["y"]) + ty, 1.0)
-	var apron := _terrain_dilate(foot, 0.7)
-	apron = _terrain_dilate(apron, 0.7)
+	var apron := _terrain_dilate(foot, 0.62)
+	var paths := PackedFloat32Array()
+	paths.resize(w * h)
+	_terrain_paths(paths)
+	paths = _terrain_dilate(paths, 0.55)
+	for i in w * h:
+		apron[i] = maxf(apron[i], paths[i])
 	var clear := foot.duplicate()
 	for id: Variant in sim.living.cells.keys():
 		var parts: PackedStringArray = str(id).split(",")
@@ -190,6 +197,8 @@ func _terrain_refresh_mask(force: bool) -> void:
 		for tile: Vector2i in sim.estates[id]["fields"]:
 			_terrain_stamp(clear, tile.x, tile.y, 1.0)
 	clear = _terrain_dilate(clear, 0.8)
+	for i in w * h:
+		clear[i] = maxf(clear[i], paths[i] * 0.9)
 	for y in h:
 		for x in w:
 			var i: int = y * w + x
@@ -197,6 +206,37 @@ func _terrain_refresh_mask(force: bool) -> void:
 	_terrain_mask_texture.update(_terrain_mask_image)
 	_clutter_apply_mask()
 	_reach_clear()
+
+
+# Worn paths: a soft line of packed earth from the Hall to each building, the way villagers walk.
+# Drawn into the dirt channel at path strength, so the shader shows a trodden track, not a blot.
+const PATH_STRENGTH: float = 0.72
+
+func _terrain_paths(field: PackedFloat32Array) -> void:
+	var hall: Dictionary = sim._hall()
+	if hall.is_empty():
+		return
+	var hs: float = float(hall["size"]) * 0.5
+	var from := Vector2(float(hall["x"]) + hs, float(hall["y"]) + hs) * 2.0
+	for b: Dictionary in sim.buildings:
+		if b == hall:
+			continue
+		var bs: float = float(b["size"]) * 0.5
+		var to := Vector2(float(b["x"]) + bs, float(b["y"]) + bs) * 2.0
+		var length: float = from.distance_to(to)
+		if length < 1.0 or length > 40.0:
+			continue
+		# A gentle bend so paths do not look ruled; the bend side comes from the building position.
+		var bend: Vector2 = (to - from).orthogonal().normalized() * (1.0 if int(b["x"] + b["y"]) % 2 == 0 else -1.0) * minf(length * 0.12, 2.0)
+		var steps: int = int(length * 2.0)
+		for i in steps + 1:
+			var t: float = float(i) / float(maxi(steps, 1))
+			var p: Vector2 = from.lerp(to, t) + bend * sin(t * PI)
+			var px: int = int(round(p.x))
+			var py: int = int(round(p.y))
+			if px >= 0 and py >= 0 and px < TERRAIN_MASK.x and py < TERRAIN_MASK.y:
+				var idx: int = py * TERRAIN_MASK.x + px
+				field[idx] = maxf(field[idx], PATH_STRENGTH)
 
 
 func _terrain_stamp(field: PackedFloat32Array, tile_x: int, tile_y: int, value: float) -> void:
@@ -729,8 +769,8 @@ func _slab_build() -> void:
 			var m: float = _terrain_noise.get_pixel((x * 2 + 97) % 256, (y * 2 + 41) % 256).r
 			var green: Color = Color("38561a").lerp(Color("55751f"), m)
 			var gold: Color = Color("a07a1c").lerp(Color("b88a22"), m)
-			var color: Color = green.lerp(gold, smoothstep(0.3, 0.7, n) * 0.75)
-			image.set_pixel(x, y, color * (0.9 + 0.2 * m))
+			var color: Color = green.lerp(gold, smoothstep(0.15, 0.85, n) * 0.7)
+			image.set_pixel(x, y, color * (0.95 + 0.1 * m))
 	var specks: Array[String] = ["d9741a", "c99a1a", "b02e17"]
 	for index in 90:
 		var px: int = rng.randi_range(0, side - 2)
@@ -756,6 +796,10 @@ func _terrain_autumn_slabs() -> void:
 		slab["autumn"] = true
 		var grass := slab["grass"] as StandardMaterial3D
 		grass.albedo_texture = _terrain_slab_tex
+		# Tile the meadow texture in world space so the reaches read as grass, not a stretched blur.
+		grass.uv1_triplanar = true
+		grass.uv1_world_triplanar = true
+		grass.uv1_scale = Vector3.ONE / SLAB_TEX_SPAN
 		if not bool(slab["locked"]) and not bool(slab["busy"]):
 			grass.albedo_color = SLAB_TINT
 		var group := slab["group"] as Node3D

@@ -15,6 +15,7 @@ var _tracked_sim: Object = null
 var _last_elapsed: float = 0.0
 var _seen_tiers: Dictionary = {}
 var _last_level: int = -1
+var _last_rank: int = -1
 
 
 func _process(delta: float) -> void:
@@ -26,6 +27,9 @@ func _process(delta: float) -> void:
 		return
 	_celebrate_clock = 0.0
 	_sync_tracking()
+	# The rank flourish goes first, so the shared effect cap never drops it behind a burst of
+	# upgrade flourishes landing on the same check.
+	_check_rank()
 	_check_completions()
 	_check_level()
 
@@ -37,6 +41,7 @@ func _sync_tracking() -> void:
 		_tracked_sim = sim
 		_seen_tiers.clear()
 		_last_level = -1
+		_last_rank = -1
 	_last_elapsed = float(sim.elapsed)
 
 
@@ -74,6 +79,35 @@ func _check_level() -> void:
 	if level > _last_level:
 		_level_flourish(level)
 	_last_level = level
+
+
+# Village rank (village_rank.gd): a rank reached for the first time this session gets the
+# Hall flourish with the new title. Loading a save only sets the baseline.
+func _check_rank() -> void:
+	var index: int = int(sim.rank.index)
+	if _last_rank < 0:
+		_last_rank = index
+		return
+	if index > _last_rank:
+		_rank_flourish()
+	_last_rank = maxi(_last_rank, index)
+
+
+func _rank_flourish() -> void:
+	var hall: Dictionary = sim._hall()
+	var anchor: Vector2 = sim.center(hall) if not hall.is_empty() else Vector2(10, 8)
+	var at: Vector3 = world_position(anchor, 0.3)
+	var lite: bool = low_power or battery_saver
+	var title: String = sim.rank.title()
+	_impact_burst(at + Vector3(0, 1.2, 0), GOLD, 14 if lite else 36, 1.6, true)
+	if not lite:
+		_sparkle_ring(at, 14, 2.8, 2.8)
+	_moon_beam(at, GOLD, 4.5, 2.6)
+	_float_label(at + Vector3(0, 4.6, 0), "Now a %s" % title, GOLD, 110, 1.2, 3.2)
+	sim.notice = "The settlement is now a %s: all workplaces yield %d%% more." % [title, roundi(sim.rank.BONUS_STEP * 100.0 * float(sim.rank.index))]
+	_chime("confirm")
+	get_tree().create_timer(0.35).timeout.connect(_chime.bind("collect"))
+	get_tree().create_timer(0.7).timeout.connect(_chime.bind("upgrade"))
 
 
 func _raise_flourish(b: Dictionary, is_new: bool) -> void:

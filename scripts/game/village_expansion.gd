@@ -9,6 +9,7 @@ extends RefCounted
 # village_sim.gd (EXPANSION_PLOTS, expansions, expansion_reason) and never
 # changes it. Built and driven by village_game.gd, which owns the host node.
 
+const Dressing = preload("res://scripts/game/village_dressing.gd")
 const GOLD := Color("d4b275")
 const GOLD_HOT := Color("ffd98a")
 const SILVER := Color("cfd8ea")
@@ -55,6 +56,7 @@ const SILHOUETTE_TONES: Array = [
 ]
 const BANNER_WIDTH: float = 220.0                  # widest status line before it wraps
 const BANNER_GAP: float = 8.0                     # space between a banner and its beacon point
+const SIGN_FOCUS_MS: int = 7000                   # a tapped signpost shows its price and route this long
 const POST_SIZE: Vector3 = Vector3(0.26, 1.4, 0.26)
 const LANTERN_RADIUS: float = 0.34
 const LANTERN_AMBER := Color("ffb060")           # warm lantern glow, matching the street lamps' amber
@@ -83,6 +85,8 @@ const BASE_RECT: Rect2i = Rect2i(0, 0, 20, 16)      # the starting village, in t
 # The side of each plot that touches the base village. The normal points from the plot into the base.
 const BASE_SIDE: Dictionary = {"north": Vector2(0, 1), "east": Vector2(-1, 0), "south": Vector2(0, -1), "west": Vector2(1, 0)}
 
+var sign_focus: String = ""          # the reach whose signpost was tapped last
+var sign_focus_until: int = 0
 var host: Node3D = null
 var origin: Vector3 = Vector3.ZERO
 var tile: float = 2.0
@@ -218,9 +222,11 @@ func place_banners(camera: Camera3D, clip: Rect2, avoid: Array[Rect2] = []) -> v
 	if banner_layer == null:
 		return
 	var placed: Array[Rect2] = avoid.duplicate()
+	var now: int = Time.get_ticks_msec()
 	for id: String in ghosts:
 		var record: Dictionary = ghosts[id]
 		var panel: PanelContainer = record["panel"]
+		_fold_sign(record, id == sign_focus and now < sign_focus_until)
 		var anchor: Vector3 = record["anchor"]
 		if camera.is_position_behind(anchor):
 			panel.hide()
@@ -272,7 +278,7 @@ func _make_banner(id: String) -> Dictionary:
 	var title := Label.new()
 	title.name = "Title"
 	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title.add_theme_font_size_override("font_size", 15)
+	title.add_theme_font_size_override("font_size", 14)
 	title.add_theme_color_override("font_color", GOLD)
 	column.add_child(title)
 	var status := Label.new()
@@ -283,6 +289,31 @@ func _make_banner(id: String) -> Dictionary:
 	status.add_theme_font_size_override("font_size", 12)
 	column.add_child(status)
 	return {"panel": panel, "title": title, "status": status, "style": style}
+
+
+# Signposts: a reach shows only its name (and "Tap to claim" when it can be bought) so the cards do not
+# cover the land. Tapping the reach opens its full price and route for a few seconds.
+func focus_sign(id: String) -> void:
+	sign_focus = id
+	sign_focus_until = Time.get_ticks_msec() + SIGN_FOCUS_MS
+
+
+func _fold_sign(record: Dictionary, open: bool) -> void:
+	var status: Label = record["status"]
+	var ready: bool = bool(record.get("ready", false))
+	var full: String = str(record.get("full_status", status.text))
+	var want: String = full if open else ("Tap to claim" if ready else "")
+	if status.text == want and status.visible == not want.is_empty():
+		return
+	status.text = want
+	status.visible = not want.is_empty()
+	status.custom_minimum_size.x = BANNER_WIDTH if open else 0.0
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if open else TextServer.AUTOWRAP_OFF
+	var panel: PanelContainer = record["panel"]
+	panel.size = Vector2.ZERO
+	var box: Vector2 = panel.get_combined_minimum_size()
+	record["box"] = box
+	panel.size = box
 
 
 # Gold edge when the plot is claimable, iron when it is still locked.
@@ -505,6 +536,7 @@ func _set_banner_text(record: Dictionary, title_text: String, status_text: Strin
 	var status: Label = record["status"]
 	title.text = title_text
 	status.text = status_text
+	record["full_status"] = status_text
 	status.add_theme_color_override("font_color", GOLD_HOT if ready else LOCKED_TEXT)
 	record["ready"] = ready
 	_paint_banner_border(record)
@@ -722,6 +754,11 @@ func _silhouette_mesh(kind: int) -> Mesh:
 			cone.radial_segments = 6
 			st.append_from(cone, 0, Transform3D(Basis(), Vector3(0, 0.75 + tier * 0.6, 0)))
 		return st.commit()
+	# Broadleaf trees and boulder clusters share the dressing module's shapes (visual pass 5).
+	if kind == KIND_ROUND:
+		return Dressing.broadleaf_mesh()
+	if kind == KIND_ROCK:
+		return Dressing.rock_cluster_mesh(1.0)
 	var ball := SphereMesh.new()
 	var lift: float = 0.0
 	match kind:

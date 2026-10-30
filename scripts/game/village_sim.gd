@@ -16,6 +16,7 @@ const Rebuild = preload("res://scripts/game/village_rebuild.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
 const Stewards = preload("res://scripts/game/village_stewards.gd")
 const Daily = preload("res://scripts/game/village_daily.gd")
+const Rank = preload("res://scripts/game/village_rank.gd")
 const Drill = preload("res://scripts/game/village_drill.gd")
 const Gear = preload("res://scripts/game/village_gear.gd")
 const WarRules = preload("res://scripts/game/war_rules.gd")
@@ -30,6 +31,7 @@ var aftermath = Aftermath.new()
 var rebuild = Rebuild.new()
 var stewards = Stewards.new()
 var daily = Daily.new()
+var rank = Rank.new()   # Camp to Manor, from building levels (village_rank.gd); not saved
 var drill = Drill.new()
 var gear = Gear.new()
 var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
@@ -1672,6 +1674,7 @@ func tick(dt: float) -> void:
 		return
 	tick_count += 1
 	elapsed += dt
+	rank.tick(self)
 	needs.tick(self, dt)
 	perks.tick(self, dt)
 	aftermath.tick(self, dt)
@@ -1856,6 +1859,8 @@ func production_rate(b: Dictionary) -> float:
 	rate *= legacy_bonus
 	# Today's omen (village_daily.gd) may favour one resource.
 	rate *= daily.rate_for(str(spec.get("production", "")))
+	# Village rank (village_rank.gd): each rank above Camp lifts output a little.
+	rate *= rank.multiplier()
 	return rate
 
 
@@ -3084,6 +3089,7 @@ func restore_state(state: Dictionary) -> bool:
 	stewards.restore(data.get("stewards"))
 	daily.restore(data.get("daily"))
 	drill.restore(data.get("drill"))
+	rank.refresh(self)   # derived from the buildings, so offline earnings use the earned rank
 	vale_united = data.get("vale_united", false) is bool and bool(data.get("vale_united", false))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))

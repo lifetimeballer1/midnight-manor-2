@@ -240,7 +240,7 @@ func _hit_flash(at: Vector3, tint: Color) -> void:
 		return
 	var flash := MeshInstance3D.new()
 	var quad := QuadMesh.new()
-	quad.size = Vector2(0.9, 0.9)
+	quad.size = Vector2(0.45, 0.45)   # a small spark, so the fighters stay visible (visual pass 5)
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -248,7 +248,7 @@ func _hit_flash(at: Vector3, tint: Color) -> void:
 	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	material.disable_receive_shadows = true
 	material.albedo_texture = _street_halo_texture()
-	material.albedo_color = Color(tint.r, tint.g, tint.b, 0.9)
+	material.albedo_color = Color(tint.r, tint.g, tint.b, 0.75)
 	quad.material = material
 	flash.mesh = quad
 	flash.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -257,7 +257,7 @@ func _hit_flash(at: Vector3, tint: Color) -> void:
 	effect_nodes.append(flash)
 	var tween: Tween = _effect_tween()
 	tween.set_parallel(true)
-	tween.tween_property(flash, "scale", Vector3.ONE * 1.8, 0.18).set_ease(Tween.EASE_OUT)
+	tween.tween_property(flash, "scale", Vector3.ONE * 1.5, 0.18).set_ease(Tween.EASE_OUT)
 	tween.tween_property(material, "albedo_color:a", 0.0, 0.18)
 	tween.chain().tween_callback(flash.queue_free)
 
