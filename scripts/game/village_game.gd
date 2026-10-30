@@ -2388,6 +2388,9 @@ func _sync_expansion(animate: bool) -> void:
 
 
 func _claim_plot(id: String) -> void:
+	expansion.focus_sign(id)
+	_camera_update()
+	get_tree().create_timer(float(expansion.SIGN_FOCUS_MS) / 1000.0 + 0.1).timeout.connect(_camera_update)
 	if sim.expand(id):
 		_sync_expansion(true)
 		_play_sfx("confirm")
@@ -3647,6 +3650,8 @@ func _pause_panel() -> void:
 
 
 func _enter_village() -> void:
+	if not started:
+		_frame_village()
 	started = true
 	sim.paused = paused or not focused
 	welcome.hide()
@@ -4280,6 +4285,35 @@ func _recenter() -> void:
 	yaw = 0.66
 	tilt = 0.75
 	zoom = 31
+	_camera_update()
+
+
+# Opening shot: frame the buildings so the village fills most of the screen instead of sitting small
+# in the middle of the plot. The player zooms out from here to see the land. Camera only.
+const OPENING_ZOOM_MIN: float = 16.0
+const OPENING_ZOOM_MAX: float = 31.0
+
+func _opening_view() -> Dictionary:
+	if sim == null or sim.buildings.is_empty():
+		return {"target": Vector3.ZERO, "zoom": 31.0}
+	var low := Vector2(INF, INF)
+	var high := Vector2(-INF, -INF)
+	for b: Dictionary in sim.buildings:
+		var size: float = float(b["size"])
+		low = low.min(Vector2(float(b["x"]), float(b["y"])))
+		high = high.max(Vector2(float(b["x"]) + size, float(b["y"]) + size))
+	var centre: Vector2 = (low + high) * 0.5
+	var span: float = maxf(high.x - low.x, high.y - low.y) * TILE
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var portrait: bool = view.y > view.x
+	var fit: float = span * (1.55 if portrait else 1.1)
+	return {"target": world_position(centre), "zoom": clampf(fit, OPENING_ZOOM_MIN, OPENING_ZOOM_MAX)}
+
+
+func _frame_village() -> void:
+	var shot: Dictionary = _opening_view()
+	target = shot["target"]
+	zoom = float(shot["zoom"])
 	_camera_update()
 
 

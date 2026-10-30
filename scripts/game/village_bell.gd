@@ -6,6 +6,8 @@ extends "res://scripts/game/village_dusk.gd"
 # the night-to-day turn, and stays quiet if the game loads in daylight.
 # Decoration only: it reads the day cycle and never changes the simulation.
 
+const BELL_WORDS_MAX_ZOOM: float = 24.0
+
 var _bell_sim: Object = null
 var _bell_seen: bool = false
 var _bell_was_night: bool = false
@@ -41,9 +43,10 @@ func _ring_bell() -> void:
 	_bell_flash(at + Vector3(0, 3.2, 0))
 	_sparkle_ring(at, 10, 3.2, 2.6)
 	_impact_burst(at + Vector3(0, 2.6, 0), GOLD, 18, 1.2, true)
-	if mentor_enabled:
-		# Raised clear of the roof and smaller, so the words never hide the Hall itself.
-		_float_label(at + Vector3(0, 7.2, 0), "The Old Bell rings", GOLD, 40, 1.0, 2.6)
+	if mentor_enabled and zoom <= BELL_WORDS_MAX_ZOOM:
+		# Raised well clear of the roof, so the words never sit on the Hall; skipped when zoomed
+		# out so far that they would only be a smudge.
+		_float_label(at + Vector3(0, 9.0, 0), "The Old Bell rings", GOLD, 40, 1.0, 2.6)
 	if sound:
 		_play_bell()
 
