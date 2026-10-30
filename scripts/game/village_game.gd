@@ -1997,6 +1997,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	_action_button("Stewards", _open_panel.bind("stewards"), campaign_grid)
 	_action_button("Daily", _open_panel.bind("daily"), campaign_grid)
 	_action_button("Weapon Drill", _open_panel.bind("drill"), campaign_grid)
+	_action_button("Unite the Vale", _open_panel.bind("vale"), campaign_grid)
 	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
@@ -2852,6 +2853,9 @@ func _open_panel(which: String) -> void:
 			_build_daily()
 		"drill":
 			_build_drill()
+		"vale":
+			if has_method("_build_vale"):
+				call("_build_vale")
 	_layout_ui()
 	_update_marker()
 

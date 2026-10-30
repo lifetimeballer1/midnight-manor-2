@@ -101,6 +101,9 @@ var quest_progress: Dictionary = {}
 var optional_won: Dictionary = {}
 var raid_stats: Dictionary = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0, "defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0, "expeditions": 0, "delivered": {}}
 var scripted_raid: String = ""
+var vale_sworn: int = 0           # rivals sworn to the manor, set by the realm layer (not saved)
+var vale_united: bool = false     # Act XI, Unite the Vale, is done (saved)
+const VALE_BONUS: float = 0.05    # each sworn rival: +5% to every workplace's output
 var raid_span: float = 240.0      # seconds the threat meter takes to fill after the last raid (saved)
 var region_progress: Dictionary = {}
 var next_id: int = 1
@@ -1839,6 +1842,8 @@ func production_rate(b: Dictionary) -> float:
 		rate *= 1.0 + chronicle.bonus("growth")
 	# Zone income milestones (data/zones.json): set by the zoning layer from what stands.
 	rate *= float(zone_boost.get(str(b["type"]), 1.0))
+	# Unite the Vale: every rival sworn to the manor lifts all output a little.
+	rate *= 1.0 + VALE_BONUS * float(vale_sworn)
 	# Today's omen (village_daily.gd) may favour one resource.
 	rate *= daily.rate_for(str(spec.get("production", "")))
 	return rate
@@ -2942,7 +2947,7 @@ func export_state() -> Dictionary:
 		for u in (group as Array):
 			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
 				(u as Dictionary).erase(transient)
-	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "stewards": stewards.state(), "daily": daily.state(), "drill": drill.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
+	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "stewards": stewards.state(), "daily": daily.state(), "drill": drill.state(), "vale_united": vale_united, "frontier": frontier.state(), "home_raid": home_raid.state(),
 		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
@@ -3068,6 +3073,7 @@ func restore_state(state: Dictionary) -> bool:
 	stewards.restore(data.get("stewards"))
 	daily.restore(data.get("daily"))
 	drill.restore(data.get("drill"))
+	vale_united = data.get("vale_united", false) is bool and bool(data.get("vale_united", false))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))
 	navigation_revision = living.navigation_revision
