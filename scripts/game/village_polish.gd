@@ -93,6 +93,9 @@ func _apply_lighting() -> void:
 	sun.light_color = sun.light_color.lerp(GOLDEN_KEY, 0.45 * gold)
 	environment.ambient_light_color = environment.ambient_light_color.lerp(GOLDEN_SHADE, 0.4 * gold)
 	environment.ambient_light_energy *= 1.0 - 0.15 * gold
+	# Fog and snow (manor_weather.gd) have the last word on the light.
+	if weather != null:
+		weather.shade(environment, sun, b)
 
 
 # Ground mist is unshaded; at night its daytime cream read as patches of lamp
