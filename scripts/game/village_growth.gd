@@ -421,6 +421,10 @@ func _keeps_everyone(walk: Dictionary, after: PackedByteArray) -> bool:
 func grow_one(sim, town) -> Dictionary:
 	if sim.raid_active or sim.raid_warning or rising(sim) >= int(spec.get("maxRising", 2)):
 		return {}
+	refresh_limits(sim, town)
+	if _town_revision(town) != _stuck_key:
+		_stuck_key = _town_revision(town)
+		stuck.clear()
 	var tiles: Dictionary = zoned_tiles(town, sim)
 	var zones: Array = tiles.keys()
 	if zones.is_empty():
@@ -435,10 +439,13 @@ func grow_one(sim, town) -> Dictionary:
 			var ground: Dictionary = tiles[zone]
 			if is_crop(type_name):
 				ground = _unfarmed_tiles(sim, town)
-				if ground.is_empty():
-					continue
+			ground = ground_for(town, ground, type_name)
+			if ground.is_empty():
+				continue
 			var spot: Vector2i = find_spot(sim, type_name, ground, walk)
 			if spot == NO_SPOT:
+				if _floods < FLOOD_BUDGET:
+					stuck[type_name] = true   # no spot keeps everyone's way in (the report says so)
 				continue
 			_turn += i + 1
 			var b: Dictionary = sim._new_building(type_name, spot.x, spot.y, true)
@@ -448,6 +455,7 @@ func grow_one(sim, town) -> Dictionary:
 			sim.revision += 1
 			sim._invalidate()
 			wishes.erase(type_name)
+			stuck.clear()
 			lay_lanes(sim, b)
 			sim.notice = "%s rises on the %s zone." % [str(sim.building_specs[type_name]["name"]), zone_name(zone)]
 			return {"type": type_name, "id": int(b["id"]), "x": spot.x, "y": spot.y}
@@ -900,6 +908,7 @@ func upgrade_one(sim) -> Dictionary:
 	if sim.raid_active or sim.raid_warning:
 		return {}
 	var best: Dictionary = {}
+	var zone_counts: Dictionary = {}   # zone -> buildings standing, counted once per pass
 	for b: Dictionary in sim.buildings:
 		if not grows(str(b["type"])) or float(b["hp"]) <= 0.0:
 			continue
@@ -907,7 +916,7 @@ func upgrade_one(sim) -> Dictionary:
 			if int(b["tier"]) > 1:
 				return {}   # one upgrade at a time
 			continue
-		if sim.village_level() < int(spec.get("tierLevels", {}).get(str(int(b["tier"]) + 1), 1)):
+		if not tier_open(sim, str(b["type"]), int(b["tier"]) + 1, zone_counts):
 			continue
 		var reason: String = sim.upgrade_reason(int(b["id"]))
 		if not reason.is_empty() and reason != "Not enough resources to upgrade.":
@@ -1008,6 +1017,7 @@ func tick(sim, town, dt: float) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	if town == null:
 		return out
+	refresh_limits(sim, town)
 	grow_clock += dt
 	upgrade_clock += dt
 	estate_clock += dt
@@ -1034,3 +1044,295 @@ func tick(sim, town, dt: float) -> Array[Dictionary]:
 		elif not sim.raid_active and not sim.raid_warning:
 			tend_paths(sim)
 	return out
+
+
+# --- Choosing what rises (a pick kept on painted cells) ------------------------------------------
+
+# The building a zoned cell is set to grow, or "" for any of its zone's buildings.
+func pick_of(town, c: Vector2i) -> String:
+	return str(_picks(town).get(c, ""))
+
+
+# The town's picks (a stand-in town without them grows anything anywhere).
+func _picks(town) -> Dictionary:
+	var picks: Variant = town.get("village_pick")
+	return picks if picks is Dictionary else {}
+
+
+func _town_revision(town) -> int:
+	var revision: Variant = town.get("revision")
+	return int(revision) if revision != null else town.village.hash()
+
+
+# Zoned tiles a type may rise on: cells set to grow it, and cells left to "any".
+func ground_for(town, tiles: Dictionary, type_name: String) -> Dictionary:
+	if _picks(town).is_empty():
+		return tiles
+	var out: Dictionary = {}
+	for tile: Vector2i in tiles:
+		var pick: String = pick_of(town, tile_cell(tile))
+		if pick.is_empty() or pick == type_name:
+			out[tile] = true
+	return out
+
+
+# --- Big zones raise limits, filling zones raise tiers ---------------------------------------------
+
+var _limits_key: String = ""
+var stuck: Dictionary = {}                # types the last growth steps found no spot for (cleared when anything rises or zones change)
+var _stuck_key: int = -1
+
+
+# Zone cells painted, per zone.
+func zone_cells(town) -> Dictionary:
+	var out: Dictionary = {}
+	for c: Vector2i in town.village:
+		var zone: String = str(town.village[c])
+		out[zone] = int(out.get(zone, 0)) + 1
+	return out
+
+
+# How many more of a zone's limited types its painted cells allow (zoneLimits).
+func zone_limit_bonus(cells: int) -> int:
+	var rule: Dictionary = spec.get("zoneLimits", {})
+	var per: int = maxi(1, int(rule.get("cellsPerExtra", 6)))
+	return mini(int(rule.get("maxExtra", 6)), cells / per)
+
+
+# Cells still to paint before the next extra, or -1 at the most.
+func cells_to_next_extra(cells: int) -> int:
+	var rule: Dictionary = spec.get("zoneLimits", {})
+	var per: int = maxi(1, int(rule.get("cellsPerExtra", 6)))
+	if zone_limit_bonus(cells) >= int(rule.get("maxExtra", 6)):
+		return -1
+	return per - cells % per
+
+
+# Whether a type's limit grows with its zone: limited types, not the unique ones.
+func _limit_grows(sim, type_name: String) -> bool:
+	var spec_b: Dictionary = sim.building_specs.get(type_name, {})
+	var limit: Variant = spec_b.get("maxCount", spec_b.get("maxPerVillage", null))
+	if limit is Array:
+		return true
+	return limit != null and int(limit) >= 2 and int(limit) < 999
+
+
+func limit_extras(sim, town) -> Dictionary:
+	var out: Dictionary = {}
+	var cells: Dictionary = zone_cells(town)
+	for zone: String in cells:
+		var bonus: int = zone_limit_bonus(int(cells[zone]))
+		if bonus <= 0:
+			continue
+		for type_name: String in zone_types(zone):
+			if _limit_grows(sim, type_name):
+				out[type_name] = bonus
+	return out
+
+
+# Keeps the simulation's zone_extra in step with the painted zones (cheap; redone only on change).
+func refresh_limits(sim, town) -> void:
+	var key: String = "%d/%d/%d" % [_town_revision(town), sim.get_instance_id(), town.village.size()]
+	if key == _limits_key:
+		return
+	_limits_key = key
+	sim.zone_extra = limit_extras(sim, town)
+
+
+# A zoned building may move up to a tier once the village level allows it (tierLevels), or once
+# enough buildings of its zone stand (zoneTiers), whichever comes first.
+func tier_open(sim, type_name: String, tier: int, cache: Dictionary = {}) -> bool:
+	if sim.village_level() >= int(spec.get("tierLevels", {}).get(str(tier), 1)):
+		return true
+	var need: Variant = spec.get("zoneTiers", {}).get(str(tier), null)
+	if need == null:
+		return false
+	var zone: String = zone_of(type_name)
+	if not cache.has(zone):
+		cache[zone] = _standing(sim, zone)
+	return int(cache[zone]) >= int(need)
+
+
+# Buildings of a zone needed for its next tier step after `tier`, or -1.
+func zone_tier_need(tier: int) -> int:
+	var need: Variant = spec.get("zoneTiers", {}).get(str(tier), null)
+	return -1 if need == null else int(need)
+
+
+func zone_count(sim, zone: String) -> int:
+	return _standing(sim, zone)
+
+
+# --- Why a zone is (not) growing ------------------------------------------------------------------
+
+# Where research or a mission introduces a locked type, in words ("research Stoneworking").
+func unlock_hint(sim, type_name: String) -> String:
+	for id: Variant in sim.chronicle.nodes():
+		var node: Dictionary = sim.chronicle.node(str(id))
+		if type_name in (node.get("unlocks", []) as Array):
+			return "research %s" % str(node.get("name", id))
+	for quest: Variant in sim.quests:
+		if not quest is Dictionary:
+			continue
+		var found: bool = type_name in (quest.get("introduces", []) as Array) or type_name in (quest.get("unlocks", []) as Array)
+		if not found:
+			for objective: Variant in quest.get("objectives", []):
+				if objective is Dictionary and type_name in (objective.get("reward", {}).get("unlocks", []) as Array):
+					found = true
+		if found:
+			return "the mission \"%s\"" % str(quest.get("name", quest.get("id", "")))
+	return "research or story"
+
+
+# Village tiles already in use: building footprints and farm estate fields.
+func used_tiles(sim) -> Dictionary:
+	var out: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		var size: int = int(b["size"])
+		for dy in size:
+			for dx in size:
+				out[Vector2i(int(b["x"]) + dx, int(b["y"]) + dy)] = true
+	for id: Variant in sim.estates:
+		for tile: Vector2i in sim.estates[id]["fields"]:
+			out[tile] = true
+	return out
+
+
+func _fits(open: Dictionary, size: int) -> bool:
+	for anchor: Vector2i in open:
+		var ok: bool = true
+		for dy in size:
+			for dx in size:
+				if not open.has(anchor + Vector2i(dx, dy)):
+					ok = false
+					break
+			if not ok:
+				break
+		if ok:
+			return true
+	return false
+
+
+func type_name_of(sim, type_name: String) -> String:
+	return str(sim.building_specs.get(type_name, {}).get("name", type_name))
+
+
+# Each zone's state, for the zoning bar, the tags over empty zones and the zone card:
+#   {zone: {growing: bool, full: bool, short: String, text: String, open: int, cells: int,
+#           types: [{type, name, state, text}]}}
+# state is one of: ready, limit, locked, later, beds, room. Cheap: no path checks.
+func zone_report(sim, town) -> Dictionary:
+	var out: Dictionary = {}
+	var tiles: Dictionary = zoned_tiles(town, sim)
+	var used: Dictionary = used_tiles(sim)
+	var cells: Dictionary = zone_cells(town)
+	var spare: int = sim.beds() - sim.units.size()
+	var raid: bool = sim.raid_active or sim.raid_warning
+	var unfarmed: Variant = null   # worked out once, only if a crop needs it
+	for zone: String in tiles:
+		var open: Dictionary = {}
+		for tile: Vector2i in tiles[zone]:
+			if not used.has(tile):
+				open[tile] = true
+		var count: int = int(cells.get(zone, 0))
+		var rows: Array[Dictionary] = []
+		var ready: Array[String] = []
+		var first: Dictionary = {}   # the first reason of each state, in the zone's order
+		for type_name: String in zone_types(zone):
+			if not sim.building_specs.has(type_name):
+				continue
+			var name: String = type_name_of(sim, type_name)
+			var row: Dictionary = {"type": type_name, "name": name, "state": "ready", "text": "Can rise here"}
+			var owned: int = _owned(sim, type_name)
+			var limit: int = sim.building_limit(type_name)
+			var lock: String = sim.unlock_reason(type_name)
+			if not lock.is_empty():
+				row["state"] = "locked"
+				row["text"] = "Opens with %s" % unlock_hint(sim, type_name)
+			elif _standing(sim, zone) < _after(zone, type_name):
+				row["state"] = "later"
+				row["text"] = "After %d %s buildings stand" % [_after(zone, type_name), zone_name(zone).to_lower()]
+			elif sim.village_level() < int(sim.building_specs[type_name].get("minLevel", 1)):
+				row["state"] = "later"
+				row["text"] = "At village level %d" % int(sim.building_specs[type_name]["minLevel"])
+			elif owned >= limit:
+				row["state"] = "limit"
+				var more: int = cells_to_next_extra(count) if _limit_grows(sim, type_name) else -1
+				row["text"] = ("%d of %d standing. Paint %d more %s cells for one more" % [owned, limit, more, zone_name(zone)]) if more > 0 else ("%d of %d standing (the most for now)" % [owned, limit])
+			elif not (sim.building_specs[type_name].get("housing", []) as Array).is_empty() and spare >= int(spec.get("bedsSpare", 3)) and type_name not in wishes:
+				row["state"] = "beds"
+				row["text"] = "Waits until fewer than %d beds stand empty (%d now)" % [int(spec.get("bedsSpare", 3)), spare]
+			else:
+				var room: Dictionary = open
+				if is_crop(type_name):
+					room = {}
+					if unfarmed == null:
+						unfarmed = _unfarmed_tiles(sim, town)
+					for tile: Vector2i in open:
+						if unfarmed.has(tile):
+							room[tile] = true
+				room = ground_for(town, room, type_name)
+				var size: int = int(sim.building_specs[type_name].get("size", 1))
+				if is_crop(type_name) and room.is_empty():
+					row["state"] = "room"
+					row["text"] = "Each farm patch has its farm. Paint a separate patch for another"
+				elif not _fits(room, size):
+					row["state"] = "room"
+					row["text"] = "Needs an open %dx%d patch" % [size, size]
+				elif stuck.has(type_name):
+					row["state"] = "room"
+					row["text"] = "No spot here keeps everyone's way in. Paint a wider patch"
+				else:
+					ready.append(type_name)
+			rows.append(row)
+			if not first.has(str(row["state"])):
+				first[str(row["state"])] = row
+		var report: Dictionary = {"growing": false, "full": open.is_empty(), "open": open.size(), "cells": count, "types": rows, "short": "", "text": ""}
+		var label: String = zone_name(zone).capitalize()
+		# What opens next, added after a reason that is not itself a lock.
+		var unlock: String = ""
+		if first.has("locked"):
+			unlock = " Next: %s %s." % [str(first["locked"]["name"]), str(first["locked"]["text"]).replace("Opens", "opens")]
+		if not ready.is_empty():
+			for type_name: String in ranked(sim, zone):
+				if type_name in ready:
+					ready.push_front(type_name)   # the one growth will try first
+					break
+			report["growing"] = true
+			report["short"] = "Growing"
+			report["text"] = ("%s: builders wait out the raid." % label) if raid else ("%s: a %s rises here next." % [label, type_name_of(sim, ready[0])])
+		elif open.is_empty():
+			report["short"] = "Full"
+			report["text"] = "%s: every zoned cell is built on. Paint more to grow more." % label
+		elif first.has("limit"):
+			var row: Dictionary = first["limit"]
+			report["short"] = "At the limit"
+			report["text"] = "%s: %s at the limit. %s.%s" % [label, str(row["name"]), str(row["text"]), unlock]
+		elif first.has("beds"):
+			report["short"] = "Waiting for people"
+			report["text"] = "%s: homes wait for people. %d beds stand empty.%s" % [label, spare, unlock]
+		elif first.has("room"):
+			var row: Dictionary = first["room"]
+			report["short"] = "No room"
+			report["text"] = "%s: no room for a %s. %s.%s" % [label, str(row["name"]), str(row["text"]), unlock]
+		elif first.has("later"):
+			var row: Dictionary = first["later"]
+			report["short"] = "Not yet"
+			report["text"] = "%s: %s comes later. %s.%s" % [label, str(row["name"]), str(row["text"]), unlock]
+		elif first.has("locked"):
+			report["short"] = "Needs unlocking"
+			report["text"] = "%s: nothing unlocked can rise here yet.%s" % [label, unlock]
+		out[zone] = report
+	return out
+
+
+# What the village wants more of, 0..1 per zone, for the zoning bar's demand columns.
+func village_demand(sim) -> Dictionary:
+	var spare: float = float(sim.beds() - sim.units.size())
+	var want: int = int(spec.get("bedsSpare", 3))
+	var homes: float = clampf(1.0 - spare / float(maxi(1, want * 2)), 0.0, 1.0)
+	var food: float = 1.0 - clampf(float(sim.resources.get("food", 0.0)) / maxf(1.0, sim.storage_cap("food")), 0.0, 1.0)
+	var wood: float = clampf(float(sim.resources.get("wood", 0.0)) / maxf(1.0, sim.storage_cap("wood")), 0.0, 1.0)
+	var stone: float = clampf(float(sim.resources.get("stone", 0.0)) / maxf(1.0, sim.storage_cap("stone")), 0.0, 1.0)
+	var civic: float = clampf((100.0 - float(sim.needs.morale)) / 60.0 + float(sim.units.size()) / 120.0, 0.0, 1.0)
+	return {"housing": homes, "farming": food, "industrial": 1.0 - (wood + stone) * 0.5, "civic": civic}

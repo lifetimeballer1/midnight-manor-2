@@ -46,6 +46,7 @@ var roads: Dictionary = {}                  # Vector2i -> true
 var paved: Dictionary = {}                  # Vector2i -> true, a subset of roads
 var lots: Dictionary = {}                   # Vector2i -> {zone, level, build, progress, variant, age}
 var village: Dictionary = {}                # Vector2i -> zone id, zoned ground inside the village
+var village_pick: Dictionary = {}           # Vector2i -> building type a village cell is set to grow (absent: any)
 var elapsed: float = 0.0
 var grow_clock: float = 0.0
 var income_clock: float = 0.0
@@ -116,17 +117,33 @@ func village_zone_ids() -> Array[String]:
 	return ids
 
 
-# Zones a village cell. The village layer checks first that the ground is the manor's.
-func paint_village(c: Vector2i, zone: String) -> String:
+# Zones a village cell, optionally set to grow one of the zone's buildings (pick; "" = any). The
+# village layer checks first that the ground is the manor's.
+func paint_village(c: Vector2i, zone: String, pick: String = "") -> String:
 	if not in_village(c):
 		return "Outside the village."
 	if zone not in village_zone_ids():
 		return "Unknown zone."
-	if str(village.get(c, "")) == zone:
+	if not pick.is_empty() and pick not in village_types(zone):
+		return "That building does not grow on this zone."
+	if str(village.get(c, "")) == zone and str(village_pick.get(c, "")) == pick:
 		return ""
 	village[c] = zone
+	if pick.is_empty():
+		village_pick.erase(c)
+	else:
+		village_pick[c] = pick
 	revision += 1
 	return ""
+
+
+# The village building types a zone grows (zones.json village.zones).
+func village_types(zone: String) -> Array[String]:
+	var out: Array[String] = []
+	for entry: Variant in village_spec().get("zones", {}).get(zone, []):
+		if entry is Dictionary:
+			out.append(str(entry.get("type", "")))
+	return out
 
 
 func road_cost() -> Dictionary:
@@ -352,6 +369,7 @@ func erase(c: Vector2i) -> bool:
 		changed = true
 	if village.has(c):
 		village.erase(c)
+		village_pick.erase(c)
 		changed = true
 	if changed:
 		revision += 1
@@ -831,9 +849,12 @@ func to_dict() -> Dictionary:
 	var village_data: Dictionary = {}
 	for c: Vector2i in village:
 		village_data[_key(c)] = village[c]
+	var pick_data: Dictionary = {}
+	for c: Vector2i in village_pick:
+		pick_data[_key(c)] = village_pick[c]
 	return {"version": VERSION, "elapsed": elapsed, "grow": grow_clock, "income": income_clock,
 		"zones": zone_data, "roads": road_data, "paved": paved_data, "lots": lot_data, "rng": str(rng.state),
-		"tier": best_tier, "village": village_data}
+		"tier": best_tier, "village": village_data, "village_pick": pick_data}
 
 
 # Loads a save. Anything malformed is refused whole, leaving the town as it was.
@@ -860,6 +881,14 @@ func from_dict(data: Variant) -> bool:
 			return false
 		if in_village(c):
 			new_village[c] = str(village_data[key])
+	# Picks are optional (older saves have none); one that no longer fits its zone is dropped.
+	var new_pick: Dictionary = {}
+	var pick_data: Variant = data.get("village_pick", {})
+	if pick_data is Dictionary:
+		for key: Variant in pick_data:
+			var c: Variant = _cell_from(key)
+			if c != null and new_village.has(c) and str(pick_data[key]) in village_types(str(new_village[c])):
+				new_pick[c] = str(pick_data[key])
 	for key: Variant in zone_data:
 		var c: Variant = _cell_from(key)
 		if c == null or zone_spec(str(zone_data[key])).is_empty():
@@ -895,6 +924,7 @@ func from_dict(data: Variant) -> bool:
 	paved = new_paved
 	lots = new_lots
 	village = new_village
+	village_pick = new_pick
 	var tier: Variant = data.get("tier", null)
 	best_tier = clampi(int(tier), 0, titles().size() - 1) if (tier is int or tier is float) and is_finite(float(tier)) else -1
 	elapsed = maxf(float(data.get("elapsed", 0.0)), 0.0)

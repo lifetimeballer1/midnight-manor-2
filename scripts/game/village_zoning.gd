@@ -123,6 +123,13 @@ var _town_plan_start: Vector2i = TOWN_NO_CELL
 var _town_ghost: MeshInstance3D = null
 var _town_ghost_label: Label3D = null
 var _town_badges: Dictionary = {}           # Vector2i -> Label3D
+var _village_tags: Dictionary = {}          # Vector2i -> Label3D: why an empty village zone patch waits
+var _zone_report: Dictionary = {}           # growth.zone_report(), refreshed with the badges
+var _town_pick: Dictionary = {}             # zone -> building type new strokes of it grow ("" or absent: any)
+var _town_pick_zone: String = ""            # the zone the "what grows" card is choosing for
+var _town_more: bool = false                # phones: the second row of tools (Road, Pave, Clear, Brush, Move)
+var _town_more_button: Button = null
+var _town_done_button: Button = null
 var _town_badge_clock: float = 0.0
 
 
@@ -178,6 +185,9 @@ func _process(delta: float) -> void:
 	if _town_badge_clock <= 0.0:
 		_town_badge_clock = TOWN_BADGE_SECONDS
 		_town_refresh_badges()
+		_village_refresh_tags()
+		if _town_active:
+			_town_refresh_status()
 
 
 func _notification(what: int) -> void:
@@ -363,6 +373,13 @@ func town_active() -> bool:
 	return _town_active
 
 
+# Whether the zoning bar speaks for the village (the view is over it) or the town outside.
+func town_view_village() -> bool:
+	if town == null:
+		return false
+	return town.in_village(town.cell_of(Vector2(target.x, target.z)))
+
+
 func town_toggle() -> void:
 	if _town_active:
 		town_close()
@@ -423,6 +440,24 @@ func town_set_tool(tool: String) -> void:
 	_town_drawn_mode = ""
 	_town_grid_revision = -1
 	_town_refresh_bar()
+
+
+# A tool button: picks the tool; tapping the zone already in hand opens "what grows" for it.
+func _town_tool_pressed(tool: String) -> void:
+	if tool == _town_tool and tool in town.village_zone_ids() and _town_active:
+		_town_open_pick(tool)
+		return
+	town_set_tool(tool)
+
+
+func _town_toggle_more() -> void:
+	_town_more = not _town_more
+	_town_refresh_bar()
+	_layout_ui()
+
+
+func _town_compact_tools() -> bool:
+	return _is_small() and not _is_landscape_phone()
 
 
 func _town_toggle_brush() -> void:
@@ -491,7 +526,8 @@ func _town_paint_one(c: Vector2i, centre: bool) -> bool:
 
 # Zoning village ground: free, and the village's own buildings rise on it (village_growth.gd).
 func _village_paint_one(c: Vector2i, centre: bool) -> bool:
-	if str(town.village.get(c, "")) == _town_tool:
+	var pick: String = str(_town_pick.get(_town_tool, ""))
+	if str(town.village.get(c, "")) == _town_tool and str(town.village_pick.get(c, "")) == pick:
 		return false
 	var reason: String = growth.cell_reason(sim, c)
 	if reason.is_empty() and _town_tool not in town.village_zone_ids():
@@ -500,7 +536,7 @@ func _village_paint_one(c: Vector2i, centre: bool) -> bool:
 		if centre:
 			_town_deny(reason)
 		return false
-	town.paint_village(c, _town_tool)
+	town.paint_village(c, _town_tool, pick)
 	# Something rises soon after the first strokes, not a whole cycle later.
 	growth.grow_clock = maxf(growth.grow_clock, float(town.village_spec().get("growSeconds", 5.0)) - 1.5)
 	return true
@@ -559,6 +595,12 @@ func _map_click(screen: Vector2) -> void:
 		# A tap on a built lot shows its card; painting over it takes the Clear tool.
 		if town.lots.has(c) and _town_tool != "erase":
 			town_inspect(c)
+			return
+		# A tap on village ground already zoned this way shows why it grows or waits.
+		if town.in_village(c) and town.village.has(c) and str(town.village[c]) == _town_tool \
+				and str(town.village_pick.get(c, "")) == str(_town_pick.get(_town_tool, "")):
+			_town_card_cell = c
+			_open_panel("town_vcell")
 			return
 		# Ground past the border: buy it, or see how to take it from whoever holds it.
 		if _town_tool != "erase" and _town_land_for_taking(c):
@@ -777,6 +819,10 @@ func _open_panel(which: String) -> void:
 		_town_lot_card(c)
 	elif which == "town_cell" and town.zones.has(c):
 		_town_cell_card(c)
+	elif which == "town_vcell" and town.village.has(c):
+		_village_cell_card(c)
+	elif which == "town_pick" and _town_pick_zone in town.village_zone_ids():
+		_town_pick_card(_town_pick_zone)
 	else:
 		_close_panel()
 		return
@@ -840,6 +886,104 @@ func _town_cell_card(c: Vector2i) -> void:
 		why = "Ready. Something will rise here soon."
 	ui.body(why, side_content, 12)
 	ui.command_button("Unzone", _town_unzone.bind(c), side_content)
+
+
+# Zoned village ground: what can rise here, what waits and why, and what this patch is set to grow.
+func _village_cell_card(c: Vector2i) -> void:
+	var zone: String = str(town.village[c])
+	var spec: Dictionary = town.zone_spec(zone)
+	_zone_report = growth.zone_report(sim, town)
+	var report: Dictionary = _zone_report.get(zone, {})
+	ui.heading(("%s ZONE" % str(spec.get("name", zone))).to_upper(), side_content)
+	ui.rule(side_content)
+	var pick: String = growth.pick_of(town, c)
+	ui.body("Grows: %s" % ("any of its buildings" if pick.is_empty() else growth.type_name_of(sim, pick)), side_content, 13)
+	var line: Label = ui.body(str(report.get("text", "Nothing has risen here yet.")), side_content, 13)
+	line.add_theme_color_override("font_color", Color("9fd88f") if bool(report.get("growing", false)) else Color("f3d79a"))
+	ui.heading("WHAT GROWS HERE", side_content)
+	for row: Dictionary in report.get("types", []):
+		if not pick.is_empty() and str(row["type"]) != pick:
+			continue
+		var ok: bool = str(row["state"]) == "ready"
+		var item: Label = ui.body(("+  " if ok else "-  ") + "%s: %s" % [str(row["name"]), str(row["text"])], side_content, 12)
+		item.add_theme_color_override("font_color", Color("9fd88f") if ok else (Color("b9ad98") if str(row["state"]) in ["locked", "later"] else Color("e9a58f")))
+	var cells: int = int(growth.zone_cells(town).get(zone, 0))
+	var next: int = growth.cells_to_next_extra(cells)
+	if next > 0:
+		ui.body("%d %s cells painted. Paint %d more and each of its buildings may stand one more time." % [cells, str(spec.get("short", zone)).to_lower(), next], side_content, 12)
+	ui.command_button("Choose What Grows", _town_open_pick.bind(zone, c), side_content)
+	ui.command_button("Unzone", _town_unzone.bind(c), side_content)
+
+
+# Choosing which of a zone's buildings new strokes grow (and, opened from a patch, that patch).
+func _town_pick_card(zone: String) -> void:
+	var spec: Dictionary = town.zone_spec(zone)
+	ui.heading(("%s: WHAT GROWS" % str(spec.get("name", zone))).to_upper(), side_content)
+	ui.rule(side_content)
+	var patch: bool = town.village.has(_town_card_cell) and str(town.village[_town_card_cell]) == zone
+	ui.body("Pick one building and only it rises on the cells you paint (or on this patch). Any lets the village choose.", side_content, 12)
+	_zone_report = growth.zone_report(sim, town)
+	var rows: Dictionary = {}
+	for row: Dictionary in _zone_report.get(zone, {}).get("types", []):
+		rows[str(row["type"])] = row
+	var current: String = growth.pick_of(town, _town_card_cell) if patch else str(_town_pick.get(zone, ""))
+	var any: Button = ui.command_button(("Any  (chosen)" if current.is_empty() else "Any"), _town_choose_pick.bind(zone, ""), side_content)
+	any.tooltip_text = "The village picks what it needs most"
+	for type_name: String in growth.zone_types(zone):
+		if not sim.building_specs.has(type_name):
+			continue
+		var name: String = growth.type_name_of(sim, type_name)
+		var row: Dictionary = rows.get(type_name, {})
+		var locked: bool = not sim.unlock_reason(type_name).is_empty()
+		var button: Button = ui.command_button(name + ("  (chosen)" if current == type_name else ""), _town_choose_pick.bind(zone, type_name), side_content)
+		button.disabled = locked
+		button.tooltip_text = str(row.get("text", ""))
+		if locked or str(row.get("state", "ready")) != "ready":
+			var note: Label = ui.body(str(row.get("text", "")), side_content, 11)
+			note.add_theme_color_override("font_color", Color("b9ad98"))
+
+
+func _town_open_pick(zone: String, c: Vector2i = TOWN_NO_CELL) -> void:
+	_town_pick_zone = zone
+	_town_card_cell = c
+	_open_panel("town_pick")
+
+
+# A pick from the card: kept for the tool, and laid over the patch the card was opened from.
+func _town_choose_pick(zone: String, type_name: String) -> void:
+	if type_name.is_empty():
+		_town_pick.erase(zone)
+	else:
+		_town_pick[zone] = type_name
+	var from: Vector2i = _town_card_cell
+	if town.village.has(from) and str(town.village[from]) == zone:
+		town_set_patch_pick(from, type_name)
+	_close_panel()
+	if _town_active and _town_tool != zone:
+		town_set_tool(zone)
+	_town_refresh_bar()
+	town_save()
+
+
+# Sets every cell of the connected same-zone patch around c to grow one type ("" = any).
+func town_set_patch_pick(c: Vector2i, type_name: String) -> int:
+	var zone: String = str(town.village.get(c, ""))
+	if zone.is_empty():
+		return 0
+	var seen: Dictionary = {c: true}
+	var queue: Array[Vector2i] = [c]
+	var changed: int = 0
+	while not queue.is_empty():
+		var at: Vector2i = queue.pop_back()
+		if town.paint_village(at, zone, type_name).is_empty():
+			changed += 1
+		for d: Vector2i in town.DIRS:
+			var n: Vector2i = at + d
+			if not seen.has(n) and str(town.village.get(n, "")) == zone:
+				seen[n] = true
+				queue.append(n)
+	growth.grow_clock = maxf(growth.grow_clock, float(town.village_spec().get("growSeconds", 5.0)) - 1.5)
+	return changed
 
 
 # Ground the town could have but does not hold yet: wild, or a neighbour's (not the river, slopes,
@@ -1008,9 +1152,13 @@ func _town_build_ui() -> void:
 	tools.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	town_bar.add_child(tools)
 	for tool: String in TOWN_TOOLS:
-		var button: Button = ui.command_button(str(TOWN_TOOL_NAMES[tool]), town_set_tool.bind(tool), tools, 44.0)
+		var button: Button = ui.command_button(str(TOWN_TOOL_NAMES[tool]), _town_tool_pressed.bind(tool), tools, 44.0)
 		button.custom_minimum_size = Vector2(76, 44)
 		button.add_theme_font_size_override("font_size", 13)
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		if tool in town.village_zone_ids():
+			button.tooltip_text = "Paint %s. Tap again to choose what grows." % str(TOWN_TOOL_NAMES[tool])
 		_town_tool_buttons[tool] = button
 	_town_brush_button = ui.command_button("Brush 1", _town_toggle_brush, tools, 44.0)
 	_town_brush_button.custom_minimum_size = Vector2(76, 44)
@@ -1019,8 +1167,14 @@ func _town_build_ui() -> void:
 	_town_pan_button.custom_minimum_size = Vector2(70, 44)
 	_town_pan_button.add_theme_font_size_override("font_size", 13)
 	_town_pan_button.tooltip_text = "One finger moves the map instead of painting (two fingers always move it)"
+	# Phones keep one row: the four zones, More (the rest of the tools) and Done.
+	_town_more_button = ui.command_button("More", _town_toggle_more, tools, 44.0)
+	_town_more_button.custom_minimum_size = Vector2(70, 44)
+	_town_more_button.add_theme_font_size_override("font_size", 13)
+	_town_more_button.tooltip_text = "Road, Pave, Clear, Brush and Move"
 	var done: Button = ui.gold_button("Done", town_close, tools, 44.0)
 	done.custom_minimum_size = Vector2(76, 44)
+	_town_done_button = done
 	town_bar.hide()
 
 
@@ -1032,8 +1186,8 @@ func _town_refresh_bar() -> void:
 		var tint: Color = _town_tool_color(tool)
 		var chosen: bool = tool == _town_tool
 		var face: StyleBox = ui.command_box(tint.darkened(0.6) if chosen else UI.WALNUT_LIGHT, tint.lightened(0.2) if chosen else Color(tint, 0.6))
-		face.content_margin_left = 8
-		face.content_margin_right = 8
+		face.content_margin_left = 3 if _town_compact_tools() else 8
+		face.content_margin_right = 3 if _town_compact_tools() else 8
 		if chosen:
 			face.glow = Color(tint, 0.45)
 		for state: String in ["normal", "hover", "pressed", "focus"]:
@@ -1041,7 +1195,18 @@ func _town_refresh_bar() -> void:
 		button.add_theme_color_override("font_color", UI.PAPER if chosen else tint.lightened(0.35))
 		button.add_theme_color_override("font_hover_color", UI.PAPER)
 		button.add_theme_color_override("font_pressed_color", UI.PAPER)
-	_town_brush_button.text = "Brush %dx%d" % [_town_brush, _town_brush]
+		var label: String = str(TOWN_TOOL_NAMES[tool])
+		var pick: String = str(_town_pick.get(tool, ""))
+		if not pick.is_empty():
+			var short: String = growth.type_name_of(sim, pick)
+			# Phones have room for one word: the building's last ("Mine", "Quarry").
+			label = short.get_slice(" ", short.get_slice_count(" ") - 1) if _town_compact_tools() else "%s: %s" % [label, short]
+		button.text = label
+	if _town_more_button != null:
+		var hidden_tool: bool = _town_tool in ["road", "pave", "erase"]
+		_town_more_button.text = "Less" if _town_more else (str(TOWN_TOOL_NAMES[_town_tool]) if hidden_tool else "More")
+		ui.paint_command(_town_more_button, "pressed" if _town_more or hidden_tool else "normal")
+	_town_brush_button.text = ("%dx%d" if _town_compact_tools() else "Brush %dx%d") % [_town_brush, _town_brush]
 	_town_pan_button.text = "Moving" if _town_pan else "Move"
 	ui.paint_command(_town_pan_button, "pressed" if _town_pan else "normal")
 	_town_refresh_status()
@@ -1054,20 +1219,42 @@ func _town_refresh_status() -> void:
 		_paint_ring(_town_button, UI.GOLD if _town_active else UI.SLATE, 44.0 if _is_small() else 56.0)
 	if town_bar == null or not town_bar.visible:
 		return
-	var stats: Dictionary = town.stats()
 	var small: bool = _is_small()
-	var heading: String = ("%s  %d folk · %d jobs · %d lots" if small else "%s  %d townsfolk · %d jobs · %d lots") % [town.title().to_upper(), int(stats["people"]), int(stats["jobs"]), int(stats["lots"])]
-	var next: Dictionary = town.next_title()
-	if not small and not next.is_empty():
-		heading += "   (%s at %d)" % [str(next.get("name", "")), int(next.get("people", 0))]
-	if int(stats["cut_off"]) > 0:
-		heading += ("  ·  %d cut off" % int(stats["cut_off"]))
+	var heading: String
+	var wants: Dictionary
+	var in_village: bool = town_view_village()
+	if in_village:
+		# Over the village: its own people, beds, jobs and Hall, and what it wants more of.
+		var spare: int = sim.beds() - sim.units.size()
+		heading = "VILLAGE  %d souls · %d beds empty" % [sim.units.size(), maxi(spare, 0)]
+		if not small:
+			heading += " · " + sim.jobs_summary()
+			var hall_next: int = growth.hall_people_next(sim)
+			if hall_next > 0:
+				heading += "   (Hall rises at %d souls)" % hall_next
+		wants = growth.village_demand(sim)
+	else:
+		var stats: Dictionary = town.stats()
+		heading = ("%s  %d folk · %d jobs · %d lots" if small else "%s  %d townsfolk · %d jobs · %d lots") % [town.title().to_upper(), int(stats["people"]), int(stats["jobs"]), int(stats["lots"])]
+		var next: Dictionary = town.next_title()
+		if not small and not next.is_empty():
+			heading += "   (%s at %d)" % [str(next.get("name", "")), int(next.get("people", 0))]
+		if int(stats["cut_off"]) > 0:
+			heading += ("  ·  %d cut off" % int(stats["cut_off"]))
+		wants = town.demand()
 	_town_stats_label.text = heading
-	var wants: Dictionary = town.demand()
 	for zone: String in _town_demand_bars:
-		(_town_demand_bars[zone] as ProgressBar).value = float(wants.get(zone, 0.0))
+		var gauge: ProgressBar = _town_demand_bars[zone]
+		gauge.value = float(wants.get(zone, 0.0))
+		(gauge.get_parent() as Control).tooltip_text = "How much the %s wants more %s" % ["village" if in_village else "town", str(town.zone_spec(zone).get("short", zone)).to_lower()]
 	var hint: String
-	if town.village.is_empty() and _town_tool in town.village_zone_ids():
+	var report: Dictionary = _zone_report.get(_town_tool, {})
+	if in_village and _town_tool in town.village_zone_ids() and not report.is_empty():
+		# Why this zone grows or waits; the card (tap the zone) has the full list.
+		hint = str(report.get("text", ""))
+		if not str(_town_pick.get(_town_tool, "")).is_empty():
+			hint = "Painting %s only. " % growth.type_name_of(sim, str(_town_pick[_town_tool])) + hint
+	elif town.village.is_empty() and _town_tool in town.village_zone_ids():
 		hint = "Paint %s on open village ground and buildings rise there free. Outside the walls, lay a Road first." % str(TOWN_TOOL_NAMES.get(_town_tool, ""))
 	elif town.roads.is_empty() and _town_tool in ["road", "pave"]:
 		hint = "Lay a Road out from the village edge (the gold squares), then paint zones beside it."
@@ -1084,7 +1271,7 @@ func _town_refresh_status() -> void:
 	else:
 		hint = "%s: %s" % [str(town.zone_spec(_town_tool).get("name", "")), str(town.zone_spec(_town_tool).get("blurb", ""))]
 		if _town_tool in town.village_zone_ids():
-			hint += " In the village, paint side by side freely: each building gets a path to its door."
+			hint += " In the village, paint side by side freely: each building gets a path to its door. Tap %s again to choose what grows." % str(TOWN_TOOL_NAMES.get(_town_tool, ""))
 	if small and hint.length() > 70:
 		hint = hint.substr(0, hint.find(".") + 1)
 	var milestone_zone: bool = _town_tool in town.zone_ids()
@@ -1202,10 +1389,37 @@ func _layout_ui() -> void:
 	if _town_button != null:
 		_paint_ring(_town_button, UI.GOLD if _town_active else UI.SLATE, 44.0 if _is_small() else 56.0)
 	if _town_tools_grid != null:
-		_town_tools_grid.columns = 5 if _is_small() and not _is_landscape_phone() else 10
+		# Phones held upright keep one row: the four zones, More and Done; More opens a second row
+		# with Road, Pave, Clear, Brush and Move. Wider screens show every tool in one row.
+		var compact: bool = _town_compact_tools()
+		var extra: Array[Control] = [_town_tool_buttons["road"], _town_tool_buttons["pave"], _town_tool_buttons["erase"], _town_brush_button, _town_pan_button]
+		_town_more_button.visible = compact
+		for button: Control in extra:
+			button.visible = not compact or _town_more
+		var order: Array[Control] = []
+		for zone: String in town.village_zone_ids():
+			order.append(_town_tool_buttons[zone])
+		if compact:
+			order.append(_town_more_button)
+			order.append(_town_done_button)
+			order.append_array(extra)
+		else:
+			order.append_array(extra)
+			order.append(_town_more_button)
+			order.append(_town_done_button)
+		for i in order.size():
+			_town_tools_grid.move_child(order[i], i)
+		_town_tools_grid.columns = 6 if compact else 10
+		_town_tools_grid.add_theme_constant_override("h_separation", 4 if compact else 6)
 		for child: Node in _town_tools_grid.get_children():
-			(child as Control).custom_minimum_size.x = 0.0 if _is_small() else 76.0
+			# Equal columns on an upright phone, so no label is squeezed by a wider neighbour.
+			(child as Control).custom_minimum_size.x = 50.0 if compact else (0.0 if _is_small() else 76.0)
 			(child as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL if _is_small() else Control.SIZE_FILL
+			if compact and child is Button:
+				(child as Button).add_theme_font_size_override("font_size", 12)
+			elif child is Button and child != _town_done_button:
+				(child as Button).add_theme_font_size_override("font_size", 13)
+		_town_refresh_bar()
 	if not _town_active:
 		return
 	# The zoning bar is taller than the nav it replaces; keep the phone sheet above it.
@@ -1330,11 +1544,13 @@ func _town_build_overlay() -> void:
 			continue
 		var tint: Color = town.zone_color(zone)
 		var waiting: bool = not has_lot and not town.has_access(c)
-		var wash: float = (0.16 if has_lot else 0.34) if _town_active else 0.2
+		# With the tools away, a zone waiting to grow shows only its rim, so the land stays clean.
+		var wash: float = (0.16 if has_lot else 0.34) if _town_active else 0.0
 		if waiting:
 			wash *= 0.45
 		var rim: float = 0.85 if _town_active else 0.45
-		_town_cell_quad(tool, c, Vector2(0.15, 0.15), Vector2(3.85, 3.85), Color(tint, wash))
+		if wash > 0.0:
+			_town_cell_quad(tool, c, Vector2(0.15, 0.15), Vector2(3.85, 3.85), Color(tint, wash))
 		# No road reaches it yet: four dots, so a stalled zone reads apart from one about to grow.
 		if waiting:
 			for spot: Vector2 in [Vector2(1.05, 1.05), Vector2(2.45, 1.05), Vector2(1.05, 2.45), Vector2(2.45, 2.45)]:
@@ -1349,7 +1565,7 @@ func _town_build_overlay() -> void:
 				Vector2i(-1, 0): to.x = 0.5
 				Vector2i(0, 1): from.y = 3.5
 				Vector2i(0, -1): to.y = 0.5
-			_town_cell_quad(tool, c, from, to, Color(tint.lightened(0.2), rim), 0.01)
+			_town_zone_rim(tool, c, from, to, tint, rim)
 		count += 1
 	# The Road tool marks where a road may start: the village edge, beside every reach.
 	if _town_active and _town_tool == "road" and town.roads.size() < 3:
@@ -1376,9 +1592,10 @@ func _town_build_overlay() -> void:
 			if built and not _town_active:
 				continue
 			var tint: Color = town.zone_color(zone)
-			var wash: float = (0.14 if built else 0.34) if _town_active else 0.1
-			var rim: float = 0.85 if _town_active else 0.4
-			_town_cell_quad(tool, c, Vector2(0.15, 0.15), Vector2(3.85, 3.85), Color(tint, wash))
+			var wash: float = (0.14 if built else 0.34) if _town_active else 0.0
+			var rim: float = 0.85 if _town_active else 0.35
+			if wash > 0.0:
+				_town_cell_quad(tool, c, Vector2(0.15, 0.15), Vector2(3.85, 3.85), Color(tint, wash))
 			for d: Vector2i in town.DIRS:
 				if str(town.village.get(c + d, "")) == zone:
 					continue
@@ -1389,9 +1606,40 @@ func _town_build_overlay() -> void:
 					Vector2i(-1, 0): to.x = 0.5
 					Vector2i(0, 1): from.y = 3.5
 					Vector2i(0, -1): to.y = 0.5
-				_town_cell_quad(tool, c, from, to, Color(tint.lightened(0.2), rim), 0.01)
+				_town_zone_rim(tool, c, from, to, tint, rim)
 			count += 1
 	_town_overlay.mesh = tool.commit() if count > 0 else null
+
+
+# A zone's edge: a dark line just inside a bright one, so the colour reads against grass and dirt
+# alike. With the tools away the rim is a thin bright line only.
+func _town_zone_rim(tool: SurfaceTool, c: Vector2i, from: Vector2, to: Vector2, tint: Color, rim: float) -> void:
+	if _town_active:
+		var inner_from: Vector2 = from
+		var inner_to: Vector2 = to
+		# Widen the strip inward by 0.25 m for the dark line.
+		if is_equal_approx(from.x, 3.5):
+			inner_from.x = 3.25
+		elif is_equal_approx(to.x, 0.5):
+			inner_to.x = 0.75
+		elif is_equal_approx(from.y, 3.5):
+			inner_from.y = 3.25
+		elif is_equal_approx(to.y, 0.5):
+			inner_to.y = 0.75
+		_town_cell_quad(tool, c, inner_from, inner_to, Color(0.05, 0.04, 0.03, 0.35), 0.006)
+		_town_cell_quad(tool, c, from, to, Color(tint.lightened(0.3), rim), 0.012)
+		return
+	var thin_from: Vector2 = from
+	var thin_to: Vector2 = to
+	if is_equal_approx(from.x, 3.5):
+		thin_from.x = 3.62
+	elif is_equal_approx(to.x, 0.5):
+		thin_to.x = 0.38
+	elif is_equal_approx(from.y, 3.5):
+		thin_from.y = 3.62
+	elif is_equal_approx(to.y, 0.5):
+		thin_to.y = 0.38
+	_town_cell_quad(tool, c, thin_from, thin_to, Color(tint.lightened(0.2), rim), 0.01)
 
 
 # A quad over part of a cell (offsets in metres from its corner), split so it follows the ground.
@@ -1878,6 +2126,82 @@ func _town_refresh_badges() -> void:
 		badge.text = text if cut_off else "Needs " + (text if text.left(1).is_valid_int() else text.to_lower())
 		badge.modulate = Color("f0a08f") if cut_off else Color("f3e6c8")
 		badge.position = _town_point(c, 4.4)
+
+
+# Village zone tags: with the tools out, each empty patch of a zone that cannot grow says why
+# ("At the limit", "Needs unlocking"); tap the patch for the full card. Nearest the view first.
+func _village_refresh_tags() -> void:
+	var wanted: Dictionary = {}
+	if _town_active and not town.village.is_empty():
+		_zone_report = growth.zone_report(sim, town)
+		var used: Dictionary = growth.used_tiles(sim)
+		var empty: Dictionary = {}
+		for c: Vector2i in town.village:
+			var free: bool = true
+			for tile: Vector2i in growth.cell_tiles(c):
+				if used.has(tile):
+					free = false
+					break
+			if free:
+				empty[c] = str(town.village[c])
+		var seen: Dictionary = {}
+		var cells: Array = empty.keys()
+		cells.sort()
+		for start: Vector2i in cells:
+			if seen.has(start):
+				continue
+			var zone: String = str(empty[start])
+			var patch: Array[Vector2i] = []
+			var queue: Array[Vector2i] = [start]
+			seen[start] = true
+			while not queue.is_empty():
+				var at: Vector2i = queue.pop_back()
+				patch.append(at)
+				for d: Vector2i in town.DIRS:
+					var n: Vector2i = at + d
+					if not seen.has(n) and str(empty.get(n, "")) == zone:
+						seen[n] = true
+						queue.append(n)
+			var report: Dictionary = _zone_report.get(zone, {})
+			if report.is_empty() or bool(report.get("growing", false)) or str(report.get("short", "")).is_empty():
+				continue
+			var middle := Vector2.ZERO
+			for c: Vector2i in patch:
+				middle += Vector2(c)
+			middle /= float(patch.size())
+			var best: Vector2i = patch[0]
+			for c: Vector2i in patch:
+				if Vector2(c).distance_to(middle) < Vector2(best).distance_to(middle):
+					best = c
+			wanted[best] = str(report["short"])
+	var most: int = TOWN_BADGES / 2 if _realm_phone else TOWN_BADGES
+	if wanted.size() > most:
+		var focus := Vector2(target.x, target.z)
+		var order: Array = wanted.keys()
+		order.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+			return town.cell_centre(a).distance_to(focus) < town.cell_centre(b).distance_to(focus))
+		for c: Vector2i in order.slice(most):
+			wanted.erase(c)
+	for c: Vector2i in _village_tags.keys():
+		if not wanted.has(c):
+			(_village_tags[c] as Node).queue_free()
+			_village_tags.erase(c)
+	for c: Vector2i in wanted:
+		var tag: Label3D = _village_tags.get(c, null)
+		if tag == null:
+			tag = _town_text_node(30)
+			_town_root.add_child(tag)
+			_village_tags[c] = tag
+		tag.text = str(wanted[c])
+		tag.modulate = Color("f3d79a")
+		tag.position = _town_point(c, 2.4)
+
+
+func village_tag_texts() -> Dictionary:
+	var result: Dictionary = {}
+	for c: Vector2i in _village_tags:
+		result[c] = (_village_tags[c] as Label3D).text
+	return result
 
 
 func town_badge_texts() -> Dictionary:

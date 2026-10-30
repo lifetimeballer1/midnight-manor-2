@@ -56,6 +56,35 @@ farms, industry and civic buildings rise there on their own, free (see "Zoning t
   `data/zones.json` under `village`. `tests/test_village_zoning.gd` covers it;
   `tests/capture_village_zoning.gd` captures it.
 
+## Why a zone waits, and choosing what grows (zoning update)
+
+- **The bar follows the view.** Over the village the zoning bar shows the village: souls, empty
+  beds, jobs filled, when the Hall rises next, and four demand columns for what the village wants
+  (homes when few beds stand empty, farms when the larder runs low, industry when wood and stone
+  run low, civic when morale dips or the village grows). Outside the walls it shows the town as before.
+- **Zones say why they wait.** With the tools out, each empty patch of a village zone that cannot
+  grow carries a tag: At the limit, Waiting for people, No room, Not yet, Needs unlocking. The bar's
+  second line says the same for the zone in hand, and what opens next ("Next: Moonchapel opens with
+  the mission \"The Moon Well\""). Tap zoned ground of the zone in hand for its card: every building
+  of the zone, whether it can rise, and what holds it back.
+- **Choose what grows.** Tap the zone already in hand (or Choose What Grows on a zone's card) and
+  pick one of its buildings, or Any. New strokes of that zone grow only that building; picked from a
+  patch's card, the whole connected patch is set. The tool shows the pick ("Industry: Moonstone Mine";
+  on phones just "Mine"). Picks are kept per cell in the town save (`village_pick`, optional).
+- **Big zones raise limits.** Every 6 cells painted with a zone let one more of each of its limited
+  buildings stand (at most 6 more); one-of-a-kind buildings stay unique (`village.zoneLimits`).
+  `sim.building_limit()` adds these (`sim.zone_extra`, set by the growth layer, not saved).
+- **Filling zones open tiers.** A zoned building may move up to a tier once the village level allows
+  it, or once enough buildings of its zone stand (3 for tier 2, 6 for tier 3, 10 for tier 4, 15 for
+  tier 5; `village.zoneTiers`), whichever comes first. Still one upgrade at a time, still free.
+- **Looks.** With the tools away, a zone waiting to grow shows only a thin rim, no wash. With them
+  out, each zone edge has a dark line inside its bright rim so it reads on grass and dirt.
+- **Phones held upright** keep one row of tools: the four zones, More and Done. More opens a second
+  row with Road, Pave, Clear, the brush size and Move.
+- Code: `village_growth.gd` (`zone_report`, `village_demand`, `unlock_hint`, `ground_for`,
+  `limit_extras`, `tier_open`), `village_zoning.gd` (tags, cards, bar, tool row). Tests:
+  `tests/test_zoning_update.gd`; captures: `tests/capture_zoning_update.gd`.
+
 ## The frontier is open: buy it or fight for it
 
 - **Past the town's border.** Tap wild ground with a zone tool and its card offers to buy it:
