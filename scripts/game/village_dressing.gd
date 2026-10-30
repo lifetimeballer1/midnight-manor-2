@@ -202,3 +202,78 @@ static func _dress_mine(model: Node3D) -> void:
 	for x in [-0.13, 0.13]:
 		for z in [-0.15, 0.15]:
 			_box(cart, Vector3(0.09, 0.09, 0.03), Vector3(x, 0.07, z), POST)
+
+
+# --- Trees and rocks outside the walls ----------------------------------------------------
+
+const BARK := Color(0.42, 0.31, 0.24)
+
+# Adds one primitive to a vertex-coloured mesh, shaded darker toward its base (as the realm's trees are).
+static func _part(tool: SurfaceTool, mesh: PrimitiveMesh, place: Transform3D, colour: Color, low: float, high: float) -> void:
+	var arrays: Array = mesh.get_mesh_arrays()
+	var points: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	for corner in indices.size():
+		var index: int = indices[corner]
+		var at: Vector3 = place * points[index]
+		var facet: int = corner / 3
+		var vary: float = 0.94 + 0.12 * fposmod(sin(float(facet) * 12.9898 + at.y * 4.1) * 43758.5453, 1.0)
+		var shade: float = lerpf(0.62, 1.0, smoothstep(low, high, at.y)) * vary
+		tool.set_color(Color(minf(colour.r * shade, 1.0), minf(colour.g * shade, 1.0), minf(colour.b * shade, 1.0)))
+		tool.set_normal((place.basis * normals[index]).normalized())
+		tool.add_vertex(at)
+
+
+# A broadleaf (oak-like) tree standing on y 0: a short trunk under four lumpy crown lobes. The
+# instance colour carries the autumn tone; the trunk keeps a bark shade.
+static func broadleaf_mesh(with_trunk: bool = true, lift: float = 0.0) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	if with_trunk:
+		var trunk := BoxMesh.new()
+		trunk.size = Vector3(0.2, 0.9, 0.2)
+		_part(st, trunk, Transform3D(Basis(), Vector3(0, 0.45 + lift, 0)), BARK, 0.0, 1.0)
+	for lobe: Vector4 in [Vector4(0, 1.3, 0, 0.62), Vector4(0.36, 1.08, 0.14, 0.42), Vector4(-0.3, 1.1, 0.26, 0.4), Vector4(-0.1, 1.62, -0.18, 0.38)]:
+		var crown := SphereMesh.new()
+		crown.radius = lobe.w
+		crown.height = lobe.w * 1.8
+		crown.radial_segments = 7
+		crown.rings = 3
+		_part(st, crown, Transform3D(Basis(), Vector3(lobe.x, lobe.y + lift, lobe.z)), Color.WHITE, 0.6 + lift, 2.0 + lift)
+	return st.commit()
+
+
+# A small cluster of boulders standing on y 0, in place of a single flat stone.
+static func rock_cluster_mesh(scale: float = 1.0) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var stone := SphereMesh.new()
+	stone.radius = 0.3 * scale
+	stone.height = 0.42 * scale
+	stone.radial_segments = 6
+	stone.rings = 3
+	for piece: Array in [[Vector3(0, 0.1, 0), Vector3(1.0, 0.9, 0.85), 0.0], [Vector3(0.32, 0.04, 0.16), Vector3(0.55, 0.5, 0.5), 0.8], [Vector3(-0.22, 0.03, 0.26), Vector3(0.42, 0.38, 0.4), 1.9]]:
+		var at: Vector3 = piece[0] * scale
+		_part(st, stone, Transform3D(Basis(Vector3.UP, piece[2]).scaled(piece[1]), at), Color.WHITE, -0.1, 0.5 * scale)
+	return st.commit()
+
+
+# The scenery ring round the map: its round crowns become lobed broadleaf crowns and its flat
+# stones become boulder clusters. The meshes are swapped in place, so the instances (and their
+# autumn colours) are kept. Crown instances already sit on top of their trunks, so the crown
+# mesh here has no trunk and is centred on the old sphere's middle.
+static func reshape_scenery(scenery: Node) -> void:
+	if scenery == null:
+		return
+	for child: Node in scenery.get_children():
+		var multi := child as MultiMeshInstance3D
+		if multi == null or multi.multimesh == null:
+			continue
+		var sphere := multi.multimesh.mesh as SphereMesh
+		if sphere == null:
+			continue
+		if sphere.radius > 0.8 and sphere.radius < 0.9:
+			multi.multimesh.mesh = broadleaf_mesh(false, -1.3)
+		elif sphere.radius < 0.3:
+			multi.multimesh.mesh = rock_cluster_mesh(0.9)

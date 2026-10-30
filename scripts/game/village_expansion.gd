@@ -9,6 +9,7 @@ extends RefCounted
 # village_sim.gd (EXPANSION_PLOTS, expansions, expansion_reason) and never
 # changes it. Built and driven by village_game.gd, which owns the host node.
 
+const Dressing = preload("res://scripts/game/village_dressing.gd")
 const GOLD := Color("d4b275")
 const GOLD_HOT := Color("ffd98a")
 const SILVER := Color("cfd8ea")
@@ -753,6 +754,11 @@ func _silhouette_mesh(kind: int) -> Mesh:
 			cone.radial_segments = 6
 			st.append_from(cone, 0, Transform3D(Basis(), Vector3(0, 0.75 + tier * 0.6, 0)))
 		return st.commit()
+	# Broadleaf trees and boulder clusters share the dressing module's shapes (visual pass 5).
+	if kind == KIND_ROUND:
+		return Dressing.broadleaf_mesh()
+	if kind == KIND_ROCK:
+		return Dressing.rock_cluster_mesh(1.0)
 	var ball := SphereMesh.new()
 	var lift: float = 0.0
 	match kind:

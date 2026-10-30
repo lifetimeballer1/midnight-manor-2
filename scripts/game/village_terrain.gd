@@ -32,6 +32,7 @@ const LEAF_COUNT_LOW: int = 12
 const MIST_COUNT: int = 9                           # ground mist patches; phones get MIST_COUNT_LOW
 const MIST_COUNT_LOW: int = 5
 const SLAB_TINT := Color(0.8, 0.79, 0.74)
+const SLAB_TEX_SPAN: float = 9.0                   # world units per repeat of the slab meadow texture
 const SLAB_GRASS_CLUMPS: int = 420                 # per claimed plot; phones get half
 const CLUTTER_CLEAR: float = 0.3                    # mask value above which clutter is hidden
 const TREE_FALL_TONES: Array[String] = ["7f8a22", "9a8a1c", "c99a1a", "e0a924", "d9741a", "e8861e", "a8381a", "c14a1c", "8e2a14"]
@@ -131,6 +132,7 @@ func _terrain_build() -> void:
 	_terrain_noise = noise_image
 	_grass_build()
 	_terrain_recolor_trees()
+	Dressing.reshape_scenery(get_node_or_null("Scenery"))
 	_leaves_build()
 	_clutter_build()
 	_mist_build()
@@ -767,8 +769,8 @@ func _slab_build() -> void:
 			var m: float = _terrain_noise.get_pixel((x * 2 + 97) % 256, (y * 2 + 41) % 256).r
 			var green: Color = Color("38561a").lerp(Color("55751f"), m)
 			var gold: Color = Color("a07a1c").lerp(Color("b88a22"), m)
-			var color: Color = green.lerp(gold, smoothstep(0.3, 0.7, n) * 0.75)
-			image.set_pixel(x, y, color * (0.9 + 0.2 * m))
+			var color: Color = green.lerp(gold, smoothstep(0.15, 0.85, n) * 0.7)
+			image.set_pixel(x, y, color * (0.95 + 0.1 * m))
 	var specks: Array[String] = ["d9741a", "c99a1a", "b02e17"]
 	for index in 90:
 		var px: int = rng.randi_range(0, side - 2)
@@ -794,6 +796,10 @@ func _terrain_autumn_slabs() -> void:
 		slab["autumn"] = true
 		var grass := slab["grass"] as StandardMaterial3D
 		grass.albedo_texture = _terrain_slab_tex
+		# Tile the meadow texture in world space so the reaches read as grass, not a stretched blur.
+		grass.uv1_triplanar = true
+		grass.uv1_world_triplanar = true
+		grass.uv1_scale = Vector3.ONE / SLAB_TEX_SPAN
 		if not bool(slab["locked"]) and not bool(slab["busy"]):
 			grass.albedo_color = SLAB_TINT
 		var group := slab["group"] as Node3D
