@@ -17,6 +17,7 @@ const GOLD := Color("d4b275")
 const WORLD_TEXT_OUTLINE := Color(0.09, 0.06, 0.04, 0.9)   # warm dark rim for floating world text
 const PAPER := Color("f2e7cc")
 const TILE: float = 2.0
+const Dressing = preload("res://scripts/game/village_dressing.gd")
 const MAP_ORIGIN := Vector3(-20, 0, -16)
 # Camera pan limits, widened so all four expansion plots can be viewed.
 var pan_limit := Vector2(40.0, 36.0)   # the realm layer widens this to the open world
@@ -1549,6 +1550,7 @@ func _rebuild_buildings() -> void:
 			building_views[int(b["id"])]["windows"] = panes
 		root_node.add_child(_ao_disc(float(b["size"]) * TILE + 0.9))
 		details.attach(self, b, building_views[int(b["id"])])
+		Dressing.dress(self, b, building_views[int(b["id"])])
 	view_revision = sim.revision
 	_update_marker()
 
