@@ -178,8 +178,13 @@ func _terrain_refresh_mask(force: bool) -> void:
 		for tx in size:
 			for ty in size:
 				_terrain_stamp(foot, int(b["x"]) + tx, int(b["y"]) + ty, 1.0)
-	var apron := _terrain_dilate(foot, 0.7)
-	apron = _terrain_dilate(apron, 0.7)
+	var apron := _terrain_dilate(foot, 0.62)
+	var paths := PackedFloat32Array()
+	paths.resize(w * h)
+	_terrain_paths(paths)
+	paths = _terrain_dilate(paths, 0.55)
+	for i in w * h:
+		apron[i] = maxf(apron[i], paths[i])
 	var clear := foot.duplicate()
 	for id: Variant in sim.living.cells.keys():
 		var parts: PackedStringArray = str(id).split(",")
@@ -190,6 +195,8 @@ func _terrain_refresh_mask(force: bool) -> void:
 		for tile: Vector2i in sim.estates[id]["fields"]:
 			_terrain_stamp(clear, tile.x, tile.y, 1.0)
 	clear = _terrain_dilate(clear, 0.8)
+	for i in w * h:
+		clear[i] = maxf(clear[i], paths[i] * 0.9)
 	for y in h:
 		for x in w:
 			var i: int = y * w + x
@@ -197,6 +204,37 @@ func _terrain_refresh_mask(force: bool) -> void:
 	_terrain_mask_texture.update(_terrain_mask_image)
 	_clutter_apply_mask()
 	_reach_clear()
+
+
+# Worn paths: a soft line of packed earth from the Hall to each building, the way villagers walk.
+# Drawn into the dirt channel at path strength, so the shader shows a trodden track, not a blot.
+const PATH_STRENGTH: float = 0.72
+
+func _terrain_paths(field: PackedFloat32Array) -> void:
+	var hall: Dictionary = sim._hall()
+	if hall.is_empty():
+		return
+	var hs: float = float(hall["size"]) * 0.5
+	var from := Vector2(float(hall["x"]) + hs, float(hall["y"]) + hs) * 2.0
+	for b: Dictionary in sim.buildings:
+		if b == hall:
+			continue
+		var bs: float = float(b["size"]) * 0.5
+		var to := Vector2(float(b["x"]) + bs, float(b["y"]) + bs) * 2.0
+		var length: float = from.distance_to(to)
+		if length < 1.0 or length > 40.0:
+			continue
+		# A gentle bend so paths do not look ruled; the bend side comes from the building position.
+		var bend: Vector2 = (to - from).orthogonal().normalized() * (1.0 if int(b["x"] + b["y"]) % 2 == 0 else -1.0) * minf(length * 0.12, 2.0)
+		var steps: int = int(length * 2.0)
+		for i in steps + 1:
+			var t: float = float(i) / float(maxi(steps, 1))
+			var p: Vector2 = from.lerp(to, t) + bend * sin(t * PI)
+			var px: int = int(round(p.x))
+			var py: int = int(round(p.y))
+			if px >= 0 and py >= 0 and px < TERRAIN_MASK.x and py < TERRAIN_MASK.y:
+				var idx: int = py * TERRAIN_MASK.x + px
+				field[idx] = maxf(field[idx], PATH_STRENGTH)
 
 
 func _terrain_stamp(field: PackedFloat32Array, tile_x: int, tile_y: int, value: float) -> void:
