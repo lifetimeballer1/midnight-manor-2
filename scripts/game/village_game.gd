@@ -7,6 +7,8 @@ const ManorScore = preload("res://scripts/game/manor_music.gd")
 const BurstPool = preload("res://scripts/game/combat_burst_pool.gd")
 const Atmosphere = preload("res://scripts/game/village_atmosphere.gd")
 const Expansion = preload("res://scripts/game/village_expansion.gd")
+const Threat = preload("res://scripts/game/village_threat.gd")
+const Soundscape = preload("res://scripts/game/manor_soundscape.gd")
 var burst_pool = BurstPool.new()
 var music = ManorScore.new()
 var details = Details.new()
@@ -149,6 +151,13 @@ var grid_layer := MeshInstance3D.new()
 var grid_button: Button
 var power_button: Button
 var shadow_button: Button
+# Graphics quality: "auto" picks Medium on phones and High elsewhere. Low also drops shadows and renders
+# the 3D view at a lower resolution; Medium keeps the lighter phone effects; High uses the full desktop set.
+const QUALITY_LEVELS: Array[String] = ["auto", "low", "medium", "high"]
+var quality: String = "auto"
+var quality_button: Button
+var fps_label: Label
+var fps_clock: float = 0.0
 # TEMP raid-start instrumentation (removed before commit).
 var spike_active: bool = false
 var spike_lines: Array[String] = []
@@ -273,6 +282,7 @@ var needs_label: Label
 var needs_summary: Label
 var hud_root: Control
 var battle_view: Node3D
+var soundscape: Node
 var expedition_region: String = ""
 var expedition_crew: Array[int] = []
 var expedition_launch: Button
@@ -328,6 +338,10 @@ func _ready() -> void:
 	_build_grid()
 	_sync_expansion(false)
 	_setup_audio()
+	soundscape = Soundscape.new()
+	soundscape.name = "Soundscape"
+	add_child(soundscape)
+	soundscape.setup(self)
 	_ui()
 	_rebuild_buildings()
 	_update_actors(0)
@@ -385,6 +399,8 @@ func _load_settings() -> void:
 				shadows_on = bool((parsed as Dictionary)["shadows_on"])
 			if parsed.get("mentor_enabled") is bool:
 				mentor_enabled = parsed["mentor_enabled"]
+			if str(parsed.get("quality", "")) in QUALITY_LEVELS:
+				quality = str(parsed["quality"])
 	_apply_power_settings()
 
 
@@ -393,12 +409,15 @@ func _save_settings() -> void:
 		return
 	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 	if f != null:
-		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound, "battery_saver": battery_saver, "shadows_on": shadows_on, "mentor_enabled": mentor_enabled}))
+		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound, "battery_saver": battery_saver, "shadows_on": shadows_on, "mentor_enabled": mentor_enabled, "quality": quality}))
 
 
 func _apply_power_settings() -> void:
 	Engine.max_fps = 30 if battery_saver else 0
 	sun.shadow_enabled = shadows_on
+	get_viewport().scaling_3d_scale = 0.75 if quality_level() == "low" else 1.0
+	if is_instance_valid(quality_button):
+		quality_button.text = _quality_text()
 	device_tuned = false
 	if is_instance_valid(power_button):
 		power_button.text = "Battery saver: On" if battery_saver else "Battery saver: Off"
@@ -411,6 +430,48 @@ func _toggle_power() -> void:
 	_save_settings()
 	_apply_power_settings()
 	sim.notice = "Battery saver on / 30 fps" if battery_saver else "Battery saver off / full fps"
+
+
+func _on_phone() -> bool:
+	return OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
+
+
+# The level in force: "auto" resolves to Medium on phones and High elsewhere.
+func quality_level() -> String:
+	if quality == "auto":
+		return "medium" if _on_phone() else "high"
+	return quality
+
+
+# True when the lighter effect set should be used (Low or Medium quality, or battery saver).
+func _quality_lite() -> bool:
+	return low_power or battery_saver or quality_level() != "high"
+
+
+func _quality_text() -> String:
+	var level: String = quality_level().capitalize()
+	return "Quality: Auto (%s)" % level if quality == "auto" else "Quality: %s" % level
+
+
+func _cycle_quality() -> void:
+	quality = QUALITY_LEVELS[(QUALITY_LEVELS.find(quality) + 1) % QUALITY_LEVELS.size()]
+	var level: String = quality_level()
+	shadows_on = level != "low"
+	# High lifts the lighter phone effects at once; going lighter applies now and fully on the next start.
+	low_power = false if level == "high" else low_power
+	_save_settings()
+	_apply_power_settings()
+	sim.notice = "%s · terrain and realm detail follow on the next start." % _quality_text()
+
+
+func _refresh_fps(delta: float) -> void:
+	if fps_label == null or not is_instance_valid(fps_label) or not fps_label.is_visible_in_tree():
+		return
+	fps_clock -= delta
+	if fps_clock > 0.0:
+		return
+	fps_clock = 0.5
+	fps_label.text = "Frame rate: %d fps · %s" % [int(Engine.get_frames_per_second()), quality_level().capitalize()]
 
 
 func _toggle_shadows() -> void:
@@ -1131,7 +1192,7 @@ func _apply_lighting() -> void:
 # transient poofs/projectiles capped at 24 nodes, pond + rain rings loop.
 func _tune_for_device() -> void:
 	device_tuned = true
-	if not (low_power or battery_saver or OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")):
+	if not _quality_lite():
 		return
 	var caps: Array = [[fireflies, 28], [mist, 8], [rain, 200], [motes, 14]]
 	for entry: Array in caps:
@@ -1933,6 +1994,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	more_board_button = _action_button("Manor Board", _open_panel.bind("board"), campaign_grid)
 	more_doctrine_button = _action_button("Doctrine", _open_panel.bind("doctrine"), campaign_grid)
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
+	_action_button("Stewards", _open_panel.bind("stewards"), campaign_grid)
 	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
@@ -2236,7 +2298,6 @@ func _ui() -> void:
 	ui.heading("THE MANOR STANDS", intro)
 	ui.title_rule(intro)
 	ui.body("Build your village beneath the moon.\nGather, grow, and hold the walls.", intro)
-	ui.body("Drag to pan. Pinch or scroll to zoom.\nTap a building for its actions. Confirm previews to build.", intro)
 	welcome_help = ui.body("", intro)
 	_refresh_input_copy()
 	ui.body("Your current Chronicle objective stays visible while you play. Builds never spend resources until you confirm.", intro, 12)
@@ -2455,6 +2516,9 @@ func _layout_ui() -> void:
 	# The next objective stays visible on phones even when the Chronicle button
 	# collapses into More. New players should never have to guess what is next.
 	quest_label.visible = true
+	quest_label.clip_text = compact_dock
+	quest_label.autowrap_mode = TextServer.AUTOWRAP_OFF if compact_dock else TextServer.AUTOWRAP_WORD_SMART
+	quest_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS if compact_dock else TextServer.OVERRUN_NO_TRIMMING
 	research_button.visible = not compact_dock and _research_surface_ready()
 	research_label.visible = not compact_dock and _research_surface_ready()
 	if compact_dock:
@@ -2780,8 +2844,33 @@ func _open_panel(which: String) -> void:
 			_build_expedition()
 		"raid_report":
 			_build_raid_report()
+		"stewards":
+			_build_stewards()
 	_layout_ui()
 	_update_marker()
+
+
+# Stewards: earned helpers, each with an on/off switch once earned (village_stewards.gd).
+func _build_stewards() -> void:
+	ui.heading("STEWARDS", side_content)
+	ui.body("Helpers the manor earns as it grows. They are never bought.", side_content, 12)
+	for id: String in Sim.Stewards.ORDER:
+		var info: Dictionary = Sim.Stewards.INFO[id]
+		ui.rule(side_content)
+		_label(str(info["name"]), side_content, true)
+		ui.body(str(info["does"]), side_content)
+		if sim.stewards.has(id):
+			var on: bool = sim.stewards.working(id)
+			var button: Button = ui.command_button("At work: On" if on else "At work: Off", _toggle_steward.bind(id), side_content, 40.0)
+			button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		else:
+			ui.body(str(info["earn"]), side_content, 12)
+
+
+func _toggle_steward(id: String) -> void:
+	if sim.stewards.toggle(id):
+		sim.notice = "%s %s." % [str(Sim.Stewards.INFO[id]["name"]), "is at work" if sim.stewards.working(id) else "rests"]
+		_open_panel("stewards")
 
 
 func _raid_stars(score: int) -> String:
@@ -3450,6 +3539,13 @@ func _refresh_inspector() -> void:
 		var shown: Dictionary = sim.get_building(selected_building)
 		if not shown.is_empty():
 			inspect_text.text = "Tier %d · HP %d of %d\nOn-site reserve %d / %d\nCollect whenever you need it." % [shown["tier"], shown["hp"], shown["max_hp"], shown["reserve"], sim.reserve_cap(shown)]
+			if sim.rebuild.is_ruin(shown) and sim.rebuild.priority(sim, shown) >= 0:
+				var rising: String = "Builders are rebuilding it: %d%% done." % int(float(shown.get("rebuild", 0.0)) * 100.0)
+				if not sim.rebuild.can_work(sim, shown):
+					rising = "Builders will rebuild it when the stores hold %s." % _cost_text(sim.rebuild.step_cost(sim, shown))
+				inspect_text.text = "Ruined · %s" % rising
+				if sim.rebuild.trickle_rate(sim, shown) > 0.0:
+					inspect_text.text += "\nIt still yields a little until then."
 			if inspect_collect != null and is_instance_valid(inspect_collect):
 				inspect_collect.disabled = float(shown.get("reserve", 0.0)) < 1 or float(shown.get("hp", 0.0)) <= 0 or float(shown.get("remaining", 0.0)) > 0
 				inspect_collect.tooltip_text = "Bank the on-site reserve of %s" % str(sim.building_specs[shown["type"]]["name"])
@@ -3538,6 +3634,11 @@ func _pause_panel() -> void:
 	shadow_button = ui.command_button("Shadows: On" if shadows_on else "Shadows: Off", _toggle_shadows, side_content, 40.0)
 	shadow_button.tooltip_text = "Toggle sun shadows (biggest phone speedup)."
 	shadow_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quality_button = ui.command_button(_quality_text(), _cycle_quality, side_content, 40.0)
+	quality_button.tooltip_text = "Low, Medium or High graphics. Auto picks Medium on phones."
+	quality_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fps_label = ui.body("Frame rate: measuring...", side_content, 12)
+	fps_clock = 0.0
 	var recenter_button := ui.command_button("Recenter camera", _recenter, side_content, 40.0)
 	recenter_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_label("Chronicle, research, defenses, doctrines, regions and Great Works are live. Closed time does not advance the village.", side_content)
@@ -4253,7 +4354,7 @@ func _income_breakdown(resource: String) -> String:
 		return "%s: nothing coming in right now. Open a workplace, collect from full ones, or zone more land." % resource.capitalize()
 	var parts: Array[String] = []
 	var sources: Dictionary = income_now.get(resource, {})
-	for source: String in ["Workplaces", "Mills", "Town lots"]:
+	for source: String in ["Workplaces", "Mills", "Town lots", "Ruins"]:
 		if float(sources.get(source, 0.0)) >= 0.5:
 			parts.append("%s +%s" % [source.to_lower(), _short_number(float(sources[source]))])
 	return "%s +%s a minute: %s." % [resource.capitalize(), _short_number(total), ", ".join(PackedStringArray(parts))]
@@ -4504,7 +4605,8 @@ func _refresh_hud() -> void:
 		raid_hud.text = "Horns · %s · %.0fs" % [sim.raid_direction(), maxf(0.0, sim.next_raid_at - sim.elapsed)]
 		music.set_mood("tension")
 	else:
-		raid_hud.text = "Quiet · next horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
+		raid_hud.text = "Threat %d%% · the horns sound when it is full" % int(Threat.meter(sim) * 100.0)
+		raid_hud.tooltip_text = "Threat builds between raids and holds while the Hall lies in ruins. Raids grow with your defences. Sound the Horn to call the next one early for +25% spoils."
 		music.set_mood("night" if night else "day")
 	# One horn tick on the rising edge of an alarm; the music mood already
 	# carries the sustained danger, so this never repeats while held.
@@ -4521,9 +4623,11 @@ func _refresh_hud() -> void:
 	music.set_calm(sim.paused)
 	if _is_small():
 		hud.text = "Lv %d" % sim.village_level()
-		quest_label.text = _quest_summary(true) if _is_landscape_phone() else _objective_summary(true)
+		# Phones fold the mission to one line; the full objective and expansion goal stay in the tooltip and Chronicle.
+		quest_label.text = _quest_summary(true)
+		quest_label.tooltip_text = _objective_summary()
 		if not sim.raid_active and not sim.raid_warning:
-			raid_hud.text = "Horns in %.0fs" % maxf(0, sim.next_raid_at - sim.elapsed - 25)
+			raid_hud.text = "Threat %d%%" % int(Threat.meter(sim) * 100.0)
 	_refresh_research()
 	_refresh_progression_panels()
 	if sim.raid_active or sim.raid_warning:
@@ -4941,6 +5045,11 @@ func _consume_events() -> void:
 			var rubble: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 1.0)
 			_impact_burst(rubble, Color("9aa0ad"), 16, 1.6)
 			_impact_burst(rubble, GOLD, 6, 1.0)
+		elif event.get("kind") == "rebuilt":
+			var risen: Vector3 = world_position(Vector2(float(event["x"]), float(event["y"])), 1.4)
+			_impact_burst(risen, GOLD, 16, 1.2, true)
+			if has_method("_float_label"):
+				call("_float_label", risen + Vector3(0, 1.6, 0), "Rebuilt", GOLD, 40, 1.0, 2.2)
 		elif event.get("kind") == "raid_result":
 			_show_combat_banner("THE MANOR STANDS" if bool(event.get("victory", false)) else "THE MANOR FELL", bool(event.get("victory", false)))
 	sim.events.clear()
@@ -5006,6 +5115,7 @@ func _process(delta: float) -> void:
 		sim.paused = true
 		return
 	_update_weather(delta)
+	_refresh_fps(delta)
 	sim.paused = not started or paused or panel == "wall_row_upgrade" or _offline_open() or (not focused and capture_path.is_empty())
 	_pause_effects(sim.paused)
 	# The sky runs itself: an 8-minute cycle (long night, short day) with

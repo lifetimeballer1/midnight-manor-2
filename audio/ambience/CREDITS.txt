@@ -1,0 +1,9 @@
+Ambience and event sound credits
+================================
+
+day.ogg, night.ogg, owl.ogg, water.ogg, fanfare.ogg, war_drums.ogg
+  Synthesised from code for Midnight Manor by scripts/audio/make_soundscape.py (no recorded samples).
+  Re-run that script to rebuild them; the seed is fixed.
+
+The soundscape also plays these existing Kenney CC0 sounds from audio/combat/ for work near the camera:
+  impactMetal_*.ogg (forges), chop.ogg (lumber camps), creak*.ogg (mills).

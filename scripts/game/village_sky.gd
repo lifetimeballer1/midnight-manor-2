@@ -87,7 +87,7 @@ func _sky_weather_tick(delta: float) -> void:
 
 
 func _sky_is_phone() -> bool:
-	return low_power or battery_saver or OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
+	return _quality_lite()
 
 
 func _sky_build() -> void:
