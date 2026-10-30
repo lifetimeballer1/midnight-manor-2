@@ -436,7 +436,10 @@ func _scene_checks() -> void:
 	check(game.town_buy_land(wild) and game.town.can_build(wild), "the town buys wild land from its card")
 	check(float(game.sim.resources["gold"]) < 500.0, "buying land costs Gold")
 	game._close_panel()
-	# Badges: with the tools out, lots held back say what they need.
+	# Badges: with the tools out, lots held back say what they need. Opening the tools eases the
+	# camera out to the town view; settle it there, as the tween would.
+	game.zoom = maxf(game.zoom, game.TOWN_OPEN_ZOOM)
+	game._camera_update()
 	game.town.village_food = 0.0
 	game._town_refresh_badges()
 	var held: int = 0

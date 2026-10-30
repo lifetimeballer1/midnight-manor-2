@@ -119,6 +119,11 @@ func _wf_dress(u: Dictionary, model: Node3D) -> void:
 	model.add_child(gear)
 	model.set_meta("wf_gear", gear)
 	var head: float = _wf_height(model)
+	# Every raider wears a hood in its band's war colour, so the band reads at phone zoom and at night.
+	var hood_colour: Color = war_colour(str(u.get("faction", "thornband")))
+	var hood := _wf_part(_wf_cylinder(0.34, 0.2, 0.26), _wf_material(hood_colour), gear, Vector3(0, head + 0.02, 0))
+	hood.name = "WarHood"
+	_wf_part(_wf_cylinder(0.16, 0.16, 0.02), _wf_material(hood_colour.darkened(0.2)), gear, Vector3(0, head + 0.2, 0))
 	match str(u.get("role", "raider")):
 		"ram":
 			var ram := Node3D.new()
