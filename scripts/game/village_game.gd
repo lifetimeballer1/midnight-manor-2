@@ -9,6 +9,9 @@ const Atmosphere = preload("res://scripts/game/village_atmosphere.gd")
 const Expansion = preload("res://scripts/game/village_expansion.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
 const Soundscape = preload("res://scripts/game/manor_soundscape.gd")
+const Feel = preload("res://scripts/game/manor_feel.gd")
+const Weather = preload("res://scripts/game/manor_weather.gd")
+const ManorStyle = preload("res://scripts/game/manor_style.gd")
 const Legacy = preload("res://scripts/game/manor_legacy.gd")
 var burst_pool = BurstPool.new()
 var music = ManorScore.new()
@@ -284,6 +287,11 @@ var needs_summary: Label
 var hud_root: Control
 var battle_view: Node3D
 var soundscape: Node
+var feel: Node                 # juice: phone buzz, finished-build pop, villager emotes (manor_feel.gd)
+var weather: Node              # rain, fog and snow, looks only (manor_weather.gd)
+var manor_style: Node          # a renewed manor's banner by the Hall (manor_style.gd)
+var vibration: bool = true
+var vibration_button: Button
 var legacy = Legacy.new()
 var renew_armed: bool = false
 var expedition_region: String = ""
@@ -347,6 +355,18 @@ func _ready() -> void:
 	soundscape.name = "Soundscape"
 	add_child(soundscape)
 	soundscape.setup(self)
+	feel = Feel.new()
+	feel.name = "Feel"
+	add_child(feel)
+	feel.setup(self)
+	weather = Weather.new()
+	weather.name = "Weather"
+	add_child(weather)
+	weather.setup(self)
+	manor_style = ManorStyle.new()
+	manor_style.name = "ManorStyle"
+	add_child(manor_style)
+	manor_style.setup(self)
 	_ui()
 	_rebuild_buildings()
 	_update_actors(0)
@@ -406,6 +426,8 @@ func _load_settings() -> void:
 				mentor_enabled = parsed["mentor_enabled"]
 			if str(parsed.get("quality", "")) in QUALITY_LEVELS:
 				quality = str(parsed["quality"])
+			if parsed.get("vibration") is bool:
+				vibration = parsed["vibration"]
 	_apply_power_settings()
 
 
@@ -414,7 +436,7 @@ func _save_settings() -> void:
 		return
 	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 	if f != null:
-		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound, "battery_saver": battery_saver, "shadows_on": shadows_on, "mentor_enabled": mentor_enabled, "quality": quality}))
+		f.store_string(JSON.stringify({"show_grid": show_grid, "sound": sound, "battery_saver": battery_saver, "shadows_on": shadows_on, "mentor_enabled": mentor_enabled, "quality": quality, "vibration": vibration}))
 
 
 func _apply_power_settings() -> void:
@@ -451,6 +473,19 @@ func quality_level() -> String:
 # True when the lighter effect set should be used (Low or Medium quality, or battery saver).
 func _quality_lite() -> bool:
 	return low_power or battery_saver or quality_level() != "high"
+
+
+func _vibration_text() -> String:
+	return "Vibration: On" if vibration else "Vibration: Off"
+
+
+func _toggle_vibration() -> void:
+	vibration = not vibration
+	if is_instance_valid(vibration_button):
+		vibration_button.text = _vibration_text()
+	_save_settings()
+	if vibration and feel != null:
+		Input.vibrate_handheld(30)
 
 
 func _quality_text() -> String:
@@ -1214,8 +1249,11 @@ func _update_weather(delta: float) -> void:
 		_tune_for_device()
 	if not is_instance_valid(rain):
 		return
-	rain_clock -= delta
-	if rain_clock <= 0.0:
+	if weather != null:
+		rain_target = weather.rain_target()
+	else:
+		rain_clock -= delta
+	if weather == null and rain_clock <= 0.0:
 		if rain_target > 0.0:
 			rain_target = 0.0
 			rain_clock = randf_range(110.0, 220.0)
@@ -2951,7 +2989,7 @@ func _train_drill() -> void:
 # Manor Renewal (manor_legacy.gd): an optional prestige reset that keeps Moon Seals.
 func _build_renewal() -> void:
 	ui.heading("MANOR RENEWAL", side_content)
-	ui.body("Hand this village to its heirs and raise the manor anew. The village, its stores and its people start fresh; Moon Seals are kept for good, and each one adds %d%% to every workplace's output in every village after." % int(Legacy.SEAL_BONUS * 100.0), side_content)
+	ui.body("Hand this village to its heirs and raise the manor anew. The village, its stores and its people start fresh; Moon Seals are kept for good, and each one adds %d%% to every workplace's output in every village after. A renewed manor flies its line's banner by the Hall, in a new colour each time." % int(Legacy.SEAL_BONUS * 100.0), side_content)
 	ui.rule(side_content)
 	_label("Moon Seals held: %d · +%d%% output" % [legacy.seals, int(roundf((legacy.multiplier() - 1.0) * 100.0))], side_content, true)
 	ui.body("Renewals so far: %d" % legacy.renewals, side_content, 12)
@@ -3769,6 +3807,9 @@ func _pause_panel() -> void:
 	quality_button = ui.command_button(_quality_text(), _cycle_quality, side_content, 40.0)
 	quality_button.tooltip_text = "Low, Medium or High graphics. Auto picks Medium on phones."
 	quality_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vibration_button = ui.command_button(_vibration_text(), _toggle_vibration, side_content, 40.0)
+	vibration_button.tooltip_text = "Buzz the phone on raid hits and milestones (Android phones)."
+	vibration_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	fps_label = ui.body("Frame rate: measuring...", side_content, 12)
 	fps_clock = 0.0
 	var recenter_button := ui.command_button("Recenter camera", _recenter, side_content, 40.0)
@@ -5110,6 +5151,8 @@ func _spawn_collect_pop(event: Dictionary) -> void:
 
 
 func _consume_events() -> void:
+	if feel != null:
+		feel.take_events(sim.events)
 	for index in range(effect_tweens.size() - 1, -1, -1):
 		if not effect_tweens[index].is_valid(): effect_tweens.remove_at(index)
 	for index in range(effect_nodes.size() - 1, -1, -1):

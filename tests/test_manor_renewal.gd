@@ -5,6 +5,7 @@ extends SceneTree
 # it acts, and does not pay Act XI's reward twice.
 const Sim = preload("res://scripts/game/village_sim.gd")
 const Legacy = preload("res://scripts/game/manor_legacy.gd")
+const ManorStyle = preload("res://scripts/game/manor_style.gd")
 const SCRATCH: String = "user://test-legacy.json"
 var checks: int = 0
 var failures: Array[String] = []
@@ -77,6 +78,9 @@ func test_renewal() -> void:
 	game._enter_village()
 	game.sim.resources["gold"] = 5000.0
 	game.sim.xp = 99999
+	for i in 3:
+		await process_frame
+	check(game.manor_style != null and not is_instance_valid(game.manor_style.banner), "a first village has no banner")
 	game._open_panel("renewal")
 	game._renew_manor()
 	check(game.legacy.renewals == 0, "renewal is closed before the Vale is united")
@@ -89,6 +93,16 @@ func test_renewal() -> void:
 	check(game.legacy.renewals == 1 and game.legacy.seals > 0, "Moon Seals are kept")
 	check(float(game.sim.resources.get("gold", 0.0)) < 5000.0 and game.sim.xp < 99999, "the new village starts fresh")
 	check(game.sim.legacy_bonus > 1.0, "the new village gets the Moon Seal bonus")
+	# The new manor style: a banner by the Hall in the line's colour.
+	for i in 4:
+		await process_frame
+	var style = game.manor_style
+	check(style != null and is_instance_valid(style.banner), "a renewed manor flies a banner by the Hall")
+	var hall_root: Node3D = game.building_views[int(game.sim._hall()["id"])]["root"]
+	check(is_instance_valid(style.banner) and style.banner.get_parent() == hall_root, "the banner stands with the Hall")
+	check(ManorStyle.colour_for(1) != ManorStyle.colour_for(2), "each renewal brings a new colour")
+	var cloth: Image = ManorStyle.emblem(2)
+	check(cloth.get_pixel(48, 4).a > 0.9 and cloth.get_pixel(48, 127).a < 0.1, "the banner has a swallowtail cut")
 	# The realm stays sworn: the new village counts the Vale united without paying the act again.
 	for site: Dictionary in game.realm.settlements:
 		site["vassal"] = true
