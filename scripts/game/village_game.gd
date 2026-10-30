@@ -1599,6 +1599,21 @@ func _enemy_scale(role: String) -> float:
 	return 1.0
 
 
+# Raider war colours (visual pass 5): each band wears its own bright colour, so raiders never read as
+# villagers. The tint multiplies the shared palette texture, so these are lighter than the faction
+# colours in world.json (which the reports and banners keep using).
+const WAR_COLOURS: Dictionary = {
+	"thornband": Color("8cc25a"),
+	"pale-host": Color("a6d2e4"),
+	"cinder-clan": Color("e8925c"),
+	"ember-legion": Color("f2684a"),
+	"pale-court": Color("eef2fa"),
+}
+
+func war_colour(faction: String) -> Color:
+	return WAR_COLOURS.get(faction, sim.faction_color(faction).lightened(0.35))
+
+
 func _tint_enemy(node: Node, tint: Color) -> void:
 	# Faction colour + role silhouette are deliberately restrained: readable at
 	# phone zoom without multiplying enemy materials every frame.
@@ -1701,7 +1716,7 @@ func _update_actors(delta: float) -> void:
 				var spawned: Node3D = _model(asset)
 				actor_layer.add_child(spawned)
 				if enemy_group:
-					_tint_enemy(spawned, sim.faction_color(str(u.get("faction", "thornband"))))
+					_tint_enemy(spawned, war_colour(str(u.get("faction", "thornband"))))
 					spawned.scale = Vector3.ONE * _enemy_scale(str(u.get("role", "raider")))
 				actors[id] = {"model": spawned, "player": _find_player_cached(asset, spawned), "clip": "", "previous": Vector3.ZERO}
 				spawned.add_child(_ao_disc(1.4))
