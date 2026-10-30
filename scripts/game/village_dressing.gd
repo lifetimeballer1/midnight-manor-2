@@ -10,6 +10,10 @@ extends RefCounted
 # - Wall and mine, tier 1: the dark soot tint is lightened so their shapes hold at night; the mine
 #   also gets a timber frame, a lantern and an ore cart.
 #
+# - Grove and Frostgrove, tier 1: both used one clump of dark round crowns. The Grove becomes three
+#   leafy broadleaf trees hung with glowing moonberries; the Frostgrove three frosted pines on pale,
+#   icy ground.
+#
 # Everything is added under the building's model node (with the model's scale undone), so it
 # follows the model when the village hides, shakes or ruins it.
 
@@ -51,6 +55,10 @@ static func dress(game: Node3D, b: Dictionary, view: Dictionary) -> void:
 		"mine_t1":
 			_lift_soot(model)
 			_dress_mine(model)
+		"grove_t1":
+			_dress_grove(game, b, model, false)
+		"frostgrove_t1":
+			_dress_grove(game, b, model, true)
 
 
 # A holder under the model that cancels the model's scale, so sizes below are in world units.
@@ -277,3 +285,82 @@ static func reshape_scenery(scenery: Node) -> void:
 			multi.multimesh.mesh = broadleaf_mesh(false, -1.3)
 		elif sphere.radius < 0.3:
 			multi.multimesh.mesh = rock_cluster_mesh(0.9)
+
+
+
+# --- Grove and Frostgrove ----------------------------------------------------------------
+
+const LEAF_TONES: Array[Color] = [Color("41692a"), Color("365d25"), Color("4a7430")]
+const FROST_TONES: Array[Color] = [Color("9fb0bd"), Color("94a6b5"), Color("aab9c5")]
+const MOONBERRY := Color("cdb8ff")
+const KERB := Color("5f5850")
+const MOSS := Color("3a4f26")
+const ICE := Color("8d9caa")
+
+static func pine_mesh() -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var trunk := BoxMesh.new()
+	trunk.size = Vector3(0.16, 0.5, 0.16)
+	_part(st, trunk, Transform3D(Basis(), Vector3(0, 0.25, 0)), BARK, 0.0, 1.0)
+	for tier in 3:
+		var cone := CylinderMesh.new()
+		cone.top_radius = 0.0
+		cone.bottom_radius = 0.6 - tier * 0.15
+		cone.height = 0.8 - tier * 0.1
+		cone.radial_segments = 7
+		cone.rings = 1
+		_part(st, cone, Transform3D(Basis(Vector3.UP, tier * 0.5), Vector3(0, 0.62 + tier * 0.4, 0)), Color.WHITE, 0.3, 1.9)
+	return st.commit()
+
+
+static func _dress_grove(game: Node3D, b: Dictionary, model: Node3D, frost: bool) -> void:
+	for part: Node in model.find_children("*", "MeshInstance3D", true, false):
+		var lower: String = str(part.name).to_lower()
+		if "architecture" in lower or "dressing" in lower or "ground" in lower:
+			(part as MeshInstance3D).hide()
+	var holder := _holder(model, "FrostPines" if frost else "MoonberryTrees")
+	var half: float = float(b["size"]) * game.TILE * 0.5 - 0.15
+	# Bed and a low stone kerb.
+	_box(holder, Vector3(half * 2.0, 0.05, half * 2.0), Vector3(0, 0.03, 0), ICE if frost else MOSS)
+	for side in 4:
+		var along_x: bool = side < 2
+		var sign: float = -1.0 if side % 2 == 0 else 1.0
+		var size := Vector3(half * 2.0 + 0.12, 0.14, 0.12) if along_x else Vector3(0.12, 0.14, half * 2.0 + 0.12)
+		var at := Vector3(0, 0.07, sign * half) if along_x else Vector3(sign * half, 0.07, 0)
+		_box(holder, size, at, KERB)
+	var mesh: ArrayMesh = pine_mesh() if frost else broadleaf_mesh()
+	var tones: Array[Color] = FROST_TONES if frost else LEAF_TONES
+	var spots: Array[Vector3] = [Vector3(-0.45, 0, -0.35), Vector3(0.5, 0, -0.2), Vector3(-0.05, 0, 0.5)]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(str(b["id"])) ^ 0x6e0f
+	var glow := StandardMaterial3D.new()
+	glow.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	glow.albedo_color = MOONBERRY
+	var berry := SphereMesh.new()
+	berry.radius = 0.08
+	berry.height = 0.16
+	berry.radial_segments = 6
+	berry.rings = 3
+	for index in spots.size():
+		var tree := MeshInstance3D.new()
+		tree.mesh = mesh
+		var tint := StandardMaterial3D.new()
+		tint.vertex_color_use_as_albedo = true
+		tint.albedo_color = tones[index % tones.size()]
+		tint.roughness = 0.85
+		tree.material_override = tint
+		var size: float = rng.randf_range(0.6, 0.75) * half / 1.05
+		tree.scale = Vector3.ONE * size
+		tree.rotation.y = rng.randf() * TAU
+		tree.position = spots[index] * half / 1.05
+		holder.add_child(tree)
+		if not frost:
+			for k in 3:
+				var ball := MeshInstance3D.new()
+				ball.mesh = berry
+				ball.material_override = glow
+				ball.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				var angle: float = rng.randf() * TAU
+				ball.position = tree.position + Vector3(cos(angle) * 0.5, 1.05 + rng.randf() * 0.4, sin(angle) * 0.5) * size
+				holder.add_child(ball)
