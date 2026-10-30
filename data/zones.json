@@ -84,6 +84,8 @@
     "upgradeSeconds": 24,
     "tierLevels": {"2": 2, "3": 4, "4": 6, "5": 8},
     "hallPeople": {"2": 12, "3": 24},
+    "zoneTiers": {"_note": "A zoned building may also move up to a tier once this many buildings of its zone stand, even before the village level allows it (whichever comes first).", "2": 3, "3": 6, "4": 10, "5": 15},
+    "zoneLimits": {"_note": "Big zones raise building limits: every cellsPerExtra cells painted with a zone let one more of each of its limited types stand (at most maxExtra more). Types with a limit of one stay unique.", "cellsPerExtra": 6, "maxExtra": 6},
     "maxRising": 2,
 "estates": {
 "_note": "A connected patch of farm zone is one farm estate: the first of these crops to rise there is its farmhouse, the rest of the patch is its fields. Output and storage grow with the estate's tiles, and it takes one farmhand per four tiles (two at least, eight at most) for the full crew bonus. The building card switches the crop. Mills, bakeries and the like still rise on farm zone as their own buildings. One estate takes at most maxCells zone cells; a bigger patch is shared between several farms.",

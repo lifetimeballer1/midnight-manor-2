@@ -369,16 +369,23 @@ func build_reason(type_name: String, x: int, y: int, ignore_id: int = -1) -> Str
 			continue
 		var need_name: String = str(building_specs.get(need_type, {}).get("name", need_type))
 		return "Needs %s first." % need_name if need_level <= 1 else "Needs %s (level %d) first." % [need_name, need_level]
-	var limit: Variant = spec.get("maxCount", spec.get("maxPerVillage", 999))
-	if limit is Array:
-		limit = limit[mini(village_level() - 1, limit.size() - 1)]
 	var count: int = 0
 	for b in buildings:
 		if b["type"] == type_name and b["hp"] > 0:
 			count += 1
-	if count >= int(limit):
+	if count >= building_limit(type_name):
 		return "Building limit reached."
 	return "" if _affordable(building_cost(type_name)) else "Not enough resources."
+
+
+# How many of a type may stand: its limit for the village level, plus what big zones add
+# (zone_extra, set by the zoning layer each tick; not saved).
+func building_limit(type_name: String) -> int:
+	var spec: Dictionary = building_specs.get(type_name, {})
+	var limit: Variant = spec.get("maxCount", spec.get("maxPerVillage", 999))
+	if limit is Array:
+		limit = limit[mini(village_level() - 1, limit.size() - 1)]
+	return int(limit) + int(zone_extra.get(type_name, 0))
 
 
 func _has_completed_building(type_name: String, min_tier: int) -> bool:
@@ -1886,6 +1893,7 @@ const OFFLINE_CAP_SECONDS: float = 8.0 * 3600.0
 const OFFLINE_MIN_SECONDS: float = 180.0
 var away_seconds: float = 0.0   # real seconds since the loaded save was written
 var zone_boost: Dictionary = {}   # building type -> income multiplier from zone milestones (not saved)
+var zone_extra: Dictionary = {}   # building type -> extra allowed from big zones (village_growth.limit_extras; not saved)
 
 
 # What the manor earned in `seconds` away, per resource, before storage limits.
