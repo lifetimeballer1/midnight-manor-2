@@ -5,6 +5,8 @@ extends SceneTree
 # building model shares one colour palette.
 
 const Tiers = preload("res://scripts/game/village_tiers.gd")
+const Rank = preload("res://scripts/game/village_rank.gd")
+const Sim = preload("res://scripts/game/village_sim.gd")
 var checks: int = 0
 var failures: Array[String] = []
 var game
@@ -46,6 +48,39 @@ func _run() -> void:
 			var now: int = Tiers.stage(tier, max_tier)
 			check(now > last, "each level climbs the ladder (%d of %d)" % [tier, max_tier])
 			last = now
+
+	# Village ranks: Camp to Manor from building levels; each rank lifts output a little.
+	check(Rank.index_for(0) == 0 and Rank.index_for(9) == 0 and Rank.index_for(10) == 1, "10 levels make a Hamlet")
+	check(Rank.index_for(75) == Rank.RANKS.size() - 1 and Rank.index_for(9999) == Rank.RANKS.size() - 1, "Manor is the top rank")
+	var sim = Sim.new()
+	sim.rank.refresh(sim)
+	var start_levels: int = sim.rank.levels
+	check(sim.rank.title() == "Camp" and is_equal_approx(sim.rank.multiplier(), 1.0), "a new village is a Camp with no bonus (%d levels)" % start_levels)
+	var worker: Dictionary = {}
+	for b: Dictionary in sim.buildings:
+		if sim.building_specs[b["type"]].get("production") != null and worker.is_empty():
+			worker = b
+	var plain_rate: float = sim.production_rate(worker)
+	var walls_before: int = sim.rank.levels
+	for b: Dictionary in sim.buildings:
+		if b["type"] == "wall": b["tier"] = 3
+	sim.rank.refresh(sim)
+	check(sim.rank.levels == walls_before, "walls do not count toward rank")
+	for b: Dictionary in sim.buildings:
+		if b["type"] == "hall": b["tier"] = 3
+		elif not Tiers.skipped(str(b["type"])): b["tier"] = (sim.building_specs[b["type"]]["tiers"] as Array).size()
+	sim.rank.refresh(sim)
+	check(sim.rank.index >= 1, "raising every building lifts the rank (%d levels, %s)" % [sim.rank.levels, sim.rank.title()])
+	var raised: float = sim.production_rate(worker)
+	var tier_part: float = float(sim.building_specs[worker["type"]]["tiers"][int(worker["tier"]) - 1]["rateMultiplier"]) / float(sim.building_specs[worker["type"]]["tiers"][0]["rateMultiplier"])
+	check(is_equal_approx(raised, plain_rate * tier_part * sim.rank.multiplier()), "workplace output carries the rank bonus")
+	var ranked: int = sim.rank.index
+	for b: Dictionary in sim.buildings:
+		if b["type"] != "hall": b["hp"] = 0.0
+	sim.rank.refresh(sim)
+	check(sim.rank.index == ranked, "ruins still count: a lost raid never demotes the village")
+	var copy = Sim.new()
+	check(copy.restore_state(sim.export_state()) and copy.rank.index == ranked, "a loaded save arrives at its earned rank at once")
 
 	# One shared palette for every building model.
 	var reference: PackedByteArray = FileAccess.get_file_as_bytes("res://art/cottage_t1/cottage_t1_MMR Shared Color Palette 64.png")
@@ -92,6 +127,10 @@ func _run() -> void:
 	game._rebuild_buildings()
 	var hall_model: Node3D = game.building_views[int(hall["id"])]["model"]
 	check(hall_model.find_child("TierFinial", true, false) != null, "the top-tier Hall flies a pennant on its roof")
+	game.sim.rank.refresh(game.sim)
+	game._refresh_hud()
+	check(game.sim.rank.title().to_upper() in game.title_label.text, "the HUD title carries the rank (%s)" % game.title_label.text)
+	check("building levels" in game.title_label.tooltip_text, "hovering the title explains the rank")
 	# Defenses are left alone.
 	for b: Dictionary in game.sim.buildings:
 		if Tiers.skipped(str(b["type"])) and game.building_views.has(int(b["id"])):

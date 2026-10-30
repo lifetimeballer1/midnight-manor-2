@@ -71,7 +71,13 @@ func _run() -> void:
 		var spec: Dictionary = game.sim.building_specs.get(str(b["type"]), {})
 		b["tier"] = (spec.get("tiers", [1]) as Array).size()
 	game.sim.revision += 1
-	await create_timer(1.0).timeout
+	game.sim.rank.refresh(game.sim)
+	await set_day(true)
+	var hall: Dictionary = game.sim._hall()
+	view(game.sim.center(hall) if not hall.is_empty() else Vector2(10.0, 8.0), 24.0, 0.6)
+	await create_timer(0.5).timeout
+	await capture("3_rank_up.png")
+	await create_timer(2.5).timeout
 	await shots("2_top_tier")
 	print("CAPTURE DONE")
 	quit(0)

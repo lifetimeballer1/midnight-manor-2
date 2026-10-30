@@ -4810,6 +4810,10 @@ func _refresh_hud() -> void:
 			repair_glow = repairable
 			_paint_ring(repair_all_button, UI.READY if repairable else UI.SLATE, 56.0)
 	hud.text = "Level %d  ·  %d XP" % [sim.village_level(), sim.xp]
+	if title_label != null and is_instance_valid(title_label):
+		title_label.text = "MIDNIGHT MANOR · %s" % sim.rank.title().to_upper()
+		title_label.tooltip_text = sim.rank.summary()
+		title_label.mouse_filter = Control.MOUSE_FILTER_PASS
 	needs_label.text = sim.needs.summary(sim)
 	needs_label.add_theme_color_override("font_color", UI.PAPER if sim.needs.hunger == 0.0 else UI.READY)
 	var lower := 0
@@ -4853,7 +4857,7 @@ func _refresh_hud() -> void:
 	alarm_latched = alarm
 	music.set_calm(sim.paused)
 	if _is_small():
-		hud.text = "Lv %d" % sim.village_level()
+		hud.text = "Lv %d · %s" % [sim.village_level(), sim.rank.title()]
 		# Phones fold the mission to one line; the full objective and expansion goal stay in the tooltip and Chronicle.
 		quest_label.text = _quest_summary(true)
 		quest_label.tooltip_text = _objective_summary()
