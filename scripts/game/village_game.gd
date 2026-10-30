@@ -1995,6 +1995,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	more_doctrine_button = _action_button("Doctrine", _open_panel.bind("doctrine"), campaign_grid)
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
 	_action_button("Stewards", _open_panel.bind("stewards"), campaign_grid)
+	_action_button("Daily", _open_panel.bind("daily"), campaign_grid)
 	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
@@ -2846,6 +2847,8 @@ func _open_panel(which: String) -> void:
 			_build_raid_report()
 		"stewards":
 			_build_stewards()
+		"daily":
+			_build_daily()
 	_layout_ui()
 	_update_marker()
 
@@ -2865,6 +2868,54 @@ func _build_stewards() -> void:
 			button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		else:
 			ui.body(str(info["earn"]), side_content, 12)
+
+
+# Daily return (village_daily.gd): the game owns the clock and tells the sim which day it is.
+func _visit_today() -> void:
+	if save_blocked:
+		return
+	var today: int = Sim.Daily.day_number(Time.get_unix_time_from_system(), int(Time.get_time_zone_from_system().get("bias", 0)))
+	sim.daily.visit(sim, today)
+	if sim.daily.just_turned:
+		var info: Dictionary = sim.daily.omen_info()
+		sim.chronicle.queue_banner("Old Bell", "A new day, day %d of your streak. Omen: %s. %s" % [sim.daily.streak, str(info.get("name", "")), str(info.get("text", ""))])
+
+
+func _build_daily() -> void:
+	ui.heading("TODAY AT THE MANOR", side_content)
+	var info: Dictionary = sim.daily.omen_info()
+	if info.is_empty():
+		ui.body("Open the village to draw today's omen.", side_content)
+		return
+	_label("Omen: %s" % str(info["name"]), side_content, true)
+	ui.body(str(info["text"]), side_content)
+	ui.rule(side_content)
+	var contract: Dictionary = sim.daily.contract
+	var resource: String = str(contract.get("resource", "wood")).capitalize()
+	_label("Daily contract", side_content, true)
+	ui.body("Gather %s %s today. %s / %s so far." % [UI.big_number(float(contract.get("target", 0))), resource, UI.big_number(sim.daily.progress(sim)), UI.big_number(float(contract.get("target", 0)))], side_content)
+	ui.body("Chest: %s" % _cost_text(sim.daily.chest(sim)), side_content, 12)
+	if bool(contract.get("claimed", false)):
+		ui.body("Claimed. A new contract comes tomorrow.", side_content, 12)
+	else:
+		var claim: Button = ui.gold_button("Open the Chest", _claim_daily, side_content, 44.0)
+		claim.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		claim.disabled = not sim.daily.is_ready(sim)
+	ui.rule(side_content)
+	_label("Streak: %d day%s" % [sim.daily.streak, "" if sim.daily.streak == 1 else "s"], side_content, true)
+	ui.body("Each day in a row adds 10%% to the chest, up to +%d%%. Miss a day and the streak starts again." % int(Sim.Daily.STREAK_STEP * 100.0 * (Sim.Daily.STREAK_CAP - 1)), side_content, 12)
+
+
+func _claim_daily() -> void:
+	var banked: Dictionary = sim.daily.claim(sim)
+	if banked.is_empty():
+		sim.notice = "The chest stays shut until the contract is done." if not sim.daily.is_ready(sim) else "The stores are full."
+	else:
+		sim.notice = "Daily chest: %s." % _cost_text(banked)
+		if sound:
+			_play_sfx("upgrade")
+	_open_panel("daily")
+	_refresh_hud()
 
 
 func _toggle_steward(id: String) -> void:
@@ -3660,6 +3711,7 @@ func _enter_village() -> void:
 		_show_frontier_battle()
 	_offer_offline(sim.away_seconds)
 	sim.away_seconds = 0.0
+	_visit_today()
 
 
 func _mentor_advice() -> String:
@@ -5492,6 +5544,8 @@ func _notification(what: int) -> void:
 		if started and focus_lost_unix > 0.0:
 			_offer_offline(Time.get_unix_time_from_system() - focus_lost_unix)
 		focus_lost_unix = 0.0
+		if started:
+			_visit_today()
 	elif what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if started and not no_save and not save_blocked:
 			sim.save_game(save_path)
