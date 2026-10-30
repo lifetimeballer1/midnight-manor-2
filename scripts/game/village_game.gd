@@ -9,6 +9,7 @@ const Atmosphere = preload("res://scripts/game/village_atmosphere.gd")
 const Expansion = preload("res://scripts/game/village_expansion.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
 const Soundscape = preload("res://scripts/game/manor_soundscape.gd")
+const Legacy = preload("res://scripts/game/manor_legacy.gd")
 var burst_pool = BurstPool.new()
 var music = ManorScore.new()
 var details = Details.new()
@@ -283,6 +284,8 @@ var needs_summary: Label
 var hud_root: Control
 var battle_view: Node3D
 var soundscape: Node
+var legacy = Legacy.new()
+var renew_armed: bool = false
 var expedition_region: String = ""
 var expedition_crew: Array[int] = []
 var expedition_launch: Button
@@ -333,6 +336,8 @@ func _ready() -> void:
 	camera.current = true
 	camera.far = 250
 	_load_settings()
+	if not no_save:
+		legacy.load_from()
 	_camera_update()
 	_setup_marker()
 	_build_grid()
@@ -1996,8 +2001,9 @@ func _build_more_sheet(root_control: Control) -> void:
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
 	_action_button("Stewards", _open_panel.bind("stewards"), campaign_grid)
 	_action_button("Daily", _open_panel.bind("daily"), campaign_grid)
-	_action_button("Weapon Drill", _open_panel.bind("drill"), campaign_grid)
-	_action_button("Unite the Vale", _open_panel.bind("vale"), campaign_grid)
+	_action_button("Drill", _open_panel.bind("drill"), campaign_grid)
+	_action_button("The Vale", _open_panel.bind("vale"), campaign_grid)
+	_action_button("Renewal", _open_panel.bind("renewal"), campaign_grid)
 	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
@@ -2774,6 +2780,7 @@ func _drop_sheet_title() -> void:
 func _open_panel(which: String) -> void:
 	if panel == "pause" and which != "pause": paused = false
 	if which != "wall_row_upgrade": wall_row_preview.clear()
+	if which != "renewal": renew_armed = false
 	var switching: bool = which != panel or not sidebar.visible
 	panel = which
 	more_sheet.hide()
@@ -2856,6 +2863,8 @@ func _open_panel(which: String) -> void:
 		"vale":
 			if has_method("_build_vale"):
 				call("_build_vale")
+		"renewal":
+			_build_renewal()
 	_layout_ui()
 	_update_marker()
 
@@ -2937,6 +2946,45 @@ func _train_drill() -> void:
 		_play_sfx("deny")
 	_open_panel("drill")
 	_refresh_hud()
+
+
+# Manor Renewal (manor_legacy.gd): an optional prestige reset that keeps Moon Seals.
+func _build_renewal() -> void:
+	ui.heading("MANOR RENEWAL", side_content)
+	ui.body("Hand this village to its heirs and raise the manor anew. The village, its stores and its people start fresh; Moon Seals are kept for good, and each one adds %d%% to every workplace's output in every village after." % int(Legacy.SEAL_BONUS * 100.0), side_content)
+	ui.rule(side_content)
+	_label("Moon Seals held: %d · +%d%% output" % [legacy.seals, int(roundf((legacy.multiplier() - 1.0) * 100.0))], side_content, true)
+	ui.body("Renewals so far: %d" % legacy.renewals, side_content, 12)
+	var why: String = legacy.reason(sim)
+	ui.body("Renewing now pays %d Moon Seals." % legacy.seals_for(sim), side_content)
+	if save_blocked:
+		why = "Renewal is blocked to protect the original save."
+	var button: Button = ui.gold_button("Tap again to renew: this cannot be undone" if renew_armed else "Renew the Manor", _renew_manor, side_content, 44.0)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.disabled = not why.is_empty()
+	button.tooltip_text = why
+	ui.body(why if not why.is_empty() else "A recovery copy of this village is kept, as with New Game. The realm stays as it is.", side_content, 12)
+
+
+func _renew_manor() -> void:
+	if not legacy.reason(sim).is_empty() or save_blocked:
+		return
+	if not renew_armed:
+		renew_armed = true
+		_open_panel("renewal")
+		return
+	renew_armed = false
+	var old = sim
+	var paid: int = legacy.seals_for(old)
+	_confirm_new_game()
+	if sim == old:
+		return   # New Game refused (it says why); nothing is paid
+	legacy.record(old)
+	if not no_save:
+		legacy.save_to()
+	sim.legacy_bonus = legacy.multiplier()
+	sim.chronicle.queue_banner("Old Bell", "The manor is renewed. %d Moon Seals pass to the new village: every workplace yields %d%% more." % [paid, int(roundf((legacy.multiplier() - 1.0) * 100.0))])
+	sim.notice = "Manor renewed / +%d Moon Seals." % paid
 
 
 func _claim_daily() -> void:
@@ -3742,6 +3790,7 @@ func _enter_village() -> void:
 	_refresh_hud()
 	if not sim.frontier.active.is_empty() and not is_instance_valid(battle_view):
 		_show_frontier_battle()
+	sim.legacy_bonus = legacy.multiplier()
 	_offer_offline(sim.away_seconds)
 	sim.away_seconds = 0.0
 	_visit_today()

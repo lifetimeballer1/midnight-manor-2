@@ -104,6 +104,7 @@ var scripted_raid: String = ""
 var vale_sworn: int = 0           # rivals sworn to the manor, set by the realm layer (not saved)
 var vale_united: bool = false     # Act XI, Unite the Vale, is done (saved)
 const VALE_BONUS: float = 0.05    # each sworn rival: +5% to every workplace's output
+var legacy_bonus: float = 1.0    # Moon Seals from Manor Renewal, set by the game from its legacy file (not saved here)
 var raid_span: float = 240.0      # seconds the threat meter takes to fill after the last raid (saved)
 var region_progress: Dictionary = {}
 var next_id: int = 1
@@ -1844,6 +1845,8 @@ func production_rate(b: Dictionary) -> float:
 	rate *= float(zone_boost.get(str(b["type"]), 1.0))
 	# Unite the Vale: every rival sworn to the manor lifts all output a little.
 	rate *= 1.0 + VALE_BONUS * float(vale_sworn)
+	# Manor Renewal: Moon Seals kept from earlier villages.
+	rate *= legacy_bonus
 	# Today's omen (village_daily.gd) may favour one resource.
 	rate *= daily.rate_for(str(spec.get("production", "")))
 	return rate

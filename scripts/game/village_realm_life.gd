@@ -436,6 +436,9 @@ func _vale_check() -> void:
 	sim.vale_sworn = realm.sworn_count()
 	if sim.vale_united or realm.settlements.is_empty() or sim.vale_sworn < realm.settlements.size():
 		return
+	if legacy.vale:
+		sim.vale_united = true   # united in an earlier village: the act is not paid twice
+		return
 	sim.vale_united = true
 	sim._reward({"gold": 2000, "wood": 1500, "food": 1500})
 	sim.chronicle.queue_banner("Old Bell", "Act XI is written: every banner in the Vale flies the manor's colour. The Vale is united.")
