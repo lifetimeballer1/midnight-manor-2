@@ -9,6 +9,7 @@ const Atmosphere = preload("res://scripts/game/village_atmosphere.gd")
 const Expansion = preload("res://scripts/game/village_expansion.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
 const Soundscape = preload("res://scripts/game/manor_soundscape.gd")
+const Legacy = preload("res://scripts/game/manor_legacy.gd")
 var burst_pool = BurstPool.new()
 var music = ManorScore.new()
 var details = Details.new()
@@ -283,6 +284,8 @@ var needs_summary: Label
 var hud_root: Control
 var battle_view: Node3D
 var soundscape: Node
+var legacy = Legacy.new()
+var renew_armed: bool = false
 var expedition_region: String = ""
 var expedition_crew: Array[int] = []
 var expedition_launch: Button
@@ -333,6 +336,8 @@ func _ready() -> void:
 	camera.current = true
 	camera.far = 250
 	_load_settings()
+	if not no_save:
+		legacy.load_from()
 	_camera_update()
 	_setup_marker()
 	_build_grid()
@@ -1995,6 +2000,10 @@ func _build_more_sheet(root_control: Control) -> void:
 	more_doctrine_button = _action_button("Doctrine", _open_panel.bind("doctrine"), campaign_grid)
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
 	_action_button("Stewards", _open_panel.bind("stewards"), campaign_grid)
+	_action_button("Daily", _open_panel.bind("daily"), campaign_grid)
+	_action_button("Drill", _open_panel.bind("drill"), campaign_grid)
+	_action_button("The Vale", _open_panel.bind("vale"), campaign_grid)
+	_action_button("Renewal", _open_panel.bind("renewal"), campaign_grid)
 	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
@@ -2771,6 +2780,7 @@ func _drop_sheet_title() -> void:
 func _open_panel(which: String) -> void:
 	if panel == "pause" and which != "pause": paused = false
 	if which != "wall_row_upgrade": wall_row_preview.clear()
+	if which != "renewal": renew_armed = false
 	var switching: bool = which != panel or not sidebar.visible
 	panel = which
 	more_sheet.hide()
@@ -2846,6 +2856,15 @@ func _open_panel(which: String) -> void:
 			_build_raid_report()
 		"stewards":
 			_build_stewards()
+		"daily":
+			_build_daily()
+		"drill":
+			_build_drill()
+		"vale":
+			if has_method("_build_vale"):
+				call("_build_vale")
+		"renewal":
+			_build_renewal()
 	_layout_ui()
 	_update_marker()
 
@@ -2865,6 +2884,119 @@ func _build_stewards() -> void:
 			button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		else:
 			ui.body(str(info["earn"]), side_content, 12)
+
+
+# Daily return (village_daily.gd): the game owns the clock and tells the sim which day it is.
+func _visit_today() -> void:
+	if save_blocked:
+		return
+	var today: int = Sim.Daily.day_number(Time.get_unix_time_from_system(), int(Time.get_time_zone_from_system().get("bias", 0)))
+	sim.daily.visit(sim, today)
+	if sim.daily.just_turned:
+		var info: Dictionary = sim.daily.omen_info()
+		sim.chronicle.queue_banner("Old Bell", "A new day, day %d of your streak. Omen: %s. %s" % [sim.daily.streak, str(info.get("name", "")), str(info.get("text", ""))])
+
+
+func _build_daily() -> void:
+	ui.heading("TODAY AT THE MANOR", side_content)
+	var info: Dictionary = sim.daily.omen_info()
+	if info.is_empty():
+		ui.body("Open the village to draw today's omen.", side_content)
+		return
+	_label("Omen: %s" % str(info["name"]), side_content, true)
+	ui.body(str(info["text"]), side_content)
+	ui.rule(side_content)
+	var contract: Dictionary = sim.daily.contract
+	var resource: String = str(contract.get("resource", "wood")).capitalize()
+	_label("Daily contract", side_content, true)
+	ui.body("Gather %s %s today. %s / %s so far." % [UI.big_number(float(contract.get("target", 0))), resource, UI.big_number(sim.daily.progress(sim)), UI.big_number(float(contract.get("target", 0)))], side_content)
+	ui.body("Chest: %s" % _cost_text(sim.daily.chest(sim)), side_content, 12)
+	if bool(contract.get("claimed", false)):
+		ui.body("Claimed. A new contract comes tomorrow.", side_content, 12)
+	else:
+		var claim: Button = ui.gold_button("Open the Chest", _claim_daily, side_content, 44.0)
+		claim.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		claim.disabled = not sim.daily.is_ready(sim)
+	ui.rule(side_content)
+	_label("Streak: %d day%s" % [sim.daily.streak, "" if sim.daily.streak == 1 else "s"], side_content, true)
+	ui.body("Each day in a row adds 10%% to the chest, up to +%d%%. Miss a day and the streak starts again." % int(Sim.Daily.STREAK_STEP * 100.0 * (Sim.Daily.STREAK_CAP - 1)), side_content, 12)
+
+
+# Weapon Drill (village_drill.gd): a war upgrade with no top, for the big numbers to go into.
+func _build_drill() -> void:
+	ui.heading("WEAPON DRILL", side_content)
+	ui.body("Drill the garrison and every tower, ballista and trap hits harder, for good. Each level costs more than the last. Raids grow with your defences, so the stakes rise too.", side_content)
+	ui.rule(side_content)
+	_label("Drill level %d · +%d%% weapon damage" % [sim.drill.level, int(roundf((sim.drill.multiplier() - 1.0) * 100.0))], side_content, true)
+	var why: String = sim.drill.reason(sim)
+	if sim.drill.level < Sim.Drill.MAX_LEVEL:
+		ui.body("Next level: %s" % _cost_text(sim.drill.cost()), side_content)
+		var train: Button = ui.gold_button("Drill to level %d" % (sim.drill.level + 1), _train_drill, side_content, 44.0)
+		train.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		train.disabled = not why.is_empty()
+		train.tooltip_text = why
+	if not why.is_empty():
+		ui.body(why, side_content, 12)
+
+
+func _train_drill() -> void:
+	if sim.drill.train(sim) and sound:
+		_play_sfx("upgrade")
+	elif sound:
+		_play_sfx("deny")
+	_open_panel("drill")
+	_refresh_hud()
+
+
+# Manor Renewal (manor_legacy.gd): an optional prestige reset that keeps Moon Seals.
+func _build_renewal() -> void:
+	ui.heading("MANOR RENEWAL", side_content)
+	ui.body("Hand this village to its heirs and raise the manor anew. The village, its stores and its people start fresh; Moon Seals are kept for good, and each one adds %d%% to every workplace's output in every village after." % int(Legacy.SEAL_BONUS * 100.0), side_content)
+	ui.rule(side_content)
+	_label("Moon Seals held: %d · +%d%% output" % [legacy.seals, int(roundf((legacy.multiplier() - 1.0) * 100.0))], side_content, true)
+	ui.body("Renewals so far: %d" % legacy.renewals, side_content, 12)
+	var why: String = legacy.reason(sim)
+	ui.body("Renewing now pays %d Moon Seals." % legacy.seals_for(sim), side_content)
+	if save_blocked:
+		why = "Renewal is blocked to protect the original save."
+	var button: Button = ui.gold_button("Tap again to renew: this cannot be undone" if renew_armed else "Renew the Manor", _renew_manor, side_content, 44.0)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.disabled = not why.is_empty()
+	button.tooltip_text = why
+	ui.body(why if not why.is_empty() else "A recovery copy of this village is kept, as with New Game. The realm stays as it is.", side_content, 12)
+
+
+func _renew_manor() -> void:
+	if not legacy.reason(sim).is_empty() or save_blocked:
+		return
+	if not renew_armed:
+		renew_armed = true
+		_open_panel("renewal")
+		return
+	renew_armed = false
+	var old = sim
+	var paid: int = legacy.seals_for(old)
+	_confirm_new_game()
+	if sim == old:
+		return   # New Game refused (it says why); nothing is paid
+	legacy.record(old)
+	if not no_save:
+		legacy.save_to()
+	sim.legacy_bonus = legacy.multiplier()
+	sim.chronicle.queue_banner("Old Bell", "The manor is renewed. %d Moon Seals pass to the new village: every workplace yields %d%% more." % [paid, int(roundf((legacy.multiplier() - 1.0) * 100.0))])
+	sim.notice = "Manor renewed / +%d Moon Seals." % paid
+
+
+func _claim_daily() -> void:
+	var banked: Dictionary = sim.daily.claim(sim)
+	if banked.is_empty():
+		sim.notice = "The chest stays shut until the contract is done." if not sim.daily.is_ready(sim) else "The stores are full."
+	else:
+		sim.notice = "Daily chest: %s." % _cost_text(banked)
+		if sound:
+			_play_sfx("upgrade")
+	_open_panel("daily")
+	_refresh_hud()
 
 
 func _toggle_steward(id: String) -> void:
@@ -2901,7 +3033,7 @@ func _gear_text(role: String) -> String:
 func _cost_text(cost: Dictionary, multiline: bool = false) -> String:
 	var pieces := PackedStringArray()
 	for resource in cost:
-		pieces.append("%d %s" % [cost[resource], str(resource).capitalize()])
+		pieces.append("%s %s" % [UI.big_number(float(cost[resource])), str(resource).capitalize()])
 	if multiline:
 		var lines := PackedStringArray()
 		for index in range(0, pieces.size(), 2):
@@ -3658,8 +3790,10 @@ func _enter_village() -> void:
 	_refresh_hud()
 	if not sim.frontier.active.is_empty() and not is_instance_valid(battle_view):
 		_show_frontier_battle()
+	sim.legacy_bonus = legacy.multiplier()
 	_offer_offline(sim.away_seconds)
 	sim.away_seconds = 0.0
+	_visit_today()
 
 
 func _mentor_advice() -> String:
@@ -4541,9 +4675,9 @@ func _refresh_hud() -> void:
 		var cap: int = int(sim.storage_cap(resource))
 		var held: int = int(sim.resources.get(resource, 0))
 		if _is_small():
-			resource_rows[resource].text = "%d" % held
+			resource_rows[resource].text = UI.big_number(held)
 		else:
-			resource_rows[resource].text = "%s  %d / %d" % [resource.capitalize(), held, cap]
+			resource_rows[resource].text = "%s  %s / %s" % [resource.capitalize(), UI.big_number(held), UI.big_number(cap)]
 		var gauge: ProgressBar = resource_bars[resource]
 		gauge.max_value = maxf(1.0, float(cap))
 		gauge.value = float(held)
@@ -5492,6 +5626,8 @@ func _notification(what: int) -> void:
 		if started and focus_lost_unix > 0.0:
 			_offer_offline(Time.get_unix_time_from_system() - focus_lost_unix)
 		focus_lost_unix = 0.0
+		if started:
+			_visit_today()
 	elif what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if started and not no_save and not save_blocked:
 			sim.save_game(save_path)

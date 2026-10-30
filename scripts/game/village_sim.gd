@@ -15,6 +15,8 @@ const Aftermath = preload("res://scripts/game/village_aftermath.gd")
 const Rebuild = preload("res://scripts/game/village_rebuild.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
 const Stewards = preload("res://scripts/game/village_stewards.gd")
+const Daily = preload("res://scripts/game/village_daily.gd")
+const Drill = preload("res://scripts/game/village_drill.gd")
 const Gear = preload("res://scripts/game/village_gear.gd")
 const WarRules = preload("res://scripts/game/war_rules.gd")
 var living = Living.new()
@@ -27,6 +29,8 @@ var materials = Materials.new()
 var aftermath = Aftermath.new()
 var rebuild = Rebuild.new()
 var stewards = Stewards.new()
+var daily = Daily.new()
+var drill = Drill.new()
 var gear = Gear.new()
 var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
 var rally_time: float = 0.0       # seconds left on the rally horn (not saved)
@@ -97,6 +101,10 @@ var quest_progress: Dictionary = {}
 var optional_won: Dictionary = {}
 var raid_stats: Dictionary = {"defended": 0, "kills": 0, "kills_by": {}, "built_lost": 0, "defenders_lost": 0, "gates_lost": 0, "seconds_held": 0.0, "prestige": 0, "expeditions": 0, "delivered": {}}
 var scripted_raid: String = ""
+var vale_sworn: int = 0           # rivals sworn to the manor, set by the realm layer (not saved)
+var vale_united: bool = false     # Act XI, Unite the Vale, is done (saved)
+const VALE_BONUS: float = 0.05    # each sworn rival: +5% to every workplace's output
+var legacy_bonus: float = 1.0    # Moon Seals from Manor Renewal, set by the game from its legacy file (not saved here)
 var raid_span: float = 240.0      # seconds the threat meter takes to fill after the last raid (saved)
 var region_progress: Dictionary = {}
 var next_id: int = 1
@@ -1835,6 +1843,12 @@ func production_rate(b: Dictionary) -> float:
 		rate *= 1.0 + chronicle.bonus("growth")
 	# Zone income milestones (data/zones.json): set by the zoning layer from what stands.
 	rate *= float(zone_boost.get(str(b["type"]), 1.0))
+	# Unite the Vale: every rival sworn to the manor lifts all output a little.
+	rate *= 1.0 + VALE_BONUS * float(vale_sworn)
+	# Manor Renewal: Moon Seals kept from earlier villages.
+	rate *= legacy_bonus
+	# Today's omen (village_daily.gd) may favour one resource.
+	rate *= daily.rate_for(str(spec.get("production", "")))
 	return rate
 
 
@@ -2508,7 +2522,7 @@ func _raid_tick(dt: float) -> void:
 		var stats: Dictionary = building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]
 		if float(stats["damage"]) <= 0:
 			continue
-		WarRules.fire(self, b, stats)
+		WarRules.fire(self, b, drill.drilled(stats))
 	WarRules.tick_raiders(self, dt)
 	var gone: Array[int] = []
 	for enemy in enemies:
@@ -2657,7 +2671,7 @@ func _finish_raid(victory: bool) -> void:
 	enemies.clear()
 	_invalidate()
 	scripted_raid = ""
-	raid_span = 240.0 if victory else 360.0
+	raid_span = (240.0 if victory else 360.0) * daily.span_scale()
 	next_raid_at = elapsed + raid_span
 	# The fallen come round beside the Chapel (or another healer) when one stands, else by the Hall.
 	var recovery: Vector2 = aftermath.recovery_spot(self)
@@ -2936,7 +2950,7 @@ func export_state() -> Dictionary:
 		for u in (group as Array):
 			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
 				(u as Dictionary).erase(transient)
-	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "stewards": stewards.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
+	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "stewards": stewards.state(), "daily": daily.state(), "drill": drill.state(), "vale_united": vale_united, "frontier": frontier.state(), "home_raid": home_raid.state(),
 		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
@@ -3060,6 +3074,9 @@ func restore_state(state: Dictionary) -> bool:
 	needs.restore(data["needs"])
 	aftermath.restore(data.get("aftermath"))
 	stewards.restore(data.get("stewards"))
+	daily.restore(data.get("daily"))
+	drill.restore(data.get("drill"))
+	vale_united = data.get("vale_united", false) is bool and bool(data.get("vale_united", false))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))
 	navigation_revision = living.navigation_revision

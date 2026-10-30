@@ -82,6 +82,7 @@ const MARCH_SPEED: float = 4.0            # m/s, start at the village edge
 const RAID_RELATION: float = 25.0         # starting a raid sours the target
 const RAID_LOSS_RELATION: float = 15.0
 const VASSAL_POP: int = 5                 # a beaten settlement this small submits
+const SWEAR_AT: float = 90.0              # Unite the Vale: a neighbour this warm can be asked to swear
 
 const FACTIONS: Array = [
 	{"id": "ashfen", "name": "Ashfen Hollow", "color": "b0543a"},
@@ -590,6 +591,42 @@ func send_gift(id: String) -> bool:
 		return false
 	_shift_relation(site, GIFT_RELATION)
 	return true
+
+
+# Unite the Vale (Act XI): a neighbour won over by gifts can swear to the manor, as one beaten in war does.
+func swear_cost(site: Dictionary) -> Dictionary:
+	return {"gold": 150 + int(site["pop"]) * 20, "food": 100 + int(site["pop"]) * 10}
+
+
+func swear_reason(id: String) -> String:
+	var site: Dictionary = settlement(id)
+	if site.is_empty():
+		return "Unknown settlement."
+	if bool(site["vassal"]):
+		return "%s is already sworn to the manor." % site["name"]
+	if float(site["relation"]) < SWEAR_AT:
+		return "Warm %s to %d goodwill first (now %d)." % [site["name"], int(SWEAR_AT), int(float(site["relation"]))]
+	return ""
+
+
+# The caller pays swear_cost first.
+func swear(id: String) -> bool:
+	if not swear_reason(id).is_empty():
+		return false
+	var site: Dictionary = settlement(id)
+	site["vassal"] = true
+	site["relation"] = RELATION_START
+	revision += 1
+	events.append({"kind": "sworn", "site": id})
+	return true
+
+
+func sworn_count() -> int:
+	var count: int = 0
+	for site: Dictionary in settlements:
+		if bool(site["vassal"]):
+			count += 1
+	return count
 
 
 func take_events() -> Array[Dictionary]:

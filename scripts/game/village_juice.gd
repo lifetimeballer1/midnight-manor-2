@@ -256,8 +256,8 @@ func _restore_counter(resource: String) -> void:
 # Mirrors the base HUD text formats so a ticking counter reads the same as a static one.
 func _hud_text(resource: String, held: int) -> String:
 	if _is_small():
-		return "%d" % held
-	return "%s  %d / %d" % [resource.capitalize(), held, int(sim.storage_cap(resource))]
+		return UI.big_number(held)
+	return "%s  %s / %s" % [resource.capitalize(), UI.big_number(held), UI.big_number(sim.storage_cap(resource))]
 
 
 func _screen_point(event: Dictionary) -> Vector2:

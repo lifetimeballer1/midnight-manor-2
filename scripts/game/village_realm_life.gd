@@ -55,6 +55,7 @@ func _process(delta: float) -> void:
 		return
 	for event: Dictionary in realm.take_events():
 		_realm_event(event)
+	_vale_check()
 	_realm_sync_outposts()
 	var moving: float = delta if started and not sim.paused else 0.0
 	_realm_move_travellers(moving)
@@ -85,6 +86,8 @@ func _realm_event(event: Dictionary) -> void:
 			sim.notice = "Victory at %s! %s." % [name, " ".join(PackedStringArray(gained)) if not gained.is_empty() else "Stores are full"]
 			if bool(event.get("sworn", false)):
 				sim.notice += " %s swears to the manor; its land is yours." % name
+		"sworn":
+			sim.notice = "%s swears to the manor. Its land is yours, and every workplace yields %d%% more." % [name, int(Sim.VALE_BONUS * 100.0)]
 		"raid_lost":
 			sim.notice = "The warband was beaten back at %s." % name
 		"catch":
@@ -346,6 +349,14 @@ func _realm_site_card() -> void:
 		"hostile": "Hostile. They spread faster, send scouts, and will overrun outposts in their way.",
 	}
 	ui.body(str(hint.get(mood, "")), side_content, 12)
+	var swear_why: String = realm.swear_reason(str(site["id"]))
+	var swear_cost: Dictionary = realm.swear_cost(site)
+	if swear_why.is_empty() and not sim._affordable(swear_cost):
+		swear_why = "Not enough for the oath feast: " + _cost_text(swear_cost)
+	var swear_button: Button = ui.gold_button("Ask to Swear  ·  " + _cost_text(swear_cost), _realm_swear.bind(str(site["id"])), side_content)
+	swear_button.disabled = not swear_why.is_empty()
+	swear_button.tooltip_text = swear_why
+	ui.body(swear_why if not swear_why.is_empty() else "Their goodwill is high enough to swear them to the manor without a fight.", side_content, 12)
 	var gift: Button = ui.command_button("Send Gifts  ·  " + _cost_text(RealmMap.GIFT_COST), _realm_gift.bind(str(site["id"])), side_content)
 	gift.disabled = not sim._affordable(RealmMap.GIFT_COST)
 	var fighters: Dictionary = realm_fighters()
@@ -409,6 +420,47 @@ func _realm_gift(id: String) -> void:
 	sim.notice = "Gifts sent to %s." % realm.settlement(id).get("name", "")
 	_realm_refresh_card()
 	_refresh_hud()
+
+
+func _realm_swear(id: String) -> void:
+	var site: Dictionary = realm.settlement(id)
+	if site.is_empty() or not realm.swear_reason(id).is_empty() or not sim._spend(realm.swear_cost(site)):
+		return
+	realm.swear(id)
+	_realm_refresh_card()
+	_refresh_hud()
+
+
+# Act XI, Unite the Vale: keeps the sim's count of sworn rivals and marks the day the last one swears.
+func _vale_check() -> void:
+	sim.vale_sworn = realm.sworn_count()
+	if sim.vale_united or realm.settlements.is_empty() or sim.vale_sworn < realm.settlements.size():
+		return
+	if legacy.vale:
+		sim.vale_united = true   # united in an earlier village: the act is not paid twice
+		return
+	sim.vale_united = true
+	sim._reward({"gold": 2000, "wood": 1500, "food": 1500})
+	sim.chronicle.queue_banner("Old Bell", "Act XI is written: every banner in the Vale flies the manor's colour. The Vale is united.")
+	sim.notice = "The Vale is united! +2,000 Gold, +1,500 Wood, +1,500 Food."
+	if sound:
+		_play_sfx("upgrade")
+
+
+func _build_vale() -> void:
+	ui.heading("ACT XI · UNITE THE VALE", side_content)
+	ui.body("Bring all five rival settlements to swear to the manor, by gifts or by war. Each sworn rival adds %d%% to every workplace's output, for good." % int(Sim.VALE_BONUS * 100.0), side_content)
+	ui.rule(side_content)
+	for site: Dictionary in realm.settlements:
+		var mood: String = realm.attitude(site)
+		var line: String = "Sworn" if mood == "sworn" else "%s · goodwill %d of %d" % [mood.capitalize(), int(float(site["relation"])), int(RealmMap.SWEAR_AT)]
+		ui.body("%s: %s" % [str(site["name"]), line], side_content)
+	ui.rule(side_content)
+	_label("Sworn: %d of %d" % [realm.sworn_count(), realm.settlements.size()], side_content, true)
+	if sim.vale_united:
+		ui.body("The Vale is united. Manor Renewal is open in More.", side_content, 12)
+	else:
+		ui.body("Tap a settlement in the realm to send gifts, ask it to swear, or raid it.", side_content, 12)
 
 
 func _realm_raid(id: String) -> void:
