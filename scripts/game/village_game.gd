@@ -22,6 +22,7 @@ const WORLD_TEXT_OUTLINE := Color(0.09, 0.06, 0.04, 0.9)   # warm dark rim for f
 const PAPER := Color("f2e7cc")
 const TILE: float = 2.0
 const Dressing = preload("res://scripts/game/village_dressing.gd")
+const Tiers = preload("res://scripts/game/village_tiers.gd")
 const MAP_ORIGIN := Vector3(-20, 0, -16)
 # Camera pan limits, widened so all four expansion plots can be viewed.
 var pan_limit := Vector2(40.0, 36.0)   # the realm layer widens this to the open world
@@ -1466,7 +1467,10 @@ func _apply_thumbnail(asset_key: String) -> void:
 
 
 func _building_asset(b: Dictionary) -> String:
-	return model_asset("manor_hall" if b["type"] == "hall" else str(b["type"]), int(b["tier"]))
+	var type_name: String = str(b["type"])
+	var spec: Dictionary = sim.building_specs.get(type_name, {})
+	var tier: int = Tiers.art_tier(type_name, int(b["tier"]), (spec.get("tiers", []) as Array).size())
+	return model_asset("manor_hall" if type_name == "hall" else type_name, tier)
 
 
 # What a building's 3D view is built from. Walls and gates also read which neighbours still stand
@@ -1594,6 +1598,7 @@ func _rebuild_buildings() -> void:
 		root_node.add_child(_ao_disc(float(b["size"]) * TILE + 0.9))
 		details.attach(self, b, building_views[int(b["id"])])
 		Dressing.dress(self, b, building_views[int(b["id"])])
+		Tiers.dress(self, b, building_views[int(b["id"])])
 	view_revision = sim.revision
 	_update_marker()
 
