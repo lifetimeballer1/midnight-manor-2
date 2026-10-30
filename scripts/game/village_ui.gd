@@ -115,6 +115,30 @@ static var _separator: RegEx = null
 
 # Display-only tidy for notices written by the simulation: " / " between words reads as a
 # separator dot, while a ratio such as "3 / 5" keeps its slash.
+# Amounts the player holds or pays, readable at any size: 950, 2,944, 12.4K, 123K, 3.1M, 1.2B.
+# Under ten thousand the exact amount shows, so costs and stores still compare to the unit.
+static func big_number(value: float) -> String:
+	var amount: float = absf(value)
+	var minus: String = "-" if value < 0.0 else ""
+	if amount >= 1.0e9:
+		return minus + _tenths(amount / 1.0e9) + "B"
+	if amount >= 1.0e6:
+		return minus + _tenths(amount / 1.0e6) + "M"
+	if amount >= 1.0e5:
+		return minus + "%dK" % int(amount / 1000.0)
+	if amount >= 1.0e4:
+		return minus + _tenths(amount / 1000.0) + "K"
+	var whole: int = int(amount)
+	if whole >= 1000:
+		return minus + "%d,%03d" % [whole / 1000, whole % 1000]
+	return minus + "%d" % whole
+
+
+# One decimal, rounded down so a store never reads as more than it holds.
+static func _tenths(value: float) -> String:
+	return ("%.1f" % (floorf(value * 10.0 + 0.0001) / 10.0)).trim_suffix(".0")
+
+
 static func tidy(text: String) -> String:
 	if not text.contains(" / "):
 		return text

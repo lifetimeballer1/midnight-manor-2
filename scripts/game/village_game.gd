@@ -2901,7 +2901,7 @@ func _gear_text(role: String) -> String:
 func _cost_text(cost: Dictionary, multiline: bool = false) -> String:
 	var pieces := PackedStringArray()
 	for resource in cost:
-		pieces.append("%d %s" % [cost[resource], str(resource).capitalize()])
+		pieces.append("%s %s" % [UI.big_number(float(cost[resource])), str(resource).capitalize()])
 	if multiline:
 		var lines := PackedStringArray()
 		for index in range(0, pieces.size(), 2):
@@ -4541,9 +4541,9 @@ func _refresh_hud() -> void:
 		var cap: int = int(sim.storage_cap(resource))
 		var held: int = int(sim.resources.get(resource, 0))
 		if _is_small():
-			resource_rows[resource].text = "%d" % held
+			resource_rows[resource].text = UI.big_number(held)
 		else:
-			resource_rows[resource].text = "%s  %d / %d" % [resource.capitalize(), held, cap]
+			resource_rows[resource].text = "%s  %s / %s" % [resource.capitalize(), UI.big_number(held), UI.big_number(cap)]
 		var gauge: ProgressBar = resource_bars[resource]
 		gauge.max_value = maxf(1.0, float(cap))
 		gauge.value = float(held)
