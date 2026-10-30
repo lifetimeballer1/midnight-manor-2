@@ -17,12 +17,16 @@ const FLY_OUT: float = 0.8
 const NOTE_FADE: float = 0.3
 const NOTE_HOLD: float = 4.5
 const TAP_MIN: float = 44.0
-const NOTE_MAX_WIDTH: float = 560.0
+const NOTE_MAX_WIDTH: float = 460.0
 const RAVEN_INK: Color = Color("1c1a21")
 const RAVEN_FAR: Color = Color("2b2832")
 const LAYER_Z: int = 40
+const TOAST_HOLD: float = 6.0     # the bottom notice line fades after this many seconds unchanged
+const TOAST_FADE_RATE: float = 2.5
 
 var _raven_seen: String = ""
+var _toast_text: String = ""
+var _toast_age: float = 0.0
 var _raven_root: Node2D = null
 var _raven_bird: Node2D = null
 var _raven_near_wing: Node2D = null
@@ -42,10 +46,30 @@ func _process(delta: float) -> void:
 	if not started:
 		_raven_seen = sim.notice
 		return
+	_toast_fade(delta)
 	if sim.notice == _raven_seen:
 		return
 	_raven_seen = sim.notice
 	_deliver(sim.notice)
+
+
+# The bottom notice line stays while it is news (or the game is paused or under attack), then fades
+# so it does not sit over the village. A new line brings it straight back.
+func _toast_fade(delta: float) -> void:
+	if sim.notice != _toast_text:
+		_toast_text = sim.notice
+		_toast_age = 0.0
+	else:
+		_toast_age += delta
+	if _raven_busy() or not is_instance_valid(toast):
+		return
+	toast.modulate.a = move_toward(toast.modulate.a, _toast_target(), delta * TOAST_FADE_RATE)
+
+
+func _toast_target() -> float:
+	if sim.paused or sim.raid_active or sim.raid_warning or is_instance_valid(battle_view) or _toast_age < TOAST_HOLD:
+		return 1.0
+	return 0.0
 
 
 func _exit_tree() -> void:
@@ -120,7 +144,7 @@ func _finish() -> void:
 	_raven_note.visible = false
 	_raven_note.modulate.a = 1.0
 	if is_instance_valid(toast):
-		toast.modulate = Color.WHITE
+		toast.modulate = Color(1, 1, 1, _toast_target())
 
 
 func _dismiss_note() -> void:

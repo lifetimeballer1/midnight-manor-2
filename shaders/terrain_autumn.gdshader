@@ -9,8 +9,8 @@ uniform sampler2D noise_tex : filter_linear_mipmap, repeat_enable;
 uniform sampler2D mask_tex : filter_linear, repeat_disable;   // R = trampled dirt, G = grass kept clear
 uniform vec2 map_size = vec2(40.0, 32.0);
 
-uniform vec3 lush_a : source_color = vec3(0.24, 0.37, 0.10);
-uniform vec3 lush_b : source_color = vec3(0.34, 0.46, 0.13);
+uniform vec3 lush_a : source_color = vec3(0.28, 0.40, 0.12);
+uniform vec3 lush_b : source_color = vec3(0.36, 0.46, 0.14);
 uniform vec3 gold_a : source_color = vec3(0.56, 0.41, 0.08);
 uniform vec3 gold_b : source_color = vec3(0.68, 0.47, 0.11);
 uniform vec3 dirt_col : source_color = vec3(0.33, 0.21, 0.11);
@@ -42,21 +42,25 @@ void fragment() {
 	// Autumn creeps in from the map edge; big noise keeps the front ragged.
 	vec2 q = abs(wp) / (map_size * 0.5);
 	float edge = max(q.x, q.y);
-	float turn = smoothstep(0.30, 1.05, edge + (n_low - 0.5) * 0.75) * autumn;
+	// Soft meadow: wide blends so colour drifts instead of forming hard-edged patches.
+	float turn = smoothstep(0.20, 1.20, edge + (n_low - 0.5) * 0.45) * autumn;
+	float meadow = smoothstep(0.05, 0.95, n_mid * 0.6 + n_low * 0.4);
 
-	vec3 green = mix(lush_a, lush_b, smoothstep(0.3, 0.7, n_mid));
-	vec3 gold = mix(gold_a, gold_b, smoothstep(0.3, 0.7, n_fine));
+	vec3 green = mix(lush_a, lush_b, meadow);
+	vec3 gold = mix(gold_a, gold_b, smoothstep(0.1, 0.9, n_mid));
 	vec3 col = mix(green, gold, clamp(turn, 0.0, 1.0));
 
-	// Grass micro-texture and broad light/dark swells.
-	col *= 0.90 + 0.20 * n_fine;
-	col *= 0.94 + 0.12 * n_low;
+	// Grass micro-texture and broad light/dark swells, kept gentle.
+	col *= 0.95 + 0.10 * n_fine;
+	col *= 0.96 + 0.08 * n_low;
 
 	// Trampled dirt around buildings, broken up by noise so edges look organic.
 	vec2 muv = clamp(wp / map_size + 0.5, vec2(0.0), vec2(1.0));
 	vec4 mask = texture(mask_tex, muv);
-	float dirt = smoothstep(0.30, 0.62, mask.r + (n_mid - 0.5) * 0.55);
-	col = mix(col, dirt_col * (0.85 + 0.3 * n_fine), dirt * 0.85);
+	// Trampled dirt and worn paths: soft edges, packed earth a little lighter where it is a path.
+	float dirt = smoothstep(0.34, 0.72, mask.r + (n_mid - 0.5) * 0.3);
+	vec3 earth = mix(dirt_col * 1.12, dirt_col, smoothstep(0.5, 0.9, mask.r));
+	col = mix(col, earth * (0.9 + 0.2 * n_fine), dirt * 0.8);
 
 	// Fallen leaves: one hashed leaf per cell, thickest toward the trees at the edge.
 	float cell_scale = 2.4;
