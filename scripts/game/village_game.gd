@@ -1996,6 +1996,7 @@ func _build_more_sheet(root_control: Control) -> void:
 	_action_button("Last Defense", _open_panel.bind("raid_report"), campaign_grid)
 	_action_button("Stewards", _open_panel.bind("stewards"), campaign_grid)
 	_action_button("Daily", _open_panel.bind("daily"), campaign_grid)
+	_action_button("Weapon Drill", _open_panel.bind("drill"), campaign_grid)
 	ui.kicker("View & System", mv)
 	var system_grid := GridContainer.new()
 	system_grid.columns = 3
@@ -2849,6 +2850,8 @@ func _open_panel(which: String) -> void:
 			_build_stewards()
 		"daily":
 			_build_daily()
+		"drill":
+			_build_drill()
 	_layout_ui()
 	_update_marker()
 
@@ -2904,6 +2907,32 @@ func _build_daily() -> void:
 	ui.rule(side_content)
 	_label("Streak: %d day%s" % [sim.daily.streak, "" if sim.daily.streak == 1 else "s"], side_content, true)
 	ui.body("Each day in a row adds 10%% to the chest, up to +%d%%. Miss a day and the streak starts again." % int(Sim.Daily.STREAK_STEP * 100.0 * (Sim.Daily.STREAK_CAP - 1)), side_content, 12)
+
+
+# Weapon Drill (village_drill.gd): a war upgrade with no top, for the big numbers to go into.
+func _build_drill() -> void:
+	ui.heading("WEAPON DRILL", side_content)
+	ui.body("Drill the garrison and every tower, ballista and trap hits harder, for good. Each level costs more than the last. Raids grow with your defences, so the stakes rise too.", side_content)
+	ui.rule(side_content)
+	_label("Drill level %d · +%d%% weapon damage" % [sim.drill.level, int(roundf((sim.drill.multiplier() - 1.0) * 100.0))], side_content, true)
+	var why: String = sim.drill.reason(sim)
+	if sim.drill.level < Sim.Drill.MAX_LEVEL:
+		ui.body("Next level: %s" % _cost_text(sim.drill.cost()), side_content)
+		var train: Button = ui.gold_button("Drill to level %d" % (sim.drill.level + 1), _train_drill, side_content, 44.0)
+		train.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		train.disabled = not why.is_empty()
+		train.tooltip_text = why
+	if not why.is_empty():
+		ui.body(why, side_content, 12)
+
+
+func _train_drill() -> void:
+	if sim.drill.train(sim) and sound:
+		_play_sfx("upgrade")
+	elif sound:
+		_play_sfx("deny")
+	_open_panel("drill")
+	_refresh_hud()
 
 
 func _claim_daily() -> void:

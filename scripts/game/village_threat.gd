@@ -33,7 +33,7 @@ static func defence_power(sim) -> float:
 		if float(b["hp"]) <= 0.0 or float(b.get("remaining", 0.0)) > 0.0:
 			continue
 		var stats: Dictionary = sim.building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]
-		var damage: float = float(stats.get("damage", 0.0))
+		var damage: float = float(stats.get("damage", 0.0)) * sim.drill.multiplier()
 		if damage > 0.0:
 			power += damage / maxf(0.1, float(WarRules.weapon_of(str(b["type"]))["cooldown"]))
 	for u: Dictionary in sim.units:

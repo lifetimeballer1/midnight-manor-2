@@ -4,7 +4,7 @@ extends SceneTree
 # clear of the resource counts and the bottom buttons, with a Close button that is always in view and
 # a full-size touch target. Fresh village, never saves.
 
-const MENUS: Array[String] = ["build", "people", "quests", "tech", "frontier", "board", "doctrine", "needs", "mentor", "raid_report", "pause", "stewards", "daily"]
+const MENUS: Array[String] = ["build", "people", "quests", "tech", "frontier", "board", "doctrine", "needs", "mentor", "raid_report", "pause", "stewards", "daily", "drill"]
 var checks: int = 0
 var failures: Array[String] = []
 var game

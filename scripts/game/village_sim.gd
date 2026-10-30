@@ -16,6 +16,7 @@ const Rebuild = preload("res://scripts/game/village_rebuild.gd")
 const Threat = preload("res://scripts/game/village_threat.gd")
 const Stewards = preload("res://scripts/game/village_stewards.gd")
 const Daily = preload("res://scripts/game/village_daily.gd")
+const Drill = preload("res://scripts/game/village_drill.gd")
 const Gear = preload("res://scripts/game/village_gear.gd")
 const WarRules = preload("res://scripts/game/war_rules.gd")
 var living = Living.new()
@@ -29,6 +30,7 @@ var aftermath = Aftermath.new()
 var rebuild = Rebuild.new()
 var stewards = Stewards.new()
 var daily = Daily.new()
+var drill = Drill.new()
 var gear = Gear.new()
 var war_log: Dictionary = WarRules.new_log()   # the current or last raid, for the after-battle report (not saved)
 var rally_time: float = 0.0       # seconds left on the rally horn (not saved)
@@ -2512,7 +2514,7 @@ func _raid_tick(dt: float) -> void:
 		var stats: Dictionary = building_specs[b["type"]]["tiers"][int(b["tier"]) - 1]
 		if float(stats["damage"]) <= 0:
 			continue
-		WarRules.fire(self, b, stats)
+		WarRules.fire(self, b, drill.drilled(stats))
 	WarRules.tick_raiders(self, dt)
 	var gone: Array[int] = []
 	for enemy in enemies:
@@ -2940,7 +2942,7 @@ func export_state() -> Dictionary:
 		for u in (group as Array):
 			for transient in ["edge_goal", "edge_tile", "edge_rev", "edge_bid"]:
 				(u as Dictionary).erase(transient)
-	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "stewards": stewards.state(), "daily": daily.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
+	return {"version": 4, "living": living.state(), "chronicle": chronicle.state(), "needs": needs.state(), "aftermath": aftermath.state(), "stewards": stewards.state(), "daily": daily.state(), "drill": drill.state(), "frontier": frontier.state(), "home_raid": home_raid.state(),
 		"buildings": buildings.duplicate(true), "units": units.duplicate(true), "enemies": enemies.duplicate(true),
 		"resources": resources.duplicate(true), "pending_rewards": pending_rewards.duplicate(true), "gathered": gathered.duplicate(true),
 		"completed_quests": completed_quests.duplicate(), "quest_progress": quest_progress.duplicate(true),
@@ -3065,6 +3067,7 @@ func restore_state(state: Dictionary) -> bool:
 	aftermath.restore(data.get("aftermath"))
 	stewards.restore(data.get("stewards"))
 	daily.restore(data.get("daily"))
+	drill.restore(data.get("drill"))
 	frontier.restore(data["frontier"])
 	home_raid.restore(data.get("home_raid", {"active": {}, "last": {}}))
 	navigation_revision = living.navigation_revision
