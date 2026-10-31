@@ -784,17 +784,8 @@ func _scenery() -> void:
 	var trunk_mesh := BoxMesh.new()
 	trunk_mesh.size = Vector3(0.28, 0.9, 0.28)
 	_add_multimesh(trunk_mesh, trunk_material, trunk_xforms, [], scenery, true)
-	# Tall pine: three stacked cones merged into one mesh.
-	var pine_st := SurfaceTool.new()
-	pine_st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for tier in 3:
-		var cone := CylinderMesh.new()
-		cone.top_radius = 0.0
-		cone.bottom_radius = 0.9 - tier * 0.24
-		cone.height = 1.0 - tier * 0.1
-		cone.radial_segments = 6
-		pine_st.append_from(cone, 0, Transform3D(Basis(), Vector3(0, 0.9 + tier * 0.5, 0)))
-	_add_multimesh(pine_st.commit(), tint_material, pine_xforms, pine_colors, scenery, true)
+	# Tall fir: four layered tiers of boughs (the trunks above are drawn separately).
+	_add_multimesh(Dressing.fir_mesh(false), tint_material, pine_xforms, pine_colors, scenery, true)
 	# Round bushy tree: low-poly squashed sphere crown.
 	var round_mesh := SphereMesh.new()
 	round_mesh.radius = 0.85
@@ -5079,21 +5070,60 @@ func _setup_audio() -> void:
 	add_child(wind)
 	if sound:
 		wind.play()
+	_sfx_prewarm.call_deferred()
 
 
-# One renderer for the whole kit: notes mix sine sweeps (f0->f1 Hz) or
-# filtered noise hits, each with fast attack + exp decay. Cached by kind.
+# Render the sound kit one kind per frame after start, so the first horn or upgrade never stalls a frame.
+func _sfx_prewarm() -> void:
+	for kind: String in ["click", "confirm", "collect", "upgrade", "deny", "repair", "horn", "chirp"]:
+		if not is_inside_tree():
+			return
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+		_sfx_render(kind)
+
+
+# One renderer for the whole kit, synthesised once per kind and cached. Each note is a tone that
+# sweeps f0->f1 Hz with a set of partials ([ratio, gain]: 2 and 3 warm a pluck, 2.76 and 5.4 ring
+# like struck metal) or a filtered noise burst ("lp" 0..1, lower is duller), with a fast attack and
+# an exponential decay ("decay" is the share of the note's length it takes to fall to about a third).
+# "vib" adds a slow vibrato (horn). The result is soft-clipped so stacked notes never crackle.
+const SFX_PLUCK: Array = [[1.0, 1.0], [2.0, 0.35], [3.0, 0.12], [4.0, 0.05]]
+const SFX_BELL: Array = [[1.0, 1.0], [2.76, 0.42], [5.4, 0.2], [8.93, 0.06]]
+const SFX_BRASS: Array = [[1.0, 1.0], [2.0, 0.55], [3.0, 0.38], [4.0, 0.2], [5.0, 0.1]]
+const SFX_WOOD: Array = [[1.0, 1.0], [2.42, 0.3], [4.1, 0.08]]
+const SFX_MUTE: Array = [[1.0, 1.0], [3.0, 0.22], [5.0, 0.08]]
+
 func _sfx_render(kind: String) -> AudioStreamWAV:
 	if sfx_cache.has(kind):
 		return sfx_cache[kind]
 	var kit: Dictionary = {
-		"click": [{"f0": 1250.0, "f1": 900.0, "dur": 0.07, "vol": 0.35}],
-		"confirm": [{"f0": 660.0, "f1": 660.0, "dur": 0.09, "vol": 0.4}, {"f0": 880.0, "f1": 880.0, "dur": 0.14, "vol": 0.4, "at": 0.08}],
-		"collect": [{"f0": 880.0, "f1": 880.0, "dur": 0.08, "vol": 0.35}, {"f0": 1318.0, "f1": 1318.0, "dur": 0.16, "vol": 0.35, "at": 0.07}],
-		"upgrade": [{"f0": 440.0, "f1": 880.0, "dur": 0.22, "vol": 0.4}],
-		"repair": [{"f0": 190.0, "f1": 120.0, "dur": 0.13, "vol": 0.5}, {"dur": 0.06, "vol": 0.25, "noise": true}],
-		"horn": [{"f0": 98.0, "f1": 98.0, "dur": 0.85, "vol": 0.55, "slow": true}, {"f0": 147.0, "f1": 147.0, "dur": 0.85, "vol": 0.35, "slow": true, "at": 0.03}],
-		"deny": [{"f0": 170.0, "f1": 110.0, "dur": 0.16, "vol": 0.4, "square": true}],
+		# A soft wooden tap: a dull tick of noise on a short knock.
+		"click": [{"dur": 0.02, "vol": 0.22, "noise": true, "lp": 0.35},
+			{"f0": 820.0, "f1": 640.0, "dur": 0.06, "vol": 0.3, "partials": SFX_WOOD, "decay": 0.25}],
+		# Two plucked notes rising a fourth.
+		"confirm": [{"f0": 784.0, "f1": 784.0, "dur": 0.16, "vol": 0.3, "partials": SFX_PLUCK, "decay": 0.3},
+			{"f0": 1047.0, "f1": 1047.0, "dur": 0.26, "vol": 0.3, "partials": SFX_PLUCK, "decay": 0.32, "at": 0.075}],
+		# Coins: two bright metallic rings and a tiny jingle of noise.
+		"collect": [{"f0": 1760.0, "f1": 1760.0, "dur": 0.22, "vol": 0.28, "partials": SFX_BELL, "decay": 0.3},
+			{"f0": 2349.0, "f1": 2349.0, "dur": 0.32, "vol": 0.28, "partials": SFX_BELL, "decay": 0.3, "at": 0.065},
+			{"dur": 0.05, "vol": 0.06, "noise": true, "lp": 0.8, "at": 0.065}],
+		# A rising arpeggio, C E G C, with the top note left to ring.
+		"upgrade": [{"f0": 523.0, "f1": 523.0, "dur": 0.16, "vol": 0.26, "partials": SFX_PLUCK, "decay": 0.3},
+			{"f0": 659.0, "f1": 659.0, "dur": 0.16, "vol": 0.26, "partials": SFX_PLUCK, "decay": 0.3, "at": 0.06},
+			{"f0": 784.0, "f1": 784.0, "dur": 0.16, "vol": 0.26, "partials": SFX_PLUCK, "decay": 0.3, "at": 0.12},
+			{"f0": 1047.0, "f1": 1047.0, "dur": 0.42, "vol": 0.3, "partials": SFX_BELL, "decay": 0.35, "at": 0.18}],
+		# A hammer on timber: a thump, a dull crack and a small ring of the nail.
+		"repair": [{"f0": 170.0, "f1": 105.0, "dur": 0.14, "vol": 0.45, "partials": SFX_WOOD, "decay": 0.3},
+			{"dur": 0.05, "vol": 0.3, "noise": true, "lp": 0.3},
+			{"f0": 1350.0, "f1": 1350.0, "dur": 0.18, "vol": 0.08, "partials": SFX_BELL, "decay": 0.3, "at": 0.01}],
+		# A war horn: a brassy low fifth that swells in and wavers.
+		"horn": [{"f0": 98.0, "f1": 96.0, "dur": 0.95, "vol": 0.75, "slow": true, "partials": SFX_BRASS, "vib": 4.5},
+			{"f0": 147.0, "f1": 145.0, "dur": 0.9, "vol": 0.45, "slow": true, "partials": SFX_BRASS, "vib": 4.0, "at": 0.04}],
+		# Two muted low notes stepping down: "not now", without a harsh buzz.
+		"deny": [{"f0": 233.0, "f1": 228.0, "dur": 0.1, "vol": 0.32, "partials": SFX_MUTE, "decay": 0.35},
+			{"f0": 185.0, "f1": 180.0, "dur": 0.16, "vol": 0.32, "partials": SFX_MUTE, "decay": 0.35, "at": 0.09}],
 		"chirp": [{"f0": 4200.0, "f1": 4600.0, "dur": 0.05, "vol": 0.12}, {"f0": 4200.0, "f1": 4400.0, "dur": 0.05, "vol": 0.1, "at": 0.08}, {"f0": 4400.0, "f1": 4200.0, "dur": 0.06, "vol": 0.1, "at": 0.16}],
 	}
 	var notes: Array = kit.get(kind, kit["click"])
@@ -5101,27 +5131,50 @@ func _sfx_render(kind: String) -> AudioStreamWAV:
 	for note in notes:
 		total = maxf(total, float(note.get("at", 0.0)) + float(note["dur"]))
 	var count: int = maxi(1, int(total * 22050.0))
-	var bytes := PackedByteArray()
-	bytes.resize(count * 2)
+	var mix := PackedFloat32Array()
+	mix.resize(count)
+	var noise_rng := RandomNumberGenerator.new()
+	noise_rng.seed = hash(kind)
 	for note in notes:
 		var start: int = int(float(note.get("at", 0.0)) * 22050.0)
-		var attack: float = 0.25 if bool(note.get("slow", false)) else 0.012
-		var phase: float = 0.0
+		var slow: bool = bool(note.get("slow", false))
+		var attack: float = 0.25 if slow else 0.004
+		var decay: float = float(note.get("decay", 0.9 if slow else 0.35))
+		var partials: Array = note.get("partials", [[1.0, 1.0]])
+		var norm: float = 0.0
+		for partial: Array in partials:
+			norm += float(partial[1])
+		var phases := PackedFloat32Array()
+		phases.resize(partials.size())
+		var lp: float = float(note.get("lp", 1.0))
+		var low: float = 0.0
+		var vib: float = float(note.get("vib", 0.0))
 		for i in int(float(note["dur"]) * 22050.0):
 			var t: float = float(i) / 22050.0
-			var sample: float
+			var sample: float = 0.0
 			if bool(note.get("noise", false)):
-				sample = randf() * 2.0 - 1.0
+				low += lp * ((noise_rng.randf() * 2.0 - 1.0) - low)
+				sample = low * (1.0 + (1.0 - lp) * 2.0)
 			else:
 				var freq: float = lerpf(float(note["f0"]), float(note["f1"]), t / maxf(float(note["dur"]), 0.001))
-				phase += TAU * freq / 22050.0
-				sample = sin(phase)
-				if bool(note.get("square", false)):
-					sample = signf(sample) * 0.6
-			var env: float = float(note["vol"]) * minf(t / attack, 1.0) * exp(-t / maxf(float(note["dur"]) * (0.9 if bool(note.get("slow", false)) else 0.35), 0.02))
-			var slot: int = (start + i) * 2
-			if slot + 1 < bytes.size():
-				bytes.encode_s16(slot, clampi(int(bytes.decode_s16(slot) + sample * env * 32767.0), -32768, 32767))
+				if vib > 0.0:
+					freq *= 1.0 + 0.008 * sin(TAU * vib * t)
+				for p in partials.size():
+					var ratio: float = float(partials[p][0])
+					phases[p] += TAU * freq * ratio / 22050.0
+					# Higher partials fade faster, as on a real string or bell.
+					sample += sin(phases[p]) * float(partials[p][1]) * exp(-t * (ratio - 1.0) * 6.0)
+				sample /= norm
+			var env: float = float(note["vol"]) * minf(t / attack, 1.0) * exp(-t / maxf(float(note["dur"]) * decay, 0.012))
+			var slot: int = start + i
+			if slot < count:
+				mix[slot] += sample * env
+	var bytes := PackedByteArray()
+	bytes.resize(count * 2)
+	for i in count:
+		# Soft clip, and a 3 ms fade at the very end so the buffer never stops on a click.
+		var tail: float = minf(float(count - i) / 66.0, 1.0)
+		bytes.encode_s16(i * 2, int(tanh(mix[i] * 1.8) / 1.4 * tail * 32767.0))
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_16_BITS
 	stream.mix_rate = 22050

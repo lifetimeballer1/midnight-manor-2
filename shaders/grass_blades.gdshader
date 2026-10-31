@@ -11,7 +11,7 @@ render_mode cull_disabled, specular_disabled;
 
 uniform sampler2D mask_tex : filter_linear, repeat_disable;
 uniform vec2 map_size = vec2(40.0, 32.0);
-uniform vec3 root_col : source_color = vec3(0.24, 0.31, 0.10);
+uniform vec3 root_col : source_color = vec3(0.34, 0.42, 0.15);
 uniform vec2 wind_dir = vec2(0.85, 0.52);
 uniform float wind_power : hint_range(0.0, 2.0) = 1.0;
 uniform float wet : hint_range(0.0, 1.0) = 0.0;

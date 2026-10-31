@@ -275,28 +275,36 @@ func _terrain_noise_at(x: float, z: float) -> float:
 	return _terrain_noise.get_pixel(int(u * size) % size, int(v * size) % size).r
 
 
-# One clump = four blades (3 triangles each); UV.y holds the height fraction the shader bends by.
+# One clump = seven tapered blades of mixed height, each in three curved segments (5 triangles), so
+# a clump reads as a soft tuft rather than a spiky star. UV.y holds the height fraction the shader
+# bends by. Blades fan out from a tight root and arch outward toward the tip.
+const CLUMP_BLADES: int = 7
+
 func _grass_clump_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
 	var uvs := PackedVector2Array()
 	var normals := PackedVector3Array()
 	var colors := PackedColorArray()
-	var half_width: float = 0.04
-	for blade in 4:
-		var spin := Basis(Vector3.UP, blade * (TAU / 4.0) + 0.4)
-		var root: Vector3 = spin * Vector3(0.0, 0.0, 0.07)
-		var lean: Vector3 = spin * Vector3(0.0, 0.0, 0.10)
+	for blade in CLUMP_BLADES:
+		var turn: float = float(blade) * (TAU / float(CLUMP_BLADES)) + 0.4 + 0.35 * sin(float(blade) * 2.3)
+		var spin := Basis(Vector3.UP, turn)
+		var tall: float = 0.62 + 0.38 * fposmod(float(blade) * 0.618, 1.0)
+		var arch: float = 0.08 + 0.1 * fposmod(float(blade) * 0.382 + 0.2, 1.0)
+		var half_width: float = 0.028 + 0.008 * float(blade % 3)
+		var root: Vector3 = spin * Vector3(0.0, 0.0, 0.03)
 		var side: Vector3 = spin * Vector3(half_width, 0.0, 0.0)
-		var base_l: Vector3 = root - side
-		var base_r: Vector3 = root + side
-		var mid_c: Vector3 = root + Vector3(0.0, 0.55, 0.0) + lean * 0.35
-		var mid_l: Vector3 = mid_c - side * 0.7
-		var mid_r: Vector3 = mid_c + side * 0.7
-		var tip_p: Vector3 = root + Vector3(0.0, 1.0, 0.0) + lean
+		# Centre line at heights 0, 0.4, 0.75, 1.0 of the blade, curving outward (more near the tip).
+		var c1: Vector3 = root + Vector3(0.0, 0.4 * tall, 0.0) + spin * Vector3(0.0, 0.0, arch * 0.25)
+		var c2: Vector3 = root + Vector3(0.0, 0.75 * tall, 0.0) + spin * Vector3(0.0, 0.0, arch * 0.6)
+		var tip_p: Vector3 = root + Vector3(0.0, tall, 0.0) + spin * Vector3(0.0, 0.0, arch * 1.15)
+		var h1: float = 0.4 * tall
+		var h2: float = 0.75 * tall
 		var tris: Array = [
-			[base_l, base_r, mid_l, 0.0, 0.0, 0.55],
-			[base_r, mid_r, mid_l, 0.0, 0.55, 0.55],
-			[mid_l, mid_r, tip_p, 0.55, 0.55, 1.0]]
+			[root - side, root + side, c1 - side * 0.85, 0.0, 0.0, h1],
+			[root + side, c1 + side * 0.85, c1 - side * 0.85, 0.0, h1, h1],
+			[c1 - side * 0.85, c1 + side * 0.85, c2 - side * 0.55, h1, h1, h2],
+			[c1 + side * 0.85, c2 + side * 0.55, c2 - side * 0.55, h1, h2, h2],
+			[c2 - side * 0.55, c2 + side * 0.55, tip_p, h2, h2, tall]]
 		for tri: Array in tris:
 			for k in 3:
 				verts.append(tri[k])
@@ -767,17 +775,27 @@ func _slab_build() -> void:
 		for x in side:
 			var n: float = _terrain_noise.get_pixel(x * 2, y * 2).r
 			var m: float = _terrain_noise.get_pixel((x * 2 + 97) % 256, (y * 2 + 41) % 256).r
-			var green: Color = Color("38561a").lerp(Color("55751f"), m)
-			var gold: Color = Color("a07a1c").lerp(Color("b88a22"), m)
-			var color: Color = green.lerp(gold, smoothstep(0.15, 0.85, n) * 0.7)
-			image.set_pixel(x, y, color * (0.95 + 0.1 * m))
-	var specks: Array[String] = ["d9741a", "c99a1a", "b02e17"]
-	for index in 90:
+			# Gentle green-to-gold drift (it was a strong blend that read as camouflage at a distance),
+			# plus a fine per-pixel grain so the ground reads as grass up close.
+			var green: Color = Color("4d6a1f").lerp(Color("587620"), m)
+			var gold: Color = Color("957d22").lerp(Color("a68a2a"), m)
+			var color: Color = green.lerp(gold, 0.18 + smoothstep(0.25, 0.8, n) * 0.3)
+			image.set_pixel(x, y, color * (0.94 + rng.randf_range(0.0, 0.1)))
+	# Short grass strokes: two-pixel streaks a shade lighter or darker, wrapped so the tile repeats cleanly.
+	for index in 900:
+		var px: int = rng.randi_range(0, side - 1)
+		var py: int = rng.randi_range(0, side - 1)
+		var shade: float = 1.12 if rng.randf() < 0.5 else 0.86
+		for k in 2:
+			var qy: int = (py + k) % side
+			image.set_pixel(px, qy, image.get_pixel(px, qy) * shade)
+	var specks: Array[String] = ["d9741a", "c99a1a", "b02e17", "e0a924"]
+	for index in 70:
 		var px: int = rng.randi_range(0, side - 2)
 		var py: int = rng.randi_range(0, side - 2)
 		var leaf := Color(specks[rng.randi() % specks.size()])
 		image.set_pixel(px, py, leaf)
-		image.set_pixel(px + 1, py, leaf)
+		image.set_pixel(px + 1, py, leaf.darkened(0.15))
 	_terrain_slab_tex = ImageTexture.create_from_image(image)
 	expansion.grass_texture = _terrain_slab_tex
 	expansion.ground_tint = SLAB_TINT
