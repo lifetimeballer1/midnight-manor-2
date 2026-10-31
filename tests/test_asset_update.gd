@@ -2,7 +2,7 @@ extends SceneTree
 
 # Asset update (looks and sounds only): the young wheat is wheat plants with seed heads, grass clumps
 # are soft seven-blade tufts, the land outside the walls has layered firs and lighter boulders, and the
-# interface sound kit renders every kind as a clean, unclipped sound.
+# interface sound kit renders every kind as a clean, unclipped sound. Each unlocked reach has its own meadow.
 
 const Dressing = preload("res://scripts/game/village_dressing.gd")
 var checks: int = 0
@@ -71,6 +71,23 @@ func _run() -> void:
 		check(peak > 2000 and peak < 32000, "%s is audible and unclipped (peak %d)" % [kind, peak])
 		check(absi(stream.data.decode_s16((frames - 1) * 2)) < 600, "%s ends at rest, without a click" % kind)
 		check(game._sfx_render(kind) == stream, "%s is rendered once and cached" % kind)
+
+	# Unlocked land: each reach wears its own era's meadow by claim order, so new land never looks like
+	# the land claimed before it, and locked land keeps the plain meadow.
+	for resource: String in ["wood", "stone", "gold"]:
+		game.sim.resources[resource] = 99999
+	var textures: Array = []
+	for id: String in ["north", "east", "west", "south"]:
+		check(game.land_era(id) == -1, "%s has no era while locked" % id)
+		check(game.sim.expand(id), "%s can be claimed" % id)
+		game._sync_expansion(false)
+		await process_frame
+		check(game.land_era(id) == textures.size(), "%s takes era %d" % [id, textures.size()])
+		var grass: StandardMaterial3D = game.expansion.slabs[id]["grass"]
+		check(not textures.has(grass.albedo_texture), "%s does not share its ground with land claimed before" % id)
+		textures.append(grass.albedo_texture)
+		check(game._slab_flowers.has(id) and game._slab_flowers[id].multimesh.instance_count > 0, "%s grows its own wildflowers" % id)
+	check(game.expansion.slabs["north"]["grass"].albedo_texture == game._terrain_slab_tex, "the first reach keeps the plain autumn meadow")
 
 	game.queue_free()
 	await process_frame
