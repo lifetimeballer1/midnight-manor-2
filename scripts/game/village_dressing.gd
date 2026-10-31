@@ -5,8 +5,9 @@ extends RefCounted
 # building's type, tier and size.
 #
 # - Farm, tier 1: the stone tray of bare stakes becomes tilled rows of young wheat behind a low
-#   rail fence, with a scarecrow. The wheat greens, then turns gold, then is cut back, on one
-#   shared slow cycle.
+#   rail fence, with a scarecrow. Each spot along a furrow is a wheat plant (five stalks with seed
+#   heads and leaf blades). The wheat greens, then turns gold, then is cut back, on one shared slow
+#   cycle.
 # - Wall and mine, tier 1: the dark soot tint is lightened so their shapes hold at night; the mine
 #   also gets a timber frame, a lantern and an ore cart.
 #
@@ -35,7 +36,7 @@ const GROW_SECONDS: float = 50.0
 const RIPE_SECONDS: float = 40.0
 const CUT_SECONDS: float = 12.0
 const WHEAT_ROWS: int = 6
-const WHEAT_PER_ROW: int = 9
+const WHEAT_PER_ROW: int = 12
 
 static var _wheat_material: StandardMaterial3D = null
 static var _wheat_tween: Tween = null
@@ -112,12 +113,10 @@ static func _dress_farm(game: Node3D, b: Dictionary, model: Node3D) -> void:
 	for r in WHEAT_ROWS:
 		var z: float = -half + 0.25 + row_gap * (float(r) + 0.5)
 		_box(holder, Vector3(half * 2.0 - 0.45, 0.05, row_gap * 0.45), Vector3(0, 0.075, z), FURROW)
-	# Young wheat: one multimesh of slim tufts along the furrows.
-	var tuft := BoxMesh.new()
-	tuft.size = Vector3(0.07, 1.0, 0.07)
+	# Young wheat: one multimesh of wheat plants (a few stalks, each with a seed head) along the furrows.
 	var multi := MultiMesh.new()
 	multi.transform_format = MultiMesh.TRANSFORM_3D
-	multi.mesh = tuft
+	multi.mesh = wheat_plant_mesh()
 	multi.instance_count = WHEAT_ROWS * WHEAT_PER_ROW
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(str(b["id"])) ^ 0x51ab
@@ -127,9 +126,9 @@ static func _dress_farm(game: Node3D, b: Dictionary, model: Node3D) -> void:
 		var z: float = -half + 0.25 + row_gap * (float(r) + 0.5)
 		for k in WHEAT_PER_ROW:
 			var x: float = -half + 0.3 + step * float(k) + rng.randf_range(-0.05, 0.05)
-			var h: float = rng.randf_range(0.26, 0.38)
-			var basis := Basis(Vector3.UP, rng.randf() * TAU).rotated(Vector3.RIGHT, rng.randf_range(-0.12, 0.12)).scaled(Vector3(1.0, h, 1.0))
-			multi.set_instance_transform(i, Transform3D(basis, Vector3(x, 0.08 + h * 0.5, z + rng.randf_range(-0.04, 0.04))))
+			var h: float = rng.randf_range(0.85, 1.15)
+			var basis := Basis(Vector3.UP, rng.randf() * TAU).rotated(Vector3.RIGHT, rng.randf_range(-0.08, 0.08)).scaled(Vector3(h, h, h))
+			multi.set_instance_transform(i, Transform3D(basis, Vector3(x, 0.09, z + rng.randf_range(-0.04, 0.04))))
 			i += 1
 	var wheat := MultiMeshInstance3D.new()
 	wheat.name = "Wheat"
@@ -168,11 +167,39 @@ static func _dress_farm(game: Node3D, b: Dictionary, model: Node3D) -> void:
 	_box(crow, Vector3(0.16, 0.1, 0.16), Vector3(0, 1.17, 0), HAT)
 
 
+# One wheat plant standing on y 0, about 0.36 tall: five thin stalks fanning out from the root, each
+# topped by a plump seed head and one leaf blade half way up. Vertex colours keep the stalks a shade
+# darker than the heads, so the plant still reads as wheat while the shared material tints it from
+# green to gold.
+static func wheat_plant_mesh() -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var stalk := BoxMesh.new()
+	stalk.size = Vector3(0.018, 1.0, 0.018)
+	var head := BoxMesh.new()
+	head.size = Vector3(0.042, 0.1, 0.03)
+	var leaf := PrismMesh.new()
+	leaf.size = Vector3(0.05, 0.16, 0.008)
+	for k in 5:
+		var turn: float = float(k) * TAU / 5.0 + 0.3
+		var lean: float = 0.14 + 0.06 * float(k % 2)
+		var tall: float = 0.3 + 0.05 * float((k * 7) % 3)
+		var bend := Basis(Vector3.UP, turn) * Basis(Vector3.RIGHT, lean)
+		var root := Basis(Vector3.UP, turn) * Vector3(0, 0, 0.012)
+		_part(st, stalk, Transform3D(bend.scaled(Vector3(1.0, tall, 1.0)), root + bend * Vector3(0, tall * 0.5, 0)), Color(0.78, 0.82, 0.7), 0.0, tall)
+		var top: Vector3 = root + bend * Vector3(0, tall, 0)
+		_part(st, head, Transform3D(bend * Basis(Vector3.RIGHT, 0.25), top + bend * Vector3(0, 0.03, 0.01)), Color(1.08, 1.0, 0.82), tall - 0.05, tall + 0.08)
+		_part(st, leaf, Transform3D(Basis(Vector3.UP, turn + 1.2) * Basis(Vector3.FORWARD, 0.7), root + bend * Vector3(0, tall * 0.35, 0) + Basis(Vector3.UP, turn + 1.2) * Vector3(0.03, 0, 0)), Color(0.72, 0.8, 0.62), 0.0, tall)
+	return st.commit()
+
+
 # One material for every tier 1 farm, on one slow looping colour cycle: green, gold, cut back.
 static func _wheat(game: Node3D) -> StandardMaterial3D:
 	if _wheat_material == null:
 		_wheat_material = StandardMaterial3D.new()
 		_wheat_material.albedo_color = WHEAT_GREEN
+		_wheat_material.vertex_color_use_as_albedo = true
+		_wheat_material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_wheat_material.roughness = 0.85
 	if _wheat_tween == null or not _wheat_tween.is_valid():
 		_wheat_tween = game.create_tween()
@@ -264,6 +291,29 @@ static func rock_cluster_mesh(scale: float = 1.0) -> ArrayMesh:
 	for piece: Array in [[Vector3(0, 0.1, 0), Vector3(1.0, 0.9, 0.85), 0.0], [Vector3(0.32, 0.04, 0.16), Vector3(0.55, 0.5, 0.5), 0.8], [Vector3(-0.22, 0.03, 0.26), Vector3(0.42, 0.38, 0.4), 1.9]]:
 		var at: Vector3 = piece[0] * scale
 		_part(st, stone, Transform3D(Basis(Vector3.UP, piece[2]).scaled(piece[1]), at), Color.WHITE, -0.1, 0.5 * scale)
+	return st.commit()
+
+
+# A fir standing on y 0 (about 2.3 tall): four tiers of eight-sided boughs, each tier turned a little
+# and shaded darker on its underside, so the tree reads as layered branches rather than one flat cone.
+# The instance colour carries the green. with_trunk adds a short bark trunk (the scenery ring draws
+# its trunks separately).
+static func fir_mesh(with_trunk: bool = true) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	if with_trunk:
+		var trunk := BoxMesh.new()
+		trunk.size = Vector3(0.2, 0.6, 0.2)
+		_part(st, trunk, Transform3D(Basis(), Vector3(0, 0.3, 0)), BARK, 0.0, 1.0)
+	for tier in 4:
+		var cone := CylinderMesh.new()
+		cone.top_radius = 0.0
+		cone.bottom_radius = 0.84 - tier * 0.17
+		cone.height = 0.92 - tier * 0.1
+		cone.radial_segments = 8
+		cone.rings = 1
+		var base: float = 0.4 + tier * 0.42
+		_part(st, cone, Transform3D(Basis(Vector3.UP, tier * 0.41), Vector3(0, base + cone.height * 0.5, 0)), Color.WHITE, base - 0.05, base + cone.height * 0.75)
 	return st.commit()
 
 

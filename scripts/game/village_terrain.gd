@@ -59,6 +59,9 @@ var _mist_patches: Array[Dictionary] = []
 var _clutter_sets: Array[Dictionary] = []    # {"multi", "xforms", "pos"} - hidden where the mask says ground is cleared
 var _glow_material: StandardMaterial3D = null
 var _grass_mesh: ArrayMesh = null
+var _slab_flowers: Dictionary = {}
+var _flower_material: StandardMaterial3D = null
+var _era_textures: Dictionary = {}             # era index -> baked meadow texture            # plot id -> MultiMeshInstance3D of that reach's wildflowers
 var _slab_grass: Dictionary = {}              # plot id -> MultiMeshInstance3D of grass on claimed land
 var _reach_apron: MultiMeshInstance3D = null  # trodden earth around buildings on claimed land
 var _reach_xforms: Dictionary = {}            # MultiMesh on claimed land -> its instances' own transforms
@@ -275,28 +278,36 @@ func _terrain_noise_at(x: float, z: float) -> float:
 	return _terrain_noise.get_pixel(int(u * size) % size, int(v * size) % size).r
 
 
-# One clump = four blades (3 triangles each); UV.y holds the height fraction the shader bends by.
+# One clump = seven tapered blades of mixed height, each in three curved segments (5 triangles), so
+# a clump reads as a soft tuft rather than a spiky star. UV.y holds the height fraction the shader
+# bends by. Blades fan out from a tight root and arch outward toward the tip.
+const CLUMP_BLADES: int = 7
+
 func _grass_clump_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
 	var uvs := PackedVector2Array()
 	var normals := PackedVector3Array()
 	var colors := PackedColorArray()
-	var half_width: float = 0.04
-	for blade in 4:
-		var spin := Basis(Vector3.UP, blade * (TAU / 4.0) + 0.4)
-		var root: Vector3 = spin * Vector3(0.0, 0.0, 0.07)
-		var lean: Vector3 = spin * Vector3(0.0, 0.0, 0.10)
+	for blade in CLUMP_BLADES:
+		var turn: float = float(blade) * (TAU / float(CLUMP_BLADES)) + 0.4 + 0.35 * sin(float(blade) * 2.3)
+		var spin := Basis(Vector3.UP, turn)
+		var tall: float = 0.62 + 0.38 * fposmod(float(blade) * 0.618, 1.0)
+		var arch: float = 0.08 + 0.1 * fposmod(float(blade) * 0.382 + 0.2, 1.0)
+		var half_width: float = 0.028 + 0.008 * float(blade % 3)
+		var root: Vector3 = spin * Vector3(0.0, 0.0, 0.03)
 		var side: Vector3 = spin * Vector3(half_width, 0.0, 0.0)
-		var base_l: Vector3 = root - side
-		var base_r: Vector3 = root + side
-		var mid_c: Vector3 = root + Vector3(0.0, 0.55, 0.0) + lean * 0.35
-		var mid_l: Vector3 = mid_c - side * 0.7
-		var mid_r: Vector3 = mid_c + side * 0.7
-		var tip_p: Vector3 = root + Vector3(0.0, 1.0, 0.0) + lean
+		# Centre line at heights 0, 0.4, 0.75, 1.0 of the blade, curving outward (more near the tip).
+		var c1: Vector3 = root + Vector3(0.0, 0.4 * tall, 0.0) + spin * Vector3(0.0, 0.0, arch * 0.25)
+		var c2: Vector3 = root + Vector3(0.0, 0.75 * tall, 0.0) + spin * Vector3(0.0, 0.0, arch * 0.6)
+		var tip_p: Vector3 = root + Vector3(0.0, tall, 0.0) + spin * Vector3(0.0, 0.0, arch * 1.15)
+		var h1: float = 0.4 * tall
+		var h2: float = 0.75 * tall
 		var tris: Array = [
-			[base_l, base_r, mid_l, 0.0, 0.0, 0.55],
-			[base_r, mid_r, mid_l, 0.0, 0.55, 0.55],
-			[mid_l, mid_r, tip_p, 0.55, 0.55, 1.0]]
+			[root - side, root + side, c1 - side * 0.85, 0.0, 0.0, h1],
+			[root + side, c1 + side * 0.85, c1 - side * 0.85, 0.0, h1, h1],
+			[c1 - side * 0.85, c1 + side * 0.85, c2 - side * 0.55, h1, h1, h2],
+			[c1 + side * 0.85, c2 + side * 0.55, c2 - side * 0.55, h1, h2, h2],
+			[c2 - side * 0.55, c2 + side * 0.55, tip_p, h2, h2, tall]]
 		for tri: Array in tris:
 			for k in 3:
 				verts.append(tri[k])
@@ -759,6 +770,17 @@ func _mist_tick() -> void:
 
 # One baked 128px autumn grass texture for the expansion slabs, since they are plain boxes.
 func _slab_build() -> void:
+	_terrain_slab_tex = _bake_meadow(LAND_ERAS[0])
+	expansion.grass_texture = _terrain_slab_tex
+	expansion.ground_tint = SLAB_TINT
+	_terrain_autumn_slabs()
+
+
+# One baked, tiling 128px meadow texture from an era's ground palette: a low tone and a high tone (each
+# a pair the second noise channel moves between), blended gently by the first noise channel, with a fine
+# per-pixel grain, short grass strokes and a few fallen-leaf specks.
+func _bake_meadow(era: Dictionary) -> ImageTexture:
+	var ground: Array = era["ground"]
 	var side: int = 128
 	var image := Image.create(side, side, false, Image.FORMAT_RGB8)
 	var rng := RandomNumberGenerator.new()
@@ -767,21 +789,26 @@ func _slab_build() -> void:
 		for x in side:
 			var n: float = _terrain_noise.get_pixel(x * 2, y * 2).r
 			var m: float = _terrain_noise.get_pixel((x * 2 + 97) % 256, (y * 2 + 41) % 256).r
-			var green: Color = Color("38561a").lerp(Color("55751f"), m)
-			var gold: Color = Color("a07a1c").lerp(Color("b88a22"), m)
-			var color: Color = green.lerp(gold, smoothstep(0.15, 0.85, n) * 0.7)
-			image.set_pixel(x, y, color * (0.95 + 0.1 * m))
-	var specks: Array[String] = ["d9741a", "c99a1a", "b02e17"]
-	for index in 90:
+			var low: Color = Color(str(ground[0])).lerp(Color(str(ground[1])), m)
+			var high: Color = Color(str(ground[2])).lerp(Color(str(ground[3])), m)
+			var color: Color = low.lerp(high, float(ground[4]) + smoothstep(0.25, 0.8, n) * float(ground[5]))
+			image.set_pixel(x, y, color * (0.94 + rng.randf_range(0.0, 0.1)))
+	# Short grass strokes: two-pixel streaks a shade lighter or darker, wrapped so the tile repeats cleanly.
+	for index in 900:
+		var px: int = rng.randi_range(0, side - 1)
+		var py: int = rng.randi_range(0, side - 1)
+		var shade: float = 1.12 if rng.randf() < 0.5 else 0.86
+		for k in 2:
+			var qy: int = (py + k) % side
+			image.set_pixel(px, qy, image.get_pixel(px, qy) * shade)
+	var specks: Array = era["specks"]
+	for index in 70:
 		var px: int = rng.randi_range(0, side - 2)
 		var py: int = rng.randi_range(0, side - 2)
-		var leaf := Color(specks[rng.randi() % specks.size()])
+		var leaf := Color(str(specks[rng.randi() % specks.size()]))
 		image.set_pixel(px, py, leaf)
-		image.set_pixel(px + 1, py, leaf)
-	_terrain_slab_tex = ImageTexture.create_from_image(image)
-	expansion.grass_texture = _terrain_slab_tex
-	expansion.ground_tint = SLAB_TINT
-	_terrain_autumn_slabs()
+		image.set_pixel(px + 1, py, leaf.darkened(0.15))
+	return ImageTexture.create_from_image(image)
 
 
 func _terrain_autumn_slabs() -> void:
@@ -817,8 +844,13 @@ func _terrain_autumn_slabs() -> void:
 		if not expansion.slabs.has(id) or bool(expansion.slabs[id]["locked"]):
 			(_slab_grass[id] as Node).queue_free()
 			_slab_grass.erase(id)
+	for id: String in _slab_flowers.keys():
+		if not expansion.slabs.has(id) or bool(expansion.slabs[id]["locked"]):
+			(_slab_flowers[id] as Node).queue_free()
+			_slab_flowers.erase(id)
 	for side: String in _skirt_rocks:
 		(_skirt_rocks[side] as Node3D).visible = not (side in sim.expansions)
+	_land_era_ground()
 
 
 func _sync_expansion(animate: bool) -> void:
@@ -844,6 +876,7 @@ func _slab_grow_grass(id: String) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = id.hash()
 	var want: int = SLAB_GRASS_CLUMPS / (2 if _terrain_is_phone() else 1)
+	var era: int = land_era(id)
 	var xforms: Array[Transform3D] = []
 	var colors: Array[Color] = []
 	for index in want:
@@ -852,12 +885,122 @@ func _slab_grow_grass(id: String) -> void:
 		var width: float = rng.randf_range(1.0, 1.5)
 		var scaled: Basis = Basis(Vector3.UP, rng.randf_range(0.0, TAU)) * Basis.from_scale(Vector3(width, rng.randf_range(0.34, 0.62), width))
 		xforms.append(Transform3D(scaled, Vector3(x, TERRAIN_LIFT, z)))
-		colors.append(_grass_tip_color(rng, 0.55, false))
+		colors.append(_land_era_tip(rng, era))
 	var node: MultiMeshInstance3D = _add_multimesh(_grass_mesh, _grass_material, xforms, colors, self, false)
 	node.name = "AutumnGrass_" + id
 	node.extra_cull_margin = 1.5
 	_slab_grass[id] = node
+	_slab_grow_flowers(id, rect, era)
 	_terrain_signature = -1   # clear it off buildings, trails and fields on the next poll
+
+
+# --- each claimed reach has its own meadow ---------------------------------
+# Land is told apart by when it was claimed: the first reach is the plain autumn meadow, the second a
+# heather heath, the third a fresh clover lea, the fourth russet bracken. Each era has its own meadow
+# texture, colours its own grass tips and grows its own wildflowers, so a newly claimed reach never looks
+# like the land claimed before it. The era comes from the claim order in sim.expansions (already saved),
+# so a loaded game shows the same colours. Looks only.
+
+const LAND_ERAS: Array[Dictionary] = [
+	{"name": "Autumn meadow", "ground": ["4d6a1f", "587620", "957d22", "a68a2a", 0.18, 0.3], "specks": ["d9741a", "c99a1a", "b02e17", "e0a924"],
+		"tips": [], "flowers": ["e8c33a", "f2efe0"], "flower_count": 70},
+	{"name": "Heather heath", "ground": ["4f4c34", "5a5638", "7a5476", "8a5f86", 0.3, 0.35], "specks": ["b98ad8", "9a6ac4", "c99a1a"],
+		"tips": ["8a5a86", "9b6aa0", "6f7a3a", "7d5276"], "flowers": ["b98ad8", "d4a6ea", "9a6ac4"], "flower_count": 150},
+	{"name": "Clover lea", "ground": ["4a8a2a", "56962e", "78a838", "86b440", 0.1, 0.25], "specks": ["f4f1e6", "eaa8c4", "e0a924"],
+		"tips": ["7fb03a", "94c045", "6fa032", "a8c85a"], "flowers": ["f4f1e6", "eaa8c4", "f4f1e6"], "flower_count": 150},
+	{"name": "Bracken", "ground": ["5a4826", "66522a", "96602e", "a46c32", 0.32, 0.32], "specks": ["e8862a", "c8402c", "f0b040"],
+		"tips": ["b8662a", "c98a3a", "a0521e", "8a6a2a"], "flowers": ["e8862a", "c8402c", "f0b040"], "flower_count": 120},
+]
+
+
+# Claim order of a reach (0 for the first reach claimed), or -1 while it is still locked.
+func land_era(id: String) -> int:
+	var order: int = sim.expansions.find(id)
+	return mini(order, LAND_ERAS.size() - 1) if order >= 0 else -1
+
+
+# Each era's meadow texture, baked once on first use.
+func _land_era_texture(era: int) -> ImageTexture:
+	if era <= 0:
+		return _terrain_slab_tex
+	if not _era_textures.has(era):
+		_era_textures[era] = _bake_meadow(LAND_ERAS[era])
+	return _era_textures[era]
+
+
+# Claimed reaches wear their own era's meadow; locked land keeps the plain one under the fog.
+func _land_era_ground() -> void:
+	if _terrain_slab_tex == null:
+		return
+	for id: String in expansion.slabs:
+		var slab: Dictionary = expansion.slabs[id]
+		var era: int = land_era(id) if not bool(slab["locked"]) else -1
+		(slab["grass"] as StandardMaterial3D).albedo_texture = _land_era_texture(era)
+
+
+func _land_era_tip(rng: RandomNumberGenerator, era: int) -> Color:
+	var tips: Array = LAND_ERAS[maxi(era, 0)]["tips"]
+	if tips.is_empty() or rng.randf() < 0.2:
+		return _grass_tip_color(rng, 0.55, false)
+	return Color(str(tips[rng.randi() % tips.size()])).darkened(rng.randf_range(0.0, 0.18)).srgb_to_linear()
+
+
+# A wildflower on y 0: a thin stem and a small round head. Vertex colours keep the stem green and
+# the head white, and the instance colour tints the head (and darkens the stem a little).
+func _flower_mesh() -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var stem := BoxMesh.new()
+	stem.size = Vector3(0.016, 0.2, 0.016)
+	var stem_arrays: Array = stem.get_mesh_arrays()
+	_flower_part(st, stem_arrays, Transform3D(Basis(), Vector3(0, 0.1, 0)), Color(0.3, 0.42, 0.18))
+	var head := SphereMesh.new()
+	head.radius = 0.05
+	head.height = 0.06
+	head.radial_segments = 6
+	head.rings = 2
+	_flower_part(st, head.get_mesh_arrays(), Transform3D(Basis(), Vector3(0, 0.21, 0)), Color.WHITE)
+	return st.commit()
+
+
+func _flower_part(st: SurfaceTool, arrays: Array, place: Transform3D, colour: Color) -> void:
+	var points: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	for index: int in arrays[Mesh.ARRAY_INDEX]:
+		st.set_color(colour)
+		st.set_normal((place.basis * normals[index]).normalized())
+		st.add_vertex(place * points[index])
+
+
+func _slab_grow_flowers(id: String, rect: Rect2, era: int) -> void:
+	if era < 0:
+		return
+	var data: Dictionary = LAND_ERAS[era]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = id.hash() ^ 0x5f10
+	var want: int = int(data["flower_count"]) / (2 if _terrain_is_phone() else 1)
+	var tones: Array = data["flowers"]
+	var xforms: Array[Transform3D] = []
+	var colors: Array[Color] = []
+	# Flowers grow in little drifts, as wild flowers do, rather than an even sprinkle.
+	var drifts: Array[Vector2] = []
+	for index in maxi(6, want / 14):
+		drifts.append(Vector2(rng.randf_range(rect.position.x + 1.5, rect.end.x - 1.5), rng.randf_range(rect.position.y + 1.5, rect.end.y - 1.5)))
+	for index in want:
+		var centre: Vector2 = drifts[rng.randi() % drifts.size()]
+		var x: float = clampf(centre.x + rng.randfn(0.0, 1.1), rect.position.x + 0.6, rect.end.x - 0.6)
+		var z: float = clampf(centre.y + rng.randfn(0.0, 1.1), rect.position.y + 0.6, rect.end.y - 0.6)
+		var size: float = rng.randf_range(0.8, 1.3)
+		var basis := Basis(Vector3.UP, rng.randf_range(0.0, TAU)).rotated(Vector3.RIGHT, rng.randf_range(-0.15, 0.15)).scaled(Vector3.ONE * size)
+		xforms.append(Transform3D(basis, Vector3(x, TERRAIN_LIFT, z)))
+		colors.append(Color(str(tones[rng.randi() % tones.size()])).srgb_to_linear())
+	if _flower_material == null:
+		_flower_material = StandardMaterial3D.new()
+		_flower_material.vertex_color_use_as_albedo = true
+		_flower_material.roughness = 0.8
+	var node: MultiMeshInstance3D = _add_multimesh(_flower_mesh(), _flower_material, xforms, colors, self, false)
+	node.name = "Wildflowers_" + id
+	_slab_flowers[id] = node
 
 
 # Mossy boulders half-buried in the dark cliff face under the base map; they go with the edge when a plot is claimed.
@@ -941,6 +1084,10 @@ func _reach_clear() -> void:
 		var node: MultiMeshInstance3D = _slab_grass[id]
 		if is_instance_valid(node):
 			hidden += _reach_hide(node.multimesh, Vector3.ZERO, worked, false)
+	for id: String in _slab_flowers:
+		var flowers: MultiMeshInstance3D = _slab_flowers[id]
+		if is_instance_valid(flowers):
+			hidden += _reach_hide(flowers.multimesh, Vector3.ZERO, worked, false)
 	for id: String in expansion.slabs:
 		var slab: Dictionary = expansion.slabs[id]
 		if bool(slab["locked"]):

@@ -52,7 +52,7 @@ const SILHOUETTE_TONES: Array = [
 	[Color("2b4a2e"), Color("264128"), Color("35532f")],
 	[Color("2f4f2c"), Color("3d5e33"), Color("283f27")],
 	[Color("3a5630"), Color("4a6236"), Color("33502c")],
-	[Color("5e5d55"), Color("6f6a5e"), Color("54534d")],
+	[Color("7a766c"), Color("8a8478"), Color("6c6a62")],   # rocks: a lighter stone so they read as boulders, not holes
 ]
 const BANNER_WIDTH: float = 220.0                  # widest status line before it wraps
 const BANNER_GAP: float = 8.0                     # space between a banner and its beacon point
@@ -745,16 +745,9 @@ func _silhouettes(id: String, world: Rect2, group: Node3D, locked: bool) -> Dict
 func _silhouette_mesh(kind: int) -> Mesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# Firs, broadleaf trees and boulder clusters share the dressing module's shapes.
 	if kind == KIND_PINE:
-		for tier in 3:
-			var cone := CylinderMesh.new()
-			cone.top_radius = 0.0
-			cone.bottom_radius = 0.75 - tier * 0.18
-			cone.height = 1.4 - tier * 0.2
-			cone.radial_segments = 6
-			st.append_from(cone, 0, Transform3D(Basis(), Vector3(0, 0.75 + tier * 0.6, 0)))
-		return st.commit()
-	# Broadleaf trees and boulder clusters share the dressing module's shapes (visual pass 5).
+		return Dressing.fir_mesh(true)
 	if kind == KIND_ROUND:
 		return Dressing.broadleaf_mesh()
 	if kind == KIND_ROCK:
